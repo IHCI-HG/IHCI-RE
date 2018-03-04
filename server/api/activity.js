@@ -2,8 +2,6 @@ var _ = require('underscore'),
     request = require('request'),
     resProcessor = require('../components/res-processor/res-processor'),
     proxy = require('../components/proxy/proxy'),
-    wxAuth = require('../middleware/auth/1.0.0/wx-auth'),
-    appAuth = require('../middleware/auth/1.0.0/app-auth'),
     clientParams = require('../middleware/client-params/client-params'),
     conf = require('../conf');
 

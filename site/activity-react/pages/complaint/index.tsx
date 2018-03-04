@@ -5,7 +5,6 @@ import { autobind } from 'core-decorators';
 import Page from '../../components/page';
 
 import api, { IApiOptions, IApiResult } from '../../utils/api';
-import { share } from '../../utils/wx-utils';
 import * as ui from '../../utils/ui';
 
 import './style.scss'

@@ -134,7 +134,6 @@ function init() {
      * @return {[type]}          [description]
      */
     logger.token('userId', function getUserIdToken(req, res) {
-        // return req.cookies && req.cookies.userId || (req.rSession && req.rSession.userId) || '';
         return lo.get(req, 'cookies.userId') || lo.get(req, 'rSession.user.userId') || '';
     });
 
@@ -156,28 +155,28 @@ function init() {
     // app.use(requestFilter());
 
 
-    if(conf.ignoreRedis && conf.mode === "development"){
-        // 在开发环境跳过连接redis，直接设置rSession对象
-        console.log('development mode auto judge using redis or not.')
-        app.use(function(req, res, next){
-            if (req.get('Host').indexOf('qlchat') < 0) {
-                req.rSession = req.rSession || {};
-                if (!req.rSession.sessionId) {
-                    req.rSession.sessionId = 'qlwrsid%3A9A715836-91F8-44A8-A65E-903594DAC1BC.Oaw%2BcdUMKLK0mPQ3mhubBPbVvKfBEzj6U1qRCAtSIvk';
-                }
-                next();
-                console.log("[development mode] not use redis")
-            } else {
-                if (!app.redisCluster) {
-                    app.redisCluster = getRedisClusterObj();
-                }
-                redis3xSession({
-                    redisCluster: app.redisCluster,
-                    expires: conf.redisExpire,
-                })(req, res, next);
-            }
-        });
-    } else {
+    // if(conf.ignoreRedis && conf.mode === "development"){
+    //     // 在开发环境跳过连接redis，直接设置rSession对象
+    //     console.log('development mode auto judge using redis or not.')
+    //     app.use(function(req, res, next){
+    //         if (req.get('Host').indexOf('qlchat') < 0) {
+    //             req.rSession = req.rSession || {};
+    //             if (!req.rSession.sessionId) {
+    //                 req.rSession.sessionId = 'qlwrsid%3A9A715836-91F8-44A8-A65E-903594DAC1BC.Oaw%2BcdUMKLK0mPQ3mhubBPbVvKfBEzj6U1qRCAtSIvk';
+    //             }
+    //             next();
+    //             console.log("[development mode] not use redis")
+    //         } else {
+    //             if (!app.redisCluster) {
+    //                 app.redisCluster = getRedisClusterObj();
+    //             }
+    //             redis3xSession({
+    //                 redisCluster: app.redisCluster,
+    //                 expires: conf.redisExpire,
+    //             })(req, res, next);
+    //         }
+    //     });
+    // } else {
         // 生成redis连接实例
         app.redisCluster = getRedisClusterObj();
         // redis session缓存服务开启
@@ -185,7 +184,7 @@ function init() {
             redisCluster: app.redisCluster,
             expires: conf.redisExpire,
         }));
-    }
+    // }
 
     // flash 临时消息存储服务开启
     app.use(flash());

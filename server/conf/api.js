@@ -1,14 +1,7 @@
 var deepcopy = require('deepcopy');
 
 var config = {
-    'baseApi': {
-        'getWxAppId': '/h5/weixin/getAppId',
-        'createKnowledgeState': '/h5/weixin/createKnowledgeState',
-        'isLiveAdmin': '/h5/live/admin/isLiveAdmin',
-        'knowledgeCodeAuth': '/h5/weixin/knowledgeCodeAuth',
-        'bindAndGetUserInfo': '/h5/weixin/bindAndGetUserInfo',
-        'livePrice': '/h5/selfmedia/get-price'
-    }
+
 };
 
 function fillApiPrefix(v, prefix) {

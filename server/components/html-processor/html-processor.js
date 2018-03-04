@@ -80,13 +80,11 @@ var handle = function(req, res, next, opts) {
     }
 
     // 处理常用的标识变量替换（如时间戳）
-    html = replaceFlagParams(html);
+    // html = replaceFlagParams(html);
 
-    // 替换collect相关变量
-    html = replaceCollectVars(html);
 
     // 替换其它参数
-    html = replaceParams(html);
+    // html = replaceParams(html);
 
 
     // 页面缓存时间固定为 10 分钟
@@ -146,20 +144,6 @@ var replaceFlagParams = function(html) {
     return html;
 };
 
-/**
- * 替换日志采集js-sdk路径和api路径
- * @Author   fisher<wangjiang.fly.1989@163.com>
- * @DateTime 2016-12-28T17:22:24+0800
- * @param    {[type]}                           html [description]
- * @return   {[type]}                           [description]
- */
-var replaceCollectVars = function (html) {
-    html = html.replace('[[collectjs]]', conf.collectjs);
-    html = html.replace('[[spaCollectjs]]', conf.spaCollectjs);
-    html = html.replace('[[collectApiPrefix]]', conf.collectApiPrefix);
-
-    return html;
-};
 
 /**
  * 替换其它参数
@@ -167,8 +151,7 @@ var replaceCollectVars = function (html) {
  * @return {[type]}      [description]
  */
 var replaceParams = function (html) {
-    html = html.replace('[[__WSURL__]]', conf.websocketUrl);
-
+    // html = html.replace('[[__WSURL__]]', conf.websocketUrl);
     return html;
 };
 

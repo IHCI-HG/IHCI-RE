@@ -2,7 +2,6 @@ var _ = require('underscore'),
 
     resProcessor = require('../components/res-processor/res-processor'),
     proxy = require('../components/proxy/proxy'),
-    wxAuth = require('../middleware/auth/1.0.0/wx-auth'),
     conf = require('../conf');
 
 import lo from 'lodash';
