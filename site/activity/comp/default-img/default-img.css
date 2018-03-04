@@ -1,0 +1,8 @@
+/*缺省图片*/
+.img-default {
+    background-image: url(./img/img-default.png?__inline);
+    background-color: #f3f3f3;
+    background-position: center; 
+    background-repeat: no-repeat;
+    background-size: 150px 150px;
+}

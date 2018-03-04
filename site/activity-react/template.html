@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title></title>
+        <meta charset="UTF-8">
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="description" content="">
+        <meta name="keyword" content="">
+        <link rel="shortcut icon" href="https://img.qlchat.com/qlLive/ico/favicon.ico" type="image/x-icon" />
+        <script src="https://static.qianliaowang.com/frontend/rs/weibo/components_modules/lib-flexible/1.0.0/lib-flexible.js"></script><!--ignore-->
+    </head>
+    <body>
+        <div id="app">
+            
+        </div>
+    
+        <script>
+            window.INIT_DATA = [[INIT_DATA]];
+        </script>
+
+        <script type="text/javascript">
+            var _uaq = window._uaq || [];
+            // 配置站点名,默认值为： ql-h5
+            _uaq.push(['set', 'site', 'activity']);
+
+            // 配置站点版本, 默认值为: 1.0.0
+            _uaq.push(['set', 'sitever', '1.0.0']);
+
+            // 配置日志采集服务地址，用于发送采集日志,默认地址为： //collect.qlchat.com
+            _uaq.push(['set', 'server', '[[collectApiPrefix]]']);
+
+            // 其它自定义日志参数配置
+            // 配置采集当前url参数key2作为日志参数log_key
+            _uaq.push(['set', 'ch', 'query.ch']);
+
+            // 设置滚动区域的dom 元素class
+            _uaq.push(['set', 'scrollBoxClass', 'container']);
+
+        </script><!--ignore-->
+        <script type="text/javascript" src="/api/js-sdk/wx?actions=hide_all&__date"></script>
+        <script type="text/javascript" src="[[collectjs]]"></script><!--ignore-->
+        <script>
+            // 百度统计
+            var _hmt = _hmt || [];
+            (function() {
+                var hm = document.createElement("script");
+                hm.src = "//hm.baidu.com/hm.js?9f8c5d323a26421cb966b5e405d629c3";
+                var s = document.getElementsByTagName("script")[0];
+                s.parentNode.insertBefore(hm, s);
+            })();
+        </script><!--ignore-->
+        {{#if isVconsole}}
+            <script type="text/javascript" src="https://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/vconsole/2.5.1/vconsole.min.js"></script>
+        {{/if}}
+    </body>
+</html>
