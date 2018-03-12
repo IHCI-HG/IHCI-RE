@@ -8,26 +8,6 @@ const testSchema = new mongoose.Schema({
     hashedKey: String,
 })
 
-// 保存
-// const testEntity = new testModule({
-//     data: 'csscscscscs'
-// })
-// testEntity.save().then((e) => {
-//     console.log(e);
-// })
-
-// 查询
-// testModule.where('data')
-// testModule.find({'data': 'csscscscscs'}).exec(function (err, docs) {
-//     console.log(docs[0].data);
-// })
-
-// testSchema.method = {
-//     encryptKey: function (key) {
-//         return crypto.createHmac('sha1', conf.salt).update(key).digest('hex');
-//     }
-// }
-
 testSchema.statics = {
     s_search: function(id, cb) {
         return this.find({id: id}).exec(cb)
@@ -40,9 +20,14 @@ testSchema.statics = {
     },
     check: async function(id, hashKey) {
         const result = await this.findOne({id: id}).exec()
-        console.log('result:', result.hashedKey);
-        console.log('input:', hashKey);
+        console.log('result:', result);
+        console.log('result:', result._id);
         return result.hashedKey == hashKey
+    },
+    findById: async function (_id) {
+        const result = await this.findOne({_id: _id}).exec()
+        console.log('result:', result);
+        return result
     }
 }
 

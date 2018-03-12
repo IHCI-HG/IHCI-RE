@@ -18,20 +18,10 @@ var fs = require('fs'),
 
     // 模式定义
     DEV = 'development',
-    DEV1 = 'development1',
-    DEV2 = 'development2',
-    TEST1 = 'test1',
-    TEST2 = 'test2',
-    TEST3 = 'test3',
     PROD = 'production',
 
     modes = {
         development: ['development', 'dev', 'DEV'],
-        development1: ['development1', 'dev1', 'DEV1'],
-        development2: ['development2', 'dev2', 'DEV2'],
-        test1: ['test1', 'TEST1'],
-        test2: ['test2', 'TEST2'],
-        test3: ['test3', 'TEST3'],
         prod: ['production', 'prod', 'PROD']
     },
 

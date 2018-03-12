@@ -26,9 +26,10 @@ var TestDB = mongoose.model('test')
 // 领书页面
 async function address(req, res, next) {
 
-    TestDB.check('588', '38fc40d19ed30da98d10d9b0eda744101311d8c3').then((e) => {
-        console.log(e);
-    })
+    // TestDB.check('588', '38fc40d19ed30da98d10d9b0eda744101311d8c3').then((e) => {
+    //     // console.log(e);
+    // })
+    TestDB.findById('5a97d0b1be080b3ed77846ed')
 
     var filePath = path.resolve(__dirname, '../../public/activity/page/address/full.html'),
     options = {

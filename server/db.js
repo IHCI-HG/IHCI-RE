@@ -10,13 +10,13 @@ fs.readdirSync(models)
   .forEach(file => require(join(models, file)));
 
 function connect () {
-  var options = {
-      server: {
-          socketOptions: {
-              keepAlive: 1
-          }
-      }
-  };
+    var options = {
+        server: {
+            socketOptions: {
+                keepAlive: 1
+            }
+        }
+    };
   mongoose.connect(conf.db).connection
   return mongoose.connection;
 }
