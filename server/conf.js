@@ -17,7 +17,6 @@ var root = path.resolve(__dirname, '../public/'),
         root: root,
         global: global,
         favicon: favicon,
-        db: 'mongodb://127.0.0.1:27017/test',
         salt: '7e1977739c748beac0c0fd14fd26a544',
     };
 

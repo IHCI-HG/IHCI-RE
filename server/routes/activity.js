@@ -18,19 +18,10 @@ var querystring = require('querystring');
 
 var activityApi = require('../api/activity');
 
-var redis = server.getRedisCluster();
-
 var mongoose = require('mongoose')
 var TestDB = mongoose.model('test')
 
-// 领书页面
 async function address(req, res, next) {
-
-    // TestDB.check('588', '38fc40d19ed30da98d10d9b0eda744101311d8c3').then((e) => {
-    //     // console.log(e);
-    // })
-    TestDB.findById('5a97d0b1be080b3ed77846ed')
-
     var filePath = path.resolve(__dirname, '../../public/activity/page/address/full.html'),
     options = {
         filePath: filePath,
@@ -39,10 +30,8 @@ async function address(req, res, next) {
     };
     htmlProcessor(req, res, next, options);
 }
-
 const test = async (req, res, next) => {
     const filePath = path.resolve(__dirname, '../../public/activity-react/complaint.html');
-
     const options = {
         filePath,
         fillVars: {
@@ -51,13 +40,10 @@ const test = async (req, res, next) => {
         },
         renderData: {},
     };
-
     req.rSession.expires = 10;
     req.rSession.noRobot = true;
     req.rSession.count = req.rSession.count + 1 || 1
-
     console.log(req.rSession);
-    
     htmlProcessor(req, res, next, options)
 }
 

@@ -23,7 +23,6 @@ function connect () {
 
 
 module.exports.init = () => {
-
     connect()
         .on('error', console.log)
         .on('disconnected', connect)

@@ -23,7 +23,7 @@ var config = {
         // 'password': 'WdPTMj6X',
     },
     'redisExpire': 60 * 60 * 24,
-    db: 'mongodb://127.0.0.1:27017/test',
+    db: 'mongodb://127.0.0.1:27017/ihci',
 
     'lruMaxAge': 36000,
     'lruMax': 500,
