@@ -38,7 +38,7 @@
 |参数名|类型|说明|
 |:---- |:----- |-----  |
 |_id   |String   |用户唯一标识       |
-|userName |String   |用户名     |
+|username |String   |用户名     |
 |name |String   |姓名    |
 |phone |String   |电话    |
 |mail |String   |邮件    |

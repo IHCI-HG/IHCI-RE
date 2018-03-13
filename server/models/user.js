@@ -4,8 +4,8 @@ const conf = require('../conf')
 
 const userSchema = new mongoose.Schema({
     create_time: { type: Date, default : Date.now},
-    userName: { type: String , default: '' },
-    passWord: { type: String , default: '' },
+    username: { type: String , default: '' },
+    password: { type: String , default: '' },
     name: String,
     phone: String,
     mail: String,
@@ -15,14 +15,14 @@ const userSchema = new mongoose.Schema({
 })
 
 userSchema.statics = {
-    createUser: async function(userName, passWord, data, cb) {
-        const result = await this.findOne({userName: userName}).exec()
+    createUser: async function(username, password, data, cb) {
+        const result = await this.findOne({username: username}).exec()
         if(result) {
             return false
         } else {
             return this.create({
-                userName: userName,
-                passWord: crypto.createHmac('sha1', conf.salt).update(passWord).digest('hex'),
+                username: username,
+                password: crypto.createHmac('sha1', conf.salt).update(password).digest('hex'),
                 ...data,
             }, cb)
         }
@@ -54,7 +54,7 @@ userSchema.statics = {
             return false
         }
     },
-    
+
 
 }
 

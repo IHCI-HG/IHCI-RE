@@ -37,6 +37,9 @@ const login = async (req, res, next) => {
 }
 
 const signUp = async (req, res, next) => {
+    const userInfo = lo.get(req, 'body.userInfo', {})
+
+    if(!userInfo || !userInfo.username || !userInfo.password)
 
     const result = await UserDB.createUser(
         Math.random().toString(),
@@ -111,20 +114,15 @@ const updateUserInfo = async (req, res, next) => {
 module.exports = [
     ['GET', '/api/base/sys-time', sysTime],
 
-    ['GET', '/api/login', login],
     ['POST', '/api/login', login],
 
-    ['GET', '/api/sign-up', signUp],
     ['POST', '/api/sign-up', signUp],
 
-    ['GET', '/api/logout', logOut],
     ['POST', '/api/logout', logOut],
     
     // todo 添加api router
-    ['GET', '/api/update-head-img', updateHeadImgUrl],
     ['POST', '/api/update-head-img', updateHeadImgUrl],
     
     // todo 添加api router
-    ['GET', '/api/update-head-img', updateUserInfo],
     ['POST', '/api/update-head-img', updateUserInfo],
 ];
