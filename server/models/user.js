@@ -21,14 +21,14 @@ userSchema.statics = {
             return false
         } else {
             return this.create({
+                ...data,
                 username: username,
                 password: crypto.createHmac('sha1', conf.salt).update(password).digest('hex'),
-                ...data,
             }, cb)
         }
     },
 
-    authJudge:async function(un, pw) {
+    authJudge: async function(un, pw) {
         const result = await this.findOne({un: un}).exec()
         if(result) {
             return result.hashedKey == hashKey ? result : null
@@ -44,9 +44,10 @@ userSchema.statics = {
     updateHeadImgUrl: async function (userId, headImgUrl) {
         try {
             const userInfo = await this.findUserByUserID(userId)
-            if(userInfo && userInfo.headImgUrl) {
+            if(userInfo) {
                 userInfo.headImgUrl = headImgUrl
-                return await this.update({_id: userId}, userInfo)
+                const result = await this.update({_id: userId}, userInfo)
+                return result.ok == 1
             } else {
                 return false
             }
@@ -54,7 +55,6 @@ userSchema.statics = {
             return false
         }
     },
-
 
 }
 
