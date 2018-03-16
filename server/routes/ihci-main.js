@@ -3,19 +3,14 @@ var path = require('path'),
     async = require('async'),
     lo = require('lodash'),
     uuid = require('uuid'),
-
     clientParams = require('../middleware/client-params/client-params'),
-
     proxy = require('../components/proxy/proxy'),
     resProcessor = require('../components/res-processor/res-processor'),
     htmlProcessor = require('../components/html-processor/html-processor'),
     conf = require('../conf'),
-
     server = require('../server');
 
-
 var querystring = require('querystring');
-
 var activityApi = require('../api/activity');
 
 var mongoose = require('mongoose')
@@ -35,8 +30,7 @@ const test = async (req, res, next) => {
     const options = {
         filePath,
         fillVars: {
-            INIT_DATA: {
-            }
+            INIT_DATA: {}
         },
         renderData: {},
     };
@@ -47,7 +41,35 @@ const test = async (req, res, next) => {
     htmlProcessor(req, res, next, options)
 }
 
+const test1 = async (req, res, next) => {
+    res.send('dataStr1')
+}
+
+const mainPage = async (req, res, next) => {
+    const filePath = path.resolve(__dirname, '../../public/activity-react/main.html');
+
+    const cccc = {
+        ssdsds: '1',
+        awdad: [
+            1,2,3,4,5
+        ]
+    }
+
+    const options = {
+        filePath,
+        fillVars: {
+            INIT_DATA: {
+                aaaa: 'aaaaaaaaaa',
+                b: cccc
+            }
+        },
+        renderData: {},
+    };
+    htmlProcessor(req, res, next, options)
+}
+
 module.exports = [
-    ['GET', '/wechat/page/activity/address', clientParams(), address],
-    ['GET', '/test', clientParams(), test],
+    // ['GET', '/wechat/page/activity/address', clientParams(), address],
+    // 主页
+    ['GET', '/', clientParams(), mainPage],
 ];

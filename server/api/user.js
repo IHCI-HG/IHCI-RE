@@ -30,7 +30,8 @@ const login = async (req, res, next) => {
         return
     }
 
-    const result = UserDB.authJudge(username, password)
+    const result = await UserDB.authJudge(username, password)
+    console.log(result);
 
     if(result) {
         req.rSession.userId = result._id
@@ -92,8 +93,9 @@ const logOut = async (req, res, next) => {
 
 const updateHeadImgUrl = async (req, res, next) => {
     const userId = req.rSession.userId
-    const imgUrl = lo.get(req, 'body.headImgUrl')
-    const result = await UserDB.updateHeadImgUrl(userId, Math.random().toString())
+    const imgUrl = lo.get(req, 'body.headImgUrl', '')
+
+    const result = await UserDB.updateHeadImgUrl(userId, imgUrl)
     if(result) {
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '操作成功' },
@@ -134,7 +136,8 @@ module.exports = [
 
     ['POST', '/api/logout', logOut],
     
-    ['POST', '/api/update-head-img' ,apiAuth, updateHeadImgUrl],
+    ['POST', '/api/update-head-img' , apiAuth, updateHeadImgUrl],
+    // ['POST', '/api/update-head-img' , updateHeadImgUrl],
     
-    ['POST', '/api/update-head-img' ,apiAuth, updateUserInfo],
+    // ['POST', '/api/update-head-img' ,apiAuth, updateUserInfo],
 ];

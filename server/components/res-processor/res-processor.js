@@ -11,7 +11,7 @@ var jsonp = function(req, res, data) {
     if (!data) {
         data = {};
     }
-
+    res.set('Content-Type', 'text/json');
     var dataStr = JSON.stringify(data);
     dataStr = dataStr.replace(/(\u0085)|(\u2028)|(\u2029)/g, (m) => "");
     if (callbackFn) {

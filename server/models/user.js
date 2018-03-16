@@ -29,21 +29,21 @@ userSchema.statics = {
     },
 
     authJudge: async function(un, pw) {
-        const result = await this.findOne({un: un}).exec()
+        const result = await this.findOne({username: un}).exec()
         if(result) {
-            return result.hashedKey == hashKey ? result : null
+            return result.password == pw ? result : null
         } else {
             return null
         }
     },
 
-    findUserByUserID: async function(userId) {
-        const result = await this.findUserByUserID(userId)
+    findUserById: async function(userId) {
+        const result = await this.findById(userId)
         return result
     },
     updateHeadImgUrl: async function (userId, headImgUrl) {
         try {
-            const userInfo = await this.findUserByUserID(userId)
+            const userInfo = await this.findById(userId)
             if(userInfo) {
                 userInfo.headImgUrl = headImgUrl
                 const result = await this.update({_id: userId}, userInfo)

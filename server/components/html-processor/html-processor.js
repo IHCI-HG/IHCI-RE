@@ -123,8 +123,7 @@ var fillHtmlVars = function(html, data) {
         jsonV = (jsonV || '').replace(/(\u0085)|(\u2028)|(\u2029)/g, (m) => "");
         jsonV = (jsonV || '').replace(/\</g, (m) => "&lt;")
         jsonV = (jsonV || '').replace(/\>/g, (m) => "&gt;")
-        html = html
-                .replace(new RegExp('\\[\\[' + key + '\\]\\]', 'g'), (m) => jsonV);
+        html = html.replace(new RegExp('\\[\\[' + key + '\\]\\]', 'g'), (m) => jsonV);
     });
 
     return html;

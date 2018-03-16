@@ -8,7 +8,7 @@ const apiAuth = (req, res, next) => {
             state: { code: 0, msg: '请先登录' },
             data: {}
         });
-        
+
         return
     }
 }
