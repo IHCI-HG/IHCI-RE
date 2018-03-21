@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { render } from 'react-dom';
-import { autobind } from 'core-decorators';
 
 import Page from '../../components/page';
 
@@ -10,7 +9,7 @@ import * as ui from '../../utils/ui';
 import './style.scss'
 import { loading } from '../../utils/ui';
 
-export default class MainPage extends React.Component {
+export default class TeamPage extends React.Component {
 
     state = {
         //loginBlock: signUp || login
@@ -91,9 +90,6 @@ export default class MainPage extends React.Component {
             </div>
             <div className="video">
                 <div className="video-des">这是一些关于视频的描述balabala这是一些关于视频的描述balabala这是一些关于视频的描述balabala这是一些关于视频的描述balabala</div>
-                <div class="video-wrap">
-                    <iframe frameborder="0" width="450" height="254" src="https://v.qq.com/iframe/player.html?vid=f0564fwe5va&tiny=0&auto=0" allowfullscreen></iframe>
-                </div>
             </div>
             <div className="stories">
                 <h1>iHCI stories</h1>
@@ -152,4 +148,4 @@ export default class MainPage extends React.Component {
     }
 }
 
-render(<MainPage />, document.getElementById('app'));
+render(<TeamPage />, document.getElementById('app'));

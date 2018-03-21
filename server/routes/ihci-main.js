@@ -10,6 +10,7 @@ var path = require('path'),
     conf = require('../conf'),
     server = require('../server');
 
+var pageHandle = require('../middleware/page-handle/page-handle')
 var querystring = require('querystring');
 var activityApi = require('../api/activity');
 
@@ -47,14 +48,12 @@ const test1 = async (req, res, next) => {
 
 const mainPage = async (req, res, next) => {
     const filePath = path.resolve(__dirname, '../../public/activity-react/main.html');
-
     const cccc = {
         ssdsds: '1',
         awdad: [
             1,2,3,4,5
         ]
     }
-
     const options = {
         filePath,
         fillVars: {
@@ -68,8 +67,34 @@ const mainPage = async (req, res, next) => {
     htmlProcessor(req, res, next, options)
 }
 
+const teamPage = async (req, res, next) => {
+    const filePath = path.resolve(__dirname, '../../public/activity-react/team.html');
+    const options = {
+        filePath,
+        fillVars: {
+            INIT_DATA: {
+                aaaa: 'aaaaaaaaaa'
+            }
+        },
+        renderData: {},
+    };
+    htmlProcessor(req, res, next, options)
+}
+
+const doNoThing = async (req, res, next) => { 
+    req.INIT_DATA = {
+        aaaa: 'aaaaaaaaaa'
+    }
+    next()
+}
+
+
 module.exports = [
     // ['GET', '/wechat/page/activity/address', clientParams(), address],
     // 主页
     ['GET', '/', clientParams(), mainPage],
+
+    ['GET', '/team', clientParams(),    doNoThing, pageHandle() ],
+    ['GET', '/discuss', clientParams(), doNoThing, pageHandle() ],
+    ['GET', '/news', clientParams(),    doNoThing, pageHandle() ],
 ];
