@@ -94,7 +94,10 @@ module.exports = [
     // 主页
     ['GET', '/', clientParams(), mainPage],
 
-    ['GET', '/team', clientParams(),    doNoThing, pageHandle() ],
+    ['GET', '/team', clientParams(), doNoThing, pageHandle() ],
+    ['GET', '/team-edit/:id', clientParams(), doNoThing, pageHandle() ],
+    ['GET', '/team-admin/:id', clientParams(), doNoThing, pageHandle() ],
+    
     ['GET', '/discuss', clientParams(), doNoThing, pageHandle() ],
     ['GET', '/news', clientParams(),    doNoThing, pageHandle() ],
 ];

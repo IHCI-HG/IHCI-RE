@@ -1,0 +1,50 @@
+.team-con {
+    max-width: 1280px;
+    margin: auto;
+
+    .act {
+        color: red;
+    }
+
+    .head {
+        font-weight: bold;
+        font-size: 20px;
+        padding: 40px 0;
+    }
+
+    .team-list {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+    .team-item {
+        height: 140px;
+        width: 220px;
+        background-color: #fff;
+        margin: 20px 20px;
+        border-radius: 2px;
+
+        display: flex;
+        justify-content: space-between;
+
+        padding: 20px;
+
+        .left {
+            .bg-img {
+                height: 100px;
+                width: 180px;
+                background-color: #888;
+            }
+            .name {
+                color: #999;
+                font-size: 20px;
+                margin: 20px;
+            }
+        }
+        .right {
+            line-height: 1.4;
+
+        }
+    }
+}

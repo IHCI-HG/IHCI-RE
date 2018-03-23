@@ -1,0 +1,39 @@
+.main-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #fff;
+    height: 80px;
+
+    padding: 0 50px;
+
+    .logo {
+        margin-right: 100px;
+    }
+    .left {
+        display: flex;
+        align-items: center;
+    }
+    .nav-list{
+        color: #999;
+    }
+    .nav-item{
+        margin-right: 40px;
+        font-size: 24px;
+        cursor: pointer;
+        &:visited {
+            color: #999;
+        }
+        &.active {
+            color: #333;
+            font-weight: bold;
+        }
+    }
+    .head-img {
+        border-radius: 100px;
+        height: 60px;
+        width: 60px;
+        background-color: #763;
+    }
+
+}
