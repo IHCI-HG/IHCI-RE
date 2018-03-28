@@ -75,7 +75,8 @@ export default class TeamAdmin extends React.Component{
                 headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
                 role: 'creator',
                 phone: '17728282828',
-                mail: 'ada@qq.com'
+                mail: 'ada@qq.com',
+                showAdmin: false,
             },
             {
                 id: 2,
@@ -83,7 +84,8 @@ export default class TeamAdmin extends React.Component{
                 headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
                 role: 'admin',
                 phone: '17728282828',
-                mail: 'ada@qq.com'
+                mail: 'ada@qq.com',
+                showAdmin: false,
             },
             {
                 id: 3,
@@ -91,7 +93,8 @@ export default class TeamAdmin extends React.Component{
                 headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
                 role: 'admin',
                 phone: '17728282828',
-                mail: 'ada@qq.com'
+                mail: 'ada@qq.com',
+                showAdmin: false,
             },
             {
                 id: 4,
@@ -99,9 +102,11 @@ export default class TeamAdmin extends React.Component{
                 headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
                 role: 'member',
                 phone: '17728282828',
-                mail: 'ada@qq.com'
+                mail: 'ada@qq.com',
+                showAdmin: false,
             },
         ],
+        showAddMemberDialog: false
     }
 
     // 过滤掉没有管理权限的团队
@@ -170,13 +175,59 @@ export default class TeamAdmin extends React.Component{
         })
     }
 
+    showAdminHandle = (id) => {
+        const memberList = this.state.memberList
+        memberList.map((item) => {
+            if(item.id == id) {
+                item.showAdmin = !item.showAdmin
+            }
+        })
+        this.setState({
+            memberList: memberList
+        })
+    } 
+
+    setUserRoleHandle = (id, role) => {
+        console.log(role);
+        const memberList = this.state.memberList
+        memberList.map((item) => {
+            if(item.id == id) {
+                item.role = role
+            }
+        })
+        this.setState({
+            memberList: memberList
+        })
+    }
+
+    showAddMemberDialogHandle = () => {
+        this.setState({showAddMemberDialog: true})
+    }
+    hideAddMemberDialogHandle = (e) => {
+        if(e.target.className == 'add-member-dialog-bg' || e.target.className == 'close') {
+            this.setState({showAddMemberDialog: false})
+        }
+    }
+
     render() {
         return (
             <div className="team-admin-page">
                 <div className="sp-nav">
                     <span className='to-team' onClick={() => {this.props.router.push('/team')}} >团队</span>
                      > 
-                    <span onClick={this.teamFilterHandle}>{this.state.currentTeam.name} {this.state.showTeamFilter ? '↑' : '↓'} </span> </div>
+                    <span onClick={this.teamFilterHandle}>{this.state.currentTeam.name} {this.state.showTeamFilter ? '↑' : '↓'} </span> 
+                </div>
+
+
+                {
+                    this.state.showAddMemberDialog && <div className="add-member-dialog-bg" onClick={this.hideAddMemberDialogHandle}>
+                        <div className="add-member-dialog">
+                            <div className="close">X</div>
+                            <div className="des">将下面的公共邀请链接通发送给需要邀请的人</div>
+                            <input type="text" value="www.wwwww.wwwwww/adadwd/awdawd?assss=sssdwa" className="invite-input" />
+                        </div>
+                    </div>
+                } 
                 
                 {
                     this.state.showTeamFilter && <div className="team-list">
@@ -220,22 +271,32 @@ export default class TeamAdmin extends React.Component{
 
                     <div className="sava-btn">保存设置</div>
 
-                    <div className="cut-off"></div>
-
-                    <div className="admin-title-bg">团队成员管理</div>
+                    <div className="admin-title-bg flex"> <span>团队成员管理</span> <span className='add' onClick={this.showAddMemberDialogHandle}>添加成员</span> </div>
 
                     <div className="member-list">
                         {
                             this.state.memberList.map((item) => {
                                 return(
-                                    <div className="member-item"></div>
+                                    <div className="member-item" key={'member-item-' + item.id}>
+                                        <img src={item.headImg} alt="" className="head-img"/>
+                                        <span className="name">{item.name}</span>
+                                        <span className="phone">{item.phone}</span>
+                                        <span className="mail">{item.mail}</span>
+                                        <span className="role" onClick={this.showAdminHandle.bind(this, item.id)}>{item.role} {item.showAdmin ? '↑' : '↓'} </span>
+                                        {
+                                            item.showAdmin && <div className="admin">
+                                                <div className="admin-item" onClick={this.setUserRoleHandle.bind(this, item.id, 'admin')}>管理员</div>
+                                                <div className="admin-item" onClick={this.setUserRoleHandle.bind(this, item.id, 'member')}>成员</div>
+                                                <div className="admin-item" onClick={this.setUserRoleHandle.bind(this, item.id, 'member')}>踢出队伍</div>
+                                            </div>
+                                        }
+                                    </div>
                                 )
                             })
                         }
-                        
                     </div>
-
                 </div>
+
             </div>
         )
     }
