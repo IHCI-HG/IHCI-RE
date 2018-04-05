@@ -8,7 +8,11 @@ import Page from '../../components/page'
 
 import Team from './team'
 import TeamAdmin from './team-admin'
-import TeamEdit from './team-edit'
+import Person from './person'
+import Discuss from './discuss'
+import Topic from './topic'
+import News from './news' 
+
 
 class App extends React.Component{
     state = {
@@ -38,7 +42,7 @@ class App extends React.Component{
     render() {
         return (
             <Page>
-                <nav className='main-nav'>
+                <div className='main-nav'>
                     <div className="left">
                         <div className="logo">这是LOGO</div>
                         <div className="nav-list">
@@ -52,45 +56,29 @@ class App extends React.Component{
                             <div className="head-img"></div>
                         </Link>
                     </div>
-                </nav>
-                {this.props.children}
+                </div>
+                { this.props.children }
             </Page>
         )
     }
 }
 
-class team extends React.Component{
-    render() {
-        return <h3>team</h3>
-    }
-}
-class discuss extends React.Component{
-    render() {
-        return <h3>discuss</h3>
-    }
-}
-class news extends React.Component{
-    render() {
-        return <h3>news</h3>
-    }
-}
-
-
-
 const routeConfig = [
     {
         path: '/',
         component: App,
-        // indexRoute: { component: team },
+        indexRoute: { component: Team },
         childRoutes: [
             { path: 'team', component: Team },
             { path: 'team-admin/:id', component: TeamAdmin },
-            { path: 'team-edit/:id', component: TeamEdit },
-
-            { path: 'discuss', component: discuss },
-            { path: 'news', component: news },
+            { path: 'person/:id', component: Person },
+            { path: 'discuss/:id', component: Discuss },
+            { path: 'discuss/topic/:id', component: Topic },
+            { path: 'news', component: News },
         ]
     }
 ]
+
+
 
 render(<Router routes={routeConfig} history={browserHistory}/>, document.getElementById('app'));

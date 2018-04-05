@@ -97,7 +97,10 @@ module.exports = [
     ['GET', '/team', clientParams(), doNoThing, pageHandle() ],
     ['GET', '/team-edit/:id', clientParams(), doNoThing, pageHandle() ],
     ['GET', '/team-admin/:id', clientParams(), doNoThing, pageHandle() ],
+    ['GET', '/person/:id', clientParams(), doNoThing, pageHandle() ],
     
-    ['GET', '/discuss', clientParams(), doNoThing, pageHandle() ],
+    ['GET', '/discuss/:id', clientParams(), doNoThing, pageHandle() ],
+    ['GET', '/discuss/topic/:id', clientParams(), doNoThing, pageHandle() ],
+    
     ['GET', '/news', clientParams(),    doNoThing, pageHandle() ],
 ];
