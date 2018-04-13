@@ -2,7 +2,7 @@ import * as React from 'react';
 import './style.scss'
 
 import api from '../../../utils/api';
-import { timeParse } from '../../../utils/util'
+import { timeParse, formatDate } from '../../../utils/util'
 
 export default class News extends React.Component{
     componentDidMount = async() => {
@@ -43,16 +43,21 @@ export default class News extends React.Component{
         })
     }
 
+    typeMap = {
+        'create': '创建了讨论：',
+        'reply': '回复了讨论：',
+    }
+
     state = {
         // type: create, reply
         newsList: [
             {
                 newsId: 8978,
-                topic: '讨论名称',
+                topic: '讨论1号',
                 topicId: '111',
                 time: 1520481600000,
-                type: 'reply',
-                content: '这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容',
+                type: 'create',
+                content: '这是回复内容这是回复内容这是回复内容这是回复内容这是这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容回复内容这是回复内容这是回复内容',
                 headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
                 name: '阿鲁巴大将军',
                 
@@ -61,7 +66,7 @@ export default class News extends React.Component{
             },
             {
                 newsId: 2231,
-                topic: '讨论名称',
+                topic: '讨论1号',
                 topicId: '111',
                 time: 1520480600200,
                 type: 'reply',
@@ -74,7 +79,7 @@ export default class News extends React.Component{
             },
             {
                 newsId: 21331,
-                topic: '讨论名称',
+                topic: '讨论2号',
                 topicId: '111',
                 time: 1520480600000,
                 type: 'reply',
@@ -87,7 +92,7 @@ export default class News extends React.Component{
             },
             {
                 newsId: 8773,
-                topic: '讨论名称',
+                topic: '讨论2号',
                 topicId: '111',
                 time: 1510471600000,
                 type: 'reply',
@@ -125,40 +130,50 @@ export default class News extends React.Component{
         const showList = this.state.showList
         return (
             <div className="news-page">
-                {
-                    showList.keyList.map((timeKey) => {
-                        return (
-                            <div key={'time-group-' + timeKey}>
-                                {/* 时间球 */}
-                                <div className="title">{timeKey}</div>
-                                {
-                                    showList[timeKey].teamKeyList.map((teamKey) => {
-                                        return (
-                                            <div key={'group-line-' + timeKey + teamKey}> 
-                                                {/* 分组线 */}
-                                                <div className="group-line">{showList[timeKey][teamKey].teamName}</div>
-                                                {
-                                                    showList[timeKey][teamKey].newsList.map((item) => {
-                                                        return (
-                                                            <div key={'news-' + item.newsId} className='news-item-wrap'>
-                                                                {/* 动态正文 */}
-                                                                <img src={item.headImg} alt="" className="head-img"/>
-                                                                <span className="name">{item.name}</span>
-                                                                <span className="type">{item.type}</span>
-                                                                <span className="topic">{item.topic}</span>
-                                                                <div className="content">{item.content}</div>
-                                                            </div>
-                                                        )
-                                                    })
-                                                }
-                                            </div>
-                                        )
-                                    })
-                                }
-                            </div>
-                        )
-                    })
-                }
+                <div className="news-list">
+                    {
+                        showList.keyList.map((timeKey) => {
+                            return (
+                                <div className="news-day" key={'time-group-' + timeKey}>
+                                    {/* 时间球 */}
+                                    <div className="time-ball">{timeKey[4] + timeKey[5] + '/' + timeKey[6] + timeKey[7]}</div>
+                                    {
+                                        showList[timeKey].teamKeyList.map((teamKey) => {
+                                            return (
+                                                <div key={'group-line-' + timeKey + teamKey}> 
+                                                    {/* 分组线 */}
+                                                    <div className="group-line">{showList[timeKey][teamKey].teamName}</div>
+                                                    {
+                                                        showList[timeKey][teamKey].newsList.map((item) => {
+                                                            return (
+                                                                <div key={'news-' + item.newsId} className='news-item-wrap'>
+                                                                    {/* 动态正文 */}
+                                                                    <div className="time">{formatDate(item.time, 'hh:mm')}</div>
+                                                                    <img src={item.headImg} alt="" className="head-img"/>
+                                                                    
+                                                                    <div className="news-con">
+                                                                        <div className="des-line"> 
+                                                                            <span className="name">{item.name}</span>
+                                                                            <span className="type">{this.typeMap[item.type]}</span>
+                                                                            <span className="topic">{item.topic}</span>
+                                                                        </div>
+
+                                                                        <div className="content">{item.content}</div>
+                                                                    </div>
+
+                                                                </div>
+                                                            )
+                                                        })
+                                                    }
+                                                </div>
+                                            )
+                                        })
+                                    }
+                                </div>
+                            )
+                        })
+                    } 
+                </div>
             </div>
         )
     }
