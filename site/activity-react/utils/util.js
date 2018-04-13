@@ -1,5 +1,26 @@
 
 /**
+ * 定制化输出日期时间
+ * @param time {Number/String} unix时间戳 
+ * @returns {String} 例如'20180123'这样的字符串
+ */
+export function timeParse(time) {
+    var date = new Date(parseInt(time))
+
+    var year = date.getFullYear().toString()
+    var mon = (date.getMonth() + 1).toString()
+    if(mon.length == 1) {
+        mon = '0' + mon
+    }
+    var day = date.getDate().toString()
+    if(day.length == 1) {
+        day = '0' + day
+    }
+
+    return year + mon + day
+}
+
+/**
  * 格式化钱
  * @param amount {Number/String}   要格式化的数字
  * @param base   {Number}          格式化基数,默认为100
