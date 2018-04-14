@@ -4,6 +4,18 @@ import './style.scss'
 import api from '../../../utils/api';
 import { timeParse, formatDate } from '../../../utils/util'
 
+class AdminTeamItem extends React.PureComponent{
+    render() {
+        return(
+            <div className="admin-team-item">
+                <div className="team-img"></div>
+                <div className="team-name">{this.props.name}</div>
+                {this.props.active && <span className="check">√</span>}
+            </div>
+        )
+    }
+}
+
 export default class News extends React.Component{
     componentDidMount = async() => {
         console.log(INIT_DATA);
@@ -104,11 +116,6 @@ export default class News extends React.Component{
                 teamId: '111',
             },
         ],
-        
-        showList: {
-            keyList : [],
-        },
-
         // showList的数据结构长这样
         // spampleShowList: {
         //     timeKeyList: ['20170101', '20170102'],
@@ -124,13 +131,29 @@ export default class News extends React.Component{
         //         },
         //     },
         // }
+        showList: {
+            keyList : [],
+        },
+
+        showFilter: false,
+
+
+    }
+
+    filterHandle = () => {
+        this.setState({
+            showFilter: !this.state.showFilter
+        })
     }
 
     render() {
         const showList = this.state.showList
         return (
             <div className="news-page">
+                
+
                 <div className="news-list">
+                <div className='news-filter' onClick={this.filterHandle}>筛选动态： 根据团队筛选 {this.state.showFilter ? '↑' : '↓'}</div>
                     {
                         showList.keyList.map((timeKey) => {
                             return (
