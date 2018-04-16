@@ -2,6 +2,7 @@ import * as React from 'react';
 import './style.scss'
 
 import api from '../../../utils/api';
+import { timeBefore } from '../../../utils/util'
 
 class TeamChoseItem extends React.PureComponent{
     render() {
@@ -15,10 +16,30 @@ class TeamChoseItem extends React.PureComponent{
     }
 }
 
+class TopicItem extends React.PureComponent{
+    render() {
+        return(
+            <div className="topic-item" onClick={() => {this.props.locationTo('/discuss/topic/' + this.props.topicId)}}>
+                <img src={this.props.creater.headImg} alt="" className="head-img" />
+                <div className="name">{this.props.creater.name}</div>
+                <div className="main">
+                    <div className="topic-title">{this.props.name}</div>
+                    <div className="topic-content">{this.props.content}</div>
+                </div>
+                <div className="time">{timeBefore(this.props.time)}</div>
+            </div>
+        )
+    }
+}
+
 export default class Team extends React.Component{
     componentDidMount = async() => {
         console.log(INIT_DATA);
         this.teamListInit()
+    }
+
+    locationTo = (url) => {
+        this.props.router.push(url)
     }
 
     // starHandle = async (id) => {
@@ -39,6 +60,60 @@ export default class Team extends React.Component{
             managed: true,
             marked: true,
         },
+
+
+        topicList: [
+            {
+                topicId: 1,
+                creater: {
+                    id: 1,
+                    name: '阿鲁巴大将军',
+                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
+                    phone: '17728282828',
+                    mail: 'ada@qq.com',
+                },
+                name: '这是一条讨论的name1',
+                content: 'ssssssssssssssss',
+                time: 1515384000000,
+            },{
+                topicId: 2,
+                creater: {
+                    id: 1,
+                    name: '阿鲁巴大将军',
+                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
+                    phone: '17728282828',
+                    mail: 'ada@qq.com',
+                },
+                name: '这是一条讨论的name2',
+                content: 'ssssssssssssssssddddddd',
+                time: 1515384000000,
+            },{
+                topicId: 3,
+                creater: {
+                    id: 1,
+                    name: '阿鲁巴大将军',
+                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
+                    phone: '17728282828',
+                    mail: 'ada@qq.com',
+                },
+                name: '这是一条讨论的name2',
+                content: 'ssssssssssssssssddddddd',
+                time: 1515384000000,
+            },{
+                topicId: 4,
+                creater: {
+                    id: 1,
+                    name: '阿鲁巴大将军',
+                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
+                    phone: '17728282828',
+                    mail: 'ada@qq.com',
+                },
+                name: '这是一条讨论的name2',
+                content: 'ssssssssssssssssddddddd',
+                time: 1515384000000,
+            }
+        ],
+
 
         teamList: [
             {
@@ -82,36 +157,7 @@ export default class Team extends React.Component{
                 marked: true,
             },
         ],
-
         shownTeam: [],
-
-        topicList: [
-            {
-                topicId: 1,
-                creater: {
-                    id: 1,
-                    name: '阿鲁巴大将军',
-                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                    phone: '17728282828',
-                    mail: 'ada@qq.com',
-                },
-                name: '这是一条讨论的name1',
-                content: 'ssssssssssssssss',
-                time: 1515384000000,
-            },{
-                topicId: 2,
-                creater: {
-                    id: 1,
-                    name: '阿鲁巴大将军',
-                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                    phone: '17728282828',
-                    mail: 'ada@qq.com',
-                },
-                name: '这是一条讨论的name2',
-                content: 'ssssssssssssssssddddddd',
-                time: 1515384000000,
-            }
-        ],
 
     }
 
@@ -193,7 +239,6 @@ export default class Team extends React.Component{
 
                     <div className="head">
                         <span className='head-title'>讨论</span> 
-                        
                         <div className="create-btn">发起讨论</div>
                     </div>
 
@@ -208,42 +253,13 @@ export default class Team extends React.Component{
                     </div>
 
                     <div className="topic-list">
-                        <div className="topic-item">
-                            <img src={this.state.topicList[0].creater.headImg} alt="" className="head-img"/>
-                            <div className="name">阿鲁巴大将军</div>
-                            <div className="main">
-                                <div className="topic-title">这是讨论标题</div>
-                                <div className="topic-content">这是讨论内容 这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容</div>
-                            </div>
-                            <div className="time">昨天</div>
-                        </div>
-                        <div className="topic-item">
-                            <img src={this.state.topicList[0].creater.headImg} alt="" className="head-img"/>
-                            <div className="name">阿鲁巴大将军</div>
-                            <div className="main">
-                                <div className="topic-title">这是讨论标题</div>
-                                <div className="topic-content">这是讨论内容 这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容</div>
-                            </div>
-                            <div className="time">昨天</div>
-                        </div>
-                        <div className="topic-item">
-                            <img src={this.state.topicList[0].creater.headImg} alt="" className="head-img"/>
-                            <div className="name">阿鲁巴大将军</div>
-                            <div className="main">
-                                <div className="topic-title">这是讨论标题</div>
-                                <div className="topic-content">这是讨论内容 这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容</div>
-                            </div>
-                            <div className="time">昨天</div>
-                        </div>
-                        <div className="topic-item">
-                            <img src={this.state.topicList[0].creater.headImg} alt="" className="head-img"/>
-                            <div className="name">阿鲁巴大将军</div>
-                            <div className="main">
-                                <div className="topic-title">这是讨论标题</div>
-                                <div className="topic-content">这是讨论内容 这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容这是讨论内容</div>
-                            </div>
-                            <div className="time">昨天</div>
-                        </div>
+                        {
+                            this.state.topicList.map((item) => {
+                                return (
+                                    <TopicItem locationTo={this.locationTo} {...item} />
+                                )
+                            })
+                        }
                     </div>
 
 

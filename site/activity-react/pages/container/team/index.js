@@ -6,13 +6,13 @@ import api from '../../../utils/api';
 class TeamItem extends React.PureComponent{
     render() {
         return <div className="team-item">
-            <div className="left">
+            <div className="left" onClick={() => {this.props.locationTo('/discuss/' + this.props.id)}}>
                 <img className="bg-img" src={this.props.teamImg}></img>
                 <div className="name">{this.props.name}</div>
             </div>
             <div className="right">
                 <div className={this.props.marked ? "star act" : "star"} onClick={() => {this.props.starHandle(this.props.id)}}>星</div>
-                {this.props.managed && <div className="admin">管</div>}
+                {this.props.managed && <div className="admin" onClick={() => {this.props.locationTo('/team-admin/' + this.props.id)}}>管</div>}
             </div>
         </div>
     }
@@ -40,6 +40,11 @@ export default class Team extends React.Component{
             })
         }
     }
+
+    locationTo = (url) => {
+        this.props.router.push(url)
+    }
+
 
     state = {
         teamList: [
@@ -83,12 +88,14 @@ export default class Team extends React.Component{
     render() {
         return (
             <div className="team-con">
+                <div className="carete" onClick={() => {this.locationTo('/team-admin/111')}}> 创建团队 </div>
+
                 <div className="head" onClick={this.starHandle}>星标团队</div>
                 <div className="team-list">
                     {   
                         this.state.teamList.map((item) => {
                             if(item.marked == true) {
-                                return <TeamItem {...item} starHandle={this.starHandle}/>
+                                return <TeamItem {...item} locationTo={this.locationTo} starHandle={this.starHandle}/>
                             }
                         })
                     }
@@ -99,7 +106,7 @@ export default class Team extends React.Component{
                     {   
                         this.state.teamList.map((item) => {
                             if(item.managed == true) {
-                                return <TeamItem {...item} starHandle={this.starHandle}/>
+                                return <TeamItem {...item} locationTo={this.locationTo} starHandle={this.starHandle}/>
                             }
                         })
                     }
@@ -109,7 +116,7 @@ export default class Team extends React.Component{
                 <div className="team-list">
                     {   
                         this.state.teamList.map((item) => {
-                            return <TeamItem {...item} starHandle={this.starHandle}/>
+                            return <TeamItem {...item} locationTo={this.locationTo} starHandle={this.starHandle}/>
                         })
                     }
                 </div>

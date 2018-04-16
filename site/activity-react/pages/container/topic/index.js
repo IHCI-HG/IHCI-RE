@@ -19,6 +19,8 @@ export default class Topic extends React.Component{
     state = {
         editTopic: false,
         createDiscussChosen: false,
+
+        
     }
 
     // teamListInit = () => {

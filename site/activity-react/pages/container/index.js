@@ -32,7 +32,7 @@ class App extends React.Component{
             this.setState({activeTag: 'team'})
         }
         if(/discuss/.test(url)) {
-            this.setState({activeTag: 'discuss'})
+            this.setState({activeTag: 'team'})
         }
         if(/news/.test(url)) {
             this.setState({activeTag: 'news'})
@@ -47,7 +47,6 @@ class App extends React.Component{
                         <div className="logo">这是LOGO</div>
                         <div className="nav-list">
                             <span className={this.state.activeTag == 'team' ? 'nav-item active' : 'nav-item'} onClick={this.routerHandle.bind(this, '/team')}>team</span>
-                            <span className={this.state.activeTag == 'discuss' ? 'nav-item active' : 'nav-item'} onClick={this.routerHandle.bind(this, '/discuss')}>discuss</span>
                             <span className={this.state.activeTag == 'news' ? 'nav-item active' : 'nav-item'} onClick={this.routerHandle.bind(this, '/news')}>news</span>
                         </div>
                     </div>

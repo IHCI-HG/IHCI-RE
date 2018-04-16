@@ -1,7 +1,19 @@
 .team-con {
     max-width: 1280px;
     margin: auto;
-
+    position: relative;
+    .carete {
+        cursor: pointer;
+        right: 30px;
+        top: 36px;
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        font-size: 22px;
+        color: #666;
+        font-weight: bold;
+    }
     .act {
         color: red;
     }
@@ -31,6 +43,7 @@
         padding: 20px;
 
         .left {
+            cursor: pointer;
             .bg-img {
                 height: 100px;
                 width: 180px;
