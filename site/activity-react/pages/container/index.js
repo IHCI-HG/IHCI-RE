@@ -51,7 +51,7 @@ class App extends React.Component{
                         </div>
                     </div>
                     <div className="person">
-                        <Link className='nav-item' activeClassName='nav-item active' to="/person">
+                        <Link className='nav-item' activeClassName='nav-item active' to="/person/1">
                             <div className="head-img"></div>
                         </Link>
                     </div>
