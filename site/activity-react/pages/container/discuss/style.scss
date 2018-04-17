@@ -205,6 +205,8 @@
         .time {
             flex-shrink: 0;
             margin-left: 20px;
+            min-width: 100px;
+            text-align: center;
         }
     }
 

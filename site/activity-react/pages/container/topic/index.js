@@ -17,46 +17,66 @@ export default class Topic extends React.Component{
     // }
 
     state = {
-        editTopic: false,
         createDiscussChosen: false,
 
-        
+        topicObj: {
+            editStatus: false,
+            topicId: 1,
+            creater: {
+                id: 1,
+                name: '阿鲁巴大将军',
+                headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
+                phone: '17728282828',
+                mail: 'ada@qq.com',
+            },
+            name: '这是一条讨论的name1',
+            content: '这是讨论的主体内容',
+            time: 1515384000000,
+        },
+
+        topicNameInput: '这是一条讨论的name1',
+        topicContentInput: '这是讨论的主体内容',
+
+
+
+        discussList: [
+            {
+                editStatus: false,
+                creater: {
+                    id: 1,
+                    name: '阿鲁巴大将军',
+                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
+                    phone: '17728282828',
+                    mail: 'ada@qq.com',
+                },
+                content: '这是一条回复',
+                time: 1515384000000,
+            }
+        ]   
     }
 
-    // teamListInit = () => {
-    //     const teamList = []
-    //     this.state.teamList.map((item) => { 
-    //         item.active = this.props.params.id == item.id
-    //         teamList.push(item)
-    //     })
-    //     this.setState({
-    //         teamList: teamList,
-    //         shownTeam: teamList,
-    //     })
-    // }
 
-    // teamFilterHandle = () => {
-    //     this.setState({
-    //         showTeamFilter: !this.state.showTeamFilter
-    //     })
-    // }
+    topicNameInput = (e) => {
+        this.setState({
+            topicNameInput: e.target.value
+        })
+    }
+    topicContentHandle = (e) => {
+        this.setState({
+            topicContentInput: e.target.value
+        })
+    }
 
-    // searchInputHandle = (e) => {
-    //     this.setState({
-    //         searchInput: e.target.value
-    //     })
-
-    //     const showTeamList = []
-    //     var partten = new RegExp(e.target.value)
-    //     this.state.teamList.map((item) => {
-    //         if(partten.test(item.name)) {
-    //             showTeamList.push(item)
-    //         }
-    //     })
-    //     this.setState({
-    //         shownTeam: showTeamList
-    //     })
-    // }
+    topicChangeSaveHandle = () => {
+        this.setState({
+            topicObj: {
+                ...this.state.topicObj,
+                name: this.state.topicNameInput,
+                content: this.state.topicContentInput,
+                editStatus: false,
+            }
+        })
+    }
 
     render() {
         return (
@@ -72,18 +92,18 @@ export default class Topic extends React.Component{
                 <div className="topic-con">
 
                     {
-                        this.state.editTopic ? <div className="topic-subject-edit">
-                                <input type="text" className="topic-title"/>
-                                <textarea className='topic-content'></textarea>
+                        this.state.topicObj.editStatus ? <div className="topic-subject-edit">
+                                <input type="text" onChange={this.topicNameInput} value={this.state.topicNameInput} className="topic-title"/>
+                                <textarea className='topic-content' onChange={this.topicContentHandle}  value={this.state.topicContentInput}></textarea>
 
-                                <div className="button-warp" onClick={() => {this.setState({editTopic: false})}}>
-                                    <div className="save-btn">保存</div>
-                                    <div className="cancel-btn">取消</div>
+                                <div className="button-warp">
+                                    <div className="save-btn" onClick={this.topicChangeSaveHandle}>保存</div>
+                                    <div className="cancel-btn" onClick={() => {this.setState({topicObj: {...this.state.topicObj, editStatus: false}})}}>取消</div>
                                 </div>
                             </div> 
                         :
                             <div className="topic-subject-con">
-                                <div className="topic-title">这是讨论的主题名字</div>
+                                <div className="topic-title">{this.state.topicObj.name}</div>
                                 <div className="flex">
                                     <div className="head-img"></div>
                                     <div className="topic-main">
@@ -93,11 +113,12 @@ export default class Topic extends React.Component{
                                                 <span className="time">11月20日</span>
                                             </div>
                                             <div className="right">
-                                                <span className="edit" onClick={()=>{this.setState({editTopic: true})}}>编辑</span>
+                                                <span className="edit" onClick={() => {this.setState({topicObj: {...this.state.topicObj, editStatus: true}})}}>编辑</span>
                                                 <span className="edit">删除</span>
                                             </div>
                                         </div>
-                                        <div className="content">内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容</div>
+                                        {/* <div className="content" dangerouslySetInnerHTML={{__html: this.state.topicObj.content}}><pre>{this.state.topicObj.content}</pre></div> */}
+                                        <div className="content"><pre>{this.state.topicObj.content}</pre></div>
                                     </div>
                                 </div>
                             </div>

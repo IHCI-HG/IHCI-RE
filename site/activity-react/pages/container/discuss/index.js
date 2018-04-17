@@ -51,6 +51,10 @@ export default class Team extends React.Component{
 
     state = {
         showTeamFilter: false,
+        showCreateTopic: false,
+
+        createTopicName: '',
+        createTopicContent: '',
 
         teamInfo: {
             id: 1,
@@ -196,6 +200,46 @@ export default class Team extends React.Component{
         })
     }
 
+    createTopicHandle = async () => {
+        const result = await api('/api/base/sys-time', {
+            method: 'GET',
+            body: {}
+        })
+
+        const topicList = this.state.topicList
+        const time = new Date().getTime()
+        topicList.unshift({
+            topicId: 2,
+            creater: {
+                id: 1,
+                name: '阿鲁巴大将军',
+                headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
+                phone: '17728282828',
+                mail: 'ada@qq.com',
+            },
+            name: this.state.createTopicName,
+            content: this.state.createTopicContent,
+            time: time,
+        })
+        this.setState({
+            topicList: topicList
+        })
+    }
+
+    topicNameInputHandle = (e) => {
+        this.setState({
+            createTopicName: e.target.value
+        })
+    }
+
+    topicContentInputHandle = (e) => {
+        this.setState({
+            createTopicContent: e.target.value
+        })
+    }
+
+    
+
     render() {
         let teamInfo = this.state.teamInfo
 
@@ -239,18 +283,20 @@ export default class Team extends React.Component{
 
                     <div className="head">
                         <span className='head-title'>讨论</span> 
-                        <div className="create-btn">发起讨论</div>
+                        <div className="create-btn" onClick={() => {this.setState({showCreateTopic: true})}}>发起讨论</div>
                     </div>
 
-                    <div className="create-area">
-                        <input type="text" className="topic-name" placeholder="话题"/>
-                        <textarea  className="topic-content" placeholder="说点什么"></textarea>
-                        <div className="btn-con">
-                            <div className="create-btn">发起讨论</div>
-                            <div className="cancle">取消</div>
+                    {
+                        this.state.showCreateTopic && <div className="create-area">
+                            <input type="text" className="topic-name" onChange={this.topicNameInputHandle} value={this.state.createTopicName} placeholder="话题" />
+                            <textarea className="topic-content" onChange={this.topicContentInputHandle} value={this.state.createTopicContent} placeholder="说点什么"></textarea>
+                            <div className="btn-con">
+                                <div className="create-btn" onClick={this.createTopicHandle}>发起讨论</div>
+                                <div className="cancle" onClick={() => {this.setState({showCreateTopic: false})}}>取消</div>
+                            </div>
                         </div>
-      
-                    </div>
+                    }
+
 
                     <div className="topic-list">
                         {
