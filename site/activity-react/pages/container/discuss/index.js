@@ -3,6 +3,7 @@ import './style.scss'
 
 import api from '../../../utils/api';
 import { timeBefore } from '../../../utils/util'
+import Page from '../../../components/page'
 
 class TeamChoseItem extends React.PureComponent{
     render() {
@@ -244,7 +245,7 @@ export default class Team extends React.Component{
         let teamInfo = this.state.teamInfo
 
         return (
-            <div className="discuss-page">
+            <Page title={"团队名称xx - IHCI"} className="discuss-page">
                 <div className="sp-nav">
                     <span className='to-team' onClick={() => { this.props.router.push('/team') }} >讨论</span>
                     >
@@ -275,7 +276,7 @@ export default class Team extends React.Component{
                     </div>
                 }
 
-                <div className="discuss-con">
+                <div className="discuss-con page-wrap">
                     <div className="head">{teamInfo.name}</div>
                     <div className="team-des">{teamInfo.desc}</div>  
 
@@ -312,7 +313,7 @@ export default class Team extends React.Component{
 
                 </div>
 
-            </div>
+            </Page>
         )
     }
 }

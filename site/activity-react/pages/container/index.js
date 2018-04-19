@@ -4,7 +4,7 @@ import { Router, Route, Link, browserHistory } from 'react-router'
 
 import routerConf from './router'
 import './style.scss'
-import Page from '../../components/page'
+import '../../commen/style.scss'
 
 import Team from './team'
 import TeamAdmin from './team-admin'
@@ -45,7 +45,7 @@ class App extends React.Component{
 
     render() {
         return (
-            <Page>
+            <div>
                 <div className='main-nav'>
                     <div className="left">
                         <div className="logo">这是LOGO</div>
@@ -62,7 +62,7 @@ class App extends React.Component{
                     </div>
                 </div>
                 { this.props.children }
-            </Page>
+            </div>
         )
     }
 }

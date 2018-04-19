@@ -3,7 +3,7 @@ import './style.scss'
 
 import api from '../../../utils/api';
 import { timeParse, formatDate } from '../../../utils/util'
-
+import Page from '../../../components/page'
 
 
 export default class News extends React.Component{
@@ -27,12 +27,9 @@ export default class News extends React.Component{
         ]
     }
 
-    
-
-
     render() {
         return (
-            <div className="member-page">
+            <Page title={"成员 - IHCI"} className="member-page">
                 <div className="teamList">
                     <div className="act team-tag-item">全部</div>
                     <div className="act team-tag-item">全部</div>
@@ -41,7 +38,7 @@ export default class News extends React.Component{
                 <div className="member-list">
                 1
                 </div>
-            </div>
+            </Page>
         )
     }
 }

@@ -2,6 +2,7 @@ import * as React from 'react';
 import './style.scss'
 
 import api from '../../../utils/api';
+import Page from '../../../components/page'
 
 class TeamItem extends React.PureComponent{
     render() {
@@ -87,7 +88,7 @@ export default class Team extends React.Component{
     }
     render() {
         return (
-            <div className="team-con">
+            <Page title="团队 - IHCI" className="team-page">
                 <div className="carete" onClick={() => {this.locationTo('/team-admin/111')}}> 创建团队 </div>
 
                 <div className="head" onClick={this.starHandle}>星标团队</div>
@@ -120,7 +121,7 @@ export default class Team extends React.Component{
                         })
                     }
                 </div>
-            </div>
+            </Page>
         )
     }
 }
