@@ -90,7 +90,6 @@ const doNoThing = async (req, res, next) => {
 
 
 module.exports = [
-    // ['GET', '/wechat/page/activity/address', clientParams(), address],
     // 主页
     ['GET', '/', clientParams(), mainPage],
 
@@ -98,9 +97,8 @@ module.exports = [
     ['GET', '/team-edit/:id', clientParams(), doNoThing, pageHandle() ],
     ['GET', '/team-admin/:id', clientParams(), doNoThing, pageHandle() ],
     ['GET', '/person/:id', clientParams(), doNoThing, pageHandle() ],
-    
     ['GET', '/discuss/:id', clientParams(), doNoThing, pageHandle() ],
     ['GET', '/discuss/topic/:id', clientParams(), doNoThing, pageHandle() ],
-    
-    ['GET', '/news', clientParams(),    doNoThing, pageHandle() ],
+    ['GET', '/timeline', clientParams(),    doNoThing, pageHandle() ],
+    ['GET', '/member', clientParams(),   doNoThing, pageHandle() ],
 ];
