@@ -1,19 +1,58 @@
 .member-page {
     margin-top: 30px;
-    .member-container {
-        
-    }
-
-    
-    .member-list {
-        box-sizing: border-box;
-        width: 1280px;
-        background-color: #fff;
-        border: 1px solid #e6e6e6; /*no*/
-        border-radius: 2px;
+    .page-wrap {
         padding: 20px 30px 40px 30px;
     }
+    .teamList {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 40px;
+        
+        .team-tag-item {
+            cursor: pointer;
+            line-height: 50px;
+            height: 50px;
+            padding: 0 40px;
+            color: #666;
+            background-color: #f1f1f1;
+            border-radius: 100px;
+            margin-right: 40px;
+            margin-bottom: 30px;
+            font-size: 20px; 
+            &.act {
+                background-color: rgb(255, 170, 43);
+                color: #fff;
+                font-weight: bold;
+            }
+        }
 
+    }
+
+    .member-item {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        height: 120px;
+        border-top: 1px solid #e6e6e6; /*no*/
+        .head-img {
+            height: 80px;
+            width: 80px;
+            border-radius: 100px;
+        }
+
+        .admin {
+            position: absolute;
+            background-color: #e6e6e6;
+            height: 120px;
+            width: 170px;
+            right: 0px;
+            top: 90px;
+            z-index: 2;
+        }
+    }
 
 
 }
