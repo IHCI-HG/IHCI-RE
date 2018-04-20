@@ -2,7 +2,7 @@ import * as React from 'react';
 import './style.scss'
 
 import api from '../../../utils/api';
-
+import Page from '../../../components/page'
 
 export default class Team extends React.Component{
     componentDidMount = async() => {
@@ -49,7 +49,7 @@ export default class Team extends React.Component{
     render() {
         let personInfo = this.state.personInfo
         return (
-            <div className="person-edit-page">
+            <Page title={"个人设置"} className="person-edit-page page-wrap">
                 <div className="title">个人设置</div>
 
                 <div className="head-edit">
@@ -88,7 +88,7 @@ export default class Team extends React.Component{
                 </div>
 
                 <div className="sava-btn">保存</div>
-            </div>
+            </Page>
         )
     }
 }

@@ -3,6 +3,7 @@ import './style.scss'
 
 import api from '../../../utils/api';
 import { timeParse, formatDate } from '../../../utils/util'
+import Page from '../../../components/page'
 
 class AdminTeamItem extends React.PureComponent{
     render() {
@@ -149,10 +150,10 @@ export default class News extends React.Component{
     render() {
         const showList = this.state.showList
         return (
-            <div className="news-page">
+            <Page className="news-page">
                 
 
-                <div className="news-list">
+                <div className="news-list page-wrap">
                 <div className='news-filter' onClick={this.filterHandle}>筛选动态： 根据团队筛选 {this.state.showFilter ? '↑' : '↓'}</div>
                     {
                         showList.keyList.map((timeKey) => {
@@ -197,7 +198,7 @@ export default class News extends React.Component{
                         })
                     } 
                 </div>
-            </div>
+            </Page>
         )
     }
 }

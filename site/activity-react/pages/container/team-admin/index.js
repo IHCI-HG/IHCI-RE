@@ -1,6 +1,7 @@
 import * as React from 'react';
 import './style.scss'
 import api from '../../../utils/api';
+import Page from '../../../components/page'
 
 class AdminTeamItem extends React.PureComponent{
     render() {
@@ -14,10 +15,8 @@ class AdminTeamItem extends React.PureComponent{
     }
 }
 
-
 export default class TeamAdmin extends React.Component{
     componentDidMount = async() => {
-        // this.props.params.id
         this.teamFilter()
     }
 
@@ -211,7 +210,7 @@ export default class TeamAdmin extends React.Component{
 
     render() {
         return (
-            <div className="team-admin-page">
+            <Page title={"团队设置"} className="team-admin-page">
                 <div className="sp-nav">
                     <span className='to-team' onClick={() => {this.props.router.push('/team')}} >团队</span>
                      > 
@@ -253,7 +252,7 @@ export default class TeamAdmin extends React.Component{
                     </div>
                 }
 
-                <div className="team-admin-con">
+                <div className="team-admin-con page-wrap">
                     <div className="admin-title-bg">团队设置</div>
 
                     <div className="admin-title-sm">团队名称</div>
@@ -297,7 +296,7 @@ export default class TeamAdmin extends React.Component{
                     </div>
                 </div>
 
-            </div>
+            </Page>
         )
     }
 }

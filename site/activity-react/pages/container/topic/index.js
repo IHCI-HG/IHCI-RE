@@ -1,6 +1,6 @@
 import * as React from 'react';
 import './style.scss'
-
+import Page from '../../../components/page'
 import api from '../../../utils/api';
 
 export default class Topic extends React.Component{
@@ -80,7 +80,7 @@ export default class Topic extends React.Component{
 
     render() {
         return (
-            <div className="topic-page">
+            <Page className="topic-page">
                 <div className="sp-nav">
                     <span className='to-team' onClick={() => { this.props.router.push('/team') }} >讨论</span>
                     >
@@ -301,7 +301,7 @@ export default class Topic extends React.Component{
 
                 </div>
 
-            </div>
+            </Page>
         )
     }
 }

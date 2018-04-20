@@ -1,8 +1,5 @@
 .news-page {
-    max-width: 1280px;
-    margin: auto;
     padding: 30px 0;
-    position: relative;
 
     .news-filter {
         margin-bottom: 30px;
@@ -12,13 +9,7 @@
     }
     
     .news-list {
-        top: 70px;
-        left: 30px;
-        background-color: #fff;
         padding: 40px 50px;
-        border-radius: 2px;
-        border: 1px solid #e6e6e6; 
-        border-radius: 4px;
     }
 
     .news-day {
