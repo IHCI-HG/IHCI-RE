@@ -33,6 +33,9 @@ var config = {
     'lruMaxAge': 3600000,
     'lruMax': 500,
 
+    'appId': 'wx50a231aefaff3222',
+    'AppSecret': '4aa16e1583e8525a4d4bb47b37928467',
+
     // 用于本地存储日志
     'logs': '/data/logs/h5',
 

@@ -7,6 +7,38 @@ import Page from '../../../components/page'
 export default class Team extends React.Component{
     componentDidMount = async() => {
         console.log(INIT_DATA);
+        
+        // var obj = new WxLogin({
+        //     id:"login_container", 
+        //     appid: "wx50a231aefaff3222", 
+        //     scope: "snsapi_login", 
+        //     redirect_uri: "http%3A%2F%2Flocalhost%3A5000%2Fauth",
+        // });
+
+        // // 小号的测试号
+        var obj = new WxLogin({
+            id:"login_container", 
+            appid: "wx4faa94837fccf23e", 
+            scope: "snsapi_login", 
+            redirect_uri: "http%3A%2F%2Flocalhost%3A5000%2Fauth",
+        });
+
+        // 授权页面
+        // https://open.weixin.qq.com/connect/qrconnect?appid=wx50a231aefaff3222&scope=snsapi_login&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fauth&login_type=jssdk
+
+        // 授权代码
+
+        let a = { 
+            "access_token":"8_0-d85Yp1SQEO73xiNwwjncsU3E6Zfnrn9XEduR0wq9dgfXPXKpdcL9sLD1PbhGslQvrACX_t_Kxcrahx-xZCHw",
+            "expires_in":7200,
+            "refresh_token":"8_4DCi13aDOkncxhRYzqydfzew90IpdRk1da92qnqh9EC2Kn3C78AWyMCIWUFzjgSUIqTUEiBx3tDaOsmI-K6bnQ",
+            "openid":"oAX1fwaSM-QbT-6P0bwq7Py8eWuI",
+            "scope":"snsapi_login",
+            "unionid":"oTq_VwKk1viNoIh98ivzt_kyEJVk"
+        }
+
+        // 获取用户信息
+        // https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID
     }
 
     starHandle = async (id) => {
@@ -50,6 +82,8 @@ export default class Team extends React.Component{
         let personInfo = this.state.personInfo
         return (
             <Page title={"个人设置"} className="person-edit-page page-wrap">
+                <div className="qr-code-container" id="login_container"></div>
+
                 <div className="title">个人设置</div>
 
                 <div className="head-edit">

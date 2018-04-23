@@ -88,10 +88,19 @@ const doNoThing = async (req, res, next) => {
     next()
 }
 
+const wxAuthCodeHandle = async (req, res, next) => { 
+    req.INIT_DATA = {
+        query: req.query
+    }
+    next()
+}
+
 
 module.exports = [
     // 主页
     ['GET', '/', clientParams(), mainPage],
+
+    ['GET', '/auth', clientParams(), wxAuthCodeHandle , mainPage],
 
     ['GET', '/team', clientParams(), doNoThing, pageHandle() ],
     ['GET', '/team-edit/:id', clientParams(), doNoThing, pageHandle() ],
