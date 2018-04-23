@@ -15,7 +15,7 @@ var config = {
     'requestTimeout': 10000,
 
     // 默认服务端口
-    'serverPort': 5000,
+    'serverPort': 80,
 
     // 实例开启个数（在开启cluster模式下有效）
     'clusterCount': 8,

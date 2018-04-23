@@ -226,16 +226,16 @@ if (require.main === module) {
         localUserId: commander.localUserId,
     });
 
-    // 编译jsx语法
-    if (conf.mode != 'prod') {
-        require('babel-register')({
-            // only: ['brand/**', 'wechat-react/**', 'wechat/**', 'test/**', 'middleware/**'],
-            // ignore: function (filename) {
-            //     console.log(filename);
-            // },
-            extensions: [ '.js' ]
-        });
-    }
+    // // 编译jsx语法
+    // if (conf.mode != 'prod') {
+    require('babel-register')({
+        // only: ['brand/**', 'wechat-react/**', 'wechat/**', 'test/**', 'middleware/**'],
+        // ignore: function (filename) {
+        //     console.log(filename);
+        // },
+        extensions: [ '.js' ]
+    });
+    // }
 
     // cluster模式多实例启动服务器
     // clusterStart();
