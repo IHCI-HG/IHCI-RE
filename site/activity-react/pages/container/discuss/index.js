@@ -5,6 +5,8 @@ import api from '../../../utils/api';
 import { timeBefore } from '../../../utils/util'
 import Page from '../../../components/page'
 
+import MemberChosenList from '../../../components/member-chose-list'
+
 class TeamChoseItem extends React.PureComponent{
     render() {
         return(
@@ -36,7 +38,7 @@ class TopicItem extends React.PureComponent{
 export default class Team extends React.Component{
     componentDidMount = async() => {
         console.log(INIT_DATA);
-        this.teamListInit()
+        // this.teamListInit()
     }
 
     locationTo = (url) => {
@@ -52,7 +54,7 @@ export default class Team extends React.Component{
 
     state = {
         showTeamFilter: false,
-        showCreateTopic: false,
+        showCreateTopic: true,
 
         createTopicName: '',
         createTopicContent: '',
@@ -119,50 +121,108 @@ export default class Team extends React.Component{
             }
         ],
 
-
-        teamList: [
+        memberList: [
             {
-                id: 1,
-                name: 'xx团队1',
-                teamImg: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1522401625&di=bcc173556f4ce40a5b92ff96402a053b&imgtype=jpg&er=1&src=http%3A%2F%2Fwx3.sinaimg.cn%2Forj360%2F7fa53ff0gy1fc1phl41r6j20hs0hsmxn.jpg',
-                desc: '这是第一个团队',
-                managed: true,
-                marked: true,
+                id: 11,
+                name: 'String',
+                chosen: false,
             },
             {
-                id: 2,
-                name: 'xx团队2xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-                teamImg: 'https://developers.google.com/machine-learning/crash-course/images/landing-icon-sliders.svg?hl=zh-cn',
-                desc: '这是第一个团队',
-                managed: true,
-                marked: false,
+                id: 22,
+                name: 'String',
+                chosen: false,
             },
             {
-                id: 3,
-                name: 'xx团队3xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-                teamImg: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1522401625&di=bcc173556f4ce40a5b92ff96402a053b&imgtype=jpg&er=1&src=http%3A%2F%2Fwx3.sinaimg.cn%2Forj360%2F7fa53ff0gy1fc1phl41r6j20hs0hsmxn.jpg',
-                desc: '这是第一个团队',
-                managed: true,
-                marked: false,
+                id: 33,
+                name: 'String',
+                chosen: false,
             },
             {
-                id: 4,
-                name: 'xx团队4',
-                teamImg: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1522401625&di=bcc173556f4ce40a5b92ff96402a053b&imgtype=jpg&er=1&src=http%3A%2F%2Fwx3.sinaimg.cn%2Forj360%2F7fa53ff0gy1fc1phl41r6j20hs0hsmxn.jpg',
-                desc: '这是第一个团队',
-                managed: false,
-                marked: false,
+                id: 44,
+                name: 'String',
+                chosen: false,
             },
             {
-                id: 5,
-                name: 'xx团队5',
-                teamImg: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1522401625&di=bcc173556f4ce40a5b92ff96402a053b&imgtype=jpg&er=1&src=http%3A%2F%2Fwx3.sinaimg.cn%2Forj360%2F7fa53ff0gy1fc1phl41r6j20hs0hsmxn.jpg',
-                desc: '这是第一个团队',
-                managed: false,
-                marked: true,
+                id: 11,
+                name: 'String',
+                chosen: false,
+            },
+            {
+                id: 22,
+                name: 'String',
+                chosen: false,
+            },
+            {
+                id: 33,
+                name: 'String',
+                chosen: false,
+            },
+            {
+                id: 44,
+                name: 'String',
+                chosen: false,
+            },
+            {
+                id: 11,
+                name: 'String',
+                chosen: false,
+            },
+            {
+                id: 22,
+                name: 'String',
+                chosen: false,
+            },
+            {
+                id: 33,
+                name: 'String',
+                chosen: false,
+            },
+            {
+                id: 44,
+                name: 'String',
+                chosen: false,
+            },
+            {
+                id: 11,
+                name: 'String',
+                chosen: false,
+            },
+            {
+                id: 22,
+                name: 'String',
+                chosen: false,
+            },
+            {
+                id: 33,
+                name: 'String',
+                chosen: false,
+            },
+            {
+                id: 44,
+                name: 'String',
+                chosen: false,
+            },
+            {
+                id: 11,
+                name: 'String',
+                chosen: false,
+            },
+            {
+                id: 22,
+                name: 'String',
+                chosen: false,
+            },
+            {
+                id: 33,
+                name: 'String',
+                chosen: false,
+            },
+            {
+                id: 44,
+                name: 'String',
+                chosen: false,
             },
         ],
-        shownTeam: [],
 
     }
 
@@ -178,11 +238,7 @@ export default class Team extends React.Component{
         })
     }
 
-    teamFilterHandle = () => {
-        this.setState({
-            showTeamFilter: !this.state.showTeamFilter
-        })
-    }
+
 
     searchInputHandle = (e) => {
         this.setState({
@@ -223,7 +279,10 @@ export default class Team extends React.Component{
             time: time,
         })
         this.setState({
-            topicList: topicList
+            topicList: topicList,
+            showCreateTopic: false,
+            createTopicName: '',
+            createTopicContent: '',
         })
     }
 
@@ -239,6 +298,16 @@ export default class Team extends React.Component{
         })
     }
 
+    memberChoseHandle = (tarId) => {
+        const memberList = this.state.memberList
+        memberList.map((item) => {
+            if(item.id == tarId) {
+                item.chosen = !item.chosen
+            }
+        })
+        this.setState({memberList})
+    }
+
     
 
     render() {
@@ -246,39 +315,25 @@ export default class Team extends React.Component{
 
         return (
             <Page title={"团队名称xx - IHCI"} className="discuss-page">
-                <div className="sp-nav">
-                    <span className='to-team' onClick={() => { this.props.router.push('/team') }} >讨论</span>
-                    >
-                    <span onClick={this.teamFilterHandle}>{teamInfo.name} {this.state.showTeamFilter ? '↑' : '↓'} </span>
-                </div>
-
-                {
-                    this.state.showTeamFilter && <div className="team-list">
-                        <input type="text" className="search" onChange={this.searchInputHandle} />
-                        <div className="head">星标团队</div>
-                        {
-                            this.state.teamList.map((item) => {
-                                if (item.marked) {
-                                    return (
-                                        <TeamChoseItem key={'mark-team-' + item.id} {...item} />
-                                    )
-                                }
-                            })
-                        }
-                        <div className="head">所有团队</div>
-                        {
-                            this.state.teamList.map((item) => {
-                                return (
-                                    <TeamChoseItem key={'team-' + item.id} {...item} />
-                                )
-                            })
-                        }
-                    </div>
-                }
 
                 <div className="discuss-con page-wrap">
-                    <div className="head">{teamInfo.name}</div>
-                    <div className="team-des">{teamInfo.desc}</div>  
+                    <div className="team-info">
+                        <div className="left">
+                            <div className="head">{teamInfo.name}</div>
+                            <div className="team-des">{teamInfo.desc}</div>  
+                        </div>
+                        <div className="right">
+                            <div className="admin">
+                                <div className="admin-con member-num">11</div>
+                                <span>成员</span>
+                            </div>
+                            <div className="admin">
+                                <div className="admin-con iconfont icon-setup_fill"></div>
+                                <span>设置</span>
+                            </div>
+                        </div>
+                    </div>
+
 
                     <div className="div-line"></div>
 
@@ -291,6 +346,10 @@ export default class Team extends React.Component{
                         this.state.showCreateTopic && <div className="create-area">
                             <input type="text" className="topic-name" onChange={this.topicNameInputHandle} value={this.state.createTopicName} placeholder="话题" />
                             <textarea className="topic-content" onChange={this.topicContentInputHandle} value={this.state.createTopicContent} placeholder="说点什么"></textarea>
+                            
+                            <div className="infrom">请选择要通知的人：</div>
+                            <MemberChosenList choseHandle={this.memberChoseHandle} memberList={this.state.memberList}/>
+
                             <div className="btn-con">
                                 <div className="create-btn" onClick={this.createTopicHandle}>发起讨论</div>
                                 <div className="cancle" onClick={() => {this.setState({showCreateTopic: false})}}>取消</div>
