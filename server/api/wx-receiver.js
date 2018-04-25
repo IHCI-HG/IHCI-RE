@@ -40,6 +40,7 @@ var wxReceiver = function(req, res, next) {
 
 module.exports = [
     ['GET', '/wxReceiver', wxReceiver],
+    ['POST', '/wxReceiver', wxReceiver],
 
     // ['POST', '/api/update-head-img' , updateHeadImgUrl],
     
