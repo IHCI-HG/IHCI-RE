@@ -9,11 +9,12 @@ class TeamItem extends React.PureComponent{
         return <div className="team-item">
             <div className="left" onClick={() => {this.props.locationTo('/discuss/' + this.props.id)}}>
                 <img className="bg-img" src={this.props.teamImg}></img>
+                <div className="img-con"></div>
                 <div className="name">{this.props.name}</div>
             </div>
             <div className="right">
-                <div className={this.props.marked ? "star act" : "star"} onClick={() => {this.props.starHandle(this.props.id)}}>星</div>
-                {this.props.managed && <div className="admin" onClick={() => {this.props.locationTo('/team-admin/' + this.props.id)}}>管</div>}
+                <div className={this.props.marked ? "iconfont icon-collection_fill act" : "iconfont icon-collection"} onClick={() => {this.props.starHandle(this.props.id)}}></div>
+                {this.props.managed && <div className="iconfont icon-setup" onClick={() => {this.props.locationTo('/team-admin/' + this.props.id)}}></div>}
             </div>
         </div>
     }
@@ -51,36 +52,36 @@ export default class Team extends React.Component{
         teamList: [
             {
                 id: 1,
-                name: 'xx团队1',
-                teamImg: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1522401625&di=bcc173556f4ce40a5b92ff96402a053b&imgtype=jpg&er=1&src=http%3A%2F%2Fwx3.sinaimg.cn%2Forj360%2F7fa53ff0gy1fc1phl41r6j20hs0hsmxn.jpg',
+                name: '青少年编程项目组',
+                teamImg: 'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=471192784,4234473862&fm=27&gp=0.jpg',
                 managed: true,
                 marked: true,
             },
             {
                 id: 2,
-                name: 'xx团队2',
-                teamImg: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1521806667274&di=83a0c0298250d65456e31d0eb86415eb&imgtype=0&src=http%3A%2F%2Fuploads.oh100.com%2Fallimg%2F1707%2F125-1FG4150320.jpg',
+                name: 'IHCI平台搭建项目组',
+                teamImg: 'https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1938658724,934922317&fm=27&gp=0.jpg',
                 managed: true,
                 marked: false,
             },
             {
                 id: 3,
-                name: 'xx团队3',
-                teamImg: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1521806667274&di=83a0c0298250d65456e31d0eb86415eb&imgtype=0&src=http%3A%2F%2Fuploads.oh100.com%2Fallimg%2F1707%2F125-1FG4150320.jpg',
+                name: '智能儿童床项目组',
+                teamImg: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1782589578,2528203182&fm=27&gp=0.jpg',
                 managed: true,
                 marked: false,
             },
             {
                 id: 4,
-                name: 'xx团队4',
-                teamImg: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1521806667274&di=83a0c0298250d65456e31d0eb86415eb&imgtype=0&src=http%3A%2F%2Fuploads.oh100.com%2Fallimg%2F1707%2F125-1FG4150320.jpg',
+                name: '2018毕业设计项目组',
+                teamImg: 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3820981196,3985389795&fm=27&gp=0.jpg',
                 managed: false,
                 marked: false,
             },
             {
                 id: 5,
-                name: 'xx团队5',
-                teamImg: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1521806667274&di=83a0c0298250d65456e31d0eb86415eb&imgtype=0&src=http%3A%2F%2Fuploads.oh100.com%2Fallimg%2F1707%2F125-1FG4150320.jpg',
+                name: '人工智能&深度学习学习项目组',
+                teamImg: 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1764029602,681735033&fm=27&gp=0.jpg',
                 managed: false,
                 marked: true,
             },

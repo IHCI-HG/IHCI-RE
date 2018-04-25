@@ -3,6 +3,74 @@ import './style.scss'
 import Page from '../../../components/page'
 import api from '../../../utils/api';
 
+class TopicDiscussItem extends React.Component {
+    componentDidMount = () => {
+        this.setState({
+            content: this.props.content
+        })
+    }
+
+    state = {
+        content: '',
+        editState: false,
+    }
+
+
+
+    editInputHandle = (e) => {
+        this.setState({
+            content: e.target.value
+        })
+    }
+
+    render() {
+        const {
+            id,
+            creator,
+            content,
+            time,
+
+            delHandle,
+            saveEditHandle,
+
+        } = this.props
+
+        return (
+            <div>
+                {
+                    this.state.editState ? <div className="topic-subject-edit">
+                        <textarea className='discuss-content' value={this.state.content} onChange={this.editInputHandle}></textarea>
+
+                        <div className="button-warp">
+                            <div className="save-btn" onClick={() => { saveEditHandle(id, this.state.content); this.setState({ editState: false }) }}>保存</div>
+                            <div className="cancel-btn" onClick={() => { this.setState({ editState: false }) }}>取消</div>
+                        </div>
+                    </div>
+                        :
+                        <div className="topic-subject-con discuss-con">
+                            <div className="flex">
+                                <img className="head-img" src={creator.headImg}></img>
+                                <div className="topic-main">
+                                    <div className="head-wrap">
+                                        <div className="left">
+                                            <span className="name">{creator.name}</span>
+                                            <span className="time">11月20日</span>
+                                        </div>
+                                        <div className="right">
+                                            <span className="edit" onClick={() => { this.setState({ editState: true }) }}>编辑</span>
+                                            <span className="edit">删除</span>
+                                        </div>
+                                    </div>
+                                    <div className="content">{content}</div>
+                                </div>
+                            </div>
+                        </div>
+                }
+            </div>
+        )
+    }
+}
+
 export default class Topic extends React.Component{
     componentDidMount = async() => {
         // console.log(INIT_DATA);
@@ -41,8 +109,8 @@ export default class Topic extends React.Component{
 
         discussList: [
             {
-                editStatus: false,
-                creater: {
+                id: 133,
+                creator: {
                     id: 1,
                     name: '阿鲁巴大将军',
                     headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
@@ -51,7 +119,67 @@ export default class Topic extends React.Component{
                 },
                 content: '这是一条回复',
                 time: 1515384000000,
-            }
+            },
+            {
+                id: 122,
+                creator: {
+                    id: 1,
+                    name: '阿鲁巴大将军',
+                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
+                    phone: '17728282828',
+                    mail: 'ada@qq.com',
+                },
+                content: '这是一条回复',
+                time: 1515384000000,
+            },
+            {
+                id: 1,
+                creator: {
+                    id: 1,
+                    name: '阿鲁巴大将军',
+                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
+                    phone: '17728282828',
+                    mail: 'ada@qq.com',
+                },
+                content: '这是一条回复',
+                time: 1515384000000,
+            },
+            {
+                id: 2,
+                creator: {
+                    id: 1,
+                    name: '阿鲁巴大将军',
+                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
+                    phone: '17728282828',
+                    mail: 'ada@qq.com',
+                },
+                content: '这是一条回复',
+                time: 1515384000000,
+            },
+            {
+                id: 3,
+                creator: {
+                    id: 1,
+                    name: '阿鲁巴大将军',
+                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
+                    phone: '17728282828',
+                    mail: 'ada@qq.com',
+                },
+                content: '这是一条回复',
+                time: 1515384000000,
+            },
+            {
+                id: 4,
+                creator: {
+                    id: 1,
+                    name: '阿鲁巴大将军',
+                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
+                    phone: '17728282828',
+                    mail: 'ada@qq.com',
+                },
+                content: '这是一条回复',
+                time: 1515384000000,
+            },
         ]   
     }
 
@@ -78,18 +206,24 @@ export default class Topic extends React.Component{
         })
     }
 
+    saveDiscussEditHandle = async (id, content) => {
+        console.log(id);
+        console.log(content);
+    }
+
     render() {
         return (
             <Page className="topic-page">
                 <div className="sp-nav">
-                    <span className='to-team' onClick={() => { this.props.router.push('/team') }} >讨论</span>
-                    >
-                    <span onClick={this.teamFilterHandle}>{"团队名字"}</span>
-                    >
-                    <span onClick={this.teamFilterHandle}>{"讨论主题"}</span>
+                    <span className='to-team' onClick={() => { this.props.router.push('/team') }} >团队</span>
+                    <span className="iconfont icon-enter"></span>
+                    <span onClick={this.teamFilterHandle}>{"IHCI平台搭建项目组"}</span>
+                    
                 </div>
 
                 <div className="topic-con">
+
+
 
                     {
                         this.state.topicObj.editStatus ? <div className="topic-subject-edit">
@@ -127,151 +261,14 @@ export default class Topic extends React.Component{
                     <div className="div-line"></div>
 
 
+
                     <div className="topic-list">
                     {
-                        this.state.editTopic ? <div className="topic-subject-edit">
-                                <textarea className='discuss-content'></textarea>
-
-                                <div className="button-warp" onClick={() => {this.setState({editTopic: false})}}>
-                                    <div className="save-btn">保存</div>
-                                    <div className="cancel-btn">取消</div>
-                                </div>
-                            </div> 
-                        :
-                            <div className="topic-subject-con discuss-con">
-                                <div className="flex">
-                                    <div className="head-img"></div>
-                                    <div className="topic-main">
-                                        <div className="head-wrap">
-                                            <div className="left">
-                                                <span className="name">阿鲁巴大将军</span>
-                                                <span className="time">11月20日</span>
-                                            </div>
-                                            <div className="right">
-                                                <span className="edit" onClick={()=>{this.setState({editTopic: true})}}>编辑</span>
-                                                <span className="edit">删除</span>
-                                            </div>
-                                        </div>
-                                        <div className="content">内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容</div>
-                                    </div>
-                                </div>
-                            </div>
-                    }
-                    {
-                        this.state.editTopic ? <div className="topic-subject-edit">
-                                <textarea className='discuss-content'></textarea>
-
-                                <div className="button-warp" onClick={() => {this.setState({editTopic: false})}}>
-                                    <div className="save-btn">保存</div>
-                                    <div className="cancel-btn">取消</div>
-                                </div>
-                            </div> 
-                        :
-                            <div className="topic-subject-con discuss-con">
-                                <div className="flex">
-                                    <div className="head-img"></div>
-                                    <div className="topic-main">
-                                        <div className="head-wrap">
-                                            <div className="left">
-                                                <span className="name">阿鲁巴大将军</span>
-                                                <span className="time">11月20日</span>
-                                            </div>
-                                            <div className="right">
-                                                <span className="edit" onClick={()=>{this.setState({editTopic: true})}}>编辑</span>
-                                                <span className="edit">删除</span>
-                                            </div>
-                                        </div>
-                                        <div className="content">内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容</div>
-                                    </div>
-                                </div>
-                            </div>
-                    }
-                    {
-                        this.state.editTopic ? <div className="topic-subject-edit">
-                                <textarea className='discuss-content'></textarea>
-
-                                <div className="button-warp" onClick={() => {this.setState({editTopic: false})}}>
-                                    <div className="save-btn">保存</div>
-                                    <div className="cancel-btn">取消</div>
-                                </div>
-                            </div> 
-                        :
-                            <div className="topic-subject-con discuss-con">
-                                <div className="flex">
-                                    <div className="head-img"></div>
-                                    <div className="topic-main">
-                                        <div className="head-wrap">
-                                            <div className="left">
-                                                <span className="name">阿鲁巴大将军</span>
-                                                <span className="time">11月20日</span>
-                                            </div>
-                                            <div className="right">
-                                                <span className="edit" onClick={()=>{this.setState({editTopic: true})}}>编辑</span>
-                                                <span className="edit">删除</span>
-                                            </div>
-                                        </div>
-                                        <div className="content">内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容</div>
-                                    </div>
-                                </div>
-                            </div>
-                    }
-                    {
-                        this.state.editTopic ? <div className="topic-subject-edit">
-                                <textarea className='discuss-content'></textarea>
-
-                                <div className="button-warp" onClick={() => {this.setState({editTopic: false})}}>
-                                    <div className="save-btn">保存</div>
-                                    <div className="cancel-btn">取消</div>
-                                </div>
-                            </div> 
-                        :
-                            <div className="topic-subject-con discuss-con">
-                                <div className="flex">
-                                    <div className="head-img"></div>
-                                    <div className="topic-main">
-                                        <div className="head-wrap">
-                                            <div className="left">
-                                                <span className="name">阿鲁巴大将军</span>
-                                                <span className="time">11月20日</span>
-                                            </div>
-                                            <div className="right">
-                                                <span className="edit" onClick={()=>{this.setState({editTopic: true})}}>编辑</span>
-                                                <span className="edit">删除</span>
-                                            </div>
-                                        </div>
-                                        <div className="content">内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容</div>
-                                    </div>
-                                </div>
-                            </div>
-                    }
-                    {
-                        this.state.editTopic ? <div className="topic-subject-edit">
-                                <textarea className='discuss-content'></textarea>
-
-                                <div className="button-warp" onClick={() => {this.setState({editTopic: false})}}>
-                                    <div className="save-btn">保存</div>
-                                    <div className="cancel-btn">取消</div>
-                                </div>
-                            </div> 
-                        :
-                            <div className="topic-subject-con discuss-con">
-                                <div className="flex">
-                                    <div className="head-img"></div>
-                                    <div className="topic-main">
-                                        <div className="head-wrap">
-                                            <div className="left">
-                                                <span className="name">阿鲁巴大将军</span>
-                                                <span className="time">11月20日</span>
-                                            </div>
-                                            <div className="right">
-                                                <span className="edit" onClick={()=>{this.setState({editTopic: true})}}>编辑</span>
-                                                <span className="edit">删除</span>
-                                            </div>
-                                        </div>
-                                        <div className="content">内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容</div>
-                                    </div>
-                                </div>
-                            </div>
+                        this.state.discussList.map((item) => {
+                            return (
+                                <TopicDiscussItem key={"topic-discuss-item-" + item.id} {...item} saveEditHandle = {this.saveDiscussEditHandle}/>
+                            )
+                        })
                     }
 
                     <div className="topic-subject-con discuss-con">

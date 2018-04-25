@@ -154,7 +154,7 @@ export default class News extends React.Component{
                 
 
                 <div className="news-list page-wrap">
-                <div className='news-filter' onClick={this.filterHandle}>筛选动态： 根据团队筛选 {this.state.showFilter ? '↑' : '↓'}</div>
+                    <div className='news-filter' onClick={this.filterHandle}>筛选动态： 根据团队筛选 {this.state.showFilter ? '↑' : '↓'}</div>
                     {
                         showList.keyList.map((timeKey) => {
                             return (
@@ -197,7 +197,11 @@ export default class News extends React.Component{
                             )
                         })
                     } 
+
+                    <div className="load-more" onCli>点击加载更多</div>
                 </div>
+
+                
             </Page>
         )
     }

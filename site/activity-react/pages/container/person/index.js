@@ -15,11 +15,11 @@ export default class Team extends React.Component{
         //     redirect_uri: "http%3A%2F%2Flocalhost%3A5000%2Fauth",
         // });
 
-        // // 小号的测试号
+        // 小号的测试号
         var obj = new WxLogin({
             id:"login_container", 
-            appid: "wx4faa94837fccf23e", 
-            scope: "snsapi_login", 
+            appid: "wx87136e7c8133efe3", 
+            scope: "snsapi_userinfo", 
             redirect_uri: "http%3A%2F%2Flocalhost%3A5000%2Fauth",
         });
 
@@ -28,13 +28,13 @@ export default class Team extends React.Component{
 
         // 授权代码
 
-        let a = { 
-            "access_token":"8_0-d85Yp1SQEO73xiNwwjncsU3E6Zfnrn9XEduR0wq9dgfXPXKpdcL9sLD1PbhGslQvrACX_t_Kxcrahx-xZCHw",
-            "expires_in":7200,
-            "refresh_token":"8_4DCi13aDOkncxhRYzqydfzew90IpdRk1da92qnqh9EC2Kn3C78AWyMCIWUFzjgSUIqTUEiBx3tDaOsmI-K6bnQ",
-            "openid":"oAX1fwaSM-QbT-6P0bwq7Py8eWuI",
-            "scope":"snsapi_login",
-            "unionid":"oTq_VwKk1viNoIh98ivzt_kyEJVk"
+        let a = {
+            "access_token": "9_y1ySzUrSA2mh6E6kNcpG7tLw05ynnntdg9wm5rsyyi0mktzD10bCYqPaP7_QTPw1oXPh_1dlc3cedxmot0l8Vw",
+            "expires_in": 7200,
+            "refresh_token": "9_g4Xhu1FwwV_TIBD-371xIXE2G8vA0tma8upaK7nVnH0-GbNnOtcknkmviA3UDhKafMYSyLDuxKSeucGzRmgLjg",
+            "openid": "oAX1fwRD4MfWXbsP5NJdUX4l2kGU",
+            "scope": "snsapi_login",
+            "unionid": "oTq_VwNhsB143AYULDVgm7PTQaLI"
         }
 
         // 获取用户信息

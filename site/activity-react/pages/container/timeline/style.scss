@@ -86,4 +86,17 @@
             overflow: hidden;
         }
     }
+
+    .load-more {
+        cursor: pointer;
+        margin: auto;
+        height: 40px;
+        line-height: 40px;
+        padding: 0 30px;
+        border-radius: 6px;
+        width: 200px;
+
+        background-color: #e6e6e6;
+        text-align: center;
+    }
 }

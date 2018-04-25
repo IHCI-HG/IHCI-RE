@@ -61,9 +61,9 @@ export default class Team extends React.Component{
 
         teamInfo: {
             id: 1,
-            name: 'xx团队1',
+            name: 'IHCI平台搭建项目组',
             teamImg: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1522401625&di=bcc173556f4ce40a5b92ff96402a053b&imgtype=jpg&er=1&src=http%3A%2F%2Fwx3.sinaimg.cn%2Forj360%2F7fa53ff0gy1fc1phl41r6j20hs0hsmxn.jpg',
-            desc: '这是第一个团队',
+            desc: '完成IHCI平台搭建',
             managed: true,
             marked: true,
         },
@@ -124,102 +124,22 @@ export default class Team extends React.Component{
         memberList: [
             {
                 id: 11,
-                name: 'String',
+                name: '萨乌丁',
                 chosen: false,
             },
             {
                 id: 22,
-                name: 'String',
+                name: '安慈',
                 chosen: false,
             },
             {
                 id: 33,
-                name: 'String',
+                name: '托马斯',
                 chosen: false,
             },
             {
                 id: 44,
-                name: 'String',
-                chosen: false,
-            },
-            {
-                id: 11,
-                name: 'String',
-                chosen: false,
-            },
-            {
-                id: 22,
-                name: 'String',
-                chosen: false,
-            },
-            {
-                id: 33,
-                name: 'String',
-                chosen: false,
-            },
-            {
-                id: 44,
-                name: 'String',
-                chosen: false,
-            },
-            {
-                id: 11,
-                name: 'String',
-                chosen: false,
-            },
-            {
-                id: 22,
-                name: 'String',
-                chosen: false,
-            },
-            {
-                id: 33,
-                name: 'String',
-                chosen: false,
-            },
-            {
-                id: 44,
-                name: 'String',
-                chosen: false,
-            },
-            {
-                id: 11,
-                name: 'String',
-                chosen: false,
-            },
-            {
-                id: 22,
-                name: 'String',
-                chosen: false,
-            },
-            {
-                id: 33,
-                name: 'String',
-                chosen: false,
-            },
-            {
-                id: 44,
-                name: 'String',
-                chosen: false,
-            },
-            {
-                id: 11,
-                name: 'String',
-                chosen: false,
-            },
-            {
-                id: 22,
-                name: 'String',
-                chosen: false,
-            },
-            {
-                id: 33,
-                name: 'String',
-                chosen: false,
-            },
-            {
-                id: 44,
-                name: 'String',
+                name: '艾文',
                 chosen: false,
             },
         ],
