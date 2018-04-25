@@ -14,27 +14,30 @@ import apiAuth from '../middleware/auth/api-auth'
 var wxReceiver = function(req, res, next) {
     // console.log('wxReceiver-body: ', req.body);
 
-    const signature = req.query.signature
-    const timestamp = req.query.timestamp
-    const nonce = req.query.nonce
-    const echostr = req.query.echostr
+    // const signature = req.query.signature
+    // const timestamp = req.query.timestamp
+    // const nonce = req.query.nonce
+    // const echostr = req.query.echostr
 
-    const arr = [nonce, 'njjnjn', timestamp]
-    arr.sort()
+    // const arr = [nonce, 'njjnjn', timestamp]
+    // arr.sort()
 
-    const tStr = arr[0] + arr[1] + arr[2]
-    hash.update(tStr)
-    const hashResult = hash.digest('hex')
+    // const tStr = arr[0] + arr[1] + arr[2]
+    // hash.update(tStr)
+    // const hashResult = hash.digest('hex')
 
-    if(hashResult == signature) {
-        // 这是来自微信官方的消息
-        console.log('wxReceiver-body: ', req.body);
-    }
+    // if(hashResult == signature) {
+    //     // 这是来自微信官方的消息
+    //     console.log('wxReceiver-body: ', req.body);
+    // }
 
     console.log('wxReceiver-body: ', req.body);
 
-
-    res.send(echostr)
+    if(req.query.echostr) {
+        res.send(req.query.echostr)
+    } else {
+        res.send('echostr')
+    }
 };
 
 
