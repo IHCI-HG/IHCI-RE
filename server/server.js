@@ -7,6 +7,7 @@ var _ = require('underscore'),
     Multer = require('multer'),
     // session = require('session'),
     cookieParser = require('cookie-parser'),
+    xmlparser = require('express-xml-bodyparser'),
     redis = require('redis'),
     lo = require('lodash'),
 
@@ -102,6 +103,8 @@ function init() {
         extended: true,
         limit: '10mb',
     }));
+
+    app.use(xmlparser());
 
     // for parsing multipart/form-data file upload
     app.use(new Multer().single('file'));
