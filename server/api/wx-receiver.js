@@ -25,11 +25,13 @@ var wxReceiver = function(req, res, next) {
     const tStr = arr[0] + arr[1] + arr[2]
     hash.update(tStr)
     const hashResult = hash.digest('hex')
-    
+
     if(hashResult == signature) {
         // 这是来自微信官方的消息
         console.log('wxReceiver-body: ', req.body);
     }
+
+    console.log('wxReceiver-body: ', req.body);
 
 
     res.send(echostr)
