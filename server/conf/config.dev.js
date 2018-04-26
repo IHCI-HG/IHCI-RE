@@ -29,7 +29,7 @@ var config = {
     'lruMax': 500,
 
     // 用于本地存储日志
-    'logs': '/data/logs/h5_dev',
+    'logs': '/logs/dev.log',
 
     'upload': {
         'maxSize': 5242880,

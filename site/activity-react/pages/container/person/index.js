@@ -8,20 +8,20 @@ export default class Team extends React.Component{
     componentDidMount = async() => {
         console.log(INIT_DATA);
         
-        // var obj = new WxLogin({
-        //     id:"login_container", 
-        //     appid: "wx50a231aefaff3222", 
-        //     scope: "snsapi_login", 
-        //     redirect_uri: "http%3A%2F%2Flocalhost%3A5000%2Fauth",
-        // });
-
-        // 小号的测试号
         var obj = new WxLogin({
             id:"login_container", 
-            appid: "wx87136e7c8133efe3", 
-            scope: "snsapi_userinfo", 
+            appid: "wx50a231aefaff3222", 
+            scope: "snsapi_login", 
             redirect_uri: "http%3A%2F%2Flocalhost%3A5000%2Fauth",
         });
+
+        // 小号的测试号
+        // var obj = new WxLogin({
+        //     id:"login_container", 
+        //     appid: "wx87136e7c8133efe3", 
+        //     scope: "snsapi_userinfo", 
+        //     redirect_uri: "http%3A%2F%2Flocalhost%3A5000%2Fauth",
+        // });
 
         // 授权页面
         // https://open.weixin.qq.com/connect/qrconnect?appid=wx50a231aefaff3222&scope=snsapi_login&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fauth&login_type=jssdk

@@ -18,7 +18,7 @@ module.exports = function () {
         var isDanger = detect(req, res);
         if (isDanger) {
             console.log('DANGER URL:', req.originalUrl);
-            res.status(403).send('<h1>403</h1><h2>You win!</h2>');
+            res.status(403).send('<h1>403</h1><h2>?</h2>');
         } else {
             next();
         }

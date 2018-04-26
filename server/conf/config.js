@@ -37,7 +37,7 @@ var config = {
     'AppSecret': '4aa16e1583e8525a4d4bb47b37928467',
 
     // 用于本地存储日志
-    'logs': '/data/logs/h5',
+    'logs': '/logs/logs.log',
 
     // 文件上传配置
     'upload': {
