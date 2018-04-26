@@ -5,6 +5,18 @@ import api from '../../../utils/api';
 import { timeParse, formatDate } from '../../../utils/util'
 import Page from '../../../components/page'
 
+class TeamChoseItem extends React.PureComponent{
+    render() {
+        return(
+            <div className="admin-team-item">
+                <div className="team-img"></div>
+                <div className="team-name">{this.props.name}</div>
+                {this.props.active && <span className="check">√</span>}
+            </div>
+        )
+    }
+}
+
 class AdminTeamItem extends React.PureComponent{
     render() {
         return(
@@ -136,14 +148,84 @@ export default class News extends React.Component{
             keyList : [],
         },
 
-        showFilter: false,
-
-
+        showTeamFilter: false,
+        teamList: [
+            {
+                id: 1,
+                name: 'xx团队1',
+                teamImg: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1522401625&di=bcc173556f4ce40a5b92ff96402a053b&imgtype=jpg&er=1&src=http%3A%2F%2Fwx3.sinaimg.cn%2Forj360%2F7fa53ff0gy1fc1phl41r6j20hs0hsmxn.jpg',
+                desc: '这是第一个团队',
+                managed: true,
+                marked: true,
+            },
+            {
+                id: 2,
+                name: 'xx团队2xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+                teamImg: 'https://developers.google.com/machine-learning/crash-course/images/landing-icon-sliders.svg?hl=zh-cn',
+                desc: '这是第一个团队',
+                managed: true,
+                marked: false,
+            },
+            {
+                id: 3,
+                name: 'xx团队3xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+                teamImg: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1522401625&di=bcc173556f4ce40a5b92ff96402a053b&imgtype=jpg&er=1&src=http%3A%2F%2Fwx3.sinaimg.cn%2Forj360%2F7fa53ff0gy1fc1phl41r6j20hs0hsmxn.jpg',
+                desc: '这是第一个团队',
+                managed: true,
+                marked: false,
+            },
+            {
+                id: 4,
+                name: 'xx团队4',
+                teamImg: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1522401625&di=bcc173556f4ce40a5b92ff96402a053b&imgtype=jpg&er=1&src=http%3A%2F%2Fwx3.sinaimg.cn%2Forj360%2F7fa53ff0gy1fc1phl41r6j20hs0hsmxn.jpg',
+                desc: '这是第一个团队',
+                managed: false,
+                marked: false,
+            },
+            {
+                id: 5,
+                name: 'xx团队5',
+                teamImg: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1522401625&di=bcc173556f4ce40a5b92ff96402a053b&imgtype=jpg&er=1&src=http%3A%2F%2Fwx3.sinaimg.cn%2Forj360%2F7fa53ff0gy1fc1phl41r6j20hs0hsmxn.jpg',
+                desc: '这是第一个团队',
+                managed: false,
+                marked: true,
+            },
+        ],
+        shownTeam: [],
     }
 
-    filterHandle = () => {
+    teamListInit = () => {
+        const teamList = []
+        this.state.teamList.map((item) => { 
+            item.active = this.props.params.id == item.id
+            teamList.push(item)
+        })
         this.setState({
-            showFilter: !this.state.showFilter
+            teamList: teamList,
+            shownTeam: teamList,
+        })
+    }
+
+    teamFilterHandle = () => {
+        this.setState({
+            showTeamFilter: !this.state.showTeamFilter
+        })
+    }
+
+    searchInputHandle = (e) => {
+        this.setState({
+            searchInput: e.target.value
+        })
+
+        const showTeamList = []
+        var partten = new RegExp(e.target.value)
+        this.state.teamList.map((item) => {
+            if(partten.test(item.name)) {
+                showTeamList.push(item)
+            }
+        })
+        this.setState({
+            shownTeam: showTeamList
         })
     }
 
@@ -152,9 +234,33 @@ export default class News extends React.Component{
         return (
             <Page className="news-page">
                 
+                {
+                    this.state.showTeamFilter && <div className="team-list" onMouseLeave={this.teamFilterHandle}>
+                        <input type="text" className="search" onChange={this.searchInputHandle} />
+                        <div className="head">星标团队</div>
+                        {
+                            this.state.teamList.map((item) => {
+                                if (item.marked) {
+                                    return (
+                                        <TeamChoseItem key={'mark-team-' + item.id} {...item} />
+                                    )
+                                }
+                            })
+                        }
+                        <div className="head">所有团队</div>
+                        {
+                            this.state.teamList.map((item) => {
+                                return (
+                                    <TeamChoseItem key={'team-' + item.id} {...item} />
+                                )
+                            })
+                        }
+                    </div>
+                }
+                
 
                 <div className="news-list page-wrap">
-                    <div className='news-filter' onClick={this.filterHandle}>筛选动态： 根据团队筛选 {this.state.showFilter ? '↑' : '↓'}</div>
+                    <div className='news-filter' onClick={this.teamFilterHandle}>筛选动态： 根据团队筛选</div>
                     {
                         showList.keyList.map((timeKey) => {
                             return (

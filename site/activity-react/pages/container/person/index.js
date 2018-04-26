@@ -3,42 +3,11 @@ import './style.scss'
 
 import api from '../../../utils/api';
 import Page from '../../../components/page'
+import WxLoginDialog from '../../../components/wx-login-dialog'
 
 export default class Team extends React.Component{
     componentDidMount = async() => {
         console.log(INIT_DATA);
-        
-        var obj = new WxLogin({
-            id:"login_container", 
-            appid: "wx50a231aefaff3222", 
-            scope: "snsapi_login", 
-            redirect_uri: "http%3A%2F%2Flocalhost%3A5000%2Fauth",
-        });
-
-        // 小号的测试号
-        // var obj = new WxLogin({
-        //     id:"login_container", 
-        //     appid: "wx87136e7c8133efe3", 
-        //     scope: "snsapi_userinfo", 
-        //     redirect_uri: "http%3A%2F%2Flocalhost%3A5000%2Fauth",
-        // });
-
-        // 授权页面
-        // https://open.weixin.qq.com/connect/qrconnect?appid=wx50a231aefaff3222&scope=snsapi_login&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fauth&login_type=jssdk
-
-        // 授权代码
-
-        let a = {
-            "access_token": "9_y1ySzUrSA2mh6E6kNcpG7tLw05ynnntdg9wm5rsyyi0mktzD10bCYqPaP7_QTPw1oXPh_1dlc3cedxmot0l8Vw",
-            "expires_in": 7200,
-            "refresh_token": "9_g4Xhu1FwwV_TIBD-371xIXE2G8vA0tma8upaK7nVnH0-GbNnOtcknkmviA3UDhKafMYSyLDuxKSeucGzRmgLjg",
-            "openid": "oAX1fwRD4MfWXbsP5NJdUX4l2kGU",
-            "scope": "snsapi_login",
-            "unionid": "oTq_VwNhsB143AYULDVgm7PTQaLI"
-        }
-
-        // 获取用户信息
-        // https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID
     }
 
     starHandle = async (id) => {
@@ -60,6 +29,8 @@ export default class Team extends React.Component{
     }
 
     state = {
+        showWxLogin: false,
+
         personInfo: {
             id: 1,
             name: '阿鲁巴大将军',
@@ -77,13 +48,23 @@ export default class Team extends React.Component{
             }
         })
     }
+
+    openWxLoginHandle = () => {
+        this.setState({
+            showWxLogin: true
+        })
+    }
+
+    closeWxLoginHandle = () => {
+        this.setState({
+            showWxLogin: false
+        })
+    }
     
     render() {
         let personInfo = this.state.personInfo
         return (
             <Page title={"个人设置"} className="person-edit-page page-wrap">
-                <div className="qr-code-container" id="login_container"></div>
-
                 <div className="title">个人设置</div>
 
                 <div className="head-edit">
@@ -94,6 +75,15 @@ export default class Team extends React.Component{
                         <input type="text" className="head-img-url" value={personInfo.headImg} onChange={this.headImgInputHandle}/>
                         <div className="head-des">请输入头像图片URL地址</div>
                     </div>
+                </div>
+
+                <div className="edit-con">
+                    <div className="before">微信</div>
+
+                    { /* <div className="bind-wx">未绑定</div> */ }
+                    <div className="bind-wx act">arluber</div>
+
+                    <div className="band" onClick={this.openWxLoginHandle}>绑定</div>
                 </div>
 
                 <div className="edit-con">
@@ -122,6 +112,10 @@ export default class Team extends React.Component{
                 </div>
 
                 <div className="sava-btn">保存</div>
+                
+                {
+                    this.state.showWxLogin && <WxLoginDialog state="bind" closeHandle={this.closeWxLoginHandle}/>
+                }
             </Page>
         )
     }

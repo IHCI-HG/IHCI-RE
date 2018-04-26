@@ -103,6 +103,8 @@ module.exports = [
     ['GET', '/auth', clientParams(), wxAuthCodeHandle , mainPage],
 
     ['GET', '/team', clientParams(), doNoThing, pageHandle() ],
+    ['GET', '/test', clientParams(), doNoThing, pageHandle() ],
+
     ['GET', '/team-edit/:id', clientParams(), doNoThing, pageHandle() ],
     ['GET', '/team-admin/:id', clientParams(), doNoThing, pageHandle() ],
     ['GET', '/person/:id', clientParams(), doNoThing, pageHandle() ],

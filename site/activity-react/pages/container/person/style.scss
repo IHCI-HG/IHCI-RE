@@ -49,6 +49,23 @@
             width: 100px;
             color: #666;
         }
+
+        .bind-wx {
+            height: 30px;
+            line-height: 30px;
+            padding: 0 10px;
+            border-radius: 4px;
+            background-color: #999;
+            margin-right: 20px;
+
+            &.act {
+                background-color: rgb(255, 197, 73);
+            }
+        }
+        .band {
+            cursor: pointer;
+            color: rgb(255, 197, 73);
+        }
         .input-edit {
             border: 1px solid #e6e6e6; /*no*/
             height: 40px;

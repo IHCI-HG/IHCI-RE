@@ -7,6 +7,7 @@ import './style.scss'
 import '../../commen/style.scss'
 
 import Team from './team'
+import Test from './test'
 import TeamAdmin from './team-admin'
 import Person from './person'
 import Discuss from './discuss'
@@ -73,6 +74,7 @@ const routeConfig = [
         component: App,
         indexRoute: { component: Team },
         childRoutes: [
+            { path: 'test', component: Test },
             { path: 'team', component: Team },
             { path: 'team-admin/:id', component: TeamAdmin },
             { path: 'person/:id', component: Person },
