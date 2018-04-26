@@ -55,16 +55,6 @@ var getIp = function(req) {
  * @return {[type]}            [description]
  */
 var apiProxy = function (uri, params, callback, secret, req) {
-
-    if (params && params.topicId) {
-        if (uri.indexOf('?') !== -1) {
-            uri += `&topicId=${params.topicId}`
-        } else {
-            uri += `?topicId=${params.topicId}`
-        }
-    }
-
-
     if (params) {
         params.ip = getIp(req);
     }
@@ -162,11 +152,13 @@ var apiProxyPromise = function (uri, params, secret, req) {
                 reject(err);
                 return;
             }
-
             resolve(body);
         }, secret, req);
     });
 };
+
+
+
 
 /**
  * 并行请求，不用等到前一个函数执行完再执行下一个函数，如果函数触发了错误，可以在callback函数中验证

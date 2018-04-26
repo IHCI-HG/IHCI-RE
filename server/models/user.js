@@ -2,29 +2,34 @@ const mongoose = require('mongoose')
 const crypto = require('crypto');
 const conf = require('../conf')
 
+/*
+    密码不存明文
+    库里存sha1 hash过的密码 （key 在conf.salt里)
+    认证的时候传入hash过的密码
+*/
+
 const userSchema = new mongoose.Schema({
     create_time: { type: Date, default : Date.now},
-    username: { type: String , default: '' },
-    password: { type: String , default: '' },
-    name: String,
-    phone: String,
-    mail: String,
-    wechat: String,
-    QQ: String,
-    headImgUrl: String,
+    username: { type: String , required: true , index: true },
+    password: { type: String , required: true },
+    personInfo: mongoose.Schema.Types.Mixed,
+    teamList: [mongoose.Schema.Types.Mixed],
+    openid: String,
+    unionid: { type: String, index: true },
+    subState: Boolean,
+    wxUserInfo: mongoose.Schema.Types.Mixed
 })
 
 userSchema.statics = {
-    createUser: async function(username, password, data, cb) {
+    createUser: async function(username, password) {
         const result = await this.findOne({username: username}).exec()
         if(result) {
-            return false
+            return null
         } else {
             return this.create({
-                ...data,
                 username: username,
                 password: crypto.createHmac('sha1', conf.salt).update(password).digest('hex'),
-            }, cb)
+            })
         }
     },
 
@@ -37,25 +42,26 @@ userSchema.statics = {
         }
     },
 
-    findUserById: async function(userId) {
+    findByUserId: async function(userId) {
         const result = await this.findById(userId)
         return result
     },
-    updateHeadImgUrl: async function (userId, headImgUrl) {
-        try {
-            const userInfo = await this.findById(userId)
-            if(userInfo) {
-                userInfo.headImgUrl = headImgUrl
-                const result = await this.update({_id: userId}, userInfo)
-                return result.ok == 1
-            } else {
-                return false
-            }
-        } catch (error) {
-            return false
-        }
+
+    findByUnionId: async function(unionid) {
+        const result = await this.findOne({unionid: unionid}).exec()
+        return result
+    },
+
+    findByUsername: async function(username) {
+        const result = await this.findOne({username: username}).exec()
+        return result
+    },
+
+    updateUser: async function(userId, userObj) {
+        const result = await this.findByIdAndUpdate(userId, userObj, () => {})
+        return result
     },
 
 }
 
-const testModule = mongoose.model('user', userSchema);
+mongoose.model('user', userSchema);

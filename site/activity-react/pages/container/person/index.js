@@ -87,6 +87,17 @@ export default class Team extends React.Component{
                 </div>
 
                 <div className="edit-con">
+                    <div className="before">服务号</div>
+
+                    { /* <div className="bind-wx">未绑定</div> */ }
+                    <div className="bind-wx act">已关注</div>
+
+                    <div onClick={this.openWxLoginHandle}>需要关注服务号才能接受讨论消息提醒</div>
+
+
+                </div>
+
+                <div className="edit-con">
                     <div className="before">名字</div>
                     <input type="text" className="input-edit" value={personInfo.name}/>
                 </div>
