@@ -7,7 +7,12 @@ var _ = require('underscore'),
 import fetch from 'isomorphic-fetch';
 import lo from 'lodash';
 import apiAuth from '../middleware/auth/api-auth'
-import {redisPromiseGet, redisPromiseSet} from '../middleware/redis-utils/redis-utils'
+
+import { 
+    web_codeToAccessToken, 
+    web_accessTokenToUserInfo,
+    web_codeToUserInfo,
+} from '../components/wx-utils/wx-utils'
 
 var mongoose = require('mongoose')
 var UserDB = mongoose.model('user')
@@ -130,28 +135,65 @@ const setUserInfo = async (req, res, next) => {
 const wxLogin = async (req, res, next) => {
     const code = lo.get(req, 'query.code')
     const state = lo.get(req, 'query.state')
+    const userId = lo.get(req, 'rSession.userId')
 
-    console.log(data);
+    try {
+        const result = await web_codeToAccessToken(code)
 
-    if(result) {
-        // req.rSession.userId = result._id
-        resProcessor.jsonp(req, res, {
-            state: { code: 0 },
-            data: {
-                sysTime: new Date().getTime(),
-                userPo: result
+        if (state == 'bind') {
+            if(result.access_token && result.openid) {
+                const userInfo = await web_accessTokenToUserInfo(result.access_token, result.openid)
+                await UserDB.updateUser(userId, { 
+                    unionid: result.result,
+                    wxUserInfo: userInfo
+                })
+                res.redirect('/person/1');
+            } else {
+                // 由于某些原因绑定失败
+                res.redirect('/person/1?fail=true');
             }
-        });
-    } else {
-        resProcessor.jsonp(req, res, {
-            state: { code: 1 , msg: '账号或密码错误'},
-            data: {}
-        });
+        }
+
+        if(state == 'auth') {
+            if(result.unionid) {
+                const userObj = await UserDB.findByUnionId(result.unionid)
+                if(userObj) {
+                    req.rSession.userId = result._id
+                    res.redirect('/team');
+                } else {
+                    res.redirect('/sign-up');
+                }
+            } else {
+                // 由于某些原因授权失败
+                res.redirect('/?fail=true');
+            }
+        }
+
+    } catch (error) {
+        console.error(error);
     }
 }
 
-
-
+const unbindWechat = async (req, res, next) => {
+    const userId = req.rSession.userId
+    try {
+        const result = await UserDB.updateUser(userId, {
+            unionid: ''
+        })
+        resProcessor.jsonp(req, res, {
+            state: { code: 0, msg: '设置成功' },
+            data: {
+                result: result,
+            }
+        });
+    } catch (error) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: '解绑失败' },
+            data: {}
+        });
+        console.error(error)
+    }
+}
 
 const test = async (req, res, next) => {
 
@@ -180,6 +222,8 @@ module.exports = [
     ['GET', '/wxLogin', wxLogin],
 
     ['POST', '/api/logout', apiAuth, logout],
+
+    ['POST', '/api/unbindWechat', apiAuth, unbindWechat],
 
     ['POST', '/api/signUp', signUp],
     ['POST', '/api/setUserInfo', apiAuth, setUserInfo]

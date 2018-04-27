@@ -1,9 +1,10 @@
-import fetch from 'isomorphic-fetch';
+var conf = require('../../conf')
 
+import fetch from 'isomorphic-fetch';
 import {redisPromiseGet, redisPromiseSet} from '../../middleware/redis-utils/redis-utils'
 
 // 网页登录，用 code 拿用户的 access_token (包括openid 和 unionid)
-export const web_TokenToAccessToken = async function(token) {
+export const web_codeToAccessToken = async function(code) {
     const result = await fetch(`https://api.weixin.qq.com/sns/oauth2/access_token?appid=${conf.webAppId}&secret=${conf.webAppSe}&code=${code}&grant_type=authorization_code`)
     const data = await result.json()
     return data
@@ -17,7 +18,7 @@ export const web_accessTokenToUserInfo = async function(accessToken, openid) {
 }
 
 // 网页登录，用token拿用户信息
-export const web_accessTokenToUserInfo = async function(token) {
+export const web_codeToUserInfo = async function(code) {
     const accessTokenResult = await web_TokenToAccessToken()
     const result = await fetch(`https://api.weixin.qq.com/sns/userinfo?access_token=${accessTokenResult.access_token}&openid=${accessTokenResult.openid}`)
     const data = await result.json()
@@ -66,6 +67,6 @@ export const pub_pushTemplateMsg = async function(openid, templateId, url, data)
             data: data
         })
     })
-    const data = await result.json()
-    return data
+    const resultJson = await result.json()
+    return resultJson
 }

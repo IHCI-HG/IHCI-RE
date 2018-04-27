@@ -8,6 +8,22 @@ const conf = require('../conf')
     认证的时候传入hash过的密码
 */
 
+/*
+wxUserInfo 
+{
+    "openid": "oAX1fwRD4MfWXbsP5NJdUX4l2kGU",
+    "nickname": "Arluber",
+    "sex": 1,
+    "language": "zh_CN",
+    "city": "Guangzhou",
+    "province": "Guangdong",
+    "country": "CN",
+    "headimgurl": "http://thirdwx.qlogo.cn/mmopen/vi_32/kQviaoWtNgHxz8aRwWR9pctqMia8NkohnwuWuHIJ14MtoXSNGibHV9QEskAib9RiaxW1jeJetkHyWVzqtuiacs7emH0g/132",
+    "privilege": [],
+    "unionid": "oTq_VwNhsB143AYULDVgm7PTQaLI"
+}
+*/
+
 const userSchema = new mongoose.Schema({
     create_time: { type: Date, default : Date.now},
     username: { type: String , required: true , index: true },
@@ -59,6 +75,11 @@ userSchema.statics = {
 
     updateUser: async function(userId, userObj) {
         const result = await this.findByIdAndUpdate(userId, userObj, () => {})
+        return result
+    },
+
+    updateUserByUid: async function(unionid, userObj) {
+        const result = await this.findOneAndUpdate({unionid: unionid}, userObj, () => {})
         return result
     },
 
