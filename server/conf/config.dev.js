@@ -26,8 +26,8 @@ var config = {
     'webAppId': 'wx50a231aefaff3222',
     'webAppSe': '4aa16e1583e8525a4d4bb47b37928467',
 
-    'serAppId': 'wx87136e7c8133efe3',
-    'serAppSe': '195592b5e345046e61b5efc33d4cb42d',
+    'pubAppId': 'wx87136e7c8133efe3',
+    'pubAppSe': '195592b5e345046e61b5efc33d4cb42d',
 
     'redisExpire': 60 * 60 * 24,
     db: 'mongodb://127.0.0.1:27017/ihci',

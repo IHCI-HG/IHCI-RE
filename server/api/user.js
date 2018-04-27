@@ -3,9 +3,11 @@ var _ = require('underscore'),
     proxy = require('../components/proxy/proxy'),
     conf = require('../conf');
 
+    
 import fetch from 'isomorphic-fetch';
 import lo from 'lodash';
 import apiAuth from '../middleware/auth/api-auth'
+import {redisPromiseGet, redisPromiseSet} from '../middleware/redis-utils/redis-utils'
 
 var mongoose = require('mongoose')
 var UserDB = mongoose.model('user')
@@ -129,9 +131,6 @@ const wxLogin = async (req, res, next) => {
     const code = lo.get(req, 'query.code')
     const state = lo.get(req, 'query.state')
 
-    fetch(`https://api.weixin.qq.com/sns/oauth2/access_token?appid=${conf.webAppId}&secret=${conf.webAppSe}&code=${code}&grant_type=authorization_code`)
-    const data = await result.json()
-
     console.log(data);
 
     if(result) {
@@ -152,8 +151,30 @@ const wxLogin = async (req, res, next) => {
 }
 
 
+
+
+const test = async (req, res, next) => {
+
+    // const reust =  redisPromiseGet()
+    const result1 = await redisPromiseSet('key-adawda', 'value:' + Math.random(), 1000)
+    const result2 = await redisPromiseGet('key-adawdass')
+
+
+    resProcessor.jsonp(req, res, {
+        state: { code: 0 },
+        data: {
+            sysTime: new Date().getTime(),
+            result1: result1,
+            result2: result2
+        }
+    });
+
+}
+
+
 module.exports = [
     ['GET', '/api/base/sys-time', sysTime],
+    ['GET', '/api/test', test],
 
     ['POST', '/api/login', login],
     ['GET', '/wxLogin', wxLogin],
