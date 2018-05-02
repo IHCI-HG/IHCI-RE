@@ -61,6 +61,18 @@ export default class Sign extends React.Component{
         })
     }
 
+    signHandle = () => {
+        // todo 检验账号密码是否可用
+        const result = await api('/api/signUp', {
+            method: 'POST',
+            body: {
+                userInfo: {
+                    username: this.state.username,
+                    password: this.state.password,
+                }
+            }
+        })
+    }
 
     
     render() {
@@ -72,10 +84,14 @@ export default class Sign extends React.Component{
                     this.state.fromWx && <div>请补充账户信息</div>
                 }
 
-                <input value={this.state.username} onChange={this.userNameInputHandle} type="text"/>
-                <input value={this.state.password} onChange={this.passWordInputHandle} type="password"/>
+                <div>
+                    <input value={this.state.username} onChange={this.userNameInputHandle} type="text"/>
+                </div>
+                <div>
+                    <input value={this.state.password} onChange={this.passWordInputHandle} type="password"/>
+                </div>
 
-                <div>确定</div>
+                <div onClick={this.signHandle}>确定</div>
 
                 {
                     this.state.showWxLogin && <WxLoginDialog state="bind" closeHandle={this.closeWxLoginHandle}/>
