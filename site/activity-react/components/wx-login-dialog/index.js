@@ -15,7 +15,7 @@ class WxLoginDialog extends React.Component{
             id:"login_container", 
             appid: "wx50a231aefaff3222", 
             scope: "snsapi_login", 
-            redirect_uri: this.props.url || "http%3A%2F%2Flocalhost%3A5000%2Ftest",
+            redirect_uri: this.props.url || "http%3A%2F%2Flocalhost%3A5000%2FwxLogin",
             state: this.props.state || "auth",
         });
     }

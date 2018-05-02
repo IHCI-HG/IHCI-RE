@@ -15,7 +15,9 @@ var querystring = require('querystring');
 var activityApi = require('../api/activity');
 
 var mongoose = require('mongoose')
+
 var TestDB = mongoose.model('test')
+var UserDB = mongoose.model('user')
 
 async function address(req, res, next) {
     var filePath = path.resolve(__dirname, '../../public/activity/page/address/full.html'),
@@ -38,7 +40,7 @@ const test = async (req, res, next) => {
     req.rSession.expires = 10;
     req.rSession.noRobot = true;
     req.rSession.count = req.rSession.count + 1 || 1
-    console.log(req.rSession);
+    
     htmlProcessor(req, res, next, options)
 }
 
@@ -96,6 +98,18 @@ const wxAuthCodeHandle = async (req, res, next) => {
 }
 
 
+
+const personSeting = async (req, res, next) => { 
+    const userId = req.rSession.userId
+    const userObj = await UserDB.findById(userId)
+    userObj.password = undefined
+    userObj.personInfo = userObj.personInfo || {}
+    req.INIT_DATA = {
+        userObj: userObj
+    }
+    next()
+}
+
 module.exports = [
     // 主页
     ['GET', '/', clientParams(), mainPage],
@@ -108,7 +122,7 @@ module.exports = [
 
     ['GET', '/team-edit/:id', clientParams(), doNoThing, pageHandle() ],
     ['GET', '/team-admin/:id', clientParams(), doNoThing, pageHandle() ],
-    ['GET', '/person/:id', clientParams(), doNoThing, pageHandle() ],
+    ['GET', '/person', clientParams(), personSeting, pageHandle() ],
     ['GET', '/discuss/:id', clientParams(), doNoThing, pageHandle() ],
     ['GET', '/discuss/topic/:id', clientParams(), doNoThing, pageHandle() ],
     ['GET', '/timeline', clientParams(),    doNoThing, pageHandle() ],

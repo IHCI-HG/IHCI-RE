@@ -14,7 +14,7 @@ export default class MainPage extends React.Component {
 
     state = {
         //loginBlock: signUp || login
-        loginBlock: "signUp",
+        loginBlock: "login",
     }
     data = {
 
@@ -47,25 +47,20 @@ export default class MainPage extends React.Component {
                     <div className="banner-img">这是LOGO图</div>
                     <div className="auth-con">
                         <div className="auth-nav">
+                            <div
+                                className={this.state.loginBlock == "login" ? "auth-nav-item active" : "auth-nav-item"}
+                                onClick={this.setToLoginHandle}
+                            >登录</div>
                             <div 
                                 className={this.state.loginBlock == "signUp" ? "auth-nav-item active" : "auth-nav-item"}
                                 onClick = {this.setToSignUpHandle}
                             >注册</div>
-                            <div 
-                                className={this.state.loginBlock == "login" ? "auth-nav-item active" : "auth-nav-item"}
-                                onClick = {this.setToLoginHandle}
-                            >登录</div>
                         </div>
-
                         {
                             this.state.loginBlock == "signUp" ?
                                 <div className='auth-form'>
                                     <div className="auth-desc">Choose a username</div>
                                     <input className="auth-input"></input>
-
-                                    <div className="auth-desc">Your email address</div>
-                                    <input className="auth-input"></input>
-
                                     <div className="auth-desc">Choose a password</div>
                                     <input className="auth-input"></input>
 
@@ -83,6 +78,8 @@ export default class MainPage extends React.Component {
                                     <input className="auth-input"></input>
 
                                     <div className="submit-btn">LOG IN</div>
+                                    
+                                    <div className="submit-btn">微信登录</div>
                                 </div> 
                             : ""
                         }

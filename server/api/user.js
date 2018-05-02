@@ -140,18 +140,25 @@ const wxLogin = async (req, res, next) => {
 
     try {
         const result = await web_codeToAccessToken(code)
-
         if (state == 'bind') {
-            if(result.access_token && result.openid) {
+            if(result.access_token && result.openid && result.unionid) {
+
+                // 如果该微信号已经绑定，则无法继续绑定
+                const findUser = await UserDB.findByUnionId(result.unionid)
+                if(findUser) {
+                    res.redirect('/person?alreadyBind=Y');
+                    return
+                }
+
                 const userInfo = await web_accessTokenToUserInfo(result.access_token, result.openid)
-                await UserDB.updateUser(userId, { 
-                    unionid: result.result,
-                    wxUserInfo: userInfo
+                const userDBresult = await UserDB.updateUser(userId, { 
+                    unionid: result.unionid,
+                    wxUserInfo: userInfo,
                 })
-                res.redirect('/person/1');
+                res.redirect('/person');
             } else {
                 // 由于某些原因绑定失败
-                res.redirect('/person/1?fail=true');
+                res.redirect('/person?fail=true');
             }
         }
 

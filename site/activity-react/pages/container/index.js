@@ -58,7 +58,7 @@ class App extends React.Component{
                         </div>
                     </div>
                     <div className="person">
-                        <Link className='nav-item' activeClassName='nav-item active' to="/person/1">
+                        <Link className='nav-item' activeClassName='nav-item active' to="/person">
                             <div className="head-img"></div>
                         </Link>
                     </div>
@@ -79,7 +79,7 @@ const routeConfig = [
             { path: 'team', component: Team },
             { path: 'sign', component: Sign },
             { path: 'team-admin/:id', component: TeamAdmin },
-            { path: 'person/:id', component: Person },
+            { path: 'person', component: Person },
             { path: 'discuss/:id', component: Discuss },
             { path: 'discuss/topic/:id', component: Topic },
             { path: 'timeline', component: Timeline },

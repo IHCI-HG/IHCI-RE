@@ -61,7 +61,7 @@ export default class Sign extends React.Component{
         })
     }
 
-    signHandle = () => {
+    signHandle = async () => {
         // todo 检验账号密码是否可用
         const result = await api('/api/signUp', {
             method: 'POST',
@@ -72,6 +72,12 @@ export default class Sign extends React.Component{
                 }
             }
         })
+
+        console.log(result);
+
+        if(result.state.code === 0) {
+            location.href = '/person'
+        }
     }
 
     
