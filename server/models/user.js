@@ -37,12 +37,13 @@ const userSchema = new mongoose.Schema({
 })
 
 userSchema.statics = {
-    createUser: async function(username, password) {
+    createUser: async function(username, password, userInfo = {}) {
         const result = await this.findOne({username: username}).exec()
         if(result) {
             return null
         } else {
             return this.create({
+                ...userInfo,
                 username: username,
                 password: crypto.createHmac('sha1', conf.salt).update(password).digest('hex'),
             })

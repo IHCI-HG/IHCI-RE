@@ -41,6 +41,7 @@ const signUp = async (req, res, next) => {
     const result = await UserDB.createUser(
         userInfo.username,
         userInfo.password,
+        userInfo
     )
 
     if(!result) {
