@@ -14,6 +14,7 @@ import Discuss from './discuss'
 import Topic from './topic'
 import Timeline from './timeline'  
 import Member from './member'  
+import Sign from './sign'
 
 
 class App extends React.Component{
@@ -76,6 +77,7 @@ const routeConfig = [
         childRoutes: [
             { path: 'test', component: Test },
             { path: 'team', component: Team },
+            { path: 'sign', component: Sign },
             { path: 'team-admin/:id', component: TeamAdmin },
             { path: 'person/:id', component: Person },
             { path: 'discuss/:id', component: Discuss },
