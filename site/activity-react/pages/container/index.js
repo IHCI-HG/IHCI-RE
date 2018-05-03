@@ -2,6 +2,8 @@ import * as React from 'react';
 import { render } from 'react-dom';
 import { Router, Route, Link, browserHistory } from 'react-router'
 
+import api from '../../utils/api';
+
 import routerConf from './router'
 import './style.scss'
 import '../../commen/style.scss'
@@ -19,10 +21,22 @@ import Sign from './sign'
 
 class App extends React.Component{
     state = {
-        activeTag : ''
+        activeTag : '',
+        headImg: '',
     }
     componentDidMount = async() => {
         this.activeTagHandle(this.props.location.pathname)
+
+        this.setHeadImg()
+    }
+
+    setHeadImg = async () => {
+        const result = await api('/api/getMyInfo')
+        if(result.data && result.data.personInfo && result.data.personInfo.headImg) {
+            this.setState({
+                headImg: result.data.personInfo.headImg
+            })
+        }
     }
     routerHandle = (toUrl) => {
         this.activeTagHandle(toUrl)
@@ -59,7 +73,7 @@ class App extends React.Component{
                     </div>
                     <div className="person">
                         <Link className='nav-item' activeClassName='nav-item active' to="/person">
-                            <div className="head-img"></div>
+                            <img className="head-img" src={this.state.headImg} />
                         </Link>
                     </div>
                 </div>

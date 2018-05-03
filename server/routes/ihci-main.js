@@ -102,10 +102,13 @@ const wxAuthCodeHandle = async (req, res, next) => {
 const personSeting = async (req, res, next) => { 
     const userId = req.rSession.userId
     const userObj = await UserDB.findById(userId)
-    userObj.password = undefined
-    userObj.personInfo = userObj.personInfo || {}
+
+    if(userObj) {
+        userObj.password = undefined
+    }
+
     req.INIT_DATA = {
-        userObj: userObj
+        userObj
     }
     next()
 }

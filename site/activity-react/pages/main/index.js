@@ -4,21 +4,37 @@ import { autobind } from 'core-decorators';
 
 import Page from '../../components/page';
 
-import api, { IApiOptions, IApiResult } from '../../utils/api';
+import api, { authApi } from '../../utils/api';
 import * as ui from '../../utils/ui';
 
 import './style.scss'
 import { loading } from '../../utils/ui';
+
+import WxLoginDialog from '../../components/wx-login-dialog'
 
 export default class MainPage extends React.Component {
 
     state = {
         //loginBlock: signUp || login
         loginBlock: "login",
+
+        username: '',
+        password: '',
+
+        createUsername: '',
+        createPassword: '',
+
+
+        showWxDialog: false,
     }
     data = {
 
     }
+
+    componentDidMount = () => {
+        this.data = window.INIT_DATA
+    }
+
     setToSignUpHandle = () =>  {
         this.setState({ 
             loginBlock: 'signUp'
@@ -30,12 +46,78 @@ export default class MainPage extends React.Component {
         });
     } 
 
-    componentDidMount = () => {
-        this.data = window.INIT_DATA
+    usernameHandle = (e) => {
+        this.setState({
+            username: e.target.value
+        })
     }
+    passwordHandle = (e) => {
+        this.setState({
+            password: e.target.value
+        })
+    }
+
+    createUsernameHandle = (e) => {
+        this.setState({
+            createUsername: e.target.value
+        })
+    }
+    createPasswordHandle = (e) => {
+        this.setState({
+            createPassword: e.target.value
+        })
+    }
+
+    loginHandle = async () => {
+        const result = await authApi(this.state.username, this.state.password)
+        if(result.state.code === 0) {
+            window.toast("登录成功")
+            window.location.href = '/team'
+        } else {
+            window.toast(result.state.msg || "登录失败")
+        }
+    }
+
+    signHandle = async () => {
+        // todo 检验账号密码是否可用
+        const result = await api('/api/signUp', {
+            method: 'POST',
+            body: {
+                userInfo: {
+                    username: this.state.createUsername,
+                    password: this.state.createPassword,
+                }
+            }
+        })
+
+        if(result.state.code === 0) {
+            location.href = '/person'
+        }
+    }
+
+    showWxDialogHandle = () => {
+        this.setState({
+            showWxDialog: true
+        })
+    }
+
+    hideWxDialogHandle = () => {
+        this.setState({
+            showWxDialog: false
+        })
+    }
+
+    
+
+
 
     render () {
         return <Page title='IHCI' className="main-page">
+
+            {
+                this.state.showWxDialog && <WxLoginDialog state="auth" closeHandle={this.hideWxDialogHandle}/>
+            }
+
             <div className="nav">
                 <div className="max-w-con nav-con">
                     <div className="logo">IHCI(换成图)</div>
@@ -59,27 +141,28 @@ export default class MainPage extends React.Component {
                         {
                             this.state.loginBlock == "signUp" ?
                                 <div className='auth-form'>
-                                    <div className="auth-desc">Choose a username</div>
-                                    <input className="auth-input"></input>
-                                    <div className="auth-desc">Choose a password</div>
-                                    <input className="auth-input"></input>
 
-                                    <div className="submit-btn">CREATE ACCOUNT</div>
+                                    <div className="auth-desc">Your username</div>
+                                    <input className="auth-input" value={this.state.createUsername} onChange={this.createUsernameHandle}></input>
+
+                                    <div className="auth-desc">Your password</div>
+                                    <input className="auth-input" type="password" value={this.state.createPassword} onChange={this.createPasswordHandle}></input>
+
+                                    <div className="submit-btn" onClick={this.signHandle}>CREATE ACCOUNT</div>
                                 </div> 
                             : ""
                         }
                         {
                             this.state.loginBlock == "login" ?
                                 <div className='auth-form'>
-                                    <div className="auth-desc">Your email or username</div>
-                                    <input className="auth-input"></input>
+                                <div className="auth-desc">Choose a username</div>
+                                <input className="auth-input" value={this.state.username} onChange={this.usernameHandle}></input>
+                                <div className="auth-desc">Choose a password</div>
+                                <input className="auth-input" type="password" value={this.state.password} onChange={this.passwordHandle}></input>
 
-                                    <div className="auth-desc">Your password</div>
-                                    <input className="auth-input"></input>
+                                    <div className="submit-btn" onClick={this.loginHandle}>LOG IN</div>
 
-                                    <div className="submit-btn">LOG IN</div>
-                                    
-                                    <div className="submit-btn">微信登录</div>
+                                    <div className="submit-btn" onClick={this.showWxDialogHandle}>微信登录</div>
                                 </div> 
                             : ""
                         }
@@ -88,8 +171,8 @@ export default class MainPage extends React.Component {
             </div>
             <div className="video">
                 <div className="video-des">这是一些关于视频的描述balabala这是一些关于视频的描述balabala这是一些关于视频的描述balabala这是一些关于视频的描述balabala</div>
-                <div class="video-wrap">
-                    <iframe frameborder="0" width="450" height="254" src="https://v.qq.com/iframe/player.html?vid=f0564fwe5va&tiny=0&auto=0" allowfullscreen></iframe>
+                <div className="video-wrap">
+                    { /* <iframe frameborder="0" width="450" height="254" src="https://v.qq.com/iframe/player.html?vid=f0564fwe5va&tiny=0&auto=0" allowfullscreen></iframe> */}
                 </div>
             </div>
             <div className="stories">

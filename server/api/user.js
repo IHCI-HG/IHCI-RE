@@ -91,6 +91,22 @@ const login = async (req, res, next) => {
     }
 }
 
+const getMyInfo = async (req, res, next) => {
+    const userID = req.rSession.userId 
+    const result = await UserDB.findByUserId(userID)
+    if(result) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 0 },
+            data: result
+        });
+    } else {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1 , msg: '未知错误'},
+            data: {}
+        });
+    }
+}
+
 const logout = async (req, res, next) => {
     req.rSession.userId = null
 
@@ -166,10 +182,10 @@ const wxLogin = async (req, res, next) => {
             if(result.unionid) {
                 const userObj = await UserDB.findByUnionId(result.unionid)
                 if(userObj) {
-                    req.rSession.userId = result._id
+                    req.rSession.userId = userObj._id
                     res.redirect('/team');
                 } else {
-                    res.redirect('/sign-up');
+                    res.redirect('/sign');
                 }
             } else {
                 // 由于某些原因授权失败
@@ -225,6 +241,8 @@ const test = async (req, res, next) => {
 module.exports = [
     ['GET', '/api/base/sys-time', sysTime],
     ['GET', '/api/test', test],
+    
+    ['GET', '/api/getMyInfo',apiAuth, getMyInfo],
 
     ['POST', '/api/login', login],
     ['GET', '/wxLogin', wxLogin],

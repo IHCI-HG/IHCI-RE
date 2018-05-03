@@ -10,15 +10,20 @@ export default class Team extends React.Component{
         this.personInfo = {}
         console.log(INIT_DATA);
 
-        this.setState({
-            userObj: INIT_DATA.userObj,
-            personInfo: INIT_DATA.userObj.personInfo || {
-                name: '',
-                mail: '',
-                phone: '',
-                headImg: INIT_DATA.userObj && INIT_DATA.userObj.wxUserInfo && INIT_DATA.userObj.wxUserInfo.headimgurl || '',
-            }
-        })
+        if(INIT_DATA.userObj) {
+            this.setState({
+                userObj: INIT_DATA.userObj,
+                personInfo: INIT_DATA.userObj.personInfo || {
+                    name: '',
+                    mail: '',
+                    phone: '',
+                    headImg: INIT_DATA.userObj && INIT_DATA.userObj.wxUserInfo && INIT_DATA.userObj.wxUserInfo.headimgurl || '',
+                }
+            })
+        } else {
+            // todo 可以优化为客户端渲染
+            window.location.reload()
+        }
 
         if(INIT_DATA.userObj.wxUserInfo) {
             this.setState({

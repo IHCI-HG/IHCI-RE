@@ -85,7 +85,9 @@ export default class Team extends React.Component{
                 managed: false,
                 marked: true,
             },
-        ]
+        ],
+
+        
     }
     render() {
         return (
