@@ -305,11 +305,70 @@ const markTeam = async (req, res, next) => {
 
 }
 
+const kikMember = async (req, res, next) => {
+    const teamId = req.body.teamId
+    const tarMemberId = req.body.memberId
+    const userId = req.rSession.userId 
+
+
+    if(!tarMemberId || !teamId) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: "参数不全" },
+            data: {}
+        });
+        return
+    }
+
+    try {
+        let teamObj = await teamDB.findByTeamId(teamId)
+        if(!teamObj) {
+            resProcessor.jsonp(req, res, {
+                state: { code: 1, msg: '团队不存在'},
+                data: {}
+            });
+            return
+        }
+
+        let power = false
+        teamObj.memberList.map((item) => {
+            if(item.userId == userId && (item.role == 'creator' || item.role == 'admin')) {
+                power = true
+            }
+        })
+        if(!power) {
+            resProcessor.jsonp(req, res, {
+                state: { code: 1, msg: '没有权限'},
+                data: {}
+            });
+            return
+        }
+
+
+        const result = await teamDB.delMember(teamId, tarMemberId)
+        resProcessor.jsonp(req, res, {
+            state: { code: 0, msg: '设置成功' },
+            data: {
+                result: result
+            }
+        });
+
+    } catch (error) {
+        console.error(error);
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: '操作失败' },
+            data: {}
+        });
+    }
+
+}
+
+
 module.exports = [
     ['GET', '/api/test', test],
     ['POST', '/api/team/create', apiAuth, creatTeam],
     ['POST', '/api/team/modifyTeamInfo', apiAuth, modifyTeamInfo],
     ['POST', '/api/team/join', apiAuth, joinTeam],
     ['POST', '/api/team/roleModify', apiAuth, modifyMemberRole],
-    ['POST', '/api/team/markTeam', apiAuth, modifyMemberRole],
+    ['POST', '/api/team/markTeam', apiAuth, markTeam],
+    ['POST', '/api/team/kikMember', apiAuth, kikMember],
 ];
