@@ -97,8 +97,6 @@ const wxAuthCodeHandle = async (req, res, next) => {
     next()
 }
 
-
-
 const personSeting = async (req, res, next) => { 
     const userId = req.rSession.userId
     const userObj = await UserDB.findById(userId)
@@ -125,6 +123,7 @@ module.exports = [
 
     ['GET', '/team-edit/:id', clientParams(), doNoThing, pageHandle() ],
     ['GET', '/team-admin/:id', clientParams(), doNoThing, pageHandle() ],
+    ['GET', '/team-create', clientParams(), doNoThing, pageHandle() ],
     ['GET', '/person', clientParams(), personSeting, pageHandle() ],
     ['GET', '/discuss/:id', clientParams(), doNoThing, pageHandle() ],
     ['GET', '/discuss/topic/:id', clientParams(), doNoThing, pageHandle() ],

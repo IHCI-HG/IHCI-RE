@@ -92,7 +92,7 @@ export default class Team extends React.Component{
     render() {
         return (
             <Page title="团队 - IHCI" className="team-page">
-                <div className="carete" onClick={() => {this.locationTo('/team-admin/111')}}> 创建团队 </div>
+                <div className="carete" onClick={() => {this.locationTo('/team-create')}}> 创建团队 </div>
 
                 <div className="head" onClick={this.starHandle}>星标团队</div>
                 <div className="team-list">

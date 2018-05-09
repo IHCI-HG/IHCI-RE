@@ -359,12 +359,43 @@ const kikMember = async (req, res, next) => {
             data: {}
         });
     }
+}
 
+const teamInfo = async (req, res, next) => {
+    const teamId = req.body.teamId
+    if(!teamId) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: "参数不全" },
+            data: {}
+        });
+        return
+    }
+    try {
+        let teamObj = await teamDB.findByTeamId(teamId)
+        if(!teamObj) {
+            resProcessor.jsonp(req, res, {
+                state: { code: 1, msg: '团队不存在'},
+                data: {}
+            });
+            return
+        }
+        resProcessor.jsonp(req, res, {
+            state: { code: 0, msg: '请求成功' },
+            data: teamObj
+        });
+    } catch (error) {
+        console.error(error);
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: '操作失败' },
+            data: {}
+        });
+    }
 }
 
 
 module.exports = [
     ['GET', '/api/test', test],
+    ['POST', '/api/team/info', apiAuth, teamInfo],
     ['POST', '/api/team/create', apiAuth, creatTeam],
     ['POST', '/api/team/modifyTeamInfo', apiAuth, modifyTeamInfo],
     ['POST', '/api/team/join', apiAuth, joinTeam],

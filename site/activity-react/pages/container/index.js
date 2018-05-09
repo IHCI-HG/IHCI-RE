@@ -11,13 +11,13 @@ import '../../commen/style.scss'
 import Team from './team'
 import Test from './test'
 import TeamAdmin from './team-admin'
+import TeamCreate from './team-create'
 import Person from './person'
 import Discuss from './discuss'
 import Topic from './topic'
 import Timeline from './timeline'  
 import Member from './member'  
 import Sign from './sign'
-
 
 class App extends React.Component{
     state = {
@@ -93,6 +93,7 @@ const routeConfig = [
             { path: 'team', component: Team },
             { path: 'sign', component: Sign },
             { path: 'team-admin/:id', component: TeamAdmin },
+            { path: 'team-create', component: TeamCreate },
             { path: 'person', component: Person },
             { path: 'discuss/:id', component: Discuss },
             { path: 'discuss/topic/:id', component: Topic },
