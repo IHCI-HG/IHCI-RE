@@ -51,7 +51,7 @@ const creatTeam = async (req, res, next) => {
     try {
         let teamObj = await teamDB.createTeam(teamInfo.name, teamInfo.teamImg, teamInfo.teamDes)
         await teamDB.addMember(teamObj._id, userId, 'creator')
-        await userDB.addTeam(userId, teamObj._id, 'creator')
+        await userDB.addTeam(userId, teamObj._id.toString(), 'creator')
         teamObj = await teamDB.findByTeamId(teamObj._id)
          
         resProcessor.jsonp(req, res, {
@@ -248,7 +248,7 @@ const markTeam = async (req, res, next) => {
     const markState = req.body.markState
     const userId = req.rSession.userId 
 
-    if(!teamId || !markState) {
+    if(!teamId || markState == undefined) {
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: "参数不全" },
             data: {}
@@ -274,21 +274,22 @@ const markTeam = async (req, res, next) => {
             return
         }
 
-        let isInTeam = false
-        userObj.teamList.map((item) => {
-            if(item.teamId === teamId) {
-                isInTeam = true
-            }
-        })
-        if(!isInTeam) {
-            resProcessor.jsonp(req, res, {
-                state: { code: 1, msg: '你不在该团队中'},
-                data: {}
-            });
-            return
-        }
+        // let isInTeam = false
+        // userObj.teamList.map((item) => {
+        //     if(item.teamId == teamId) {
+        //         isInTeam = true
+        //     }
+        // })
+        // if(!isInTeam) {
+        //     resProcessor.jsonp(req, res, {
+        //         state: { code: 1, msg: '你不在该团队中'},
+        //         data: {}
+        //     });
+        //     return
+        // }
 
-        const result = await teamDB.markTeam(userId, teamId, markState)
+        const result = await userDB.markTeam(userId, teamId, markState)
+
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '设置成功' },
             data: result
@@ -392,12 +393,44 @@ const teamInfo = async (req, res, next) => {
     }
 }
 
+const teamInfoList = async (req, res, next) => {
+    const teamIdList = req.body.teamIdList
+
+    if(!teamIdList || !teamIdList.length) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: "参数不全" },
+            data: {}
+        });
+        return
+    }
+
+    try {
+        const promiseList = []
+        teamIdList.map((item) => {
+            promiseList.push(teamDB.findByTeamId(item))
+        })
+        const result = await Promise.all(promiseList)
+        resProcessor.jsonp(req, res, {
+            state: { code: 0, msg: '请求成功' },
+            data: result
+        });
+    } catch (error) {
+        console.error(error);
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: '操作失败' },
+            data: {}
+        });
+    }
+}
+
 
 
 
 module.exports = [
     ['GET', '/api/test', test],
     ['POST', '/api/team/info', apiAuth, teamInfo],
+    ['POST', '/api/team/infoList', apiAuth, teamInfoList],
+
     ['POST', '/api/team/create', apiAuth, creatTeam],
     ['POST', '/api/team/modifyTeamInfo', apiAuth, modifyTeamInfo],
     ['POST', '/api/team/join', apiAuth, joinTeam],

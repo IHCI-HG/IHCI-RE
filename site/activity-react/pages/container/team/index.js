@@ -7,14 +7,14 @@ import Page from '../../../components/page'
 class TeamItem extends React.PureComponent{
     render() {
         return <div className="team-item">
-            <div className="left" onClick={() => {this.props.locationTo('/discuss/' + this.props.id)}}>
+            <div className="left" onClick={() => {this.props.locationTo('/discuss/' + this.props._id)}}>
                 <img className="bg-img" src={this.props.teamImg}></img>
                 <div className="img-con"></div>
                 <div className="name">{this.props.name}</div>
             </div>
             <div className="right">
-                <div className={this.props.marked ? "iconfont icon-collection_fill act" : "iconfont icon-collection"} onClick={() => {this.props.starHandle(this.props.id)}}></div>
-                {this.props.managed && <div className="iconfont icon-setup" onClick={() => {this.props.locationTo('/team-admin/' + this.props.id)}}></div>}
+                <div className={this.props.marked ? "iconfont icon-collection_fill act" : "iconfont icon-collection"} onClick={() => {this.props.starHandle(this.props._id)}}></div>
+                {this.props.managed && <div className="iconfont icon-setup" onClick={() => {this.props.locationTo('/team-admin/' + this.props._id)}}></div>}
             </div>
         </div>
     }
@@ -22,18 +22,66 @@ class TeamItem extends React.PureComponent{
 
 export default class Team extends React.Component{
     componentDidMount = async() => {
-        console.log(INIT_DATA);
+        this.initTeamList()
     }
 
-    starHandle = async (id) => {
-        const result = await api('/api/base/sys-time', {
+    initTeamList = async () => {
+        const result = await api('/api/getMyInfo', {
             method: 'GET',
             body: {}
         })
-        if(result) {
-            const teamList = this.state.teamList
+        const teamList = result.data.teamList
+        const teamIdList = []
+        teamList.map((item) => {
+            teamIdList.push(item.teamId)
+        })
+
+        const listResult = await api('/api/team/infoList', {
+            method: 'POST',
+            body: {
+                teamIdList: teamIdList
+            }
+        })
+        const teamInfoList = listResult.data
+
+        console.log(teamInfoList);
+
+        teamList.map((item, idx) => {
+            teamList[idx] = {
+                ...item,
+                ...teamInfoList[idx],
+                managed: (item.role == 'creator' || item.role == 'admin')
+            }
+        })
+
+        this.setState({
+            teamList: teamList
+        })
+    }
+
+    starHandle = async (_id) => {
+
+        const teamList = this.state.teamList
+        let curMarkState = false
+        teamList.map((item) => {
+            if(item._id == _id) {
+                curMarkState = item.marked
+            }
+        })
+
+        const result = await api('/api/team/markTeam', {
+            method: 'POST',
+            body: {
+                teamId: _id,
+                markState: !curMarkState
+            }
+        })
+
+        if(result.state.code != 0) {
+            window.toast(result.state.msg)
+        } else {
             teamList.map((item) => {
-                if(item.id == id) {
+                if(item._id == _id) {
                     item.marked = !item.marked
                 }
             })
@@ -50,44 +98,14 @@ export default class Team extends React.Component{
 
     state = {
         teamList: [
-            {
-                id: 1,
-                name: '青少年编程项目组',
-                teamImg: 'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=471192784,4234473862&fm=27&gp=0.jpg',
-                managed: true,
-                marked: true,
-            },
-            {
-                id: 2,
-                name: 'IHCI平台搭建项目组',
-                teamImg: 'https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1938658724,934922317&fm=27&gp=0.jpg',
-                managed: true,
-                marked: false,
-            },
-            {
-                id: 3,
-                name: '智能儿童床项目组',
-                teamImg: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1782589578,2528203182&fm=27&gp=0.jpg',
-                managed: true,
-                marked: false,
-            },
-            {
-                id: 4,
-                name: '2018毕业设计项目组',
-                teamImg: 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3820981196,3985389795&fm=27&gp=0.jpg',
-                managed: false,
-                marked: false,
-            },
-            {
-                id: 5,
-                name: '人工智能&深度学习学习项目组',
-                teamImg: 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1764029602,681735033&fm=27&gp=0.jpg',
-                managed: false,
-                marked: true,
-            },
+            // {
+            //     _id: 1,
+            //     name: '青少年编程项目组',
+            //     teamImg: 'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=471192784,4234473862&fm=27&gp=0.jpg',
+            //     managed: true,
+            //     marked: true,
+            // },
         ],
-
-        
     }
     render() {
         return (
@@ -99,7 +117,7 @@ export default class Team extends React.Component{
                     {   
                         this.state.teamList.map((item) => {
                             if(item.marked == true) {
-                                return <TeamItem {...item} locationTo={this.locationTo} starHandle={this.starHandle}/>
+                                return <TeamItem key={'mark-team' + item._id} {...item} locationTo={this.locationTo} starHandle={this.starHandle}/>
                             }
                         })
                     }
@@ -110,7 +128,7 @@ export default class Team extends React.Component{
                     {   
                         this.state.teamList.map((item) => {
                             if(item.managed == true) {
-                                return <TeamItem {...item} locationTo={this.locationTo} starHandle={this.starHandle}/>
+                                return <TeamItem key={'manage-team' + item._id} {...item} locationTo={this.locationTo} starHandle={this.starHandle}/>
                             }
                         })
                     }
@@ -120,7 +138,7 @@ export default class Team extends React.Component{
                 <div className="team-list">
                     {   
                         this.state.teamList.map((item) => {
-                            return <TeamItem {...item} locationTo={this.locationTo} starHandle={this.starHandle}/>
+                            return <TeamItem key={'join-team' + item._id} {...item} locationTo={this.locationTo} starHandle={this.starHandle}/>
                         })
                     }
                 </div>
