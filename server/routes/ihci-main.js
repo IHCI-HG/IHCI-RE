@@ -123,6 +123,7 @@ module.exports = [
 
     ['GET', '/team-edit/:id', clientParams(), doNoThing, pageHandle() ],
     ['GET', '/team-admin/:id', clientParams(), doNoThing, pageHandle() ],
+    ['GET', '/team-join/:id', clientParams(), doNoThing, pageHandle() ],
     ['GET', '/team-create', clientParams(), doNoThing, pageHandle() ],
     ['GET', '/person', clientParams(), personSeting, pageHandle() ],
     ['GET', '/discuss/:id', clientParams(), doNoThing, pageHandle() ],

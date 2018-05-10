@@ -133,7 +133,6 @@ export default class TeamAdmin extends React.Component{
                         </div>
                     </div>
                 } 
-                
 
                 <div className="team-admin-con page-wrap">
                     <div className="admin-title-bg">团队设置</div>
