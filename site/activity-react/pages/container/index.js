@@ -11,6 +11,7 @@ import '../../commen/style.scss'
 import Team from './team'
 import Test from './test'
 import TeamAdmin from './team-admin'
+import TeamJoin from './team-join'
 import TeamCreate from './team-create'
 import Person from './person'
 import Discuss from './discuss'
@@ -91,8 +92,9 @@ const routeConfig = [
         childRoutes: [
             { path: 'test', component: Test },
             { path: 'team', component: Team },
-            { path: 'sign', component: Sign },
             { path: 'team-admin/:id', component: TeamAdmin },
+            { path: 'team-join/:id', component: TeamJoin },
+            { path: 'sign', component: Sign },
             { path: 'team-create', component: TeamCreate },
             { path: 'person', component: Person },
             { path: 'discuss/:id', component: Discuss },

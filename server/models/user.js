@@ -63,6 +63,11 @@ userSchema.statics = {
         const result = await this.findById(userId)
         return result
     },
+    baseInfoById: async function(userId) {
+        const result = await this.findById(userId)
+        result.personInfo._id = result._id
+        return result.personInfo
+    },
     findByUnionId: async function(unionid) {
         const result = await this.findOne({unionid: unionid}).exec()
         return result

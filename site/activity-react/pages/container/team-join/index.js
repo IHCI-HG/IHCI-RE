@@ -5,75 +5,50 @@ import Page from '../../../components/page'
 
 export default class TeamAdmin extends React.Component{
     componentDidMount = async() => {
-        
+        if(INIT_DATA.login) {
+            this.setState({
+                login: true
+            })
+        }
+        if(INIT_DATA.teamObj) {
+            this.setState({
+                teamObj: INIT_DATA.teamObj
+            })
+        }
+
     }
 
     state = {
-        name: '',
-        teamImg: 'https://developers.google.com/machine-learning/crash-course/images/landing-icon-sliders.svg',
-        desc: '',
-       
+        login: false,
+        teamObj: {},
     }
 
-    teamNameInputHandle = (e) => {
-        this.setState({
-            name: e.target.value
-        })
-    }
-    teamImgChangeHandle = (e) => {
-        this.setState({
-            teamImg: e.target.value
-        })
-    }
-    teamDescChangeHandle = (e) => {
-        this.setState({
-            desc: e.target.value
-        })
-    }
-
-    createBtnHandle = async () => {
-        const result = await api('/api/team/create', {
+    joinBtnHandle = async () => {
+        const result = await api('/api/team/join', {
             method: 'POST',
             body: {
-                teamInfo: {
-                    name: this.state.name,
-                    teamImg: this.state.teamImg,
-                    teamDes: this.state.desc
-                }
+                teamId: this.state.teamObj._id
             }
         })
+        window.toast(result.state.msg)
+        
+        setTimeout(() => {
+            if(result.state.code == 0) {
+                location.href = "/discuss/" + this.state.teamObj._id
+            }
+        }, 400);
 
-        if(result.state.code === 0) {
-            console.log(result);
-            window.toast("创建成功")
-            location.href = '/team-admin/' + result.data.teamObj._id
-        }
-    } 
-
+    }
 
     render() {
         return (
-            <Page title={"创建团队"} className="team-admin-page">
-
-                <div className="team-admin-con page-wrap">
-                    <div className="admin-title-bg">创建团队</div>
-
-                    <div className="admin-title-sm">团队名称</div>
-                    <input type="text" value={this.state.name} className="admin-input" onChange={this.teamNameInputHandle} />
-
-                    <div className="admin-title-sm">团队图片</div>
-                    <div className="input-warp">
-                        <div className="input-help">请输入图片URL，建议图片比例为16：9</div>
-                        <input type="text" value={this.state.teamImg} className="admin-input" onChange={this.teamImgChangeHandle} />
-                    </div>
-                    <img className="img-preview" src={this.state.teamImg}></img>
-
-                    <div className="admin-title-sm">团队说明</div>
-                    <textarea type="text" value={this.state.desc} className="admin-tra" onChange={this.teamDescChangeHandle} />
-
-                    <div className="sava-btn" onClick={this.createBtnHandle}>创建</div>
-
-                </div>
+            <Page title={"加入团队"} className="join-team">
+                {
+                    this.state.login ? 
+                        <div className='btn' onClick={this.joinBtnHandle}> 点击加入团队{this.state.teamObj.name} </div> 
+                    : 
+                        <div> 请先注册或登录 </div>
+                }
 
             </Page>
         )

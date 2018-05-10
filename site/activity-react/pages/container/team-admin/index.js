@@ -21,6 +21,31 @@ export default class TeamAdmin extends React.Component{
             name: teamObj.name,
             teamImg: teamObj.teamImg,
             desc: teamObj.teamDes,
+
+        })
+
+        const memberList = []
+        const memberIDList = []
+
+        result.data.memberList.map((item) => {
+            memberIDList.push(item.userId)
+        })
+
+        const memberResult = await api('/api/userInfoList', {
+            method: 'POST',
+            body: { userList: memberIDList }
+        })
+
+        memberResult.data.map((item, idx) => {
+            memberList.push({
+                ...item,
+                ...result.data.memberList[idx],
+                showAdmin: false
+            })
+        })
+
+        this.setState({
+            memberList: memberList
         })
     }
 
@@ -29,44 +54,7 @@ export default class TeamAdmin extends React.Component{
         teamImg: '',
         desc: '',
 
-        memberList: [
-            {
-                id: 1,
-                name: '阿鲁巴大将军',
-                headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                role: 'creator',
-                phone: '17728282828',
-                mail: 'ada@qq.com',
-                showAdmin: false,
-            },
-            {
-                id: 2,
-                name: '阿鲁巴上校',
-                headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                role: 'admin',
-                phone: '17728282828',
-                mail: 'ada@qq.com',
-                showAdmin: false,
-            },
-            {
-                id: 3,
-                name: '阿鲁巴上尉',
-                headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                role: 'admin',
-                phone: '17728282828',
-                mail: 'ada@qq.com',
-                showAdmin: false,
-            },
-            {
-                id: 4,
-                name: '阿鲁巴上士',
-                headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                role: 'member',
-                phone: '17728282828',
-                mail: 'ada@qq.com',
-                showAdmin: false,
-            },
-        ],
+        memberList: [],
         showAddMemberDialog: false
     }
 
@@ -89,7 +77,7 @@ export default class TeamAdmin extends React.Component{
     showAdminHandle = (id) => {
         const memberList = this.state.memberList
         memberList.map((item) => {
-            if(item.id == id) {
+            if(item._id == id) {
                 item.showAdmin = !item.showAdmin
             }
         })
@@ -102,7 +90,7 @@ export default class TeamAdmin extends React.Component{
         console.log(role);
         const memberList = this.state.memberList
         memberList.map((item) => {
-            if(item.id == id) {
+            if(item._id == id) {
                 item.role = role
             }
         })
@@ -110,6 +98,38 @@ export default class TeamAdmin extends React.Component{
             memberList: memberList
         })
     }
+
+    kikMember = async (id) => {
+        const memberResult = await api('/api/team/kikMember', {
+            method: 'POST',
+            body: { memberId: id, teamId: this.teamId }
+        })
+
+        window.toast(memberResult.state.msg)
+        if(memberResult.state.code == 0) {
+            location.href = location.href
+        }
+    }
+
+    saveBtnHandle = async () => {
+        const result = await api('/api/team/modifyTeamInfo', {
+            method: 'POST',
+            body: {
+                teamId: this.teamId,
+                teamInfo: {
+                    name: this.state.name,
+                    teamImg: this.state.teamImg,
+                    teamDes: this.state.desc
+                }
+            }
+        })
+
+        if(result.state.code === 0) {
+            console.log(result);
+            window.toast("设置成功")
+            location.href = '/discuss/' + this.teamId
+        }
+    } 
 
     showAddMemberDialogHandle = () => {
         this.setState({showAddMemberDialog: true})
@@ -129,7 +149,7 @@ export default class TeamAdmin extends React.Component{
                         <div className="add-member-dialog">
                             <div className="close">X</div>
                             <div className="des">将下面的公共邀请链接通发送给需要邀请的人</div>
-                            <input type="text" value={`${location.host}/join-team/${this.teamId}`} className="invite-input" />
+                            <input type="text" value={`${location.host}/team-join/${this.teamId}`} className="invite-input" />
                         </div>
                     </div>
                 } 
@@ -150,7 +170,7 @@ export default class TeamAdmin extends React.Component{
                     <div className="admin-title-sm">团队说明</div>
                     <textarea type="text" value={this.state.desc} className="admin-tra" onChange={this.teamDescChangeHandle} />
 
-                    <div className="sava-btn">保存设置</div>
+                    <div className="sava-btn" onClick={this.saveBtnHandle}>保存设置</div>
 
                     <div className="admin-title-bg flex"> <span>团队成员管理</span> <span className='add' onClick={this.showAddMemberDialogHandle}>添加成员</span> </div>
 
@@ -158,17 +178,17 @@ export default class TeamAdmin extends React.Component{
                         {
                             this.state.memberList.map((item) => {
                                 return(
-                                    <div className="member-item" key={'member-item-' + item.id}>
+                                    <div className="member-item" key={'member-item-' + item._id}>
                                         <img src={item.headImg} alt="" className="head-img"/>
                                         <span className="name">{item.name}</span>
                                         <span className="phone">{item.phone}</span>
                                         <span className="mail">{item.mail}</span>
-                                        <span className="role" onClick={this.showAdminHandle.bind(this, item.id)}>{item.role} {item.showAdmin ? '↑' : '↓'} </span>
+                                        <span className="role" onClick={this.showAdminHandle.bind(this, item._id)}>{item.role} {item.showAdmin ? '↑' : '↓'} </span>
                                         {
                                             item.showAdmin && <div className="admin">
-                                                <div className="admin-item" onClick={this.setUserRoleHandle.bind(this, item.id, 'admin')}>管理员</div>
-                                                <div className="admin-item" onClick={this.setUserRoleHandle.bind(this, item.id, 'member')}>成员</div>
-                                                <div className="admin-item" onClick={this.setUserRoleHandle.bind(this, item.id, 'member')}>踢出队伍</div>
+                                                {/* <div className="admin-item" onClick={this.setUserRoleHandle.bind(this, item._id, 'admin')}>管理员</div>*}
+                                                <div className="admin-item" onClick={this.setUserRoleHandle.bind(this, item._id, 'member')}>成员</div>*/}
+                                                <div className="admin-item" onClick={this.kikMember.bind(this, item._id)}>踢出队伍</div>
                                             </div>
                                         }
                                     </div>

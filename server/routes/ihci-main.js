@@ -18,6 +18,7 @@ var mongoose = require('mongoose')
 
 var TestDB = mongoose.model('test')
 var UserDB = mongoose.model('user')
+var TeamDB = mongoose.model('team')
 
 async function address(req, res, next) {
     var filePath = path.resolve(__dirname, '../../public/activity/page/address/full.html'),
@@ -111,6 +112,31 @@ const personSeting = async (req, res, next) => {
     next()
 }
 
+const joinTeam = async (req, res, next) => {
+    const userId = req.rSession.userId
+    const teamId = req.params.teamId
+
+    const teamObj = await TeamDB.findByTeamId(teamId) 
+
+    const initData = {
+        login: false,
+        teamObj: null
+    }
+
+    if(userId) {
+        initData.login = true
+    }
+    if(teamObj) {
+        initData.teamObj = teamObj
+    }
+
+    req.INIT_DATA = initData
+
+    next()
+}
+
+
+
 module.exports = [
     // 主页
     ['GET', '/', clientParams(), mainPage],
@@ -121,9 +147,10 @@ module.exports = [
     ['GET', '/sign', clientParams(), doNoThing, pageHandle() ],
     ['GET', '/test', clientParams(), doNoThing, pageHandle() ],
 
-    ['GET', '/team-edit/:id', clientParams(), doNoThing, pageHandle() ],
-    ['GET', '/team-admin/:id', clientParams(), doNoThing, pageHandle() ],
-    ['GET', '/team-join/:id', clientParams(), doNoThing, pageHandle() ],
+    ['GET', '/team-edit/:teamId', clientParams(), doNoThing, pageHandle() ],
+    ['GET', '/team-admin/:teamId', clientParams(), doNoThing, pageHandle() ],
+    ['GET', '/team-join/:teamId', clientParams(), joinTeam, pageHandle() ],
+
     ['GET', '/team-create', clientParams(), doNoThing, pageHandle() ],
     ['GET', '/person', clientParams(), personSeting, pageHandle() ],
     ['GET', '/discuss/:id', clientParams(), doNoThing, pageHandle() ],

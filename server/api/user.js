@@ -237,12 +237,53 @@ const test = async (req, res, next) => {
 
 }
 
+const userInfoList = async (req, res, next) => {
+
+    const userList = req.body.userList
+    const resultPromiseList = []
+
+    if(!userList || !userList.length) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: "参数有误" },
+            data: {}
+        });
+        return
+    }
+
+    try {
+        userList.map((item) => {
+            resultPromiseList.push(UserDB.baseInfoById(item))
+        })
+        const resultList = await Promise.all(resultPromiseList)
+    
+        if(resultList) {
+            resProcessor.jsonp(req, res, {
+                state: { code: 0 },
+                data: resultList
+            });
+        } else {
+            resProcessor.jsonp(req, res, {
+                state: { code: 1 , msg: '找不到'},
+                data: {}
+            });
+        }
+    } catch (error) {
+        console.log(error);
+        resProcessor.jsonp(req, res, {
+            state: { code: 1 , msg: '有问题的userID'},
+            data: {}
+        });
+    }
+
+}
+
 
 module.exports = [
     ['GET', '/api/base/sys-time', sysTime],
     ['GET', '/api/test', test],
     
     ['GET', '/api/getMyInfo',apiAuth, getMyInfo],
+    ['POST', '/api/userInfoList',apiAuth, userInfoList],
 
     ['POST', '/api/login', login],
     ['GET', '/wxLogin', wxLogin],
