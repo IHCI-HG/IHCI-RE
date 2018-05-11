@@ -22,9 +22,9 @@ class TeamChoseItem extends React.PureComponent{
 class TopicItem extends React.PureComponent{
     render() {
         return(
-            <div className="topic-item" onClick={() => {this.props.locationTo('/discuss/topic/' + this.props.topicId)}}>
-                <img src={this.props.creater.headImg} alt="" className="head-img" />
-                <div className="name">{this.props.creater.name}</div>
+            <div className="topic-item" key={"topic-item-" + this.props._id} onClick={() => {this.props.locationTo('/discuss/topic/' + this.props._id)}}>
+                <img src={this.props.creator.headImg} alt="" className="head-img" />
+                <div className="name">{this.props.creator.name}</div>
                 <div className="main">
                     <div className="topic-title">{this.props.name}</div>
                     <div className="topic-content">{this.props.content}</div>
@@ -39,8 +39,6 @@ export default class Team extends React.Component{
     componentDidMount = async() => {
         this.teamId = this.props.params.id
         this.initTeamInfo()
-
-
     }
 
     locationTo = (url) => {
@@ -83,7 +81,8 @@ export default class Team extends React.Component{
         this.setState({
             teamInfo: teamInfo,
             memberNum: result.data.memberList.length,
-            memberList: memberList
+            memberList: memberList,
+            topicList: result.data.topicList
         })
     }
 
@@ -107,7 +106,7 @@ export default class Team extends React.Component{
         topicList: [
             {
                 topicId: 1,
-                creater: {
+                creator: {
                     id: 1,
                     name: '阿鲁巴大将军',
                     headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
@@ -119,31 +118,7 @@ export default class Team extends React.Component{
                 time: 1515384000000,
             },{
                 topicId: 2,
-                creater: {
-                    id: 1,
-                    name: '阿鲁巴大将军',
-                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                    phone: '17728282828',
-                    mail: 'ada@qq.com',
-                },
-                name: '这是一条讨论的name2',
-                content: 'ssssssssssssssssddddddd',
-                time: 1515384000000,
-            },{
-                topicId: 3,
-                creater: {
-                    id: 1,
-                    name: '阿鲁巴大将军',
-                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                    phone: '17728282828',
-                    mail: 'ada@qq.com',
-                },
-                name: '这是一条讨论的name2',
-                content: 'ssssssssssssssssddddddd',
-                time: 1515384000000,
-            },{
-                topicId: 4,
-                creater: {
+                creator: {
                     id: 1,
                     name: '阿鲁巴大将军',
                     headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
@@ -167,32 +142,48 @@ export default class Team extends React.Component{
     }
 
     createTopicHandle = async () => {
-        const result = await api('/api/base/sys-time', {
-            method: 'GET',
-            body: {}
+        const informList = []
+        this.state.memberList.map((item) => {
+            if(item.chosen) {
+                informList.push(item._id)
+            }
         })
 
-        const topicList = this.state.topicList
-        const time = new Date().getTime()
-        topicList.unshift({
-            topicId: 2,
-            creater: {
-                id: 1,
-                name: '阿鲁巴大将军',
-                headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                phone: '17728282828',
-                mail: 'ada@qq.com',
-            },
-            name: this.state.createTopicName,
-            content: this.state.createTopicContent,
-            time: time,
+        const result = await api('/api/team/createTopic', {
+            method: 'POST',
+            body: {
+                teamId: this.teamId,
+                name: this.state.createTopicName,
+                content: this.state.createTopicContent,
+                informList: informList,
+            }
         })
-        this.setState({
-            topicList: topicList,
-            showCreateTopic: false,
-            createTopicName: '',
-            createTopicContent: '',
-        })
+
+        if(result.state.code == 0) {
+            const topicList = this.state.topicList
+            const time = new Date().getTime()
+            topicList.unshift({
+                topicId: 2,
+                creator: {
+                    id: 1,
+                    name: '阿鲁巴大将军',
+                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
+                    phone: '17728282828',
+                    mail: 'ada@qq.com',
+                },
+                name: this.state.createTopicName,
+                content: this.state.createTopicContent,
+                time: time,
+            })
+            this.setState({
+                topicList: topicList,
+                showCreateTopic: false,
+                createTopicName: '',
+                createTopicContent: '',
+            })
+        } else {
+            window.toast(result.state.msg)
+        }
     }
 
     topicNameInputHandle = (e) => {

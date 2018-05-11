@@ -63,16 +63,16 @@ teamSchema.statics = {
     },
 
     // topic 操作
-    addTopic: async function(teamId, topicId) {
+    addTopic: async function(teamId, topicObj) {
         return this.update(
             {_id: teamId},
-            { $push: { topicList : topicId}}
+            { $push: { topicList : topicObj}}
         ).exec()
     },
     delTopic: async function(teamId, topicId) {
         return this.update(
             {_id: teamId},
-            { $pull: { topicList: topicId}}
+            { $pull: { "topicList._id": topicId}}
         ).exec()
     },
 

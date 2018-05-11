@@ -6,16 +6,14 @@ const discussSchema = new mongoose.Schema({
     create_time: { type: Date, default : Date.now},
     content: String,
     creator: { type: mongoose.Schema.Types.Mixed , required: true }, 
-    // fileList: [mongoose.Schema.Types.Mixed]
+    fileList: [mongoose.Schema.Types.Mixed]
 })
 
 discussSchema.statics = {
-    createTopic: async function(title, content, creatorObj) {
+    createTopic: async function(title, content, creatorObj, teamId) {
         return this.create({
-            title: title, 
             content: content,
-            creator: creator,
-            team: teamId,
+            creator: creatorObj,
             discussList: [],
         })
     },
