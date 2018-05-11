@@ -26,7 +26,6 @@ export default class TeamAdmin extends React.Component{
 
         const memberList = []
         const memberIDList = []
-
         result.data.memberList.map((item) => {
             memberIDList.push(item.userId)
         })

@@ -37,37 +37,72 @@ class TopicItem extends React.PureComponent{
 
 export default class Team extends React.Component{
     componentDidMount = async() => {
-        console.log(INIT_DATA);
-        // this.teamListInit()
+        this.teamId = this.props.params.id
+        this.initTeamInfo()
+
+
     }
 
     locationTo = (url) => {
         this.props.router.push(url)
     }
 
-    // starHandle = async (id) => {
-    //     const result = await api('/api/base/sys-time', {
-    //         method: 'GET',
-    //         body: {}
-    //     })
-    // }
+    initTeamInfo = async () => {
+        const result = await api('/api/team/info', {
+            method: 'POST',
+            body: {
+                teamId: this.teamId
+            }
+        })
+
+        const teamInfo = {}
+        teamInfo._id = result.data._id 
+        teamInfo.name = result.data.name
+        teamInfo.teamImg = result.data.teamImg
+        teamInfo.desc = result.data.teamDes
+
+
+        const memberList = []
+        const memberIDList = []
+        result.data.memberList.map((item) => {
+            memberIDList.push(item.userId)
+        })
+        const memberResult = await api('/api/userInfoList', {
+            method: 'POST',
+            body: { userList: memberIDList }
+        })
+
+        memberResult.data.map((item, idx) => {
+            memberList.push({
+                ...item,
+                ...result.data.memberList[idx],
+                chosen: false,
+            })
+        })
+
+        this.setState({
+            teamInfo: teamInfo,
+            memberNum: result.data.memberList.length,
+            memberList: memberList
+        })
+    }
+
+
 
     state = {
-        showTeamFilter: false,
         showCreateTopic: true,
 
         createTopicName: '',
         createTopicContent: '',
+        memberNum: 0,
 
         teamInfo: {
-            id: 1,
+            _id: 1,
             name: 'IHCI平台搭建项目组',
             teamImg: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1522401625&di=bcc173556f4ce40a5b92ff96402a053b&imgtype=jpg&er=1&src=http%3A%2F%2Fwx3.sinaimg.cn%2Forj360%2F7fa53ff0gy1fc1phl41r6j20hs0hsmxn.jpg',
             desc: '完成IHCI平台搭建',
             managed: true,
-            marked: true,
         },
-
 
         topicList: [
             {
@@ -123,58 +158,12 @@ export default class Team extends React.Component{
 
         memberList: [
             {
-                id: 11,
+                _id: 11,
                 name: '萨乌丁',
-                chosen: false,
-            },
-            {
-                id: 22,
-                name: '安慈',
-                chosen: false,
-            },
-            {
-                id: 33,
-                name: '托马斯',
-                chosen: false,
-            },
-            {
-                id: 44,
-                name: '艾文',
                 chosen: false,
             },
         ],
 
-    }
-
-    teamListInit = () => {
-        const teamList = []
-        this.state.teamList.map((item) => { 
-            item.active = this.props.params.id == item.id
-            teamList.push(item)
-        })
-        this.setState({
-            teamList: teamList,
-            shownTeam: teamList,
-        })
-    }
-
-
-
-    searchInputHandle = (e) => {
-        this.setState({
-            searchInput: e.target.value
-        })
-
-        const showTeamList = []
-        var partten = new RegExp(e.target.value)
-        this.state.teamList.map((item) => {
-            if(partten.test(item.name)) {
-                showTeamList.push(item)
-            }
-        })
-        this.setState({
-            shownTeam: showTeamList
-        })
     }
 
     createTopicHandle = async () => {
@@ -221,14 +210,16 @@ export default class Team extends React.Component{
     memberChoseHandle = (tarId) => {
         const memberList = this.state.memberList
         memberList.map((item) => {
-            if(item.id == tarId) {
+            if(item._id == tarId) {
                 item.chosen = !item.chosen
             }
         })
         this.setState({memberList})
     }
 
-    
+    toAdminHandle = () => {
+        location.href = '/team-admin/' + this.teamId
+    }
 
     render() {
         let teamInfo = this.state.teamInfo
@@ -244,11 +235,12 @@ export default class Team extends React.Component{
                         </div>
                         <div className="right">
                             <div className="admin">
-                                <div className="admin-con member-num">11</div>
+                                <div className="admin-con member-num">{this.state.memberNum}</div>
                                 <span>成员</span>
                             </div>
+ 
                             <div className="admin">
-                                <div className="admin-con iconfont icon-setup_fill"></div>
+                                <div className="admin-con iconfont icon-setup_fill"  onClick={this.toAdminHandle}></div>
                                 <span>设置</span>
                             </div>
                         </div>
@@ -277,7 +269,6 @@ export default class Team extends React.Component{
                         </div>
                     }
 
-
                     <div className="topic-list">
                         {
                             this.state.topicList.map((item) => {
@@ -287,8 +278,6 @@ export default class Team extends React.Component{
                             })
                         }
                     </div>
-
-
 
                 </div>
 

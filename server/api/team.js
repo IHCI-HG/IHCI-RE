@@ -424,8 +424,6 @@ const teamInfoList = async (req, res, next) => {
 }
 
 
-
-
 module.exports = [
     ['GET', '/api/test', test],
     ['POST', '/api/team/info', apiAuth, teamInfo],
