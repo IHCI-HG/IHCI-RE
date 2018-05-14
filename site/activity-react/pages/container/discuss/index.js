@@ -149,7 +149,7 @@ export default class Team extends React.Component{
             }
         })
 
-        const result = await api('/api/team/createTopic', {
+        const result = await api('/api/topic/createTopic', {
             method: 'POST',
             body: {
                 teamId: this.teamId,

@@ -3,6 +3,8 @@ import './style.scss'
 import Page from '../../../components/page'
 import api from '../../../utils/api';
 
+import MemberChosenList from '../../../components/member-chose-list'
+
 class TopicDiscussItem extends React.Component {
     componentDidMount = () => {
         this.setState({
@@ -14,8 +16,6 @@ class TopicDiscussItem extends React.Component {
         content: '',
         editState: false,
     }
-
-
 
     editInputHandle = (e) => {
         this.setState({
@@ -73,16 +73,43 @@ class TopicDiscussItem extends React.Component {
 
 export default class Topic extends React.Component{
     componentDidMount = async() => {
-        // console.log(INIT_DATA);
-        // this.teamListInit()
+        this.topicId = this.props.params.id
+        this.initPageInfo()
     }
 
-    // starHandle = async (id) => {
-    //     const result = await api('/api/base/sys-time', {
-    //         method: 'GET',
-    //         body: {}
-    //     })
-    // }
+    initPageInfo = async (id) => {
+        const result = await api('/api/topic/get', {
+            method: 'GET',
+            body: {
+                topicId: this.topicId
+            }
+        })
+
+        const topicObj = result.data
+
+
+        const memberResult = await api('/api/team/memberList', {
+            method: 'GET',
+            body: {
+                teamId: topicObj.team
+            }
+        })
+        const memberList = []
+        memberResult.data.map((item) => [
+            memberList.push({
+                ...item,
+                chosen: false,
+            })
+        ])
+
+        this.setState({
+            topicObj: {
+                ...topicObj,
+                editStatus: false,
+            },
+            memberList: memberList
+        })
+    }
 
     state = {
         createDiscussChosen: false,
@@ -90,7 +117,7 @@ export default class Topic extends React.Component{
         topicObj: {
             editStatus: false,
             topicId: 1,
-            creater: {
+            creator: {
                 id: 1,
                 name: '阿鲁巴大将军',
                 headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
@@ -104,8 +131,6 @@ export default class Topic extends React.Component{
 
         topicNameInput: '这是一条讨论的name1',
         topicContentInput: '这是讨论的主体内容',
-
-
 
         discussList: [
             {
@@ -180,7 +205,9 @@ export default class Topic extends React.Component{
                 content: '这是一条回复',
                 time: 1515384000000,
             },
-        ]   
+        ],
+
+        memberList: []
     }
 
 
@@ -211,6 +238,20 @@ export default class Topic extends React.Component{
         console.log(content);
     }
 
+    memberChoseHandle = (tarId) => {
+        const memberList = this.state.memberList
+        memberList.map((item) => {
+            if(item._id == tarId) {
+                item.chosen = !item.chosen
+            }
+        })
+        this.setState({memberList})
+    }
+
+    createDisscuss = async () => {
+        
+    }
+
     render() {
         return (
             <Page className="topic-page">
@@ -222,7 +263,6 @@ export default class Topic extends React.Component{
                 </div>
 
                 <div className="topic-con">
-
 
 
                     {
@@ -237,14 +277,14 @@ export default class Topic extends React.Component{
                             </div> 
                         :
                             <div className="topic-subject-con">
-                                <div className="topic-title">{this.state.topicObj.name}</div>
+                                <div className="topic-title">{this.state.topicObj.title}</div>
                                 <div className="flex">
-                                    <div className="head-img"></div>
+                                    <img className="head-img" src={this.state.topicObj.creator.headImg}></img>
                                     <div className="topic-main">
                                         <div className="head-wrap">
                                             <div className="left">
-                                                <span className="name">阿鲁巴大将军</span>
-                                                <span className="time">11月20日</span>
+                                                <span className="name">{this.state.topicObj.creator.name}</span>
+                                                <span className="time">{this.state.topicObj.create_time}</span>
                                             </div>
                                             <div className="right">
                                                 <span className="edit" onClick={() => {this.setState({topicObj: {...this.state.topicObj, editStatus: true}})}}>编辑</span>
@@ -259,8 +299,6 @@ export default class Topic extends React.Component{
                     }
 
                     <div className="div-line"></div>
-
-
 
                     <div className="topic-list">
                     {
@@ -279,6 +317,8 @@ export default class Topic extends React.Component{
                                     this.state.createDiscussChosen ?
                                         <div className='topic-subject-edit no-pading'>
                                             <textarea className='discuss-content'></textarea>
+                                            <div className="infrom">请选择要通知的人：</div>
+                                            <MemberChosenList choseHandle={this.memberChoseHandle} memberList={this.state.memberList}/>
                                             <div className="button-warp" onClick={() => { this.setState({ createDiscussChosen: false }) }}>
                                                 <div className="save-btn">发表</div>
                                                 <div className="cancel-btn">取消</div>

@@ -394,6 +394,7 @@ const teamInfo = async (req, res, next) => {
     }
 }
 
+// 个人首页、获取团队列表
 const teamInfoList = async (req, res, next) => {
     const teamIdList = req.body.teamIdList
 
@@ -424,31 +425,30 @@ const teamInfoList = async (req, res, next) => {
     }
 }
 
-const createTopic = async (req, res, next) => {
-    const teamId = req.body.teamId
-    const topicName = req.body.name
-    const topicContent = req.body.content
-    const informList = req.body.informList
-    const userId = req.rSession.userId 
-
-    if(!topicName || !topicContent) {
+// 直接返回团队的成员列表
+const memberList = async (req, res, next) => {
+    const teamId = req.query.teamId
+    if(!teamId) {
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: "参数不全" },
             data: {}
         });
         return
     }
-
-    if(informList || informList.length) {
-        //todo 走微信模板消息下发流程
-    }
-
     try {
-        const userObj = await userDB.baseInfoById(userId)
-        const result = await topicDB.createTopic(topicName, topicContent, userObj, teamId)
-        await teamDB.addTopic(teamId, result)
-        //todo 还要在timeline表中增加项目
-
+        const teamObj = await teamDB.findByTeamId(teamId)
+        if(!teamObj) {
+            resProcessor.jsonp(req, res, {
+                state: { code: 1, msg: "团队不存在" },
+                data: {}
+            });
+            return
+        }
+        const promiseList = []
+        teamObj.memberList.map((item) => {
+            promiseList.push(userDB.baseInfoById(item.userId))
+        })
+        const result = await Promise.all(promiseList)
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
             data: result
@@ -463,6 +463,7 @@ const createTopic = async (req, res, next) => {
 }
 
 
+
 module.exports = [
     ['GET', '/api/test', test],
     ['POST', '/api/team/info', apiAuth, teamInfo],
@@ -474,7 +475,7 @@ module.exports = [
     ['POST', '/api/team/roleModify', apiAuth, modifyMemberRole],
     ['POST', '/api/team/markTeam', apiAuth, markTeam],
     ['POST', '/api/team/kikMember', apiAuth, kikMember],
-    
-    ['POST', '/api/team/createTopic', apiAuth, createTopic],
 
+    ['GET', '/api/team/memberList', apiAuth, memberList],
+    
 ];
