@@ -6,29 +6,40 @@ const discussSchema = new mongoose.Schema({
     create_time: { type: String, default : Date.now},
     content: String,
     creator: { type: mongoose.Schema.Types.Mixed , required: true }, 
-    fileList: [mongoose.Schema.Types.Mixed]
+    fileList: [mongoose.Schema.Types.Mixed],
+    teamId: String,
+    topicId: String,
 })
 
 discussSchema.statics = {
-    createTopic: async function(title, content, creatorObj, teamId) {
+    createDiscuss: async function(teamId, topicId, content, creatorObj, fileList) {
         return this.create({
+            teamId: teamId,
+            topicId: topicId,
             content: content,
             creator: creatorObj,
-            discussList: [],
+            fileList: fileList || [],
         })
     },
-    delTopicById: async function(topicId) {
-        const result = await this.remove({_id: topicId}).exec()
+
+    updateDiscuss: async function(discussId, discussObj) {
+        const result = await this.findByIdAndUpdate(discussId, discussObj, () => {})
         return result
     },
-    updateTopic: async function(topicId, topicObj) {
-        const result = await this.findByIdAndUpdate(topicId, topicObj, () => {})
+
+    delDiscussById: async function(discussId) {
+        const result = await this.remove({_id: discussId}).exec()
         return result
-    },
-    findByTopicId: async function(topicId) {
-        const result = await this.findById(topicId)
-        return result
-    },
+    }
+    
+    // updateTopic: async function(topicId, topicObj) {
+    //     const result = await this.findByIdAndUpdate(topicId, topicObj, () => {})
+    //     return result
+    // },
+    // findByTopicId: async function(topicId) {
+    //     const result = await this.findById(topicId)
+    //     return result
+    // },
 
 }
 

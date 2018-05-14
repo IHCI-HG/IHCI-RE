@@ -2,6 +2,7 @@ import * as React from 'react';
 import './style.scss'
 import Page from '../../../components/page'
 import api from '../../../utils/api';
+import { timeBefore } from '../../../utils/util'
 
 import MemberChosenList from '../../../components/member-chose-list'
 
@@ -25,13 +26,14 @@ class TopicDiscussItem extends React.Component {
 
     render() {
         const {
-            id,
+            _id,
             creator,
             content,
-            time,
+            create_time,
 
             delHandle,
             saveEditHandle,
+            allowEdit,
 
         } = this.props
 
@@ -42,7 +44,7 @@ class TopicDiscussItem extends React.Component {
                         <textarea className='discuss-content' value={this.state.content} onChange={this.editInputHandle}></textarea>
 
                         <div className="button-warp">
-                            <div className="save-btn" onClick={() => { saveEditHandle(id, this.state.content); this.setState({ editState: false }) }}>保存</div>
+                            <div className="save-btn" onClick={() => { saveEditHandle(_id, this.state.content); this.setState({ editState: false }) }}>保存</div>
                             <div className="cancel-btn" onClick={() => { this.setState({ editState: false }) }}>取消</div>
                         </div>
                     </div>
@@ -54,14 +56,16 @@ class TopicDiscussItem extends React.Component {
                                     <div className="head-wrap">
                                         <div className="left">
                                             <span className="name">{creator.name}</span>
-                                            <span className="time">11月20日</span>
+                                            <span className="time">{timeBefore(create_time)}</span>
                                         </div>
-                                        <div className="right">
-                                            <span className="edit" onClick={() => { this.setState({ editState: true }) }}>编辑</span>
-                                            <span className="edit">删除</span>
-                                        </div>
+                                        {
+                                            allowEdit && <div className="right">
+                                                <span className="edit" onClick={() => { this.setState({ editState: true }) }}>编辑</span>
+                                                {/* <span className="edit">删除</span> */}
+                                            </div>
+                                        }
                                     </div>
-                                    <div className="content">{content}</div>
+                                    <div className="content"><pre>{content}</pre></div>
                                 </div>
                             </div>
                         </div>
@@ -72,12 +76,33 @@ class TopicDiscussItem extends React.Component {
 }
 
 export default class Topic extends React.Component{
+
+    state = {
+        topicObj: {
+            editStatus: false,
+            topicId: 1,
+            creator: {},
+            title: '',
+            content: '',
+            create_time: '',
+        },
+
+        topicNameInput: '',
+        topicContentInput: '',
+
+        discussList: [],
+        memberList: [],
+
+        createDiscussChosen: false,
+        createDiscussContent: '',
+    }
+
     componentDidMount = async() => {
         this.topicId = this.props.params.id
         this.initPageInfo()
     }
 
-    initPageInfo = async (id) => {
+    initPageInfo = async () => {
         const result = await api('/api/topic/get', {
             method: 'GET',
             body: {
@@ -86,7 +111,7 @@ export default class Topic extends React.Component{
         })
 
         const topicObj = result.data
-
+        this.teamId = result.data.team
 
         const memberResult = await api('/api/team/memberList', {
             method: 'GET',
@@ -101,114 +126,22 @@ export default class Topic extends React.Component{
                 chosen: false,
             })
         ])
+        
 
         this.setState({
             topicObj: {
                 ...topicObj,
                 editStatus: false,
             },
+            topicNameInput: topicObj.title,
+            topicContentInput: topicObj.content,
+
+            discussList: result.data.discussList,
             memberList: memberList
         })
     }
 
-    state = {
-        createDiscussChosen: false,
 
-        topicObj: {
-            editStatus: false,
-            topicId: 1,
-            creator: {
-                id: 1,
-                name: '阿鲁巴大将军',
-                headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                phone: '17728282828',
-                mail: 'ada@qq.com',
-            },
-            name: '这是一条讨论的name1',
-            content: '这是讨论的主体内容',
-            time: 1515384000000,
-        },
-
-        topicNameInput: '这是一条讨论的name1',
-        topicContentInput: '这是讨论的主体内容',
-
-        discussList: [
-            {
-                id: 133,
-                creator: {
-                    id: 1,
-                    name: '阿鲁巴大将军',
-                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                    phone: '17728282828',
-                    mail: 'ada@qq.com',
-                },
-                content: '这是一条回复',
-                time: 1515384000000,
-            },
-            {
-                id: 122,
-                creator: {
-                    id: 1,
-                    name: '阿鲁巴大将军',
-                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                    phone: '17728282828',
-                    mail: 'ada@qq.com',
-                },
-                content: '这是一条回复',
-                time: 1515384000000,
-            },
-            {
-                id: 1,
-                creator: {
-                    id: 1,
-                    name: '阿鲁巴大将军',
-                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                    phone: '17728282828',
-                    mail: 'ada@qq.com',
-                },
-                content: '这是一条回复',
-                time: 1515384000000,
-            },
-            {
-                id: 2,
-                creator: {
-                    id: 1,
-                    name: '阿鲁巴大将军',
-                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                    phone: '17728282828',
-                    mail: 'ada@qq.com',
-                },
-                content: '这是一条回复',
-                time: 1515384000000,
-            },
-            {
-                id: 3,
-                creator: {
-                    id: 1,
-                    name: '阿鲁巴大将军',
-                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                    phone: '17728282828',
-                    mail: 'ada@qq.com',
-                },
-                content: '这是一条回复',
-                time: 1515384000000,
-            },
-            {
-                id: 4,
-                creator: {
-                    id: 1,
-                    name: '阿鲁巴大将军',
-                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                    phone: '17728282828',
-                    mail: 'ada@qq.com',
-                },
-                content: '这是一条回复',
-                time: 1515384000000,
-            },
-        ],
-
-        memberList: []
-    }
 
 
     topicNameInput = (e) => {
@@ -222,7 +155,19 @@ export default class Topic extends React.Component{
         })
     }
 
-    topicChangeSaveHandle = () => {
+    topicChangeSaveHandle = async () => {
+        const result = await api('/api/topic/editTopic', {
+            method: 'POST',
+            body: {
+                teamId: this.teamId,
+                topicId: this.topicId,
+                editTopic: {
+                    title: this.state.topicNameInput,
+                    content: this.state.topicContentInput,
+                },
+                informList: []
+            }
+        })
         this.setState({
             topicObj: {
                 ...this.state.topicObj,
@@ -233,9 +178,28 @@ export default class Topic extends React.Component{
         })
     }
 
-    saveDiscussEditHandle = async (id, content) => {
-        console.log(id);
-        console.log(content);
+    saveDiscussEditHandle = async (_id, content) => {
+        const result = await api('/api/topic/editDiscuss', {
+            method: 'POST',
+            body: {
+                topicId: this.topicId,
+                discussId: _id,
+                content: content,
+                informList: []
+            }
+        })
+
+        if(result && result.state.code == 0) {
+            const discussList = this.state.discussList
+            discussList.map((item, idx) => {
+                if(item._id == _id) {
+                    discussList[idx].content = content
+                }
+            })
+            this.setState({
+                discussList: discussList
+            })
+        }
     }
 
     memberChoseHandle = (tarId) => {
@@ -248,23 +212,55 @@ export default class Topic extends React.Component{
         this.setState({memberList})
     }
 
-    createDisscuss = async () => {
-        
+    createDiscussInputHandle = (e) => {
+        this.setState({
+            createDiscussContent: e.target.value
+        })
+    }
+
+    createDiscussHandle = async () => {
+        const informList = []
+        this.state.memberList.map((item) => {
+            if(item.chosen) {
+                informList.push(item._id)
+            }
+        })
+
+        const result = await api('/api/topic/createDiscuss', {
+            method: 'POST',
+            body: {
+                teamId: this.teamId,
+                topicId: this.topicId,
+                content: this.state.createDiscussContent,
+                informList: informList
+            }
+        })
+
+        if(result && result.state.code == 0) {
+            const discussList = this.state.discussList
+            discussList.push(result.data)
+            this.setState({
+                discussList: discussList,
+                createDiscussContent: '',
+                createDiscussChosen: false,
+            })
+        } else {
+            window.toast(result.state.msg)
+        }
     }
 
     render() {
         return (
             <Page className="topic-page">
                 <div className="sp-nav">
-                    <span className='to-team' onClick={() => { this.props.router.push('/team') }} >团队</span>
+                    <span className='to-team' onClick={() => { this.props.router.push('/team') }} >团队列表</span>
                     <span className="iconfont icon-enter"></span>
-                    <span onClick={this.teamFilterHandle}>{"IHCI平台搭建项目组"}</span>
-                    
+                    <span onClick={() => {this.props.router.push('/discuss/' + this.teamId)}}>{"团队主页"}</span>
+                    <span className="iconfont icon-enter"></span>
+                    <span>讨论</span>
                 </div>
 
                 <div className="topic-con">
-
-
                     {
                         this.state.topicObj.editStatus ? <div className="topic-subject-edit">
                                 <input type="text" onChange={this.topicNameInput} value={this.state.topicNameInput} className="topic-title"/>
@@ -284,14 +280,17 @@ export default class Topic extends React.Component{
                                         <div className="head-wrap">
                                             <div className="left">
                                                 <span className="name">{this.state.topicObj.creator.name}</span>
-                                                <span className="time">{this.state.topicObj.create_time}</span>
+                                                <span className="time">{timeBefore(this.state.topicObj.create_time)}</span>
                                             </div>
-                                            <div className="right">
-                                                <span className="edit" onClick={() => {this.setState({topicObj: {...this.state.topicObj, editStatus: true}})}}>编辑</span>
-                                                <span className="edit">删除</span>
-                                            </div>
+                                            {
+                                                this.state.topicObj.creator._id == this.props.personInfo._id &&
+                                                 <div className="right">
+                                                    <span className="edit" onClick={() => { this.setState({ topicObj: { ...this.state.topicObj, editStatus: true } }) }}>编辑</span>
+                                                     {/* <span className="edit">删除</span> */}
+                                                </div>
+                                            }
+
                                         </div>
-                                        {/* <div className="content" dangerouslySetInnerHTML={{__html: this.state.topicObj.content}}><pre>{this.state.topicObj.content}</pre></div> */}
                                         <div className="content"><pre>{this.state.topicObj.content}</pre></div>
                                     </div>
                                 </div>
@@ -304,24 +303,24 @@ export default class Topic extends React.Component{
                     {
                         this.state.discussList.map((item) => {
                             return (
-                                <TopicDiscussItem key={"topic-discuss-item-" + item.id} {...item} saveEditHandle = {this.saveDiscussEditHandle}/>
+                                <TopicDiscussItem key={"topic-discuss-item-" + item._id} allowEdit={this.props.personInfo._id == item.creator._id} {...item} saveEditHandle = {this.saveDiscussEditHandle}/>
                             )
                         })
                     }
 
                     <div className="topic-subject-con discuss-con">
                         <div className="flex">
-                            <div className="head-img"></div>
+                            <img className="head-img" src={this.props.personInfo && this.props.personInfo.headImg}></img>
                             <div className="topic-main">
                                 {
                                     this.state.createDiscussChosen ?
                                         <div className='topic-subject-edit no-pading'>
-                                            <textarea className='discuss-content'></textarea>
+                                            <textarea autoFocus className='discuss-content' value={this.state.createDiscussContent} onChange={this.createDiscussInputHandle}></textarea>
                                             <div className="infrom">请选择要通知的人：</div>
                                             <MemberChosenList choseHandle={this.memberChoseHandle} memberList={this.state.memberList}/>
-                                            <div className="button-warp" onClick={() => { this.setState({ createDiscussChosen: false }) }}>
-                                                <div className="save-btn">发表</div>
-                                                <div className="cancel-btn">取消</div>
+                                            <div className="button-warp" >
+                                                <div className="save-btn" onClick={this.createDiscussHandle}>发表</div>
+                                                <div className="cancel-btn" onClick={() => { this.setState({ createDiscussContent: '',createDiscussChosen: false }) }}>取消</div>
                                             </div>
                                         </div>
                                         : 

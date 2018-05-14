@@ -158,14 +158,13 @@ export default class Team extends React.Component{
                 informList: informList,
             }
         })
-        const myInfo = await api('/api/getMyInfo', {method: 'GET'})
 
         if(result.state.code == 0) {
             const topicList = this.state.topicList
             const time = new Date().getTime()
             topicList.unshift({
-                topicId: 2,
-                creator: myInfo.data.personInfo,
+                _id: result.data._id,
+                creator: this.props.personInfo,
                 title: this.state.createTopicName,
                 content: this.state.createTopicContent,
                 time: time,

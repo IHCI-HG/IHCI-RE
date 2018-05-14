@@ -69,6 +69,15 @@ teamSchema.statics = {
             { $push: { topicList : topicObj}}
         ).exec()
     },
+    updateTopic: async function(teamId, topicId, editTopic) {
+        return this.update(
+            {_id: teamId, "topicList._id": mongoose.Types.ObjectId(topicId)},
+            { $set: { "topicList.$.title" : editTopic.title}}
+        ).update(
+            {_id: teamId, "topicList._id": mongoose.Types.ObjectId(topicId)},
+            { $set: { "topicList.$.content" : editTopic.content}}
+        ).exec()
+    },
     delTopic: async function(teamId, topicId) {
         return this.update(
             {_id: teamId},

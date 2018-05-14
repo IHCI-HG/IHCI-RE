@@ -47,10 +47,10 @@ topicSchema.statics = {
             { $pull: { discussList: {discussId: discussId}}}
         ).exec()
     },
-    updateDiscuss: async function(topicId, discussId, discussObj) {
+    updateDiscuss: async function(topicId, discussId, content) {
         return this.update(
-            {_id: topicId, "discussList._id": discussId},
-            { $set: { "discussList.$": discussObj}}
+            {_id: topicId, "discussList._id":  mongoose.Types.ObjectId(discussId)},
+            { $set: { "discussList.$.content": content}}
         ).exec()
     },
 

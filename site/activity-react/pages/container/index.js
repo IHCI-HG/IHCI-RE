@@ -24,6 +24,7 @@ class App extends React.Component{
     state = {
         activeTag : '',
         headImg: '',
+        personInfo: {},
     }
     componentDidMount = async() => {
         this.activeTagHandle(this.props.location.pathname)
@@ -35,10 +36,15 @@ class App extends React.Component{
         const result = await api('/api/getMyInfo')
         if(result.data && result.data.personInfo && result.data.personInfo.headImg) {
             this.setState({
-                headImg: result.data.personInfo.headImg
+                headImg: result.data.personInfo.headImg,
+                personInfo: {
+                    ...result.data.personInfo,
+                    _id: result.data._id,
+                }
             })
         }
     }
+
     routerHandle = (toUrl) => {
         this.activeTagHandle(toUrl)
         this.props.router.push(toUrl)
@@ -78,7 +84,7 @@ class App extends React.Component{
                         </Link>
                     </div>
                 </div>
-                { this.props.children }
+                { this.props.children && React.cloneElement(this.props.children, {personInfo: this.state.personInfo}) }
             </div>
         )
     }

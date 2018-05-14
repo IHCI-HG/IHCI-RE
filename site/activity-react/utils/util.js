@@ -325,9 +325,9 @@ export const timeBefore = (pushTime, nowTime) => {
         d_hours = Math.floor(d / 3600),
         d_minutes = Math.floor(d / 60);
 
-    if (d_days > 30) {
+    if (d_days > 3) {
         return formatDate(pushTime)
-    } else if (d_days > 0 && d_days <= 30) {
+    } else if (d_days > 0 && d_days <= 3) {
         return d_days + "天前";
     } else if (d_days <= 0 && d_hours > 0) {
         return d_hours + "小时前";
