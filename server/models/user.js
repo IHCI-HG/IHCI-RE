@@ -27,7 +27,7 @@ wxUserInfo
 // teamList : {teamId: teamId, role: role, marked: false}
 
 const userSchema = new mongoose.Schema({
-    create_time: { type: Date, default : Date.now},
+    create_time: { type: String, default : Date.now},
     username: { type: String , required: true , index: true },
     password: { type: String , required: true },
     personInfo: mongoose.Schema.Types.Mixed,

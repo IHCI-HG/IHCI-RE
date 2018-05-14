@@ -3,7 +3,7 @@ const crypto = require('crypto');
 const conf = require('../conf')
 
 const testSchema = new mongoose.Schema({
-    create_time: { type: Date, default : Date.now},
+    create_time: { type: String, default : Date.now},
     id: { type: Number , default: '' },
     hashedKey: String,
 })

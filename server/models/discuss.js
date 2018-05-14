@@ -3,7 +3,7 @@ const crypto = require('crypto');
 const conf = require('../conf')
 
 const discussSchema = new mongoose.Schema({
-    create_time: { type: Date, default : Date.now},
+    create_time: { type: String, default : Date.now},
     content: String,
     creator: { type: mongoose.Schema.Types.Mixed , required: true }, 
     fileList: [mongoose.Schema.Types.Mixed]

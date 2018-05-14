@@ -2,7 +2,7 @@ import * as React from 'react';
 import './style.scss'
 
 import api from '../../../utils/api';
-import { timeBefore } from '../../../utils/util'
+import { timeBefore, sortByCreateTime } from '../../../utils/util'
 import Page from '../../../components/page'
 
 import MemberChosenList from '../../../components/member-chose-list'
@@ -26,10 +26,10 @@ class TopicItem extends React.PureComponent{
                 <img src={this.props.creator.headImg} alt="" className="head-img" />
                 <div className="name">{this.props.creator.name}</div>
                 <div className="main">
-                    <div className="topic-title">{this.props.name}</div>
+                    <div className="topic-title">{this.props.title}</div>
                     <div className="topic-content">{this.props.content}</div>
                 </div>
-                <div className="time">{timeBefore(this.props.time)}</div>
+                <div className="time">{timeBefore(this.props.create_time)}</div>
             </div>
         )
     }
@@ -82,7 +82,7 @@ export default class Team extends React.Component{
             teamInfo: teamInfo,
             memberNum: result.data.memberList.length,
             memberList: memberList,
-            topicList: result.data.topicList
+            topicList: sortByCreateTime(result.data.topicList)
         })
     }
 
@@ -158,20 +158,15 @@ export default class Team extends React.Component{
                 informList: informList,
             }
         })
+        const myInfo = await api('/api/getMyInfo', {method: 'GET'})
 
         if(result.state.code == 0) {
             const topicList = this.state.topicList
             const time = new Date().getTime()
             topicList.unshift({
                 topicId: 2,
-                creator: {
-                    id: 1,
-                    name: '阿鲁巴大将军',
-                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                    phone: '17728282828',
-                    mail: 'ada@qq.com',
-                },
-                name: this.state.createTopicName,
+                creator: myInfo.data.personInfo,
+                title: this.state.createTopicName,
                 content: this.state.createTopicContent,
                 time: time,
             })

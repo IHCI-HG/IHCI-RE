@@ -1102,3 +1102,30 @@ function s4() {
 export function guid() {
     return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
 }
+
+/**
+ * 按照create_time字段,默认从新到旧排序 （）
+ */
+export function sortByCreateTime(topicList, positive) {
+    var posi = positive || true
+    if(posi) {
+        return topicList.sort((a, b) => {
+            if(a.create_time < b.create_time) {
+                return 1
+            } else {
+                return -1
+            }
+            return 0
+        })
+    } else {
+        return topicList.sort((a, b) => {
+            if(a.create_time < b.create_time) {
+                return -1
+            } else {
+                return 1
+            }
+            return 0
+        })
+    }
+    return 
+}
