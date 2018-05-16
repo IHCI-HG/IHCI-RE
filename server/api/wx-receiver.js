@@ -60,7 +60,7 @@ var subscribeEventHandle = async (openid) => {
 
 }
 
-var unsubscribeEventHandle = () => {
+var unsubscribeEventHandle = async (openid) => {
     // 获取用户信息(拿uid)
     // 用uid查用户表 -》 改sub状态
     try {
@@ -119,10 +119,10 @@ var wxReceiver = function(req, res, next) {
 
     switch (msgtype) {
         case 'subscribe':
-
+            subscribeEventHandle(req.body.xml.fromusername[0])
             break;
         case 'unsubscribe':
-            
+            unsubscribeEventHandle(req.body.xml.fromusername[0])
             break;
         default:
             break;
