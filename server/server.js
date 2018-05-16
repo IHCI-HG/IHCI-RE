@@ -32,6 +32,9 @@ var _ = require('underscore'),
 
 var db = require('./db');
 
+fs.appendFile(path.join('/data/logs', 'access.log'), '服务启动/n', (err) => {
+    if(err) throw err;
+})
 var accessLogStream = fs.createWriteStream(path.join('/data/logs', 'access.log'), {flags: 'a'})
 
 function getRedisClusterObj() {
