@@ -18,7 +18,7 @@ import {
 var mongoose = require('mongoose')
 var UserDB = mongoose.model('user')
 
-var subscribeEventHandle = (openid) => {
+var subscribeEventHandle = async (openid) => {
     // 获取用户信息(拿uid)
     // 用uid查用户表（查到了 -》 添加uid, 改sub状态 -》发模板）
     try {
