@@ -36,13 +36,12 @@ teamSchema.statics = {
         const result = await this.findByIdAndUpdate(teamId, teamInfo, () => {})
         return result
     },
-    findByTeamId: async function(teamId) {
-        const result = await this.findById(teamId)
-        return result
+    findByTeamId: function(teamId) {
+        return this.findById(teamId)
     },
 
     // member 操作
-    addMember: async function(teamId, userId, role) {
+    addMember: function(teamId, userId, role) {
         return this.update(
             {_id: teamId},
             { $addToSet: { memberList: {userId: userId, role: role}}}

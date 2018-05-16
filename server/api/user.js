@@ -95,6 +95,7 @@ const getMyInfo = async (req, res, next) => {
     const userID = req.rSession.userId 
     const result = await UserDB.findByUserId(userID)
     if(result) {
+        result.password = undefined
         resProcessor.jsonp(req, res, {
             state: { code: 0 },
             data: result

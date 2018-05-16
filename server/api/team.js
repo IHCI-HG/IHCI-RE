@@ -52,7 +52,7 @@ const creatTeam = async (req, res, next) => {
     try {
         let teamObj = await teamDB.createTeam(teamInfo.name, teamInfo.teamImg, teamInfo.teamDes)
         await teamDB.addMember(teamObj._id, userId, 'creator')
-        await userDB.addTeam(userId, teamObj._id.toString(), 'creator')
+        await userDB.addTeam(userId, teamObj, 'creator')
         teamObj = await teamDB.findByTeamId(teamObj._id)
          
         resProcessor.jsonp(req, res, {
@@ -108,7 +108,7 @@ const joinTeam = async (req, res, next) => {
         }
 
         await teamDB.addMember(teamId, userId, 'member')
-        await userDB.addTeam(userId, teamId, 'member')
+        await userDB.addTeam(userId, teamObj, 'member')
         teamObj = await teamDB.findByTeamId(teamId)
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '加入成功' },
@@ -227,6 +227,13 @@ const modifyTeamInfo = async (req, res, next) => {
         }
 
         const result = await teamDB.updateTeam(teamId, teamInfo)
+
+        // 团队中所有成员更新team信息
+        teamObj = await teamDB.findByTeamId(teamId)
+        teamObj.memberList.map((item) => {
+            userDB.updateTeam(item.userId, teamObj)
+        })
+
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '设置成功' },
             data: {

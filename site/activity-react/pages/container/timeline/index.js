@@ -5,58 +5,118 @@ import api from '../../../utils/api';
 import { timeParse, formatDate } from '../../../utils/util'
 import Page from '../../../components/page'
 
+
 class TeamChoseItem extends React.PureComponent{
     render() {
         return(
-            <div className="admin-team-item">
-                <div className="team-img"></div>
-                <div className="team-name">{this.props.name}</div>
-                {this.props.active && <span className="check">√</span>}
+            <div className="admin-team-item" onClick={() => {location.href = '/timeline?teamId=' + this.props.teamId }}>
+                <img className="team-img" src={this.props.teamImg}></img>
+                <div className="team-name">{this.props.teamName}</div>
             </div>
         )
     }
 }
 
-class AdminTeamItem extends React.PureComponent{
+
+class TimelineItem extends React.PureComponent{
+    typeMap = {
+        'CREATE_TOPIC': '创建了讨论：',
+        'REPLY_TOPIC': '回复了讨论：',
+    }
+
     render() {
-        return(
-            <div className="admin-team-item">
-                <div className="team-img"></div>
-                <div className="team-name">{this.props.name}</div>
-                {this.props.active && <span className="check">√</span>}
-            </div>
-        )
+        switch (this.props.type) {
+            case 'CREATE_TOPIC':
+                return(
+                    <div className='news-item-wrap'>
+                        <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
+                        <img src={this.props.creator.headImg} alt="" className="head-img" />
+
+                        <div className="news-con">
+                            <div className="des-line">
+                                <span className="name">{this.props.creator.name}</span>
+                                <span className="type">{this.typeMap[this.props.type]}</span>
+                                <span className="topic">{this.props.content.title}</span>
+                            </div>
+
+                            <div className="content">{this.props.content.content}</div>
+                        </div>
+                    </div>
+                )
+            case 'REPLY_TOPIC':
+                return (
+                    <div className='news-item-wrap'>
+                        <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
+                        <img src={this.props.creator.headImg} alt="" className="head-img" />
+
+                        <div className="news-con">
+                            <div className="des-line">
+                                <span className="name">{this.props.creator.name}</span>
+                                <span className="type">{this.typeMap[this.props.type]}</span>
+                                <span className="topic">{this.props.content.title}</span>
+                            </div>
+
+                            <div className="content">{this.props.content.content}</div>
+                        </div>
+                    </div>
+                )
+                break;
+            default:
+                return ''
+        }
     }
 }
 
 export default class News extends React.Component{
     componentDidMount = async() => {
-        console.log(INIT_DATA);
-
-        this.appendToShowList(this.state.newsList)
+        await this.initTimelineData()
+        this.initTeamList()
     }
-    starHandle = async (id) => {
-        const result = await api('/api/base/sys-time', {
-            method: 'GET',
-            body: {}
+
+    initTimelineData = async () => {
+        const queryTeamId = this.props.location.query.teamId
+
+        const result = await api('/api/timeline/getTimeline', {
+            method: 'POST',
+            body: queryTeamId ? {
+                teamId: queryTeamId
+            } : {}
+        })
+        this.setState({
+            newsList: result.data
+        }, () => {
+            this.appendToShowList(this.state.newsList)
+        })
+
+    }
+
+    initTeamList = () => {
+        this.setState({
+            shownTeam: this.props.personInfo && this.props.personInfo.teamList || [],
         })
     }
+
+    // starHandle = async (id) => {
+    //     const result = await api('/api/base/sys-time', {
+    //         method: 'GET',
+    //         body: {}
+    //     })
+    // }
 
     appendToShowList = (list) => {
         let showList = this.state.showList
 
         list.map((item) => {
-            var timeKey = timeParse(item.time)
+            var timeKey = timeParse(item.create_time)
             if(!showList[timeKey]) {
                 showList.keyList.push(timeKey)
                 showList[timeKey] = {}
                 showList[timeKey].teamKeyList = []
             }
-
             if(!showList[timeKey][item.teamId]) {
                 showList[timeKey].teamKeyList.push(item.teamId)
                 showList[timeKey][item.teamId] = {}
-                showList[timeKey][item.teamId].teamName = item.team
+                showList[timeKey][item.teamId].teamName = item.teamName
                 showList[timeKey][item.teamId].newsList = []
             }
             showList[timeKey][item.teamId].newsList.push(item)
@@ -69,68 +129,16 @@ export default class News extends React.Component{
     }
 
     typeMap = {
-        'create': '创建了讨论：',
-        'reply': '回复了讨论：',
+        'CREATE_TOPIC': '创建了讨论：',
+        'REPLY_TOPIC': '回复了讨论：',
     }
 
     state = {
         // type: create, reply
-        newsList: [
-            {
-                newsId: 8978,
-                topic: '讨论1号',
-                topicId: '111',
-                time: 1520481600000,
-                type: 'create',
-                content: '这是回复内容这是回复内容这是回复内容这是回复内容这是这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容回复内容这是回复内容这是回复内容',
-                headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                name: '阿鲁巴大将军',
-                
-                team: 'xx队伍2',
-                teamId: '222',
-            },
-            {
-                newsId: 2231,
-                topic: '讨论1号',
-                topicId: '111',
-                time: 1520480600200,
-                type: 'reply',
-                content: '这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容',
-                headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                name: '阿鲁巴大将军',
-                
-                team: 'xx队伍1',
-                teamId: '111',
-            },
-            {
-                newsId: 21331,
-                topic: '讨论2号',
-                topicId: '111',
-                time: 1520480600000,
-                type: 'reply',
-                content: '这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容',
-                headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                name: '阿鲁巴大将军',
-                
-                team: 'xx队伍1',
-                teamId: '111',
-            },
-            {
-                newsId: 8773,
-                topic: '讨论2号',
-                topicId: '111',
-                time: 1510471600000,
-                type: 'reply',
-                content: '这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容这是回复内容',
-                headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                name: '阿鲁巴大将军',
-                
-                team: 'xx队伍1',
-                teamId: '111',
-            },
-        ],
+        newsList: [],
+
         // showList的数据结构长这样
-        // spampleShowList: {
+        // showList: {
         //     timeKeyList: ['20170101', '20170102'],
         //     '20170101': {
         //         'teamKeyList': ['teamId1','teamId2']                
@@ -149,65 +157,13 @@ export default class News extends React.Component{
         },
 
         showTeamFilter: false,
-        teamList: [
-            {
-                id: 1,
-                name: 'xx团队1',
-                teamImg: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1522401625&di=bcc173556f4ce40a5b92ff96402a053b&imgtype=jpg&er=1&src=http%3A%2F%2Fwx3.sinaimg.cn%2Forj360%2F7fa53ff0gy1fc1phl41r6j20hs0hsmxn.jpg',
-                desc: '这是第一个团队',
-                managed: true,
-                marked: true,
-            },
-            {
-                id: 2,
-                name: 'xx团队2xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-                teamImg: 'https://developers.google.com/machine-learning/crash-course/images/landing-icon-sliders.svg?hl=zh-cn',
-                desc: '这是第一个团队',
-                managed: true,
-                marked: false,
-            },
-            {
-                id: 3,
-                name: 'xx团队3xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-                teamImg: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1522401625&di=bcc173556f4ce40a5b92ff96402a053b&imgtype=jpg&er=1&src=http%3A%2F%2Fwx3.sinaimg.cn%2Forj360%2F7fa53ff0gy1fc1phl41r6j20hs0hsmxn.jpg',
-                desc: '这是第一个团队',
-                managed: true,
-                marked: false,
-            },
-            {
-                id: 4,
-                name: 'xx团队4',
-                teamImg: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1522401625&di=bcc173556f4ce40a5b92ff96402a053b&imgtype=jpg&er=1&src=http%3A%2F%2Fwx3.sinaimg.cn%2Forj360%2F7fa53ff0gy1fc1phl41r6j20hs0hsmxn.jpg',
-                desc: '这是第一个团队',
-                managed: false,
-                marked: false,
-            },
-            {
-                id: 5,
-                name: 'xx团队5',
-                teamImg: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1522401625&di=bcc173556f4ce40a5b92ff96402a053b&imgtype=jpg&er=1&src=http%3A%2F%2Fwx3.sinaimg.cn%2Forj360%2F7fa53ff0gy1fc1phl41r6j20hs0hsmxn.jpg',
-                desc: '这是第一个团队',
-                managed: false,
-                marked: true,
-            },
-        ],
-        shownTeam: [],
+        teamList: [],
     }
 
-    teamListInit = () => {
-        const teamList = []
-        this.state.teamList.map((item) => { 
-            item.active = this.props.params.id == item.id
-            teamList.push(item)
-        })
-        this.setState({
-            teamList: teamList,
-            shownTeam: teamList,
-        })
-    }
 
     teamFilterHandle = () => {
         this.setState({
+            teamList: this.props.personInfo.teamList,
             showTeamFilter: !this.state.showTeamFilter
         })
     }
@@ -217,17 +173,29 @@ export default class News extends React.Component{
             searchInput: e.target.value
         })
 
-        const showTeamList = []
+        const teamList = []
         var partten = new RegExp(e.target.value)
-        this.state.teamList.map((item) => {
-            if(partten.test(item.name)) {
-                showTeamList.push(item)
-            }
-        })
-        this.setState({
-            shownTeam: showTeamList
-        })
+        if(e.target.value) {
+            this.props.personInfo.teamList.map((item) => {
+                if(partten.test(item.teamName)) {
+                    teamList.push(item)
+                }
+            })
+            this.setState({
+                teamList: teamList
+            })
+        } else {
+            this.setState({
+                teamList: this.props.personInfo.teamList
+            })
+        }
     }
+
+    // routerTo = (url) => {
+    //     this.props.router.push(url)
+    //     // await this.componentDidMount()
+    //     // this.render()
+    // }
 
     render() {
         const showList = this.state.showList
@@ -237,12 +205,15 @@ export default class News extends React.Component{
                 {
                     this.state.showTeamFilter && <div className="team-list" onMouseLeave={this.teamFilterHandle}>
                         <input type="text" className="search" onChange={this.searchInputHandle} />
+                        <div className="admin-team-item" onClick={() => {location.href = '/timeline'}}>
+                            <div className="team-name"> 全部团队</div>
+                        </div>
                         <div className="head">星标团队</div>
                         {
                             this.state.teamList.map((item) => {
                                 if (item.marked) {
                                     return (
-                                        <TeamChoseItem key={'mark-team-' + item.id} {...item} />
+                                        <TeamChoseItem key={'mark-team-' + item.teamId} routerTo={this.routerTo} {...item} />
                                     )
                                 }
                             })
@@ -251,7 +222,7 @@ export default class News extends React.Component{
                         {
                             this.state.teamList.map((item) => {
                                 return (
-                                    <TeamChoseItem key={'team-' + item.id} {...item} />
+                                    <TeamChoseItem key={'team-' + item.teamId} routerTo={this.routerTo} {...item} />
                                 )
                             })
                         }
@@ -260,7 +231,14 @@ export default class News extends React.Component{
                 
 
                 <div className="news-list page-wrap">
-                    <div className='news-filter' onClick={this.teamFilterHandle}>筛选动态： 根据团队筛选</div>
+                    <div className='news-filter' onClick={this.teamFilterHandle}>
+                        筛选动态： {
+                            this.props.location.query.teamId ? this.props.personInfo.teamList.map((item) => {
+                                if(item.teamId == this.props.location.query.teamId)
+                                    return item.teamName
+                            }) : "根据团队"
+                        }
+                    </div>
                     {
                         showList.keyList.map((timeKey) => {
                             return (
@@ -275,24 +253,7 @@ export default class News extends React.Component{
                                                     <div className="group-line">{showList[timeKey][teamKey].teamName}</div>
                                                     {
                                                         showList[timeKey][teamKey].newsList.map((item) => {
-                                                            return (
-                                                                <div key={'news-' + item.newsId} className='news-item-wrap'>
-                                                                    {/* 动态正文 */}
-                                                                    <div className="time">{formatDate(item.time, 'hh:mm')}</div>
-                                                                    <img src={item.headImg} alt="" className="head-img"/>
-                                                                    
-                                                                    <div className="news-con">
-                                                                        <div className="des-line"> 
-                                                                            <span className="name">{item.name}</span>
-                                                                            <span className="type">{this.typeMap[item.type]}</span>
-                                                                            <span className="topic">{item.topic}</span>
-                                                                        </div>
-
-                                                                        <div className="content">{item.content}</div>
-                                                                    </div>
-
-                                                                </div>
-                                                            )
+                                                            return <TimelineItem key={'timeline-' + item._id} {...item}/>
                                                         })
                                                     }
                                                 </div>
@@ -304,7 +265,7 @@ export default class News extends React.Component{
                         })
                     } 
 
-                    <div className="load-more" onCli>点击加载更多</div>
+                    <div className="load-more" onClick={() => {}}>点击加载更多</div>
                 </div>
 
                 

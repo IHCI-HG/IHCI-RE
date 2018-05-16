@@ -87,20 +87,46 @@ userSchema.statics = {
 
 
     // team 操作相关
-    addTeam: async function(userId, teamId, role) {
+    addTeam: async function(userId, teamObj, role) {
         return this.update(
-            {_id: userId},
-            { $addToSet: { teamList: {teamId: teamId, role: role, marked: false}}}
+            { _id: userId },
+            {
+                $addToSet: {
+                    teamList: {
+                        teamId: teamObj._id.toString(),
+                        role: role,
+                        marked: false,
+                        teamName: teamObj.name,
+                        teamImg: teamObj.teamImg,
+                        teamDes: teamObj.teamDes,
+                    }
+                }
+            }
         ).exec()
     },
+
+    updateTeam: async function(userId, teamObj) {
+        teamId = teamObj._id.toString()
+        return this.update(
+            { _id: userId, "teamList.teamId": teamId },
+            {
+                $set: {
+                    "teamList.$.teamName": teamObj.name,
+                    "teamList.$.teamImg": teamObj.teamImg,
+                    "teamList.$.teamDes": teamObj.teamDes,
+                }
+            },
+        ).exec()
+    },
+
     delTeam: async function(userId, teamId) {
         return this.update(
             {_id: userId},
             { $pull: { teamList: {teamId: teamId}}}
         ).exec()
     },
-
     markTeam: async function(userId, teamId, markState) {
+        teamId = teamId.toString()
         return this.update(
             {_id: userId, "teamList.teamId": teamId},
             {$set: {"teamList.$.marked": markState}},

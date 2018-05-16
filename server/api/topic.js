@@ -20,6 +20,7 @@ var teamDB = mongoose.model('team')
 var userDB = mongoose.model('user')
 var topicDB = mongoose.model('topic')
 var discussDB = mongoose.model('discuss')
+var timelineDB = mongoose.model('timeline')
 
 const createTopic = async (req, res, next) => {
     const teamId = req.body.teamId
@@ -44,7 +45,8 @@ const createTopic = async (req, res, next) => {
         const userObj = await userDB.baseInfoById(userId)
         const result = await topicDB.createTopic(topicName, topicContent, userObj, teamId)
         await teamDB.addTopic(teamId, result)
-        //todo 还要在timeline表中增加项目
+        const teamObj = await teamDB.findByTeamId(teamId)
+        await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'CREATE_TOPIC', result._id, result.title, result)
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
@@ -140,10 +142,14 @@ const createDiscuss = async (req, res, next) => {
 
     try {
         const userObj = await userDB.baseInfoById(userId)
-        const result = await discussDB.createDiscuss(teamId, topicId, content, userObj, fileList)
-        await topicDB.addDiscuss(topicId, result)
+        const topicObj = await topicDB.findByTopicId(topicId)
+        const result = await discussDB.createDiscuss(teamId, topicId, topicObj.title, content, userObj, fileList)
 
-        //todo 还要在timeline表中增加项目
+        await topicDB.addDiscuss(topicId, result)
+        
+        const teamObj = await teamDB.findByTeamId(teamId)
+
+        await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'REPLY_TOPIC', result._id, topicObj.title, result)
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },

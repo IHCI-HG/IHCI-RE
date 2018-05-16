@@ -4,6 +4,7 @@ const conf = require('../conf')
 
 const discussSchema = new mongoose.Schema({
     create_time: { type: String, default : Date.now},
+    title: String,
     content: String,
     creator: { type: mongoose.Schema.Types.Mixed , required: true }, 
     fileList: [mongoose.Schema.Types.Mixed],
@@ -12,10 +13,11 @@ const discussSchema = new mongoose.Schema({
 })
 
 discussSchema.statics = {
-    createDiscuss: async function(teamId, topicId, content, creatorObj, fileList) {
+    createDiscuss: async function(teamId, topicId, title, content, creatorObj, fileList) {
         return this.create({
             teamId: teamId,
             topicId: topicId,
+            title: title,
             content: content,
             creator: creatorObj,
             fileList: fileList || [],
@@ -31,7 +33,7 @@ discussSchema.statics = {
         const result = await this.remove({_id: discussId}).exec()
         return result
     }
-    
+
     // updateTopic: async function(topicId, topicObj) {
     //     const result = await this.findByIdAndUpdate(topicId, topicObj, () => {})
     //     return result

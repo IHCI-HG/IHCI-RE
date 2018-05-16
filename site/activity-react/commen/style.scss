@@ -17,6 +17,11 @@ html, body {
     height: 100%;
 }
 
+pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
 .page-container {
     position: relative;
     max-width: 1280px; 

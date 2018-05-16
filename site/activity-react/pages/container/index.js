@@ -24,7 +24,9 @@ class App extends React.Component{
     state = {
         activeTag : '',
         headImg: '',
-        personInfo: {},
+        personInfo: {
+            teamList: []
+        },
     }
     componentDidMount = async() => {
         this.activeTagHandle(this.props.location.pathname)
@@ -38,8 +40,8 @@ class App extends React.Component{
             this.setState({
                 headImg: result.data.personInfo.headImg,
                 personInfo: {
+                    ...result.data,
                     ...result.data.personInfo,
-                    _id: result.data._id,
                 }
             })
         }

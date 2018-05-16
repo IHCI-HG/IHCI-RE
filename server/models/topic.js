@@ -29,9 +29,8 @@ topicSchema.statics = {
         const result = await this.findByIdAndUpdate(topicId, topicObj, () => {})
         return result
     },
-    findByTopicId: async function(topicId) {
-        const result = await this.findById(topicId)
-        return result
+    findByTopicId: function(topicId) {
+        return this.findById(topicId)
     },
     
 
