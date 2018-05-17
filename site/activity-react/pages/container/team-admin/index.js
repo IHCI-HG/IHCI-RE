@@ -17,6 +17,7 @@ export default class TeamAdmin extends React.Component{
             }
         })
         const teamObj = result.data
+        this.teamInfo = teamObj
         this.setState({
             name: teamObj.name,
             teamImg: teamObj.teamImg,
@@ -99,12 +100,28 @@ export default class TeamAdmin extends React.Component{
     }
 
     kikMember = async (id) => {
+        if(id == this.props.personInfo._id) {
+            window.toast('你无法踢出自己!')
+            return
+        }
+        let isCreator = false
+        teamInfo.memberList.map((item) => {
+            if(item.userId == id && item.role == 'creator') {
+                let isCreator = true
+            } 
+        })
+        if(isCreator) {
+            window.toast('无法踢出创建者')
+            return 
+        }
+
         const memberResult = await api('/api/team/kikMember', {
             method: 'POST',
             body: { memberId: id, teamId: this.teamId }
         })
 
         window.toast(memberResult.state.msg)
+
         if(memberResult.state.code == 0) {
             location.href = location.href
         }

@@ -53,6 +53,10 @@ export default class Team extends React.Component{
             }
         })
 
+        if(!result.data) {
+            window.toast('团队内容加载出错')
+        }
+
         const teamInfo = {}
         teamInfo._id = result.data._id 
         teamInfo.name = result.data.name
@@ -63,6 +67,12 @@ export default class Team extends React.Component{
         const memberList = []
         const memberIDList = []
         result.data.memberList.map((item) => {
+            if(item.userId == this.props.personInfo._id) {
+                this.setState({
+                    isCreator: true
+                })
+            }
+
             memberIDList.push(item.userId)
         })
         const memberResult = await api('/api/userInfoList', {
@@ -90,6 +100,7 @@ export default class Team extends React.Component{
 
     state = {
         showCreateTopic: true,
+        isCreator: false,
 
         createTopicName: '',
         createTopicContent: '',
@@ -223,11 +234,13 @@ export default class Team extends React.Component{
                                 <div className="admin-con member-num">{this.state.memberNum}</div>
                                 <span>成员</span>
                             </div>
- 
-                            <div className="admin">
-                                <div className="admin-con iconfont icon-setup_fill"  onClick={this.toAdminHandle}></div>
+                            {
+                                this.state.isCreator && <div className="admin">
+                                    <div className="admin-con iconfont icon-setup_fill"  onClick={this.toAdminHandle}></div>
                                 <span>设置</span>
                             </div>
+                            }
+
                         </div>
                     </div>
 
