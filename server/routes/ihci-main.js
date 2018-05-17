@@ -86,7 +86,7 @@ const teamPage = async (req, res, next) => {
 
 // 路由前判定是否已经登录
 const routerAuthJudge = async (req, res, next) => { 
-    if()
+    
     req.INIT_DATA = {
         aaaa: 'aaaaaaaaaa'
     }
