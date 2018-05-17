@@ -20,6 +20,22 @@ var TestDB = mongoose.model('test')
 var UserDB = mongoose.model('user')
 var TeamDB = mongoose.model('team')
 
+// 路由前判定是否已经登录
+const routerAuthJudge = async (req, res, next) => { 
+    if(req.rSession.userId) {
+        req.INIT_DATA = {
+            'a': 'a'
+        }
+    } else {
+        req.INIT_DATA = {
+            'a': 'a'
+        }
+        res.redirect('/')
+        return
+    }
+    next()
+}
+
 async function address(req, res, next) {
     var filePath = path.resolve(__dirname, '../../public/activity/page/address/full.html'),
     options = {
@@ -84,14 +100,7 @@ const teamPage = async (req, res, next) => {
     htmlProcessor(req, res, next, options)
 }
 
-// 路由前判定是否已经登录
-const routerAuthJudge = async (req, res, next) => { 
-    
-    req.INIT_DATA = {
-        aaaa: 'aaaaaaaaaa'
-    }
-    next()
-}
+
 
 const wxAuthCodeHandle = async (req, res, next) => { 
     req.INIT_DATA = {
@@ -142,18 +151,18 @@ module.exports = [
 
     ['GET', '/auth', clientParams(), wxAuthCodeHandle , mainPage],
 
-    ['GET', '/team', clientParams(), doNoThing, pageHandle() ],
-    ['GET', '/sign', clientParams(), doNoThing, pageHandle() ],
-    ['GET', '/test', clientParams(), doNoThing, pageHandle() ],
+    ['GET', '/team', clientParams(), routerAuthJudge, pageHandle() ],
+    ['GET', '/sign', clientParams(), routerAuthJudge, pageHandle() ],
+    ['GET', '/test', clientParams(), routerAuthJudge, pageHandle() ],
 
-    ['GET', '/team-edit/:teamId', clientParams(), doNoThing, pageHandle() ],
-    ['GET', '/team-admin/:teamId', clientParams(), doNoThing, pageHandle() ],
+    ['GET', '/team-edit/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
+    ['GET', '/team-admin/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/team-join/:teamId', clientParams(), joinTeam, pageHandle() ],
 
-    ['GET', '/team-create', clientParams(), doNoThing, pageHandle() ],
-    ['GET', '/person', clientParams(), personSeting, pageHandle() ],
-    ['GET', '/discuss/:id', clientParams(), doNoThing, pageHandle() ],
-    ['GET', '/discuss/topic/:id', clientParams(), doNoThing, pageHandle() ],
-    ['GET', '/timeline', clientParams(),    doNoThing, pageHandle() ],
-    ['GET', '/member', clientParams(),   doNoThing, pageHandle() ],
+    ['GET', '/team-create', clientParams(), routerAuthJudge, pageHandle() ],
+    ['GET', '/person', clientParams(), routerAuthJudge, personSeting, pageHandle() ],
+    ['GET', '/discuss/:id', clientParams(), routerAuthJudge, pageHandle() ],
+    ['GET', '/discuss/topic/:id', clientParams(), routerAuthJudge, pageHandle() ],
+    ['GET', '/timeline', clientParams(),    routerAuthJudge, pageHandle() ],
+    ['GET', '/member', clientParams(),   routerAuthJudge, pageHandle() ],
 ];
