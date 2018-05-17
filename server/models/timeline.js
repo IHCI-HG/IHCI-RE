@@ -46,7 +46,11 @@ timelineSchema.statics = {
         teamIdList.map((item) => {
             queryList.push({teamId: item})
         })
-        return this.find({$or: queryList}).sort({create_time: -1}).exec()
+        if(queryList && queryList.length) {
+            return this.find({$or: queryList}).sort({create_time: -1}).exec()
+        } else {
+            return []
+        }
     },
 }
 

@@ -31,28 +31,20 @@ var subscribeEventHandle = async (openid) => {
                     subState: true
                 })
             } 
-            pub_pushTemplateMsg(openid, 'p6pZBXX0SaqODRDZgY_3NqyIAK0mYN9HXYq6yMLyA04', 'www.animita.cn', {
+            pub_pushTemplateMsg(openid, 'YH-TY6g0sbVJgC5Ppk-cBDvLlFCfQxRm61QKj7IOSV4', 'www.animita.cn', {
                 "first": {
-                    "value":"关注服务号成功",
-                    "color":"#173177"
+                    "value": "关注服务号成功，您已注册平台",
                 },
                 "keyword1":{
-                    "value":"消息1",
-                    "color":"#173177"
+                    "value": userObj.personInfo.name  + '关注服务号成功',
                 },
                 "keyword2": {
-                    "value":"消息2",
-                    "color":"#173177"
-                },
-                "keyword3": {
-                    "value":"消息3",
-                    "color":"#173177"
+                    "value": new Date().toString(),
                 },
                 "remark":{
-                    "value":"",
-                    "color":"#173177"
+                    "value": "",
                 }
-        })
+            })
         }
     } catch (error) {
         console.error(error);
@@ -65,6 +57,9 @@ var unsubscribeEventHandle = async (openid) => {
     // 用uid查用户表 -》 改sub状态
     try {
         const wxUserInfo = await pub_openidToUserInfo(openid)
+
+        console.log(wxUserInfo);
+
         if(wxUserInfo && wxUserInfo.unionid) {
             const userObj = await UserDB.findByUnionId(wxUserInfo.unionid)
             if(userObj) {
@@ -115,9 +110,9 @@ var wxReceiver = function(req, res, next) {
     //       event: [ 'subscribe' ],
     //       eventkey: [ '' ] } } 
 
-    const msgtype = req.body.xml && req.body.xml.msgtype[0]
+    const event = req.body.xml && req.body.xml.event[0]
 
-    switch (msgtype) {
+    switch (event) {
         case 'subscribe':
             subscribeEventHandle(req.body.xml.fromusername[0])
             break;
@@ -132,7 +127,9 @@ var wxReceiver = function(req, res, next) {
 
     if(req.query.echostr) {
         res.send(req.query.echostr)
-    } 
+    } else {
+        res.send('')
+    }
 };
 
 

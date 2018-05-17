@@ -734,9 +734,7 @@ export const validLegal = (validType, typeName, inputVal, maxNum, minNum, spec_t
  */
 export const imgUrlFormat = (url, formatStrQ = "?x-oss-process=image/resize,m_fill,limit_0,h_64,w_64", formatStrW = "/64") => {
 
-    if (/(img\.qlchat\.com)/.test(url)) {
-        url = url.replace(/@.*/, "") + formatStrQ;
-    } else if (/(wx\.qlogo\.cn\/mmopen)/.test(url)) {
+    if (/(wx\.qlogo\.cn\/mmopen)/.test(url)) {
         url = url.replace(/(\/(0|132|64|96)$)/, formatStrW);
     };
 

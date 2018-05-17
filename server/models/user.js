@@ -85,6 +85,18 @@ userSchema.statics = {
         return result
     },
 
+    openidList: async function(userIdList) {
+        const queryList = []
+        userIdList.length && userIdList.map((item) => {
+            queryList.push({_id: item})
+        })
+        if(queryList && queryList.length) {
+            return this.find({$or: queryList}, {openid: 1}).exec()
+        } else {
+            return []
+        }
+    }, 
+
 
     // team 操作相关
     addTeam: async function(userId, teamObj, role) {

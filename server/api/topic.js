@@ -3,15 +3,11 @@ var _ = require('underscore'),
     proxy = require('../components/proxy/proxy'),
     conf = require('../conf');
 
-    
-import fetch from 'isomorphic-fetch';
-import lo from 'lodash';
 import apiAuth from '../middleware/auth/api-auth'
 
 import { 
-    web_codeToAccessToken, 
-    web_accessTokenToUserInfo,
-    web_codeToUserInfo,
+    createTopicTemplate,
+    replyTopicTemplate
 } from '../components/wx-utils/wx-utils'
 
 var mongoose = require('mongoose')
@@ -37,16 +33,17 @@ const createTopic = async (req, res, next) => {
         return
     }
 
-    if(informList || informList.length) {
-        //todo 走微信模板消息下发流程
-    }
-
     try {
         const userObj = await userDB.baseInfoById(userId)
         const result = await topicDB.createTopic(topicName, topicContent, userObj, teamId)
         await teamDB.addTopic(teamId, result)
         const teamObj = await teamDB.findByTeamId(teamId)
         await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'CREATE_TOPIC', result._id, result.title, result)
+
+        //如果有需要通知的人，则走微信模板消息下发流程
+        if(informList && informList.length) {
+            createTopicTemplate(informList, result)
+        }
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
@@ -78,12 +75,13 @@ const editTopic = async (req, res, next) => {
         return
     }
 
-    if(informList && informList.length) {
-        //todo 走微信模板消息下发流程
-    }
+
 
     try {
         let topicObj = await topicDB.findByTopicId(topicId)
+        // if(informList && informList.length) {
+        //   todo 走微信模板消息下发流程
+        // }
         if(!topicObj) {
             resProcessor.jsonp(req, res, {
                 state: { code: 1, msg: "话题不存在" },
@@ -136,9 +134,7 @@ const createDiscuss = async (req, res, next) => {
         return
     }
     
-    if(informList || informList.length) {
-        //todo 走微信模板消息下发流程
-    }
+
 
     try {
         const userObj = await userDB.baseInfoById(userId)
@@ -150,6 +146,11 @@ const createDiscuss = async (req, res, next) => {
         const teamObj = await teamDB.findByTeamId(teamId)
 
         await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'REPLY_TOPIC', result._id, topicObj.title, result)
+
+        //如果有需要通知的人，则走微信模板消息下发流程
+        if(informList && informList.length) {
+            replyTopicTemplate(informList, result)
+        }
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
