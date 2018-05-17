@@ -44,8 +44,6 @@ export default class Team extends React.Component{
         })
         const teamInfoList = listResult.data
 
-        console.log(teamInfoList);
-
         teamList.map((item, idx) => {
             teamList[idx] = {
                 ...item,
@@ -92,7 +90,7 @@ export default class Team extends React.Component{
     }
 
     locationTo = (url) => {
-        this.props.router.push(url)
+        location.href = url
     }
 
 

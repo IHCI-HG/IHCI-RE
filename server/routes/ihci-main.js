@@ -84,7 +84,9 @@ const teamPage = async (req, res, next) => {
     htmlProcessor(req, res, next, options)
 }
 
-const doNoThing = async (req, res, next) => { 
+// 路由前判定是否已经登录
+const routerAuthJudge = async (req, res, next) => { 
+    if()
     req.INIT_DATA = {
         aaaa: 'aaaaaaaaaa'
     }
@@ -122,16 +124,13 @@ const joinTeam = async (req, res, next) => {
         login: false,
         teamObj: null
     }
-
     if(userId) {
         initData.login = true
     }
     if(teamObj) {
         initData.teamObj = teamObj
     }
-
     req.INIT_DATA = initData
-
     next()
 }
 
