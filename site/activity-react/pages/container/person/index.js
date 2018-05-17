@@ -17,7 +17,7 @@ export default class Team extends React.Component{
                     name: '',
                     mail: '',
                     phone: '',
-                    headImg: INIT_DATA.userObj && INIT_DATA.userObj.wxUserInfo && INIT_DATA.userObj.wxUserInfo.headimgurl || '',
+                    headImg: INIT_DATA.userObj && INIT_DATA.userObj.wxUserInfo && INIT_DATA.userObj.wxUserInfo.headimgurl || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnregyyDrMvhEDpfC4wFetzykulWRVMGF-jp7RXIIqZ5ffEdawIA',
                 }
             })
         } else {
@@ -34,6 +34,7 @@ export default class Team extends React.Component{
 
         if(this.props.location.query.alreadyBind) {
             window.toast("该微信号已经绑定")
+            history.pushState({}, {}, '/person')
         }
     }
 
@@ -122,6 +123,9 @@ export default class Team extends React.Component{
 
         if(result.state.code === 0) {
             window.toast("设置成功")
+            setTimeout(() => {
+                location.href = location.href
+            }, 300);
         } else {
             window.toast("设置失败，请稍后再试")
         }

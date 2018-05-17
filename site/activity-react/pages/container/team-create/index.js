@@ -10,7 +10,7 @@ export default class TeamAdmin extends React.Component{
 
     state = {
         name: '',
-        teamImg: 'https://developers.google.com/machine-learning/crash-course/images/landing-icon-sliders.svg',
+        teamImg: 'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=471192784,4234473862&fm=27&gp=0.jpg',
         desc: '',
        
     }

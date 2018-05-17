@@ -23,7 +23,7 @@ import Sign from './sign'
 class App extends React.Component{
     state = {
         activeTag : '',
-        headImg: '',
+        headImg: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnregyyDrMvhEDpfC4wFetzykulWRVMGF-jp7RXIIqZ5ffEdawIA',
         personInfo: {
             teamList: []
         },

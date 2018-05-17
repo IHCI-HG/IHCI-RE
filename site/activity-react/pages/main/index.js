@@ -8,6 +8,7 @@ import api, { authApi } from '../../utils/api';
 import * as ui from '../../utils/ui';
 
 import './style.scss'
+import '../../commen/style.scss'
 import { loading } from '../../utils/ui';
 
 import WxLoginDialog from '../../components/wx-login-dialog'

@@ -216,7 +216,7 @@ export default class Team extends React.Component{
                     <div className="team-info">
                         <div className="left">
                             <div className="head">{teamInfo.name}</div>
-                            <div className="team-des">{teamInfo.desc}</div>  
+                            <pre><div className="team-des">{teamInfo.desc}</div>  </pre>
                         </div>
                         <div className="right">
                             <div className="admin">
