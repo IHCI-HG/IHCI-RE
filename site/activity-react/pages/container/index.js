@@ -28,10 +28,11 @@ class App extends React.Component{
             teamList: []
         },
     }
+    componentWillMount = async() => { 
+        this.setHeadImg()
+    }
     componentDidMount = async() => {
         this.activeTagHandle(this.props.location.pathname)
-
-        this.setHeadImg()
     }
 
     setHeadImg = async () => {

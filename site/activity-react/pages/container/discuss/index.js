@@ -66,13 +66,14 @@ export default class Team extends React.Component{
 
         const memberList = []
         const memberIDList = []
-        result.data.memberList.map((item) => {
-            if(item.userId == this.props.personInfo._id) {
-                this.setState({
-                    isCreator: true
-                })
-            }
 
+        const curUserId = this.props.personInfo._id
+
+        let isCreator = false
+        result.data.memberList.map((item) => {
+            if(item.userId == curUserId) {
+                isCreator = true
+            }
             memberIDList.push(item.userId)
         })
         const memberResult = await api('/api/userInfoList', {
@@ -89,6 +90,7 @@ export default class Team extends React.Component{
         })
 
         this.setState({
+            isCreator: isCreator,
             teamInfo: teamInfo,
             memberNum: result.data.memberList.length,
             memberList: memberList,

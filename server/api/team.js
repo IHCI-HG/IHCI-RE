@@ -282,20 +282,6 @@ const markTeam = async (req, res, next) => {
             return
         }
 
-        // let isInTeam = false
-        // userObj.teamList.map((item) => {
-        //     if(item.teamId == teamId) {
-        //         isInTeam = true
-        //     }
-        // })
-        // if(!isInTeam) {
-        //     resProcessor.jsonp(req, res, {
-        //         state: { code: 1, msg: '你不在该团队中'},
-        //         data: {}
-        //     });
-        //     return
-        // }
-
         const result = await userDB.markTeam(userId, teamId, markState)
 
         resProcessor.jsonp(req, res, {
@@ -351,9 +337,9 @@ const kikMember = async (req, res, next) => {
             });
             return
         }
-
-
         const result = await teamDB.delMember(teamId, tarMemberId)
+        await userDB.delTeam(tarMemberId, teamId)
+
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '设置成功' },
             data: {

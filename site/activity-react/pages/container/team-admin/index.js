@@ -105,7 +105,7 @@ export default class TeamAdmin extends React.Component{
             return
         }
         let isCreator = false
-        teamInfo.memberList.map((item) => {
+        this.teamInfo.memberList.map((item) => {
             if(item.userId == id && item.role == 'creator') {
                 let isCreator = true
             } 
@@ -114,6 +114,8 @@ export default class TeamAdmin extends React.Component{
             window.toast('无法踢出创建者')
             return 
         }
+
+        console.log("ssssssssssss");
 
         const memberResult = await api('/api/team/kikMember', {
             method: 'POST',

@@ -96,13 +96,6 @@ export default class News extends React.Component{
         })
     }
 
-    // starHandle = async (id) => {
-    //     const result = await api('/api/base/sys-time', {
-    //         method: 'GET',
-    //         body: {}
-    //     })
-    // }
-
     appendToShowList = (list) => {
         let showList = this.state.showList
 

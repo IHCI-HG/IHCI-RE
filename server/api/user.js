@@ -8,6 +8,9 @@ import fetch from 'isomorphic-fetch';
 import lo from 'lodash';
 import apiAuth from '../middleware/auth/api-auth'
 
+    
+import { pub_pushTemplateMsg } from '../components/wx-utils/wx-utils'
+
 import { 
     web_codeToAccessToken, 
     web_accessTokenToUserInfo,
@@ -27,9 +30,7 @@ var sysTime = function(req, res, next) {
 };
 
 const signUp = async (req, res, next) => {
-
     const userInfo = req.body.userInfo
-
     if(!userInfo.username || !userInfo.password) {
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: "参数不全"},
@@ -37,13 +38,11 @@ const signUp = async (req, res, next) => {
         });
         return
     }
-
     const result = await UserDB.createUser(
         userInfo.username,
         userInfo.password,
         userInfo
     )
-
     if(!result) {
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: "用户名已经存在"},
@@ -203,7 +202,9 @@ const unbindWechat = async (req, res, next) => {
     const userId = req.rSession.userId
     try {
         const result = await UserDB.updateUser(userId, {
-            unionid: ''
+            unionid: '',
+            openid: '',
+            subState: false,
         })
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '设置成功' },
@@ -294,6 +295,6 @@ module.exports = [
     ['POST', '/api/unbindWechat', apiAuth, unbindWechat],
 
     ['POST', '/api/signUp', signUp],
-    ['POST', '/api/setUserInfo', apiAuth, setUserInfo]
+    ['POST', '/api/setUserInfo', apiAuth, setUserInfo],
 
 ];

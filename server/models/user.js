@@ -28,8 +28,8 @@ wxUserInfo
 
 const userSchema = new mongoose.Schema({
     create_time: { type: String, default : Date.now},
-    username: { type: String , required: true , index: true },
-    password: { type: String , required: true },
+    username: { type: String , index: true },
+    password: { type: String  },
     personInfo: mongoose.Schema.Types.Mixed,
     teamList: [mongoose.Schema.Types.Mixed],
     openid: String,
@@ -116,7 +116,6 @@ userSchema.statics = {
             }
         ).exec()
     },
-
     updateTeam: async function(userId, teamObj) {
         teamId = teamObj._id.toString()
         return this.update(
@@ -130,7 +129,6 @@ userSchema.statics = {
             },
         ).exec()
     },
-
     delTeam: async function(userId, teamId) {
         return this.update(
             {_id: userId},
