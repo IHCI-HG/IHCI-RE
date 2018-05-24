@@ -185,7 +185,7 @@ const createFile = async function(teamId, dir, fileName, ossKey) {
 }
 
 const createFolder = async function(teamId, dir, folderName) {
-    const folderObj = await folderDB.findOne({
+    let folderObj = await folderDB.findOne({
         team: mongoose.Types.ObjectId(teamId),
         dir: dir
     }).exec()
@@ -203,7 +203,7 @@ const createFolder = async function(teamId, dir, folderName) {
         throw '文件名已存在'
     }
 
-    const folderObj = await folderDB.createFolder(teamId, dir, folderName)
+    folderObj = await folderDB.createFolder(teamId, dir, folderName)
     await folderDB.appendFile(teamId, dir, folderObj)
 
     return folderObj
@@ -310,15 +310,6 @@ const moveFolder = async function(teamId, dir, folderName, tarDir) {
     if(!folderObj) {
         throw '目标目录不存在'
     }    
-
-    const folderObj = await folderDB.findOne({
-        team: mongoose.Types.ObjectId(teamId),
-        dir: dir,
-        folderName: folderName,
-    })
-    if(!folderObj) {
-        throw '文件不存在'
-    }
 
     folderObj.fileList.map((item) => {
         if(item.fileType == 'file') {

@@ -143,8 +143,6 @@ const joinTeam = async (req, res, next) => {
     next()
 }
 
-
-
 module.exports = [
     // 主页
     ['GET', '/', clientParams(), mainPage],
@@ -153,6 +151,7 @@ module.exports = [
 
     ['GET', '/team', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/sign', clientParams(), routerAuthJudge, pageHandle() ],
+
     ['GET', '/test', clientParams(), routerAuthJudge, pageHandle() ],
 
     ['GET', '/team-edit/:teamId', clientParams(), routerAuthJudge, pageHandle() ],

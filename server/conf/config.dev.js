@@ -22,6 +22,7 @@ var config = {
         'no_ready_check': true,
         // 'password': 'WdPTMj6X',
     },
+    'redisExpire': 60 * 60 * 24,
 
     'webAppId': 'wx50a231aefaff3222',
     'webAppSe': '4aa16e1583e8525a4d4bb47b37928467',
@@ -29,7 +30,17 @@ var config = {
     'pubAppId': 'wx87136e7c8133efe3',
     'pubAppSe': '195592b5e345046e61b5efc33d4cb42d',
 
-    'redisExpire': 60 * 60 * 24,
+    'ossConf': {
+        'ossAdminAccessKeyId': 'LTAIkrgpPKLOb6CJ',
+        'ossAdminAccessKeySecret': 'STTW2qHnI6NLNuUJAjmom6rDSO2ksr',
+
+        'accessKeyId': 'LTAI50JBylPO2aRe',
+        'accessKeySecret': 'dCXkMpinyC853SACdOqu2LyM2PI3Cv',
+        'roleArn': 'acs:ram::1656281103392398:role/aliyunosstokengeneratorrole',
+        'region': 'oss-cn-shenzhen',
+        'bucket': 'arluber',
+    },
+
     db: 'mongodb://127.0.0.1:27017/ihci',
 
     'lruMaxAge': 36000,

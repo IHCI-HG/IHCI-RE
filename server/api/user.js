@@ -221,23 +221,6 @@ const unbindWechat = async (req, res, next) => {
     }
 }
 
-const test = async (req, res, next) => {
-
-    // const reust =  redisPromiseGet()
-    const result1 = await redisPromiseSet('key-adawda', 'value:' + Math.random(), 1000)
-    const result2 = await redisPromiseGet('key-adawdass')
-
-
-    resProcessor.jsonp(req, res, {
-        state: { code: 0 },
-        data: {
-            sysTime: new Date().getTime(),
-            result1: result1,
-            result2: result2
-        }
-    });
-
-}
 
 const userInfoList = async (req, res, next) => {
 
@@ -282,7 +265,6 @@ const userInfoList = async (req, res, next) => {
 
 module.exports = [
     ['GET', '/api/base/sys-time', sysTime],
-    ['GET', '/api/test', test],
     
     ['GET', '/api/getMyInfo',apiAuth, getMyInfo],
     ['POST', '/api/userInfoList',apiAuth, userInfoList],

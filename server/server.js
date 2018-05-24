@@ -32,10 +32,10 @@ var _ = require('underscore'),
 
 var db = require('./db');
 
-fs.appendFile(path.join('/data/logs', 'access.log'), '服务启动/n', (err) => {
-    if(err) throw err;
-})
-var accessLogStream = fs.createWriteStream(path.join('/data/logs', 'access.log'), {flags: 'a'})
+// fs.appendFile(path.join('/data/logs', 'access.log'), '服务启动/n', (err) => {
+//     if(err) throw err;
+// })
+// var accessLogStream = fs.createWriteStream(path.join('/data/logs', 'access.log'), {flags: 'a'})
 
 function getRedisClusterObj() {
     var redisOption = _.extend({
@@ -142,11 +142,11 @@ function init() {
      * @return {[type]}          [description]
      */
     logger.token('userId', function getUserIdToken(req, res) {
-        return lo.get(req, 'cookies.userId') || lo.get(req, 'rSession.user.userId') || '';
+        return lo.get(req, 'cookies.userId') || lo.get(req, 'rSession.userId') || '';
     });
 
     // app.use(logger(':remote-addr - [:userId] - :remote-user [:date[default]] ":method :url HTTP/:http-version" ":referrer" ":user-agent" :status :res[content-length] - :response-time ms', {stream: accessLogStream}));
-    app.use(logger(':remote-addr - [:userId] - :remote-user [:date[default]] ":method :url HTTP/:http-version" ":referrer" ":user-agent" :status :res[content-length] - :response-time ms', {stream: accessLogStream}));
+    app.use(logger(':remote-addr - [:userId] - :remote-user [:date[default]] ":method :url HTTP/:http-version" ":referrer" ":user-agent" :status :res[content-length] - :response-time ms'));
     
 
     // 危险检测

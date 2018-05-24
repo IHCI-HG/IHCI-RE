@@ -20,22 +20,6 @@ var teamDB = mongoose.model('team')
 var userDB = mongoose.model('user')
 var timelineDB = mongoose.model('timeline')
 
-const test = async (req, res, next) => {
-    const teamObj = await teamDB.createTeam('name', 'url', 'test')
-    await teamDB.addMember(teamObj._id, 'userId', 'creator')
-    await teamDB.addMember(teamObj._id, 'userId1', 'member')
-    await teamDB.addMember(teamObj._id, 'userId2', 'member')
-    const result = await teamDB.changeMemberRole(teamObj._id, 'userId2', 'admin')
-    await teamDB.addTopic(teamObj._id, 'topicId11')
-     
-    resProcessor.jsonp(req, res, {
-        state: { code: 0 },
-        data: {
-            sysTime: new Date().getTime(),
-            result: result
-        }
-    });
-}
 
 const returnAll = async (req, res, next) => {
     const allTimeline = await timelineDB.returnAll()

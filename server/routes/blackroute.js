@@ -1,6 +1,8 @@
 
 var notFound = require('../middleware/not-found/not-found');
 
+
+
 /**
  * routes配置，配置格式如下：
  * routes = [

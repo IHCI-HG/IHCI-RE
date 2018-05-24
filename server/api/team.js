@@ -20,22 +20,6 @@ var teamDB = mongoose.model('team')
 var userDB = mongoose.model('user')
 var topicDB = mongoose.model('topic')
 
-const test = async (req, res, next) => {
-    const teamObj = await teamDB.createTeam('name', 'url', 'test')
-    await teamDB.addMember(teamObj._id, 'userId', 'creator')
-    await teamDB.addMember(teamObj._id, 'userId1', 'member')
-    await teamDB.addMember(teamObj._id, 'userId2', 'member')
-    const result = await teamDB.changeMemberRole(teamObj._id, 'userId2', 'admin')
-    await teamDB.addTopic(teamObj._id, 'topicId11')
-     
-    resProcessor.jsonp(req, res, {
-        state: { code: 0 },
-        data: {
-            sysTime: new Date().getTime(),
-            result: result
-        }
-    });
-}
 
 const creatTeam = async (req, res, next) => {
     const teamInfo = req.body.teamInfo || {}
@@ -458,7 +442,6 @@ const memberList = async (req, res, next) => {
 
 
 module.exports = [
-    ['GET', '/api/test', test],
     ['POST', '/api/team/info', apiAuth, teamInfo],
     ['POST', '/api/team/infoList', apiAuth, teamInfoList],
 

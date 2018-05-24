@@ -82,5 +82,6 @@ module.exports = function (opts) {
     });
 
     router.options = options || {};
+    
     return router;
 };

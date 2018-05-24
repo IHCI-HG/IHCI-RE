@@ -7,8 +7,6 @@ var signature = require('cookie-signature'),
     // session key
     redisSessionKey = "rsessionid";
 
-
-
 module.exports = RedisSession;
 
 

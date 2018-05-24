@@ -93,7 +93,6 @@ module.exports = function (routesPath, options) {
             }
 
             if (_.isFunction(router[method])) {
-                // console.log(method, path, nextFuns);
                 router[method].apply(router, [path].concat(nextFuns));
             }
         }
