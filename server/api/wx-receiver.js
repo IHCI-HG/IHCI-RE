@@ -110,14 +110,14 @@ var wxReceiver = function(req, res, next) {
     //       event: [ 'subscribe' ],
     //       eventkey: [ '' ] } } 
 
-    const event = req.body.xml && req.body.xml.event[0]
+    const event = req.body.xml && req.body.xml.event
 
     switch (event) {
         case 'subscribe':
-            subscribeEventHandle(req.body.xml.fromusername[0])
+            subscribeEventHandle(req.body.xml.fromusername)
             break;
         case 'unsubscribe':
-            unsubscribeEventHandle(req.body.xml.fromusername[0])
+            unsubscribeEventHandle(req.body.xml.fromusername)
             break;
         default:
             break;

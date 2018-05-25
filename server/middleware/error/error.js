@@ -8,6 +8,15 @@ var errorHandler = require('errorhandler'),
 
 // 生产环境下，给出简要的错误信息
 function handleProd(err, req, res, next) {
+
+    // console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
+    // console.log(req.body);
+    // console.log(req.method);
+    // console.log(decodeURIComponent(req.query));
+    // console.log(req.headers);
+    // console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
+
+
     var msg = err.stack;
     if (err.mod) {
         msg = '[' + err.mod + '] ' + msg;
@@ -17,8 +26,8 @@ function handleProd(err, req, res, next) {
     if (err.status) {
         res.statusCode = err.status;
     }
-
     // Todo  这里可以配置一些错误的处理
+
 
     res.end();
 }

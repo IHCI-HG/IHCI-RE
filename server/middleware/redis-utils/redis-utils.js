@@ -35,7 +35,7 @@ const generateId = function() {
  * @param {any} key 
  * @returns 
  */
-const redisPromiseGet = (key) => {
+export const redisPromiseGet = (key) => {
     return new Promise((resolve, reject) => {
         redisCluster.get(key, (err, value) => {
             console.log('redis-get: ' + key + ' | value: ' + value);

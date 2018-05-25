@@ -7,7 +7,6 @@ var _ = require('underscore'),
     Multer = require('multer'),
     // session = require('session'),
     cookieParser = require('cookie-parser'),
-    xmlparser = require('express-xml-bodyparser'),
     redis = require('redis'),
     lo = require('lodash'),
 
@@ -29,6 +28,8 @@ var _ = require('underscore'),
     exphbs = require('express-handlebars'),
 
     app = express();
+
+    require("body-parser-xml")(bodyParser);
 
 var db = require('./db');
 
@@ -98,6 +99,9 @@ function init() {
     }));
     app.set('view engine', 'handlebars');
 
+    // 危险检测
+    app.use(dangerDetect());
+
     // for parsing application/json
     app.use(bodyParser.json({
         limit: '10mb',
@@ -109,7 +113,20 @@ function init() {
         limit: '10mb',
     }));
 
-    app.use(xmlparser());
+    app.use(bodyParser.xml({
+        limit: "1MB",   // Reject payload bigger than 1 MB
+        xmlParseOptions: {
+            normalize: true,     // Trim whitespace inside text nodes
+            normalizeTags: true, // Transform tags to lowercase
+            explicitArray: false // Only put nodes in array if >1
+        },
+        verify: function (req, res, buf, encoding) {
+            if (buf && buf.length) {
+                // Store the raw XML
+                req.rawBody = buf.toString(encoding || "utf8");
+            }
+        }
+    }));
 
     // for parsing multipart/form-data file upload
     app.use(new Multer().single('file'));
@@ -147,10 +164,6 @@ function init() {
 
     // app.use(logger(':remote-addr - [:userId] - :remote-user [:date[default]] ":method :url HTTP/:http-version" ":referrer" ":user-agent" :status :res[content-length] - :response-time ms', {stream: accessLogStream}));
     app.use(logger(':remote-addr - [:userId] - :remote-user [:date[default]] ":method :url HTTP/:http-version" ":referrer" ":user-agent" :status :res[content-length] - :response-time ms'));
-    
-
-    // 危险检测
-    app.use(dangerDetect());
 
     // 使用带签名的cookie，提高安全性
     app.use(cookieParser('$asdfeozsDLMNZXOPsf...zoweqhzil'));
