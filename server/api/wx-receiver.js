@@ -8,7 +8,7 @@ var fs = require("fs")
 var crypto = require('crypto');
 const hash = crypto.createHash('sha1')
 
-import apiAuth from '../middleware/auth/api-auth'
+import apiAuth from '../components/auth/api-auth'
 
 import {
     pub_openidToUserInfo,

@@ -3,7 +3,7 @@ var _ = require('underscore'),
     proxy = require('../components/proxy/proxy'),
     conf = require('../conf');
 
-import apiAuth from '../middleware/auth/api-auth'
+import apiAuth from '../components/auth/api-auth'
 
 import { 
     createTopicTemplate,

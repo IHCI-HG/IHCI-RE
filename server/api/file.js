@@ -6,7 +6,7 @@ var _ = require('underscore'),
     
 import fetch from 'isomorphic-fetch';
 import lo from 'lodash';
-import apiAuth from '../middleware/auth/api-auth'
+import apiAuth from '../components/auth/api-auth'
 
 var OSSW = require('ali-oss').Wrapper;
 
