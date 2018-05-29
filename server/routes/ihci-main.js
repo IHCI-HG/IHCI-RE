@@ -10,7 +10,7 @@ var path = require('path'),
     conf = require('../conf'),
     server = require('../server');
 
-var pageHandle = require('../middleware/page-handle/page-handle')
+var pageHandle = require('../components/page-handle/page-handle')
 var querystring = require('querystring');
 var activityApi = require('../api/activity');
 
@@ -23,13 +23,7 @@ var TeamDB = mongoose.model('team')
 // 路由前判定是否已经登录
 const routerAuthJudge = async (req, res, next) => { 
     if(req.rSession.userId) {
-        req.INIT_DATA = {
-            'a': 'a'
-        }
     } else {
-        req.INIT_DATA = {
-            'a': 'a'
-        }
         res.redirect('/')
         return
     }

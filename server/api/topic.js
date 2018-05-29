@@ -75,8 +75,6 @@ const editTopic = async (req, res, next) => {
         return
     }
 
-
-
     try {
         let topicObj = await topicDB.findByTopicId(topicId)
         // if(informList && informList.length) {
@@ -93,7 +91,6 @@ const editTopic = async (req, res, next) => {
         const result1 = await topicDB.updateTopic(topicId, editTopic)
         const result2 = await teamDB.updateTopic(teamId, topicId, editTopic)
         
-
         //todo 还要在timeline表中增加项目
 
         resProcessor.jsonp(req, res, {
