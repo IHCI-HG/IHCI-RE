@@ -239,10 +239,6 @@ export class AudioPlayer {
         } else if (/(https\:)/.test(audioTempSrc) && /(amr|aac)/.test(audioTempSrc)) {
             audioTempSrc = audioTempSrc.replace("https:","http:");
             console.log('2: https 降级成 http');
-        } else if (/(http\:)/.test(audioTempSrc) && /(amr|aac)/.test(audioTempSrc)){
-            audioTempSrc = audioTempSrc.replace("http:","https:");
-            audioTempSrc = audioTempSrc.replace(/(media\.qlchat\.com)|(qiniu\.qianliaowang\.com)/, "audio.qianliaowang.com").replace(/\.(amr|aac)/,"\.mp3");
-            console.log('3: 降级使用audio.qianliaowang.com');
         } else if (/(https\:)/.test(audioTempSrc) && /(\.mp3)/.test(audioTempSrc)){
             audioTempSrc = audioTempSrc.replace("https:","http:");
             console.log('4: 降级使用 http');
@@ -279,15 +275,6 @@ export class AudioPlayer {
 				status: _status,
 				errorCodeMsg:msg,
 			};
-
-        fetch(`//stat.corp.qlchat.com/media.gif?${encode(body)}`, {
-            method:'GET',
-            headers: {
-                'Content-Type': 'application/json;charset=UTF-8',
-            },
-            credentials: 'include',
-
-        });
 	}
 
     // 私有方法，在音频错误处理函数
