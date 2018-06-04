@@ -29,16 +29,4 @@ export function isPc() {
     return !isAndroid() && !isIOS()
 }
 
-export function isQlchat() {
-    return ua.toLowerCase().match(/qlchat/i) == "qlchat";
-}
 
-export function getQlchatVersion() {
-    var qlver = ua.toLowerCase().match(/qlchat[a-zA-Z]*?\/([\d.]+)/);
-
-    if (qlver && qlver.length) {
-        return parseInt(qlver[1]);
-    }
-
-    return;
-}

@@ -1,6 +1,6 @@
 
 import { fillParams } from './url-utils';
-import { isIOS, isAndroid, getQlchatVersion} from './envi';
+import { isIOS, isAndroid} from './envi';
 
 function copy(obj) {
     // JSON解析之类的其实如果给定格式不对很容易出错滴，自己做好检验~
@@ -37,13 +37,7 @@ export function share(opts) {
         opts.shareUrl = window.location.href;
     }
 
-    // Todo 根据需要可能要调整或去掉
     var newShareUrl = opts.shareUrl;
-    // if (opts.shareUrl.indexOf('__sharem=1') > -1) {
-    //     newShareUrl = opts.shareUrl;
-    // } else {
-    //     newShareUrl = opts.shareUrl.replace(/http[s]{0,1}\:\/\/m\.qlchat\.com/, 'http://v' + (Math.random() * 9).toFixed(0) + '.qianliao.tv');
-    // }
 
 
     // 去掉重复参数以及state, code参数
@@ -153,25 +147,6 @@ export function share(opts) {
 };
 
 
-export function appShare(opts) {
-    var ver = getQlchatVersion()
-    if(ver && ver > 360) {
-        window.qlchat.onMenuShareWeChatTimeline({
-            type: "link", // "link" "image"
-            content: opts.shareUrl, 
-            title:  opts.timelineTitle,
-            desc:  opts.timelineDesc,
-            thumbImage:  opts.imgUrl 
-        });
-        window.qlchat.onMenuShareWeChatFriends({
-            type: "link", // "link" "image"
-            content: opts.shareUrl, 
-            title:  opts.title,
-            desc:  opts.desc,
-            thumbImage:  opts.imgUrl 
-        });
-    }
-}
 
 export function closeShare() {
     typeof wx != 'undefined' && wx.ready(function () {

@@ -18,42 +18,6 @@ fis.match('*', {
     release: '/activity/$0',
 });
 
-// 使用cdn时开发调试部署-前端资源发布目录设置
-fis.media('cdn_dev')
-    .match('*.{js,css,jpg,png,jpeg,gif,ttf,eot,svg,woff}', {
-        deploy: fis.plugin('http-push', {
-            receiver: 'http://receiver.dev1.qlchat.com/receiver',
-            to: '/data/nodeapp/resources/rs',
-        }),
-    })
-    .match('*.{js,css,jpg,png,jpeg,gif,ttf,eot,svg,woff}', {
-        domain: '//res.dev1.qlchat.com/rs',
-    });
-
-// 测试环境cdn配置
-fis.media('cdn_test')
-    .match('*.{js,css,jpg,png,jpeg,gif,ttf,eot,svg,woff}', {
-        deploy: fis.plugin('http-push', {
-            receiver: 'http://receiver.dev1.qlchat.com/receiver',
-            to: '/data/nodeapp/resources/rs',
-        }),
-    })
-    .match('*.{js,css,jpg,png,jpeg,gif,ttf,eot,svg,woff}', {
-        domain: '//res.dev1.qlchat.com/rs',
-    });
-
-// 使用cdn线上部署-前端资源发布目录设置
-fis.media('cdn_prod')
-    .match('*.{js,css,jpg,png,jpeg,gif,ttf,eot,svg,woff}', {
-        deploy: fis.plugin('http-push', {
-            receiver: 'http://127.0.0.1:5001/receiver',
-            to: '/data/res/activity/rs',
-        }),
-    })
-    .match('*.{js,css,jpg,png,jpeg,gif,ttf,eot,svg,woff}', {
-        domain: '//static.qianliaowang.com/activity/rs',
-    });
-
 
 // ///////////////////////////资源处理配置///////////////////////////////////////
 
