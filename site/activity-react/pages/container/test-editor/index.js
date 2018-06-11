@@ -26,24 +26,23 @@ export default class Team extends React.Component{
         console.log(content)
     }
 
-    handleRawChange = (rawContent) => {
-        console.log(rawContent)
-    }
-
     openFileInput = () => {
         this.fileInput.click()
     }
 
-    handleInputChange = (e) => {
-        console.log(e.target.files[0]);
+    handleInputChange = async (e) => {
+        // 上传文件到阿里云服务器
+        const result = await fileUploader('teamId', '', e.target.files[0])
+        console.log(result);
+
         const fileList = this.state.fileList
-        fileList.push(e.target.files[0])
+        fileList.push(result.name)
+
         this.setState({
             fileList: fileList,
         })
 
-        // 上传文件到阿里云服务器
-        // fileUploader('teamxxx', '/aa', e.target.files[0])
+
     }
 
     render() {
@@ -52,7 +51,6 @@ export default class Team extends React.Component{
             contentFormat: 'html',
             initialContent: '',
             onChange: this.handleChange,
-            onRawChange: this.handleRawChange,
             controls: [
                 'undo', 'redo', 'split', 'font-size', 
                 'text-color', 'bold', 'italic', 'underline', 'strike-through',
@@ -80,7 +78,7 @@ export default class Team extends React.Component{
                 <div className="file-list">
                     {
                         this.state.fileList.map((item) => {
-                            return( <div key={Math.random()}>{item.name}</div> )
+                            return( <div key={Math.random()}>{item}</div> )
                         })
                     }
                 </div>
