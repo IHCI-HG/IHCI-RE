@@ -8,8 +8,10 @@ import routerConf from './router'
 import './style.scss'
 import '../../commen/style.scss'
 
-import Team from './team'
 import Test from './test'
+import TestEditor from './test-editor'
+
+import Team from './team'
 import TeamAdmin from './team-admin'
 import TeamJoin from './team-join'
 import TeamCreate from './team-create'
@@ -100,6 +102,7 @@ const routeConfig = [
         indexRoute: { component: Team },
         childRoutes: [
             { path: 'test', component: Test },
+            { path: 'test-editor', component: TestEditor },
             { path: 'team', component: Team },
             { path: 'team-admin/:id', component: TeamAdmin },
             { path: 'team-join/:id', component: TeamJoin },
