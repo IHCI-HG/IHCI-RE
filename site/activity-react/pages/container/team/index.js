@@ -7,7 +7,7 @@ import Page from '../../../components/page'
 class TeamItem extends React.PureComponent{
     render() {
         return <div className="team-item">
-            <div className="left" onClick={() => {this.props.locationTo('/discuss/' + this.props._id)}}>
+            <div className="left" onClick={() => {this.props.locationTo('/team/' + this.props._id)}}>
                 <img className="bg-img" src={this.props.teamImg}></img>
                 <div className="img-con"></div>
                 <div className="name">{this.props.name}</div>

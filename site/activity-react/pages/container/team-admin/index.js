@@ -145,7 +145,7 @@ export default class TeamAdmin extends React.Component{
         if(result.state.code === 0) {
             console.log(result);
             window.toast("设置成功")
-            location.href = '/discuss/' + this.teamId
+            location.href = '/team/' + this.teamId
         }
     } 
 
@@ -204,7 +204,7 @@ export default class TeamAdmin extends React.Component{
                                         <span className="role" onClick={this.showAdminHandle.bind(this, item._id)}>{item.role} {item.showAdmin ? '↑' : '↓'} </span>
                                         {
                                             item.showAdmin && <div className="admin">
-                                                {/* <div className="admin-item" onClick={this.setUserRoleHandle.bind(this, item._id, 'admin')}>管理员</div>*}
+                                                {/* <div className="admin-item" onClick={this.setUserRoleHandle.bind(this, item._id, 'admin')}>管理员</div>
                                                 <div className="admin-item" onClick={this.setUserRoleHandle.bind(this, item._id, 'member')}>成员</div>*/}
                                                 <div className="admin-item" onClick={this.kikMember.bind(this, item._id)}>踢出队伍</div>
                                             </div>
