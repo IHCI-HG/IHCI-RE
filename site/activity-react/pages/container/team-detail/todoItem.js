@@ -21,11 +21,11 @@ class TodoItem extends React.Component {
                     }
                 </div>
                 <div className={`${_props.hasDone ? 'check-box-checked' : 'check-box'}`}
-                     onClick={_props.HandleTodoCheck}>
+                     onClick={_props.handleTodoCheck}>
                     <i className="icon iconfont checked-icon">&#xe750;</i>
                 </div>
                 <div className="todo-wrap">
-                    <span>{_props.desc}</span>
+                    <span>{_props.content}</span>
                     {   (_props.checkItem != null && _props.checkItem.length>0) &&
                         <span className="todo-progress">
                             {`(${hasDoneNum}/${_props.checkItem != null && _props.checkItem.length})`}

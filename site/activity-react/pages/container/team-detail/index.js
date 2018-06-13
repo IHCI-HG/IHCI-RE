@@ -39,7 +39,8 @@ class TopicItem extends React.PureComponent{
 
 export default class Team extends React.Component{
     state = {
-        showCreateTopic: true,
+        showCreateTopic: false,
+        showCreateTodo: false,
         isCreator: false,
 
         createTopicName: '', //
@@ -51,7 +52,7 @@ export default class Team extends React.Component{
         todoList: [
             {
                 id: 1,
-                desc: '了解tower',
+                content: '了解tower',
                 hasDone: true,
                 ddl: '2018.7.7',
                 assignee: {
@@ -61,25 +62,25 @@ export default class Team extends React.Component{
                 checkItem: [{
                     id: 1,
                     hasDone: true,
-                    desc: '子检查项'
+                    content: '子检查项'
                 }, {
                     id: 2,
                     hasDone: false,
-                    desc: '子检查项2'
+                    content: '子检查项2'
                 }, {
                     id: 3,
                     hasDone: false,
-                    desc: '子检查项3'
+                    content: '子检查项3'
                 }]
             }, {
                 id: 2,
-                desc: '了解tower',
+                content: '了解tower',
                 hasDone: true,
                 assignee: null,
                 checkItem: [],
             }, {
                 id: 3,
-                desc: '了解tower',
+                content: '了解tower',
                 hasDone: false,
                 assignee: null,
                 checkItem: null,
@@ -91,7 +92,6 @@ export default class Team extends React.Component{
         this.teamId = this.props.params.id
         this.initTeamInfo()
     }
-
     initTeamInfo = async () => {
         const result = await api('/api/team/info', {
             method: 'POST',
@@ -138,7 +138,7 @@ export default class Team extends React.Component{
                 chosen: false,
             })
         })
-
+        console.log(memberList)
         this.setState({
             isCreator: isCreator,
             teamInfo: teamInfo,
@@ -216,8 +216,8 @@ export default class Team extends React.Component{
         location.href = '/team-admin/' + this.teamId
     }
 
-    HandleTodoCheck = (id) => {
-        console.log('HandleTodoCheck', id)
+    handleTodoCheck = (id) => {
+        console.log('handleTodoCheck', id)
         const todoList = this.state.todoList.slice()
         todoList.forEach((item) => {
             if(item.id === id) {
@@ -226,6 +226,40 @@ export default class Team extends React.Component{
         })
         this.setState({ todoList })
     }
+
+    handleTodoCreate(todoInfo) {
+        // 发请求,结果
+        const result = {
+                id: 4,
+                content: '了解tower',
+                hasDone: false,
+                assignee: null,
+                checkItem: null,
+            }
+        // 如果成功,将返回值push进todoList中
+        const todoList = [...this.state.todoList, result]
+        this.setState({todoList})
+    }
+
+    handleTodoModify(todoInfo) {
+        // 发请求,结果
+        const result = {
+            id: 4,
+            content: '了解tower',
+            hasDone: false,
+            assignee: null,
+            checkItem: null,
+        }
+        // 如果成功,更新
+        const todoList = [...this.state.todoList, result]
+        this.setState({todoList})
+    }
+
+    closeDialog = () => {
+        console.log('closeDialog')
+        this.setState({showCreateTodo: false})
+    }
+
 
     render() {
         let teamInfo = this.state.teamInfo
@@ -237,7 +271,8 @@ export default class Team extends React.Component{
         })
 
         return (
-            <Page title={"团队名称xx - IHCI"} className="discuss-page">
+            <Page title={"团队名称xx - IHCI"}
+                className="discuss-page">
 
                 <div className="discuss-con page-wrap">
                     <div className="team-info">
@@ -287,15 +322,24 @@ export default class Team extends React.Component{
                         {
                             this.state.topicList.map((item) => {
                                 return (
-                                    <TopicItem locationTo={this.locationTo} {...item} />
+                                    <TopicItem locationTo={this.locationTo}
+                                               key={item._id}
+                                               {...item}/>
                                 )
                             })
                         }
                     </div>
-
+                </div>
+                <div className="todo-board"
+                     // onClick={this.closeDialog}
+                >
                     <div className="head">
                         <span className='head-title'>任务</span>
-                        <div className="create-btn" onClick={() => {this.setState({showCreateTopic: true})}}>添加任务</div>
+                        <div className="create-btn"
+                             onClick={(e) => {
+                                 this.setState({showCreateTodo: true})
+                                 e.stopPropagation()
+                             }}>添加任务</div>
                     </div>
 
                     <div className="todo-list">
@@ -305,12 +349,19 @@ export default class Team extends React.Component{
                                     <TodoItem
                                         {...item}
                                         key={item.id}
-                                        HandleTodoCheck={this.HandleTodoCheck.bind(this, item.id)} />
+                                        handleTodoCheck={this.handleTodoCheck.bind(this, item.id)} />
                                 )
                             })
                         }
                     </div>
-
+                    {
+                        this.state.showCreateTodo &&
+                        <EditTodo
+                            handleCreate={this.handleTodoCreate.bind(this)}
+                            memberList={this.state.memberList}
+                            handleClose={(() => {this.setState({showCreateTodo: false})}).bind(this)}>
+                        </EditTodo>
+                    }
                     <div className="todo-list">
                         {
                             doneList.map((item) => {
@@ -318,12 +369,11 @@ export default class Team extends React.Component{
                                     <TodoItem
                                         {...item}
                                         key={item.id}
-                                        HandleTodoCheck={this.HandleTodoCheck.bind(this, item.id)} />
+                                        handleTodoCheck={this.handleTodoCheck.bind(this, item.id)} />
                                 )
                             })
                         }
                     </div>
-                    <EditTodo></EditTodo>
                 </div>
             </Page>
         )
