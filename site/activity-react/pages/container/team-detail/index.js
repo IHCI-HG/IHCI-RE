@@ -52,7 +52,7 @@ export default class Team extends React.Component{
         todoList: [
             {
                 id: 1,
-                content: '了解tower',
+                name: '了解tower',
                 hasDone: true,
                 ddl: '2018.7.7',
                 assignee: {
@@ -62,25 +62,25 @@ export default class Team extends React.Component{
                 checkItem: [{
                     id: 1,
                     hasDone: true,
-                    content: '子检查项'
+                    name: '子检查项'
                 }, {
                     id: 2,
                     hasDone: false,
-                    content: '子检查项2'
+                    name: '子检查项2'
                 }, {
                     id: 3,
                     hasDone: false,
-                    content: '子检查项3'
+                    name: '子检查项3'
                 }]
             }, {
                 id: 2,
-                content: '了解tower',
+                name: '了解tower',
                 hasDone: true,
                 assignee: null,
                 checkItem: [],
             }, {
                 id: 3,
-                content: '了解tower',
+                name: '了解tower',
                 hasDone: false,
                 assignee: null,
                 checkItem: null,
@@ -231,7 +231,7 @@ export default class Team extends React.Component{
         // 发请求,结果
         const result = {
                 id: 4,
-                content: '了解tower',
+                name: '了解tower',
                 hasDone: false,
                 assignee: null,
                 checkItem: null,
@@ -245,7 +245,7 @@ export default class Team extends React.Component{
         // 发请求,结果
         const result = {
             id: 4,
-            content: '了解tower',
+            name: '了解tower',
             hasDone: false,
             assignee: null,
             checkItem: null,

@@ -7,11 +7,11 @@ class EditTodo extends React.Component {
         showLabelEditBoard: false,
     }
     handleCreate = () => {
-        const content = this.refs.content.value
+        const name = this.refs.name.value
         const assignee = null
         const checkItem = null
         this.props.handleCreate({
-            content,
+            name,
             assignee,
             checkItem
         });
@@ -22,7 +22,7 @@ class EditTodo extends React.Component {
             <div className="todo">
                 <div className='check-box-disable'></div>
                 <div className="todo-wrap">
-                    <input ref="content" className="dashed-input" placeholder="新的任务"></input>
+                    <input ref="name" className="dashed-input" placeholder="新的任务"></input>
                     <span className="todo-label"
                           onClick={() => {
                               const showLabelEditBoard = !this.state.showLabelEditBoard

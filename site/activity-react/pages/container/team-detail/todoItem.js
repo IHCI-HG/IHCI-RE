@@ -1,23 +1,51 @@
 import * as React from 'react';
+import EditTodo from './editTodo'
 import './style.scss'
 
 
 class TodoItem extends React.Component {
+    state = {
+        mode: 'read',
+        // mode 任务框模式, edit 或者 read
+    }
+
+    setMode(mode) {
+        this.setState({ mode: 'edit' })
+    }
+
     render() {
+        const _props = this.props
+        console.log(_props)
+        if (this.state.mode === 'edit') {
+            return (
+                <EditTodo
+                    {...props}
+                    memberList={this.state.memberList}
+                ></EditTodo>
+            )
+        }
+
         let hasDoneNum = 0;
         if (this.props.checkItem) {
             hasDoneNum = this.props.checkItem.filter(function (item) {
                 return item.hasDone === true
             }).length;
         }
-        const _props = this.props
 
         return (
             <div className="todo">
                 <div className="actions">
                     <i className="icon iconfont">&#xe70b;</i>
                     {
-                        !_props.hasDone && <i className="icon iconfont">&#xe6ec;</i>
+                        !_props.hasDone &&
+                        <i className="icon iconfont"
+                           onClick={(e) => {
+                               console.log('edit')
+                               this.setMode('edit')
+                               e.stopPropagation()
+                           }}>
+                            &#xe6ec;
+                        </i>
                     }
                 </div>
                 <div className={`${_props.hasDone ? 'check-box-checked' : 'check-box'}`}
@@ -25,7 +53,7 @@ class TodoItem extends React.Component {
                     <i className="icon iconfont checked-icon">&#xe750;</i>
                 </div>
                 <div className="todo-wrap">
-                    <span>{_props.content}</span>
+                    <span>{_props.name}</span>
                     {   (_props.checkItem != null && _props.checkItem.length>0) &&
                         <span className="todo-progress">
                             {`(${hasDoneNum}/${_props.checkItem != null && _props.checkItem.length})`}
