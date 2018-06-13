@@ -6,6 +6,8 @@ import { timeBefore, sortByCreateTime } from '../../../utils/util'
 import Page from '../../../components/page'
 
 import MemberChosenList from '../../../components/member-chose-list'
+import TodoItem from './todoItem'
+import EditTodo from './editTodo'
 
 class TeamChoseItem extends React.PureComponent{
     render() {
@@ -36,13 +38,58 @@ class TopicItem extends React.PureComponent{
 }
 
 export default class Team extends React.Component{
+    state = {
+        showCreateTopic: true,
+        isCreator: false,
+
+        createTopicName: '', //
+        createTopicContent: '', //
+
+        teamInfo: {}, //
+        topicList: [], //
+        memberList: [], //
+        todoList: [
+            {
+                id: 1,
+                desc: '了解tower',
+                hasDone: true,
+                ddl: '2018.7.7',
+                assignee: {
+                    _id: 1,
+                    username: '黄',
+                },
+                checkItem: [{
+                    id: 1,
+                    hasDone: true,
+                    desc: '子检查项'
+                }, {
+                    id: 2,
+                    hasDone: false,
+                    desc: '子检查项2'
+                }, {
+                    id: 3,
+                    hasDone: false,
+                    desc: '子检查项3'
+                }]
+            }, {
+                id: 2,
+                desc: '了解tower',
+                hasDone: true,
+                assignee: null,
+                checkItem: [],
+            }, {
+                id: 3,
+                desc: '了解tower',
+                hasDone: false,
+                assignee: null,
+                checkItem: null,
+            },
+        ]
+    }
+
     componentDidMount = async() => {
         this.teamId = this.props.params.id
         this.initTeamInfo()
-    }
-
-    locationTo = (url) => {
-        this.props.router.push(url)
     }
 
     initTeamInfo = async () => {
@@ -52,13 +99,14 @@ export default class Team extends React.Component{
                 teamId: this.teamId
             }
         })
+        console.log('result:', result);
 
         if(!result.data) {
             window.toast('团队内容加载出错')
         }
 
         const teamInfo = {}
-        teamInfo._id = result.data._id 
+        teamInfo._id = result.data._id
         teamInfo.name = result.data.name
         teamInfo.teamImg = result.data.teamImg
         teamInfo.desc = result.data.teamDes
@@ -70,7 +118,7 @@ export default class Team extends React.Component{
         const curUserId = this.props.personInfo._id
 
         let isCreator = false
-        result.data.memberList.map((item) => {
+        result.data.memberList.map((item) => {  // 判断是否是创建者 ？
             if(item.userId == curUserId) {
                 isCreator = true
             }
@@ -80,6 +128,8 @@ export default class Team extends React.Component{
             method: 'POST',
             body: { userList: memberIDList }
         })
+
+        console.log('memberResult:', memberResult);
 
         memberResult.data.map((item, idx) => {
             memberList.push({
@@ -92,68 +142,15 @@ export default class Team extends React.Component{
         this.setState({
             isCreator: isCreator,
             teamInfo: teamInfo,
-            memberNum: result.data.memberList.length,
             memberList: memberList,
             topicList: sortByCreateTime(result.data.topicList)
         })
     }
 
-
-
-    state = {
-        showCreateTopic: true,
-        isCreator: false,
-
-        createTopicName: '',
-        createTopicContent: '',
-        memberNum: 0,
-
-        teamInfo: {
-            _id: 1,
-            name: 'IHCI平台搭建项目组',
-            teamImg: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1522401625&di=bcc173556f4ce40a5b92ff96402a053b&imgtype=jpg&er=1&src=http%3A%2F%2Fwx3.sinaimg.cn%2Forj360%2F7fa53ff0gy1fc1phl41r6j20hs0hsmxn.jpg',
-            desc: '完成IHCI平台搭建',
-            managed: true,
-        },
-
-        topicList: [
-            {
-                topicId: 1,
-                creator: {
-                    id: 1,
-                    name: '阿鲁巴大将军',
-                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                    phone: '17728282828',
-                    mail: 'ada@qq.com',
-                },
-                name: '这是一条讨论的name1',
-                content: 'ssssssssssssssss',
-                time: 1515384000000,
-            },{
-                topicId: 2,
-                creator: {
-                    id: 1,
-                    name: '阿鲁巴大将军',
-                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                    phone: '17728282828',
-                    mail: 'ada@qq.com',
-                },
-                name: '这是一条讨论的name2',
-                content: 'ssssssssssssssssddddddd',
-                time: 1515384000000,
-            }
-        ],
-
-        memberList: [
-            {
-                _id: 11,
-                name: '萨乌丁',
-                chosen: false,
-            },
-        ],
-
+    locationTo = (url) => {
+        this.props.router.push(url)
     }
-
+    //
     createTopicHandle = async () => {
         const informList = []
         this.state.memberList.map((item) => {
@@ -192,13 +189,13 @@ export default class Team extends React.Component{
             window.toast(result.state.msg)
         }
     }
-
+    //
     topicNameInputHandle = (e) => {
         this.setState({
             createTopicName: e.target.value
         })
     }
-
+    //
     topicContentInputHandle = (e) => {
         this.setState({
             createTopicContent: e.target.value
@@ -219,8 +216,25 @@ export default class Team extends React.Component{
         location.href = '/team-admin/' + this.teamId
     }
 
+    HandleTodoCheck = (id) => {
+        console.log('HandleTodoCheck', id)
+        const todoList = this.state.todoList.slice()
+        todoList.forEach((item) => {
+            if(item.id === id) {
+                item.hasDone = !item.hasDone
+            }
+        })
+        this.setState({ todoList })
+    }
+
     render() {
         let teamInfo = this.state.teamInfo
+        const doneList = this.state.todoList.filter((item) => {
+            return item.hasDone === true
+        })
+        const todoList = this.state.todoList.filter((item) => {
+            return item.hasDone === false
+        })
 
         return (
             <Page title={"团队名称xx - IHCI"} className="discuss-page">
@@ -233,7 +247,7 @@ export default class Team extends React.Component{
                         </div>
                         <div className="right">
                             <div className="admin">
-                                <div className="admin-con member-num">{this.state.memberNum}</div>
+                                <div className="admin-con member-num">{this.state.memberList.length}</div>
                                 <span>成员</span>
                             </div>
                             {
@@ -279,8 +293,38 @@ export default class Team extends React.Component{
                         }
                     </div>
 
-                </div>
+                    <div className="head">
+                        <span className='head-title'>任务</span>
+                        <div className="create-btn" onClick={() => {this.setState({showCreateTopic: true})}}>添加任务</div>
+                    </div>
 
+                    <div className="todo-list">
+                        {
+                            todoList.map((item) => {
+                                return (
+                                    <TodoItem
+                                        {...item}
+                                        key={item.id}
+                                        HandleTodoCheck={this.HandleTodoCheck.bind(this, item.id)} />
+                                )
+                            })
+                        }
+                    </div>
+
+                    <div className="todo-list">
+                        {
+                            doneList.map((item) => {
+                                return (
+                                    <TodoItem
+                                        {...item}
+                                        key={item.id}
+                                        HandleTodoCheck={this.HandleTodoCheck.bind(this, item.id)} />
+                                )
+                            })
+                        }
+                    </div>
+                    <EditTodo></EditTodo>
+                </div>
             </Page>
         )
     }
