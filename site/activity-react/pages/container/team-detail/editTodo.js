@@ -22,7 +22,7 @@ class EditTodo extends React.Component {
             <div className="todo">
                 <div className='check-box-disable'></div>
                 <div className="todo-wrap">
-                    <input ref="content"></input>
+                    <input ref="content" className="dashed-input" placeholder="新的任务"></input>
                     <span className="todo-label"
                           onClick={() => {
                               const showLabelEditBoard = !this.state.showLabelEditBoard
