@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>填写收货地址</title>
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="description" content="">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="https://img.qlchat.com/qlLive/ico/favicon.ico" type="image/x-icon" />
+    <script src="../../components_modules/lib-flexible/1.0.0/lib-flexible.js"></script><!--ignore-->
+    <script type="text/javascript" src="../../components_modules/require/2.1.18/require.js"></script><!--ignore-->
+</head>
+
+<body>
+    <div id="container">
+        <div class="info">
+            <!-- <p>为了将女性魅力必修手册《性感资本》一书赠送到您的手中，请完善好以下资料：</p> -->
+            <p>{{topFont}}</p>
+        </div>
+        <div class="item">
+            <div class="lb">姓名</div>
+            <div class="input-wrap"><input id="name" type="text" ></div>
+        </div>
+        <div class="item">
+            <div class="lb">手机号码</div>
+            <div class="input-wrap"><input id="mobile" type="number" ></div>
+        </div>
+        <div class="item">
+            <div class="lb">收货地址</div>
+            <div class="textarea-wrap"><textarea id="address"></textarea></div>
+        </div>
+
+        <div class="submit-btn">提交</div>
+
+        <div class="des">
+            注意事项： <br/>
+
+            <div class="bottom-font"></div>
+
+            <!-- 1、送书通道将在11月14日12：00分开放，前18000名填写信息的学员默认报名成功； <br/>
+            2、仅限在中国大陆已购买课程的用户可领（不包含港澳台用户）；<br/>
+            3、18000名学员填写完毕，我们会关闭送书通道，请及时填写信息； <br/>
+            4、受双十一快递潮影响，我们承诺在7-14个工作日将快递发出，届时报名成功的学员均可获得赠书。<br/>
+            5、领书信息每人可提交3次，以最后1次提交为准，由于信息填写不准确而导致没有获赠到图书，官方概不负责 -->
+        </div>
+    </div>
+    <!--SCRIPT_PLACEHOLDER-->
+    <script>
+        (function (win) {
+            require(['./address'], function (address) {
+                var initData = {
+                    name: "[[name]]",
+                    mobile: "[[phone]]",
+                    address: "[[address]]",
+                    bottomFont: "[[bottomFont]]"
+                }
+
+                address.init(initData);
+            });
+        })(window);
+    </script><!--ignore-->
+</body>
+
+</html>

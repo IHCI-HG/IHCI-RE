@@ -1,0 +1,17 @@
+html {
+    overflow: hidden;
+    height: 100%;
+}
+body {
+    background-color: #e5e5e5;
+    max-width: 1280px; /*px*/
+    min-width: 640px; /*px*/
+    height: 100%;
+    line-height: 1;
+    font-family: "微软雅黑";
+    font-size: 12px;
+    color: #5d5b5b;
+    margin: 0px auto;
+    display: block;
+    position: relative;
+}

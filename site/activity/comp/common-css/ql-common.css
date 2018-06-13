@@ -1,0 +1,209 @@
+/*标签重定义*/
+*, :after, :before {
+    outline: none;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    -webkit-box-sizing: border-box;/*px*/
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 62.5%;
+    height: 100%;
+    background: #eee;
+}
+
+body {
+    height: 100%;
+    line-height: 1;
+    font-family: "微软雅黑";
+    background-color: #ffffff;
+    font-size: 12px;
+    color: #5d5b5b;
+    min-width: 640px;/*px*/
+    max-width: 1280px;/*px*/
+    margin: 0px auto;
+    display: block;
+    position: relative;
+}
+
+var, em, i {
+    font-style: normal;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    font-size: inherit;
+}
+
+img {
+    vertical-align: inherit;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+p {
+    margin: 0;
+}
+
+input {
+    outline: none;
+    -webkit-appearance: none;
+}
+
+a {
+    color: #5d5b5b;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+dl, dd {
+    margin: 0;
+}
+
+textarea {
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.ng-cloak {
+    display: none;
+}
+
+
+/*闭合一切浮动*/
+.clearfix {
+    *zoom: 1;
+}
+
+.clearfix:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+}
+
+.clearline {
+    *zoom: 1;
+    height: 0px;
+    line-height: 0px;
+    font-size: 0px;
+    overflow: hidden;
+    clear: both;
+}
+
+.clearperfect {
+    clear: both;
+    height: 0px;
+    overflow: hidden;
+}
+
+
+/*盒子模式*/
+
+.webkitBox, [class*="wkBox"], .qlMTBottom {
+    display: -webkit-box;
+    display: box;
+    display: flex;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+}
+
+.boxFlex, [class*="boxFl"] {
+    width: 100%;
+    display: block;
+    -webkit-box-flex: 1;
+    box-flex: 1;
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: hidden;
+}
+
+
+/*  单行超出省略 */
+.elli {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    word-break: break-all;
+}
+
+
+/*  多行超出省略 */
+.multi-elli {
+    display: block;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/*  默认容器样式 */
+#container {
+    background: #f2f2f2;
+    width: 100%;
+    position: absolute;
+    overflow: auto;
+    overflow-x: hidden;
+    top: 0;
+    bottom: 0;
+}
+
+
+
+/****按钮****/
+/*圆角*/
+[class^="wt_btn"]{display: block; height:92px; line-height: 92px;font-size: 36px;/*px*/  text-align: center; color: #fff; border-radius:3px; background: #00acff; text-decoration: none; } 
+.wt_btn_1{ border: solid 1px #00acff;}
+.wt_btn_2{ color: #00acff; background: #fff; border: solid 1px #999999;}
+
+[class*="tlbtn"]{display: inline-block; height:96px; line-height: 96px;font-size: 30px;/*px*/ padding: 0 34px;  text-align: center; color: #fff; border-radius:6px; background-color: #00acff; text-decoration: none;  white-space: nowrap;cursor: pointer;} 
+
+/*圆边*/
+[class*="qlbtn"]{display: inline-block; height: 80px; line-height: 80px;margin: 0 auto;padding: 0 34px;  border-radius: 80px;  font-size:30px;/*px*/  text-align: center;text-decoration: none;background-color: #00acff; color: #fff; white-space: nowrap;cursor: pointer;} 
+[class*="qlbtna"]{background-color: #ddf4ff; color: #00acff;}
+[class*="qlbtnb"]{background-color: #ffa200; color: #fff;}
+
+[class*="stlbtn"],[class^="sqlbtn"]{ height: 60px; line-height: 60px; font-size: 24px;/*px*/}
+[class*="btn-org1"]{ background-color: #ffa200;}
+[class*="btn-org2"]{ background-color: #fcf0d4; color: #ffb400;}
+[class*="btn-gre1"]{ background-color: #00c8bc;}
+[class*="btn-gre2"]{ background-color: #d5fdfa; color: #00c8bc;}
+[class*="btn-gre3"]{ background-color: #eff1f2; color: #888888;}
+[class*="btn-blu1"]{ background-color: #ddf4ff; color: #00acff;}
+[class*="btn-blu2"]{ background-color: #fff; color: #00acff; border: 1px solid #00acff;}
+[class*="btn-blu3"]{ background-color: #00acff; }
+[class*="btn-red1"]{ background-color: #ffe7e7; color: #f46262;}
+[class*="tlbtn"].ed,
+[class*="qlbtn"].ed,
+[class*="btn-gra1"]{ background-color: #b9b9b9;}
+[class*="tlbtn"].sta,
+[class*="qlbtn"].sta,
+[class*="btn-gra2"]{ background-color: #cedae0;}
+[class*="btn-gra3"]{ background-color: #eff1f2; color: #00acff;}
+[class*="tlbtn"].tra,
+[class*="qlbtn"].tra,
+[class*="btn-tra1"]{ background-color:rgba(0,0,0,0.45);}
+
+
+[class*="blk"]{display: block;}
+[class*="wblk"]{display: block; width: 100%;}
+
+/* tips基本颜色 */
+.text-state1{color:#ffa200;}
+.text-state2{color:#949fa4;}
+.text-state3{color:#e95050;}
+.text-state4{color:#00acff;}
+.text-state5{color:#999;}
+.text-state6{color:#333;}
+.text-state7{color:#666;}
+.text-statew{color:#fff;}

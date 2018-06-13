@@ -1,0 +1,47 @@
+{
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true
+  },
+  "extends": [
+    "eslint-config-airbnb"
+  ],
+  "rules": {
+    "no-var": "off",
+    "linebreak-style": "off",
+    "space-before-function-paren": "off",
+    "require-jsdoc": "off",
+    "max-len": "off",
+    "valid-jsdoc": "off",
+    "one-var": "off",
+    "object-curly-spacing": "off",
+    "padded-blocks": "off",
+    "brace-style": "off",
+    "semi": "off",
+    "import/default": 0,
+    "import/no-duplicates": 0,
+    "import/named": 0,
+    "import/namespace": 0,
+    "import/no-unresolved": 0,
+    "import/no-named-as-default": 2,
+    "comma-dangle": 0,  // not sure why airbnb turned this on. gross!
+  },
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaVersion": 6,
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "settings": {
+    "import/parser": "babel-eslint",
+    "import/resolve": {
+      "moduleDirectory": ["node_modules", "src"]
+    }
+  },
+  "parser": "babel-eslint",
+  "plugins": [
+    "react", "import"
+  ]
+}
