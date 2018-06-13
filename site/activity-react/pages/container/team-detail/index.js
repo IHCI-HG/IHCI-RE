@@ -357,7 +357,8 @@ export default class Team extends React.Component{
                     {
                         this.state.showCreateTodo &&
                         <EditTodo
-                            handleCreate={this.handleTodoCreate.bind(this)}
+                            handleConfirm={this.handleTodoCreate.bind(this)}
+                            confirmLabel="添加任务"
                             memberList={this.state.memberList}
                             handleClose={(() => {this.setState({showCreateTodo: false})}).bind(this)}>
                         </EditTodo>

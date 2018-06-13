@@ -343,8 +343,8 @@
         .buttons {
             margin: 8px 0;
             button {
-                width: 74px;
-                height: 32px;
+                padding: 8px 6px;
+                min-width: 74px;
                 border-radius: 5px;
                 border: none;
             }

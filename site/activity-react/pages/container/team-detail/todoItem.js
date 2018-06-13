@@ -10,17 +10,20 @@ class TodoItem extends React.Component {
     }
 
     setMode(mode) {
-        this.setState({ mode: 'edit' })
+        console.log('setMode:', mode);
+        this.setState({ mode: mode })
     }
 
     render() {
         const _props = this.props
-        console.log(_props)
         if (this.state.mode === 'edit') {
             return (
                 <EditTodo
-                    {...props}
+                    value={..._props}
                     memberList={this.state.memberList}
+                    confirmLabel="保存"
+                    handleConfirm={(params) => {console.log(params)}}
+                    handleClose={this.setMode.bind(this, 'read')}
                 ></EditTodo>
             )
         }

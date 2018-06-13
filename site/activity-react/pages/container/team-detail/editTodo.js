@@ -6,23 +6,36 @@ class EditTodo extends React.Component {
     state = {
         showLabelEditBoard: false,
     }
-    handleCreate = () => {
-        const name = this.refs.name.value
-        const assignee = null
-        const checkItem = null
-        this.props.handleCreate({
-            name,
-            assignee,
-            checkItem
-        });
+    handleConfirm = () => {
+        const params = {}
+        if (this.props.value) {
+            params.id = this.props.value.id
+        }
+        params.name = this.refs.name.value
+        params.assignee = null
+        params.checkItem = null
+        this.props.handleConfirm(params);
     }
+
+    handleClose = (e) => {
+        // 输入框重置
+        console.log('close')
+        this.props.handleClose()
+        e.stopPropagation()
+    }
+
     render() {
         const _props = this.props
+        console.log(_props)
         return (
             <div className="todo">
                 <div className='check-box-disable'></div>
                 <div className="todo-wrap">
-                    <input ref="name" className="dashed-input" placeholder="新的任务"></input>
+                    <input ref="name"
+                           className="dashed-input"
+                           placeholder="任务名"
+                           defaultValue={_props.value?_props.value.name:''}>
+                    </input>
                     <span className="todo-label"
                           onClick={() => {
                               const showLabelEditBoard = !this.state.showLabelEditBoard
@@ -58,8 +71,8 @@ class EditTodo extends React.Component {
                     </span>
                     <div className="buttons">
                         <button className="confirm"
-                                onClick={this.handleCreate}>确定</button>
-                        <button onClick={_props.handleClose}>取消</button>
+                                onClick={this.handleConfirm}>{_props.confirmLabel}</button>
+                        <button onClick={this.handleClose}>取消</button>
                     </div>
                 </div>
             </div>
