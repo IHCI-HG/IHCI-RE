@@ -7,17 +7,12 @@ class ItemLabel extends React.Component {
         editDialog: false,
     }
 
-    // handleOpenEditDialog = () => {
-    //     this.setState({ editDialog: true })
-    // }
-    //
-    // handleCloseEditDialog = () => {
-    //     this.setState({ editDialog: false })
-    // }
+    handleOpenEditDialog = () => {
+        this.setState({ editDialog: true })
+    }
 
-    toggerEditDialog = () => {
-        const editDialog = !this.state.editDialog
-        this.setState({ editDialog })
+    handleCloseEditDialog = () => {
+        this.setState({ editDialog: false })
     }
 
     render() {
@@ -32,7 +27,7 @@ class ItemLabel extends React.Component {
 
         return (
             <div className="todo-label">
-                <span onClick={this.toggerEditDialog}>
+                <span onClick={this.handleOpenEditDialog}>
                     {   assignee ?
                         <span className="assignee">{assignee.name}</span>
                         :<span className="due">未指派</span>
@@ -65,7 +60,10 @@ class ItemLabel extends React.Component {
                         </div>
                     </div>
                 }
-            </div>
+                {   this.state.editDialog &&
+                    <div class="mask" onClick={this.handleCloseEditDialog}></div>
+                }
+                </div>
         )
     }
 }

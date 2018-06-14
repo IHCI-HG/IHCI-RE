@@ -248,6 +248,15 @@ export default class Team extends React.Component{
         // 如果成功,更新
     }
 
+    handleAssigneeChange = (e) => {
+        console.log('handleAssigneeChange', e.target.value);
+        // 直接调用接口改变指派用户
+    }
+
+    handleDateChange = (e) => {
+        console.log('handleDateChange', e.target.value);
+    }
+
 
     render() {
         let teamInfo = this.state.teamInfo
@@ -258,6 +267,7 @@ export default class Team extends React.Component{
             return item.hasDone === false
         })
 
+        console.log(this.state.memberList)
         return (
             <Page title={"团队名称xx - IHCI"}
                 className="discuss-page">
@@ -317,51 +327,55 @@ export default class Team extends React.Component{
                             })
                         }
                     </div>
-                </div>
-                <div className="todo-board">
-                    <div className="head">
-                        <span className='head-title'>任务</span>
-                        <div className="create-btn"
-                             onClick={(e) => {
-                                 this.setState({showCreateTodo: true})
-                                 e.stopPropagation()
-                             }}>添加任务</div>
-                    </div>
 
-                    <div className="todo-list">
+                    <div className="todo-board">
+                        <div className="head">
+                            <span className='head-title'>任务</span>
+                            <div className="create-btn"
+                                 onClick={(e) => {
+                                     this.setState({showCreateTodo: true})
+                                     e.stopPropagation()
+                                 }}>添加任务</div>
+                        </div>
+
+                        <div className="todo-list">
+                            {
+                                todoList.map((item) => {
+                                    return (
+                                        <TodoItem
+                                            {...item}
+                                            key={item.id}
+                                            memberList={this.state.memberList}
+                                            handleAssigneeChange={this.handleAssigneeChange}
+                                            handleDateChange={this.handleDateChange}
+                                            handleTodoModify={this.handleTodoModify.bind(this,item.id )}
+                                            handleTodoCheck={this.handleTodoCheck.bind(this, item.id)} />
+                                    )
+                                })
+                            }
+                        </div>
                         {
-                            todoList.map((item) => {
-                                return (
-                                    <TodoItem
-                                        {...item}
-                                        key={item.id}
-                                        memberList={this.state.memberList}
-                                        handleTodoModify={this.handleTodoModify.bind(this,item.id )}
-                                        handleTodoCheck={this.handleTodoCheck.bind(this, item.id)} />
-                                )
-                            })
+                            this.state.showCreateTodo &&
+                            <NewTodo
+                                memberList={this.state.memberList}
+                                confirmLabel="添加任务"
+                                handleConfirm={this.handleTodoCreate.bind(this)}
+                                handleClose={(() => {this.setState({showCreateTodo: false})}).bind(this)}>
+                            </NewTodo>
                         }
-                    </div>
-                    {
-                        this.state.showCreateTodo &&
-                        <NewTodo
-                            memberList={this.state.memberList}
-                            confirmLabel="添加任务"
-                            handleConfirm={this.handleTodoCreate.bind(this)}
-                            handleClose={(() => {this.setState({showCreateTodo: false})}).bind(this)}>
-                        </NewTodo>
-                    }
-                    <div className="todo-list">
-                        {
-                            doneList.map((item) => {
-                                return (
-                                    <TodoItem
-                                        {...item}
-                                        key={item.id}
-                                        handleTodoCheck={this.handleTodoCheck.bind(this, item.id)} />
-                                )
-                            })
-                        }
+                        <div className="todo-list">
+                            {
+                                doneList.map((item) => {
+                                    return (
+                                        <TodoItem
+                                            {...item}
+                                            key={item.id}
+                                            memberList={this.state.memberList}
+                                            handleTodoCheck={this.handleTodoCheck.bind(this, item.id)} />
+                                    )
+                                })
+                            }
+                        </div>
                     </div>
                 </div>
             </Page>

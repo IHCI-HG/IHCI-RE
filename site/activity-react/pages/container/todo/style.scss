@@ -102,9 +102,19 @@
             word-break: keep-all;
             word-wrap: normal;
             border-radius: 10px;
+            .mask {
+                position: fixed;
+                z-index: 1;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;
+            }
             &-edit {
+                z-index: 2;
+                background-color: white;
                 box-shadow: 0 10px 30px 0 rgba(0, 0, 0, 0.15);
-                border: 1px solid rgba(200, 200, 200, .6);
+                border: 1px solid rgb(200, 200, 200);
                 border-radius: 6px;
                 color: black;
                 font-weight: bold;
@@ -113,6 +123,11 @@
                 margin-left: 20px;
                 margin-top: -0.6rem;
                 padding: 10px 15px;
+                &:after {
+                    position: fixed;
+                    background-color: black;
+                    z-index: 1;
+                }
                 > * {
                     margin: 10px 0;
                     display: flex;
@@ -126,7 +141,7 @@
                     height: 0;
                     border-width: 18px 18px 18px 0;
                     border-style: solid;
-                    border-color: transparent rgba(200, 200, 200, .6) transparent transparent;
+                    border-color: transparent rgb(200, 200, 200) transparent transparent;
                     position: absolute;
                     left: -18px;
                 }

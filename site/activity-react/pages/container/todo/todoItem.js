@@ -1,6 +1,7 @@
 import * as React from 'react';
 import EditTodo from './editTodo'
 import './style.scss'
+import ItemLabel from './itemLabel'
 
 
 class TodoItem extends React.Component {
@@ -24,9 +25,10 @@ class TodoItem extends React.Component {
         this.setMode('read')
     }
 
+
     render() {
         const _props = this.props
-        console.log(_props.assignee,_props.date)
+        console.log(_props.memberList)
         if (this.state.mode === 'edit') {
             return (
                 <EditTodo
@@ -82,15 +84,12 @@ class TodoItem extends React.Component {
                         </span>
                     }
                     { _props.checkItem && <i className="icon iconfont todo-twr">&#xe6e7;</i> }
-                    <span className="todo-label">
-                        { _props.assignee?
-                            <span className="assignee">{_props.assignee.username}</span>
-                            : <span className="assignee">未指派</span>
-                        }
-                        {
-                            _props.ddl && <span className="due">{_props.ddl}</span>
-                        }
-                    </span>
+                    <ItemLabel assigneeId={_props.assignee?_props.assignee.id:null}
+                               date={_props.ddl}
+                               memberList={_props.memberList}
+                               handleDateChange={_props.handleDateChange}
+                               handleAssigneeChange={_props.handleAssigneeChange}>
+                    </ItemLabel>
                 </div>
             </div>
         )
