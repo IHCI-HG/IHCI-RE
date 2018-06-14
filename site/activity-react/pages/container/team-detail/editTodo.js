@@ -5,9 +5,9 @@ import ItemLabel from './itemLabel'
 
 class EditTodo extends React.Component {
     state = {
-
+        assigneeId: null,
+        date: null,
     }
-
 
     handleConfirm = () => {
         const params = {}
@@ -15,10 +15,13 @@ class EditTodo extends React.Component {
             params.id = this.props.value.id
         }
         params.name = this.refs.name.value
-        params.assignee = this.refs.label.state.assigneeId
-        params.date = this.refs.label.state.date
-        this.props.handleConfirm(params);
+        params.assigneeId = this.state.assigneeId
+        params.date = this.state.date
+        // params.assignee = this.refs.label.state.assigneeId
+        // params.date = this.refs.label.state.date
+
         // 调用父组件方法，把提交参数传出去
+        this.props.handleConfirm(params);
     }
 
     handleClose = (e) => {
@@ -27,6 +30,20 @@ class EditTodo extends React.Component {
         this.props.handleClose()
         e.stopPropagation()
     }
+
+
+    handleAssigneeChange = (e) => {
+        console.log(e.target.value);
+        this.setState({assigneeId: e.target.value});
+        // 嵌套父亲方法
+    }
+
+    handleDateChange = (e) => {
+        console.log('h', e.target.value);
+        this.setState({date: e.target.value});
+        // 嵌套父亲方法
+    }
+
 
 
     render() {
@@ -42,9 +59,11 @@ class EditTodo extends React.Component {
                            defaultValue={_props.value?_props.value.name:''}>
                     </input>
                     <ItemLabel ref="label"
-                        assignee = {null}
-                        date = {null}
-                        memberList={_props.memberList}>
+                               assigneeId = {this.state.assigneeId}
+                               date = {this.state.date}
+                               handleDateChange={this.handleDateChange.bind(this)}
+                               handleAssigneeChange={this.handleAssigneeChange.bind(this)}
+                               memberList={_props.memberList}>
                     </ItemLabel>
                     <div className="buttons">
                         <button className="confirm"
