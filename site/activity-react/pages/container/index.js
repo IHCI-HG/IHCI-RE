@@ -111,7 +111,7 @@ const routeConfig = [
             { path: 'discuss/topic/:id', component: Topic },
             { path: 'timeline', component: Timeline },
             { path: 'member', component: Member },
-            { path: 'task-detail/', component: TaskDetail },
+            { path: 'todo/:id', component: TaskDetail },
         ]
     }
 ]

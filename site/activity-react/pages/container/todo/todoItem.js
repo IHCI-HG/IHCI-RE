@@ -70,7 +70,12 @@ class TodoItem extends React.Component {
                     <i className="icon iconfont checked-icon">&#xe750;</i>
                 </div>
                 <div className="todo-wrap">
-                    <span>{_props.name}</span>
+                    <span onClick={() => {
+                        console.log('toDetail')
+                        location.href = `/todo/${this.props.id}`
+                    }}>
+                        {_props.name}
+                    </span>
                     {   (_props.checkItem != null && _props.checkItem.length>0) &&
                         <span className="todo-progress">
                             {`(${hasDoneNum}/${_props.checkItem != null && _props.checkItem.length})`}

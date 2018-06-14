@@ -153,6 +153,6 @@ module.exports = [
     ['GET', '/discuss/topic/:id', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/timeline', clientParams(),    routerAuthJudge, pageHandle() ],
     ['GET', '/member', clientParams(),   routerAuthJudge, pageHandle() ],
-    ['GET', '/task-detail', clientParams(),   routerAuthJudge, pageHandle() ],
+    ['GET', '/todo/:id', clientParams(),   routerAuthJudge, pageHandle() ],
 
 ];
