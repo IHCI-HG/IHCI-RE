@@ -12,8 +12,8 @@ class EditTodo extends React.Component {
     handleConfirm = () => {
         console.log('handleConfirm')
         const params = {}
-        if (this.props.value) {
-            params.id = this.props.value.id
+        if (this.props.id) {
+            params.id = this.props.id
         }
         params.name = this.refs.name.value
         params.assigneeId = this.state.assigneeId
@@ -51,7 +51,7 @@ class EditTodo extends React.Component {
                     <input ref="name"
                            className="dashed-input"
                            placeholder="任务名"
-                           defaultValue={_props.value?_props.value.name:''}>
+                           defaultValue={_props.value?_props.value:''}>
                     </input>
                     <ItemLabel assigneeId = {this.state.assigneeId}
                                date = {this.state.date}

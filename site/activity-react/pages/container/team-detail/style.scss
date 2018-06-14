@@ -13,7 +13,22 @@
         border-radius: 4px;
         margin-left: 30px;
         cursor: pointer;
-
+        position: relative;
+        .icon {
+            margin-left: 6px;
+        }
+        .menu {
+            width: 100%;
+            position: absolute;
+            background-color: white;
+            border: 1px solid #e6e6e6; /*no*/
+            border-radius: 4px;
+            top: 46px;
+            right: 0px;
+            >li {
+                margin: 10px 10px;
+            }
+        }
         &:hover {
             background-color: #e6e6e646;
         }

@@ -34,7 +34,8 @@ class TodoItem extends React.Component {
                 <EditTodo
                     assigneeId={_props.assignee?_props.assignee.id:null}
                     date={_props.ddl}
-                    value={..._props}
+                    id={_props.id}
+                    value={_props.name}
                     memberList={_props.memberList}
                     confirmLabel="保存"
                     handleConfirm={this.handleSave.bind(this)}

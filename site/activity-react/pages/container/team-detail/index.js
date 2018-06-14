@@ -8,6 +8,7 @@ import Page from '../../../components/page'
 import MemberChosenList from '../../../components/member-chose-list'
 import TodoItem from '../todo/todoItem'
 import NewTodo from '../todo/editTodo'
+import EditTodoList from '../todo/todolist/editTodoList'
 
 class TeamChoseItem extends React.PureComponent{
     render() {
@@ -41,6 +42,8 @@ export default class Team extends React.Component{
     state = {
         showCreateTopic: false,
         showCreateTodo: false,
+        showCreateTodoList: false,
+        showMenu: false,
         isCreator: false,
 
         createTopicName: '', //
@@ -216,6 +219,7 @@ export default class Team extends React.Component{
         location.href = '/team-admin/' + this.teamId
     }
 
+    // todo
     handleTodoCheck = (id) => {
         console.log('handleTodoCheck', id)
         const todoList = this.state.todoList.slice()
@@ -256,6 +260,15 @@ export default class Team extends React.Component{
     handleDateChange = (e) => {
         console.log('handleDateChange', e.target.value);
     }
+
+    // todoList
+    handleTodoListCreate(info) {
+        console.log(info)
+        // 发请求,结果
+        // 如果成功,将返回值push进todoList中
+        this.setState({showCreateTodoList: false})
+    }
+
 
 
     render() {
@@ -331,11 +344,32 @@ export default class Team extends React.Component{
                     <div className="todo-board">
                         <div className="head">
                             <span className='head-title'>任务</span>
-                            <div className="create-btn"
-                                 onClick={(e) => {
-                                     this.setState({showCreateTodo: true})
-                                     e.stopPropagation()
-                                 }}>添加任务</div>
+                            <div className="create-btn">
+                                <span onClick={(e) => {
+                                    this.setState({showCreateTodo: true})
+                                    e.stopPropagation()
+                                }}>添加任务</span>
+                                <i className="icon iconfont"
+                                   onClick={() => {
+                                       this.setState({showMenu: !this.state.showMenu})
+                                       e.stopPropagation()
+                                   }}
+                                >&#xe783;</i>
+                                {   this.state.showMenu &&
+                                    <ul class="menu">
+                                        <li onClick={(e) => {
+                                            this.setState({showCreateTodo: true, showMenu: false})
+                                            e.stopPropagation()
+                                        }}>添加任务
+                                        </li>
+                                        <li onClick={(e) => {
+                                            this.setState({showCreateTodoList: true, showMenu: false})
+                                            e.stopPropagation()
+                                        }}>添加清单
+                                        </li>
+                                    </ul>
+                                }
+                            </div>
                         </div>
 
                         <div className="todo-list">
@@ -362,6 +396,14 @@ export default class Team extends React.Component{
                                 handleConfirm={this.handleTodoCreate.bind(this)}
                                 handleClose={(() => {this.setState({showCreateTodo: false})}).bind(this)}>
                             </NewTodo>
+                        }
+                        {
+                            this.state.showCreateTodoList &&
+                            <EditTodoList
+                                confirmLabel="保存，开始添加任务"
+                                handleConfirm={this.handleTodoListCreate.bind(this)}
+                                handleClose={(() => {this.setState({showCreateTodoList: false})}).bind(this)}>
+                            </EditTodoList>
                         }
                         <div className="todo-list">
                             {
