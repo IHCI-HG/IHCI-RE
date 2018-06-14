@@ -22,9 +22,8 @@ class ItemLabel extends React.Component {
 
     render() {
         const _props = this.props
-        // const defaultDate = _props.date?
 
-        // 如果props中没有传入
+        // 如果props中没有传入assigneeId，为创建todo的label
         const assignee = _props.memberList.find((item) => {
             return item._id = _props.assigneeId
         })
@@ -37,7 +36,7 @@ class ItemLabel extends React.Component {
                         <span className="assignee">{assignee.name}</span>
                         :<span className="due">未指派</span>
                     }
-                    {   this.state.date &&
+                    {   _props.date &&
                         <span className="due">{_props.date}</span>
                     }
                 </span>

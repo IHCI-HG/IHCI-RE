@@ -17,34 +17,27 @@ class EditTodo extends React.Component {
         params.name = this.refs.name.value
         params.assigneeId = this.state.assigneeId
         params.date = this.state.date
-        // params.assignee = this.refs.label.state.assigneeId
-        // params.date = this.refs.label.state.date
-
         // 调用父组件方法，把提交参数传出去
         this.props.handleConfirm(params);
     }
 
     handleClose = (e) => {
         // 输入框重置
-        console.log('close')
+        this.state.assigneeId = null
+        this.state.date = null
         this.props.handleClose()
         e.stopPropagation()
     }
 
-
     handleAssigneeChange = (e) => {
         console.log(e.target.value);
         this.setState({assigneeId: e.target.value});
-        // 嵌套父亲方法
     }
 
     handleDateChange = (e) => {
         console.log('h', e.target.value);
         this.setState({date: e.target.value});
-        // 嵌套父亲方法
     }
-
-
 
     render() {
         const _props = this.props
@@ -58,12 +51,11 @@ class EditTodo extends React.Component {
                            placeholder="任务名"
                            defaultValue={_props.value?_props.value.name:''}>
                     </input>
-                    <ItemLabel ref="label"
-                               assigneeId = {this.state.assigneeId}
+                    <ItemLabel assigneeId = {this.state.assigneeId}
                                date = {this.state.date}
+                               memberList={_props.memberList}
                                handleDateChange={this.handleDateChange.bind(this)}
-                               handleAssigneeChange={this.handleAssigneeChange.bind(this)}
-                               memberList={_props.memberList}>
+                               handleAssigneeChange={this.handleAssigneeChange.bind(this)}>
                     </ItemLabel>
                     <div className="buttons">
                         <button className="confirm"

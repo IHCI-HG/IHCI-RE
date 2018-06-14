@@ -7,7 +7,7 @@ import Page from '../../../components/page'
 
 import MemberChosenList from '../../../components/member-chose-list'
 import TodoItem from './todoItem'
-import EditTodo from './editTodo'
+import NewTodo from './editTodo'
 
 class TeamChoseItem extends React.PureComponent{
     render() {
@@ -350,12 +350,12 @@ export default class Team extends React.Component{
                     </div>
                     {
                         this.state.showCreateTodo &&
-                        <EditTodo
+                        <NewTodo
                             memberList={this.state.memberList}
                             confirmLabel="添加任务"
                             handleConfirm={this.handleTodoCreate.bind(this)}
                             handleClose={(() => {this.setState({showCreateTodo: false})}).bind(this)}>
-                        </EditTodo>
+                        </NewTodo>
                     }
                     <div className="todo-list">
                         {
