@@ -19,6 +19,7 @@ import Topic from './topic'
 import Timeline from './timeline'  
 import Member from './member'  
 import Sign from './sign'
+import TaskDetail from './task-detail'
 
 class App extends React.Component{
     state = {
@@ -110,6 +111,7 @@ const routeConfig = [
             { path: 'discuss/topic/:id', component: Topic },
             { path: 'timeline', component: Timeline },
             { path: 'member', component: Member },
+            { path: 'task-detail/', component: TaskDetail },
         ]
     }
 ]

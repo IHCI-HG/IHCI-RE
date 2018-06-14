@@ -140,22 +140,19 @@ const joinTeam = async (req, res, next) => {
 module.exports = [
     // 主页
     ['GET', '/', clientParams(), mainPage],
-
     ['GET', '/auth', clientParams(), wxAuthCodeHandle , mainPage],
-
     ['GET', '/team', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/sign', clientParams(), routerAuthJudge, pageHandle() ],
-
     ['GET', '/test', clientParams(), routerAuthJudge, pageHandle() ],
-
     ['GET', '/team-edit/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/team-admin/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/team-join/:teamId', clientParams(), joinTeam, pageHandle() ],
-
     ['GET', '/team-create', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/person', clientParams(), routerAuthJudge, personSeting, pageHandle() ],
     ['GET', '/team/:id', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/discuss/topic/:id', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/timeline', clientParams(),    routerAuthJudge, pageHandle() ],
     ['GET', '/member', clientParams(),   routerAuthJudge, pageHandle() ],
+    ['GET', '/task-detail', clientParams(),   routerAuthJudge, pageHandle() ],
+
 ];
