@@ -14,6 +14,12 @@ class TodoItem extends React.Component {
         this.setState({ mode: mode })
     }
 
+    // 中间步骤省略？
+    handleSave = (params) =>{
+        console.log('handleSave', params)
+        this.props.handleTodoModify(params)
+    }
+
     handleClose = () => {
         this.setMode('read')
     }
@@ -29,7 +35,8 @@ class TodoItem extends React.Component {
                     value={..._props}
                     memberList={_props.memberList}
                     confirmLabel="保存"
-                    handleConfirm={_props.handleTodoModify}
+                    handleConfirm={this.handleSave.bind(this)}
+                    // handleConfirm={_props.handleTodoModify}
                     handleClose={this.handleClose.bind(this)}
                 ></EditTodo>
             )

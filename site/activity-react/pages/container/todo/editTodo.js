@@ -10,6 +10,7 @@ class EditTodo extends React.Component {
     }
 
     handleConfirm = () => {
+        console.log('handleConfirm')
         const params = {}
         if (this.props.value) {
             params.id = this.props.value.id

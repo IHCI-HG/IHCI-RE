@@ -6,8 +6,8 @@ import { timeBefore, sortByCreateTime } from '../../../utils/util'
 import Page from '../../../components/page'
 
 import MemberChosenList from '../../../components/member-chose-list'
-import TodoItem from './todoItem'
-import NewTodo from './editTodo'
+import TodoItem from '../todo/todoItem'
+import NewTodo from '../todo/editTodo'
 
 class TeamChoseItem extends React.PureComponent{
     render() {
