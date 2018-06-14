@@ -5,8 +5,8 @@ import ItemLabel from './itemLabel'
 
 class EditTodo extends React.Component {
     state = {
-        assigneeId: null,
-        date: null,
+        assigneeId: this.props.assigneeId || null,
+        date: this.props.date || null,
     }
 
     handleConfirm = () => {

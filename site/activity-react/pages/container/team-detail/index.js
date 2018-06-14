@@ -56,7 +56,7 @@ export default class Team extends React.Component{
                 hasDone: true,
                 ddl: '2018.7.7',
                 assignee: {
-                    _id: 1,
+                    id: 1,
                     username: '黄',
                 },
                 checkItem: [{
@@ -242,7 +242,8 @@ export default class Team extends React.Component{
         this.setState({todoList})
     }
 
-    handleTodoModify(todoInfo) {
+    handleTodoModify(id, todoInfo) {
+        console.log('index', id, todoInfo)
         // 发请求,结果
         const result = {
             id: 4,
@@ -254,6 +255,10 @@ export default class Team extends React.Component{
         // 如果成功,更新
         const todoList = [...this.state.todoList, result]
         this.setState({todoList})
+    }
+
+    handleTodoModify() {
+
     }
 
 
@@ -343,6 +348,8 @@ export default class Team extends React.Component{
                                     <TodoItem
                                         {...item}
                                         key={item.id}
+                                        memberList={this.state.memberList}
+                                        handleTodoModify={this.handleTodoModify.bind(this,item.id )}
                                         handleTodoCheck={this.handleTodoCheck.bind(this, item.id)} />
                                 )
                             })

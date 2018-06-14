@@ -5,8 +5,8 @@ import './style.scss'
 
 class TodoItem extends React.Component {
     state = {
-        mode: 'read',
         // mode 任务框模式, edit 或者 read
+        mode: 'read',
     }
 
     setMode(mode) {
@@ -14,16 +14,23 @@ class TodoItem extends React.Component {
         this.setState({ mode: mode })
     }
 
+    handleClose = () => {
+        this.setMode('read')
+    }
+
     render() {
         const _props = this.props
+        console.log(_props.assignee,_props.date)
         if (this.state.mode === 'edit') {
             return (
                 <EditTodo
+                    assigneeId={_props.assignee?_props.assignee.id:null}
+                    date={_props.ddl}
                     value={..._props}
-                    memberList={this.state.memberList}
+                    memberList={_props.memberList}
                     confirmLabel="保存"
-                    handleConfirm={(params) => {console.log(params)}}
-                    handleClose={this.setMode.bind(this, 'read')}
+                    handleConfirm={_props.handleTodoModify}
+                    handleClose={this.handleClose.bind(this)}
                 ></EditTodo>
             )
         }

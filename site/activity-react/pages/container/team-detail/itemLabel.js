@@ -22,12 +22,13 @@ class ItemLabel extends React.Component {
 
     render() {
         const _props = this.props
+        console.log('memberList', _props.memberList)
 
         // 如果props中没有传入assigneeId，为创建todo的label
         const assignee = _props.memberList.find((item) => {
-            return item._id = _props.assigneeId
+            return item._id === _props.assigneeId
         })
-        console.log('r', _props.date)
+        console.log('r', _props)
 
         return (
             <div className="todo-label">
@@ -50,7 +51,7 @@ class ItemLabel extends React.Component {
                                 {
                                     _props.memberList.map((item) => {
                                         return (
-                                            <option value={item.userId} key={item.userId}>
+                                            <option value={item._id} key={item._id}>
                                                 {item.name}
                                             </option>
                                         )
