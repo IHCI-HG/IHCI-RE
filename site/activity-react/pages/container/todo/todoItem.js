@@ -28,7 +28,7 @@ class TodoItem extends React.Component {
 
     render() {
         const _props = this.props
-        console.log(_props.memberList)
+        console.log(_props)
         if (this.state.mode === 'edit') {
             return (
                 <EditTodo
@@ -78,18 +78,26 @@ class TodoItem extends React.Component {
                     }}>
                         {_props.name}
                     </span>
+
                     {   (_props.checkItem != null && _props.checkItem.length>0) &&
                         <span className="todo-progress">
                             {`(${hasDoneNum}/${_props.checkItem != null && _props.checkItem.length})`}
                         </span>
                     }
                     { _props.checkItem && <i className="icon iconfont todo-twr">&#xe6e7;</i> }
-                    <ItemLabel assigneeId={_props.assignee?_props.assignee.id:null}
-                               date={_props.ddl}
-                               memberList={_props.memberList}
-                               handleDateChange={_props.handleDateChange}
-                               handleAssigneeChange={_props.handleAssigneeChange}>
-                    </ItemLabel>
+
+                    { _props.hasDone?
+                        <span>
+                            <span className="remark">{_props.assignee&&_props.assignee.username}</span>
+                            <span className="remark">刚刚</span>
+                        </span>
+                        :< ItemLabel assigneeId={_props.assignee?_props.assignee.id:null}
+                            date={_props.ddl}
+                            memberList={_props.memberList}
+                            handleDateChange={_props.handleDateChange}
+                            handleAssigneeChange={_props.handleAssigneeChange}>
+                        </ItemLabel>
+                    }
                 </div>
             </div>
         )

@@ -61,7 +61,7 @@ class ItemLabel extends React.Component {
                     </div>
                 }
                 {   this.state.editDialog &&
-                    <div class="mask" onClick={this.handleCloseEditDialog}></div>
+                    <div className="mask" onClick={this.handleCloseEditDialog}></div>
                 }
                 </div>
         )

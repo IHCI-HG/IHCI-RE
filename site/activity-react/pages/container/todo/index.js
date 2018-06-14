@@ -312,6 +312,15 @@ export default class Task extends React.Component{
         // 如果成功,更新
     }
 
+    handleAssigneeChange = (e) => {
+        console.log('handleAssigneeChange', e.target.value);
+        // 直接调用接口改变指派用户
+    }
+
+    handleDateChange = (e) => {
+        console.log('handleDateChange', e.target.value);
+    }
+
     render() {
         let taskInfo = this.state.taskInfo
         let teamInfo = this.state.teamInfo
@@ -322,9 +331,12 @@ export default class Task extends React.Component{
             <Page title={"任务详情"} className="discuss-page">
 
                  <div className="discuss-con page-wrap">
+
                      <TodoItem
                          {...this.state.todo}
                          memberList={this.state.memberList}
+                         handleAssigneeChange={this.handleAssigneeChange}
+                         handleDateChange={this.handleDateChange}
                          handleTodoModify={this.handleTodoModify.bind(this,this.state.todo.id )}
                          handleTodoCheck={this.handleTodoCheck.bind(this, this.state.todo.id)} />
                     <div className="detail-actions">

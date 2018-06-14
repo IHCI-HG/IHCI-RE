@@ -87,6 +87,11 @@
             font-weight: 600;
             margin: 0 4px;
         }
+        .remark {
+            color: #999;
+            font-weight: 600;
+            margin:0 4px;
+        }
         .todo-label {
             display: inline-block;
             position: relative;
@@ -354,45 +359,7 @@
             }
             
         }
-        // .team-info {
-        //     display: block;
-        //     justify-content: space-between;
-        //     .mainInfo{
-        //         display:block;
-        //     }
-        //     .subTasks{
-        //         color:#555;
-        //         display:block;
-        //         line-height:24px;
-        //         margin-right:5px;
-        //         max-width:75%;
-        //         user-select:all;
-        //         word-wrap:break-word;
-        //         .subTask{
-        //             display:block;
-        //             // .taskName{
-        //             //     display: inline-block;
-        //             // }
-        //         }
-        //     }
-            
-        //     .admin {
-        //         height: 100px;
-        //         width: 100px;
-        //         text-align: center;
-        //         cursor: pointer;
-        //         .admin-con {
-        //             display: flex;
-        //             align-items: center;
-        //             justify-content: center;
-        //             height: 70px;
-        //             width: 100px;
 
-        //             font-size: 26px; 
-        //         }
-        //     }
-
-        // }
 
         .head {
             padding: 40px 0;

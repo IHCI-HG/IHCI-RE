@@ -18,6 +18,7 @@ class EditTodo extends React.Component {
         params.name = this.refs.name.value
         params.assigneeId = this.state.assigneeId
         params.date = this.state.date
+        this.refs.name.value = ''
         // 调用父组件方法，把提交参数传出去
         this.props.handleConfirm(params);
     }
