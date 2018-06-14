@@ -4,6 +4,7 @@ import './style.scss'
 import api from '../../../utils/api';
 import { timeBefore, sortByCreateTime, timeParse } from '../../../utils/util'
 import Page from '../../../components/page'
+import TodoItem from './todoItem'
 
 import MemberChosenList from '../../../components/member-chose-list'
 
@@ -115,21 +116,7 @@ export default class Task extends React.Component{
         createTopicName: '',
         createTopicContent: '',
         memberNum: 0,
-        // taskInfo:{
-        //     name:"任务一",
-        //     discription:"1234",
-        //     subTaskList:{
-        //         subTaskKeyList:[1,2],
-        //         1:{
-        //             name:"123",
-        //             assigned:false
-        //         },
-        //         2:{
-        //             name:"223",
-        //             assigned:true
-        //         },
-        //     },
-        // },
+
         teamInfo: {
             _id: 1,
             name: 'IHCI平台搭建项目组',
@@ -219,7 +206,30 @@ export default class Task extends React.Component{
                 chosen: false,
             },
         ],
-
+        todo: {
+            id: 1,
+            desc: '分析tower系统功能',
+            name: '使用tower',
+            hasDone: true,
+            ddl: '2010-1-1',
+            assignee:{
+                id: 1,
+                username: '黄',
+                avator: '',
+            },
+            checkItemList:[
+                {
+                    id: 1,
+                    hasDone:false,
+                    content: '试用tower',
+                    assignee: {
+                        id: 1,
+                        username: '黄',
+                        avator: '',
+                    }
+                }
+            ]
+        }
     }
 
     createTopicHandle = async () => {
@@ -290,21 +300,18 @@ export default class Task extends React.Component{
     loadmore = () => {
 
     }
-    // taskInfo:{
-    //     name:任务一,
-    //     discription:1234,
-    //     subTaskList:{
-    //         subTaskKeyList:[1,2],
-    //         1:{
-    //             name:123,
-    //             assigned:false
-    //         },
-    //         2:{
-    //             name:223,
-    //             assigned:true
-    //         },
-    //     },
-    // },
+    handleTodoCheck = (id) => {
+        console.log('handleTodoCheck', id)
+        this.state.todo.hasDone = !this.state.todo.hasDone
+        this.setState({ todo: this.state.todo })
+    }
+
+    handleTodoModify(id, todoInfo) {
+        console.log('index', id, todoInfo)
+        // 发请求,获取结果
+        // 如果成功,更新
+    }
+
     render() {
         let taskInfo = this.state.taskInfo
         let teamInfo = this.state.teamInfo
@@ -315,24 +322,11 @@ export default class Task extends React.Component{
             <Page title={"任务详情"} className="discuss-page">
 
                  <div className="discuss-con page-wrap">
-                    {/* <div className="team-info">
-                        <div className="mainInfo">
-                            <div className="head">{taskInfo.name}</div>
-                            <pre><div className="team-des">{taskInfo.discription}</div>  </pre>
-                        </div>
-                        <div className="subTasks">
-                    {
-                            taskInfo.subTaskList.subTaskKeyList.map((subTaskKey) => {
-                                return (
-                                    <div className="subTask">
-                                        <input type="checkbox"  value="true" />
-                                        <div className="taskName" key={'subTask-' + subTaskKey}>{taskInfo.subTaskList[subTaskKey].name}</div>
-                                    </div>
-                                )
-                            })
-                    } 
-                        </div> 
-                    </div>*/} 
+                     <TodoItem
+                         {...this.state.todo}
+                         memberList={this.state.memberList}
+                         handleTodoModify={this.handleTodoModify.bind(this,this.state.todo.id )}
+                         handleTodoCheck={this.handleTodoCheck.bind(this, this.state.todo.id)} />
                     <div className="detail-actions">
                         <div className={"item "+((moveExpanded)?"expanded":"")}>
                             {!moveExpanded&&<a onClick={() => {this.setState({moveExpanded: true,copyExpanded: false})}}>移动</a>}
@@ -348,17 +342,7 @@ export default class Task extends React.Component{
                                             <span className="link-clear" title="清除选择">
                                                 <i className="iconfont icon-close"></i>
                                             </span>
-                                            {/* <div class="select-list" style="display: none;">
-                                                <div class="select-item">
-                                                    <a href="javascript:;" class="label"><span>熟悉 Tower</span></a>
-                                                </div>
-                                                <div class="select-item">
-                                                    <a href="javascript:;" class="label"><span>test</span></a>
-                                                </div>
-                                                <div class="select-item">
-                                                    <a href="javascript:;" class="label"><span>2134</span></a>
-                                                </div> 
-                                            </div> */}
+
                                         </div>
                                     </p>
                                     <p>

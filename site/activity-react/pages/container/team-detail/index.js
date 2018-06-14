@@ -244,21 +244,8 @@ export default class Team extends React.Component{
 
     handleTodoModify(id, todoInfo) {
         console.log('index', id, todoInfo)
-        // 发请求,结果
-        const result = {
-            id: 4,
-            name: '了解tower',
-            hasDone: false,
-            assignee: null,
-            checkItem: null,
-        }
+        // 发请求,获取结果
         // 如果成功,更新
-        const todoList = [...this.state.todoList, result]
-        this.setState({todoList})
-    }
-
-    handleTodoModify() {
-
     }
 
 
