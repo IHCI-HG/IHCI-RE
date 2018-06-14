@@ -19,7 +19,7 @@ import Topic from './topic'
 import Timeline from './timeline'  
 import Member from './member'  
 import Sign from './sign'
-import TaskDetail from './task-detail'
+import TaskDetail from './todo'
 
 class App extends React.Component{
     state = {
