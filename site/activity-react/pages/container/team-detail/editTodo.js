@@ -1,20 +1,24 @@
 import * as React from 'react';
 import './style.scss'
+import ItemLabel from './itemLabel'
 
 
 class EditTodo extends React.Component {
     state = {
-        showLabelEditBoard: false,
+
     }
+
+
     handleConfirm = () => {
         const params = {}
         if (this.props.value) {
             params.id = this.props.value.id
         }
         params.name = this.refs.name.value
-        params.assignee = null
-        params.checkItem = null
+        params.assignee = this.refs.label.state.assigneeId
+        params.date = this.refs.label.state.date
         this.props.handleConfirm(params);
+        // 调用父组件方法，把提交参数传出去
     }
 
     handleClose = (e) => {
@@ -23,6 +27,7 @@ class EditTodo extends React.Component {
         this.props.handleClose()
         e.stopPropagation()
     }
+
 
     render() {
         const _props = this.props
@@ -36,39 +41,11 @@ class EditTodo extends React.Component {
                            placeholder="任务名"
                            defaultValue={_props.value?_props.value.name:''}>
                     </input>
-                    <span className="todo-label"
-                          onClick={() => {
-                              const showLabelEditBoard = !this.state.showLabelEditBoard
-                              this.setState({ showLabelEditBoard })
-                          }}>
-                        <span className="assignee">huang</span>
-                        <span className="due">2017.1.1</span>
-                        {
-                            this.state.showLabelEditBoard &&
-                            <div className="todo-label-edit">
-                                <div className="arrow"></div>
-                                <div>
-                                    <label>将任务指派给</label>
-                                    <select>
-                                        <option value ='-1'>未指定</option>
-                                        {
-                                            _props.memberList.map((item) => {
-                                                return (
-                                                    <option value ={item._id} key={item._id}>
-                                                        {item.name}
-                                                    </option>
-                                                )
-                                            })
-                                        }
-                                    </select>
-                                </div>
-                                <div>
-                                    <label>任务截止时间</label>
-                                    <input type="date"></input>
-                                </div>
-                            </div>
-                        }
-                    </span>
+                    <ItemLabel ref="label"
+                        assignee = {null}
+                        date = {null}
+                        memberList={_props.memberList}>
+                    </ItemLabel>
                     <div className="buttons">
                         <button className="confirm"
                                 onClick={this.handleConfirm}>{_props.confirmLabel}</button>

@@ -228,10 +228,11 @@ export default class Team extends React.Component{
     }
 
     handleTodoCreate(todoInfo) {
+        console.log(todoInfo)
         // 发请求,结果
         const result = {
                 id: 4,
-                name: '了解tower',
+                name: todoInfo.name,
                 hasDone: false,
                 assignee: null,
                 checkItem: null,
@@ -253,11 +254,6 @@ export default class Team extends React.Component{
         // 如果成功,更新
         const todoList = [...this.state.todoList, result]
         this.setState({todoList})
-    }
-
-    closeDialog = () => {
-        console.log('closeDialog')
-        this.setState({showCreateTodo: false})
     }
 
 
@@ -330,9 +326,7 @@ export default class Team extends React.Component{
                         }
                     </div>
                 </div>
-                <div className="todo-board"
-                     // onClick={this.closeDialog}
-                >
+                <div className="todo-board">
                     <div className="head">
                         <span className='head-title'>任务</span>
                         <div className="create-btn"
@@ -357,9 +351,9 @@ export default class Team extends React.Component{
                     {
                         this.state.showCreateTodo &&
                         <EditTodo
-                            handleConfirm={this.handleTodoCreate.bind(this)}
-                            confirmLabel="添加任务"
                             memberList={this.state.memberList}
+                            confirmLabel="添加任务"
+                            handleConfirm={this.handleTodoCreate.bind(this)}
                             handleClose={(() => {this.setState({showCreateTodo: false})}).bind(this)}>
                         </EditTodo>
                     }
