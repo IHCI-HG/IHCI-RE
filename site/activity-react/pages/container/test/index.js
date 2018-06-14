@@ -25,6 +25,25 @@ export default class Team extends React.Component{
         this.setState({
             chosenFile: e.target.files[0]
         })
+
+        const result = await api('/api/file/uploadFile', {
+            method: 'POST',
+            body: {
+                fileInfo: {
+                   teamId: 'teamxxx',
+                   dir: '/',
+                   fileName: e.target.files[0].name,
+                   ossKey: ""
+
+                }
+            }
+        })
+
+        if(result.state.code === 0) {
+            console.log(result);
+            window.toast("Appended")
+        }
+
         fileUploader('teamxxx', '/aa', e.target.files[0])
     }
 
