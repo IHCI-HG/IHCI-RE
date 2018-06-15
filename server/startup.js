@@ -2,7 +2,7 @@ require('babel-polyfill');
 
 var fs = require('fs'),                 //test一下
     path = require('path'),
-    cluster = require('cluster'),
+    cluster = require('cluster'),        //test两下
     os = require('os'),
     express = require('express'),
     commander = require('commander'),
