@@ -1,6 +1,6 @@
 require('babel-polyfill');
 
-var fs = require('fs'),
+var fs = require('fs'),                 //test一下
     path = require('path'),
     cluster = require('cluster'),
     os = require('os'),
