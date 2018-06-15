@@ -1,14 +1,13 @@
 import * as React from 'react';
 import './style.scss'
-
 import api from '../../../utils/api';
 import { timeBefore, sortByCreateTime } from '../../../utils/util'
 import Page from '../../../components/page'
-
 import MemberChosenList from '../../../components/member-chose-list'
 import TodoItem from '../todo/todoItem'
 import NewTodo from '../todo/editTodo'
 import EditTodoList from '../todo/todolist/editTodoList'
+import TodoList from '../todo/todolist/todoList'
 
 class TeamChoseItem extends React.PureComponent{
     render() {
@@ -21,7 +20,6 @@ class TeamChoseItem extends React.PureComponent{
         )
     }
 }
-
 class TopicItem extends React.PureComponent{
     render() {
         return(
@@ -45,7 +43,6 @@ export default class Team extends React.Component{
         showCreateTodoList: false,
         showMenu: false,
         isCreator: false,
-
         createTopicName: '', //
         createTopicContent: '', //
 
@@ -269,7 +266,9 @@ export default class Team extends React.Component{
         this.setState({showCreateTodoList: false})
     }
 
-
+    handleTodoListModify(id, todoInfo) {
+        console.log('index', id, todoInfo)
+    }
 
     render() {
         let teamInfo = this.state.teamInfo
@@ -418,6 +417,9 @@ export default class Team extends React.Component{
                                 })
                             }
                         </div>
+                        <TodoList
+                            handleTodoListModify={this.handleTodoListModify.bind(this, 1 )}
+                        ></TodoList>
                     </div>
                 </div>
             </Page>

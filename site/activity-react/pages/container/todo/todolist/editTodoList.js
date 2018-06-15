@@ -6,9 +6,10 @@ class EditTodoList extends React.Component {
     handleConfirm = () => {
         console.log('handleConfirm')
         const params = {}
-        if (this.props) {
-            params.id = this.props.id
-        }
+        // id 可以在之前绑定
+        // if (this.props) {
+        //     params.id = this.props.id
+        // }
         params.name = this.refs.name.value
         this.props.handleConfirm(params);
         this.refs.name.value = ''

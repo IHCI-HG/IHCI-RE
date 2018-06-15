@@ -1,0 +1,29 @@
+.todolist {
+    position: relative;
+    padding: 5px;
+    margin-bottom: 5px;
+    &:hover {
+        .actions {
+            visibility: visible;
+        }
+    }
+    h4 {
+        color: #3e7598;
+    }
+    .actions {
+        visibility: hidden;
+        padding: 2px 4px;
+        border-radius: 6px;
+        border: 1px solid rgba(200, 200, 200, .6);
+        background-color: white;
+        position: absolute;
+        left: -1.13rem;
+        top: 3px;
+        .icon {
+            margin: 0 6px;
+        }
+    }
+    .todolist-name {
+
+    }
+}
