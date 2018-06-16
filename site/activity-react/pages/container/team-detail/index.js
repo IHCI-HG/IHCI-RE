@@ -278,15 +278,23 @@ export default class Team extends React.Component{
     }
 
     // todoList
-    handleTodoListCreate(info) {
-        console.log(info)
-        // 发请求,结果
-        // 如果成功,将返回值push进todoList中
-        this.setState({showCreateTodoList: false})
+    handleTodoListCreate = async(info) => {
+        const resp = await mock.httpMock('/todo/post', {
+            teamId: this.teamId,
+            name: info.name
+        })
+        if (resp.status === 201) {
+            this.setState({showCreateTodoList: false})
+        }
     }
 
-    handleTodoListModify(id, todoInfo) {
-        console.log('index', id, todoInfo)
+    handleTodoListModify = async(id, info) => {
+        const resp = await mock.httpMock('/todo/post', {
+            id,
+            name: info.name
+        })
+        if (resp.status === 200) {
+        }
     }
 
     render() {
@@ -368,13 +376,13 @@ export default class Team extends React.Component{
                                     e.stopPropagation()
                                 }}>添加任务</span>
                                 <i className="icon iconfont"
-                                   onClick={() => {
+                                   onClick={(e) => {
                                        this.setState({showMenu: !this.state.showMenu})
                                        e.stopPropagation()
                                    }}
                                 >&#xe783;</i>
                                 {   this.state.showMenu &&
-                                    <ul class="menu">
+                                    <ul className="menu">
                                         <li onClick={(e) => {
                                             this.setState({showCreateTodo: true, showMenu: false})
                                             e.stopPropagation()

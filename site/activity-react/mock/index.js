@@ -59,15 +59,42 @@ http.listen('/team/:id/todolist/get', function (params) {
     return Mock.mock(data)
 })
 
+http.listen('/todolist/post', function (params) {
+    const data = {
+        'status': 201,
+        data: {
+            todolist: {
+                id: '@natural(100,200)',
+                name: params.name || '',
+            }
+        }
+    }
+    return Mock.mock(data)
+})
+
+
+http.listen('/todolist/put', function (params) {
+    const data = {
+        'status': 200,
+        data: {
+            todolist: {
+                id: params.id,
+                name: params.name || '',
+            }
+        }
+    }
+    return Mock.mock(data)
+})
+
 
 
 // todo
-http.listen('/todo/:id/post', function (params) {
+http.listen('/todo/post', function (params) {
     const data = {
         'status': 201,
         data: {
             todo: {
-                id: params.id || '@natural(100,200)',
+                id: '@natural(100,200)',
                 name: params.name || '',
                 desc: params.desc || '',
                 // assignee: null,
