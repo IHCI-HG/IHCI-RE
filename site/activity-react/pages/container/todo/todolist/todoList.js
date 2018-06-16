@@ -1,12 +1,13 @@
 import * as React from 'react';
 import EditTodoList from './editTodoList'
+import NewTodo from '../editTodo'
 import './style.scss'
 
 class TodoList extends React.Component {
     state = {
         // mode 任务框模式, edit 或者 read
         mode: 'read',
-
+        showCreateTodo: false,
     }
 
     setMode(mode) {
@@ -55,8 +56,19 @@ class TodoList extends React.Component {
                         </div>
                 }
                 {
-                    listType === 'classification' &&
-                        <div>添加新任务</div>
+                    listType === 'classification' && (
+                        this.state.showCreateTodo?
+                            <NewTodo
+                                memberList={_props.memberList}
+                                confirmLabel="添加任务"
+                                handleConfirm={_props.handleTodoCreate}
+                                handleClose={(() => {this.setState({showCreateTodo: false})}).bind(this)}>
+                            </NewTodo>
+                            :<div onClick={(e) => {
+                                this.setState({showCreateTodo: true})
+                                e.stopPropagation()
+                            }}>添加新任务</div>
+                    )
                 }
             </div>
         )

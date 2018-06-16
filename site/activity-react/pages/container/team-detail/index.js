@@ -476,6 +476,8 @@ export default class Team extends React.Component{
                                     <TodoList
                                         key={todoList.id}
                                         {...todoList}
+                                        memberList={this.state.memberList}
+                                        handleTodoCreate={this.handleTodoCreate.bind(this)}
                                         handleTodoListDelete={this.handleTodoListDelete.bind(this,todoList.id )}
                                         handleTodoListModify={this.handleTodoListModify.bind(this, todoList.id)}
                                     ></TodoList>
