@@ -8,6 +8,7 @@ import TodoItem from '../todo/todoItem'
 import NewTodo from '../todo/editTodo'
 import EditTodoList from '../todo/todolist/editTodoList'
 import TodoList from '../todo/todolist/todoList'
+import mock from '../../../mock/index';
 
 class TeamChoseItem extends React.PureComponent{
     render() {
@@ -43,12 +44,12 @@ export default class Team extends React.Component{
         showCreateTodoList: false,
         showMenu: false,
         isCreator: false,
-        createTopicName: '', //
-        createTopicContent: '', //
+        createTopicName: '',
+        createTopicContent: '',
 
-        teamInfo: {}, //
-        topicList: [], //
-        memberList: [], //
+        teamInfo: {},
+        topicList: [],
+        memberList: [],
         todoList: [
             {
                 id: 1,
@@ -93,6 +94,8 @@ export default class Team extends React.Component{
         this.initTeamInfo()
     }
     initTeamInfo = async () => {
+        const mockt = await mock.httpMock('/team/:id/todolist', { id: 1 })
+
         const result = await api('/api/team/info', {
             method: 'POST',
             body: {
@@ -150,7 +153,7 @@ export default class Team extends React.Component{
     locationTo = (url) => {
         this.props.router.push(url)
     }
-    //
+
     createTopicHandle = async () => {
         const informList = []
         this.state.memberList.map((item) => {
@@ -189,13 +192,13 @@ export default class Team extends React.Component{
             window.toast(result.state.msg)
         }
     }
-    //
+
     topicNameInputHandle = (e) => {
         this.setState({
             createTopicName: e.target.value
         })
     }
-    //
+
     topicContentInputHandle = (e) => {
         this.setState({
             createTopicContent: e.target.value
@@ -309,7 +312,7 @@ export default class Team extends React.Component{
                     <div className="div-line"></div>
 
                     <div className="head">
-                        <span className='head-title'>讨论</span> 
+                        <span className='head-title'>讨论</span>
                         <div className="create-btn" onClick={() => {this.setState({showCreateTopic: true})}}>发起讨论</div>
                     </div>
 
@@ -317,7 +320,7 @@ export default class Team extends React.Component{
                         this.state.showCreateTopic && <div className="create-area">
                             <input type="text" className="topic-name" onChange={this.topicNameInputHandle} value={this.state.createTopicName} placeholder="话题" />
                             <textarea className="topic-content" onChange={this.topicContentInputHandle} value={this.state.createTopicContent} placeholder="说点什么"></textarea>
-                            
+
                             <div className="infrom">请选择要通知的人：</div>
                             <MemberChosenList choseHandle={this.memberChoseHandle} memberList={this.state.memberList}/>
 

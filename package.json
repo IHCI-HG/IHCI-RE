@@ -44,6 +44,7 @@
     "lodash.merge": "^4.6.0",
     "lru-cache": "4.0.1",
     "mkdirp": "^0.5.1",
+    "mockjs": "^1.0.1-beta3",
     "moment": "^2.19.1",
     "mongodb": "^3.0.3",
     "morgan": "1.6.1",
