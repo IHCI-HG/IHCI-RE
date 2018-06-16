@@ -17,13 +17,13 @@ class ItemLabel extends React.Component {
 
     render() {
         const _props = this.props
-        console.log('memberList', _props.memberList)
+        // console.log('memberList', _props.memberList)
 
         // 如果props中没有传入assigneeId，为创建todo的label
         const assignee = _props.memberList.find((item) => {
             return item._id === _props.assigneeId
         })
-        console.log('r', _props)
+        // console.log('r', _props)
 
         return (
             <div className="todo-label">

@@ -1,4 +1,5 @@
 var Mock = require('mockjs');
+var Random = Mock.Random
 
 // 极简mock
 var http = {
@@ -11,7 +12,7 @@ var http = {
         var key = Array.prototype.shift.call(arguments)
         var params = Array.prototype.shift.call(arguments)
         var fn = this.urlList[key]
-        var resp = fn && fn()
+        var resp = fn && fn(params)
         console.log(key,'params:',params)
         console.log('resp:', resp)
         return resp
@@ -19,45 +20,81 @@ var http = {
 }
 
 
-http.listen('/team/:id/todolist', function () {
-    const todoList = [
-        {
-            id: 1,
-            name: '了解tower',
-            hasDone: true,
-            ddl: '2018.7.7',
-            assignee: {
-                id: 1,
-                username: '黄',
-            },
-            checkItem: [{
-                id: 1,
-                hasDone: true,
-                name: '子检查项'
-            }, {
-                id: 2,
-                hasDone: false,
-                name: '子检查项2'
-            }, {
-                id: 3,
-                hasDone: false,
-                name: '子检查项3'
+http.listen('/common/delete', function (params) {
+    const data = {
+        status: 200,
+        data: {
+        }
+    }
+    return Mock.mock(data)
+})
+
+
+
+
+http.listen('/team/:id/todolist/get', function (params) {
+    const data = {
+        'status': 200,
+        data: {
+            'todoList|7-10': [{
+                'id|+1': '@natural(0,100)',
+                name: '@cparagraph(1)',
+                hasDone: '@boolean',
+                'ddl|0-1': '@date',
+                'assignee|0-1': {
+                    id: '@natural(0,100)',
+                    username: '@cname',
+                },
+                checkItemDoneNum: "@natural(0,3)",
+                checkItemNum: "@natural(3,5)",
             }]
-        }, {
-            id: 2,
-            name: '了解tower',
-            hasDone: true,
-            assignee: null,
-            checkItem: [],
-        }, {
-            id: 3,
-            name: '了解tower',
-            hasDone: false,
-            assignee: null,
-            checkItem: null,
-        },
-    ]
-    return Mock.mock(todoList)
+        }
+    }
+    return Mock.mock(data)
+})
+
+
+http.listen('/todo/:id/put', function (params) {
+    const data = {
+        'status': 200,
+        data: {
+            todo: {
+                id: params.id || '返回id',
+                name: params.name || '返回name',
+                desc: params.desc || 'desc',
+                assignee: {
+                    id: params.assigneeId || '返回assigneeId',
+                    name: '返回name',
+                },
+                ddl: params.ddl || '返回name',
+                hasDone: params.hasDone || '不变',
+            }
+        }
+    }
+    return Mock.mock(data)
+})
+
+http.listen('/todo/:id/post', function (params) {
+    const data = {
+        'status': 201,
+        data: {
+            todo: {
+                id: params.id || '@natural(100,200)',
+                name: params.name || '',
+                desc: params.desc || '',
+                // assignee: null,
+                assignee: {
+                    id: params.assigneeId || 'null',
+                    name: '返回name',
+                },
+                ddl: params.ddl || null,
+                checkItemDoneNum: 0,
+                checkItemNum: 0,
+                hasDone: false,
+            }
+        }
+    }
+    return Mock.mock(data)
 })
 
 

@@ -16,10 +16,10 @@ class TodoItem extends React.Component {
     }
 
     // 中间步骤省略？
-    // handleSave = (params) =>{
-    //     console.log('handleSave', params)
-    //     this.props.handleTodoModify(params)
-    // }
+    handleSave = (params) =>{
+        this.setMode('read')
+        this.props.handleTodoModify(params)
+    }
 
     handleClose = () => {
         this.setMode('read')
@@ -28,7 +28,7 @@ class TodoItem extends React.Component {
 
     render() {
         const _props = this.props
-        console.log(_props)
+        // console.log(_props)
         if (this.state.mode === 'edit') {
             return (
                 <EditTodo
@@ -38,8 +38,8 @@ class TodoItem extends React.Component {
                     value={_props.name}
                     memberList={_props.memberList}
                     confirmLabel="保存"
-                    // handleConfirm={this.handleSave.bind(this)}
-                    handleConfirm={_props.handleTodoModify}
+                    handleConfirm={this.handleSave.bind(this)}
+                    // handleConfirm={_props.handleTodoModify}
                     handleClose={this.handleClose.bind(this)}
                 ></EditTodo>
             )
@@ -55,7 +55,9 @@ class TodoItem extends React.Component {
         return (
             <div className="todo">
                 <div className="actions">
-                    <i className="icon iconfont">&#xe70b;</i>
+                    <i className="icon iconfont"
+                       onClick={_props.handleTodoDelete}
+                    >&#xe70b;</i>
                     {
                         !_props.hasDone &&
                         <i className="icon iconfont"
@@ -79,11 +81,11 @@ class TodoItem extends React.Component {
                     }}>
                         {_props.name}
                     </span>
-
-                    {   (_props.checkItem != null && _props.checkItem.length>0) &&
-                        <span className="todo-progress">
-                            {`(${hasDoneNum}/${_props.checkItem != null && _props.checkItem.length})`}
-                        </span>
+                    {/*如果存在item计数，优先使用*/}
+                    {
+                        (_props.checkItem&& _props.checkItem.length>0)
+                            ?<span className="todo-progress">`(${hasDoneNum}/${_props.checkItem != null && _props.checkItem.length})`</span>
+                            :<span className="todo-progress">{_props.checkItemDoneNum}/{_props.checkItemNum}</span>
                     }
                     { _props.checkItem && <i className="icon iconfont todo-twr">&#xe6e7;</i> }
 
@@ -92,7 +94,9 @@ class TodoItem extends React.Component {
                             <span className="remark">{_props.assignee&&_props.assignee.username}</span>
                             <span className="remark">刚刚</span>
                         </span>
-                        :< ItemLabel assigneeId={_props.assignee?_props.assignee.id:null}
+                        :< ItemLabel
+                            // 使用用户传入，不用id
+                            assigneeId={_props.assignee?_props.assignee.id:null}
                             date={_props.ddl}
                             memberList={_props.memberList}
                             handleDateChange={_props.handleDateChange}

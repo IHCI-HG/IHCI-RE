@@ -37,6 +37,21 @@ class TopicItem extends React.PureComponent{
     }
 }
 
+
+//工具函数
+function updateList(arr, id) {
+    const newList = arr.slice()
+    let item = null
+    let index =null
+    newList.forEach((innerItem, innerIndex) => {
+        if(innerItem.id === id) {
+            item = innerItem
+            index = innerIndex
+        }
+    })
+    return [newList, item, index]
+}
+
 export default class Team extends React.Component{
     state = {
         showCreateTopic: false,
@@ -50,43 +65,7 @@ export default class Team extends React.Component{
         teamInfo: {},
         topicList: [],
         memberList: [],
-        todoList: [
-            {
-                id: 1,
-                name: '了解tower',
-                hasDone: true,
-                ddl: '2018.7.7',
-                assignee: {
-                    id: 1,
-                    username: '黄',
-                },
-                checkItem: [{
-                    id: 1,
-                    hasDone: true,
-                    name: '子检查项'
-                }, {
-                    id: 2,
-                    hasDone: false,
-                    name: '子检查项2'
-                }, {
-                    id: 3,
-                    hasDone: false,
-                    name: '子检查项3'
-                }]
-            }, {
-                id: 2,
-                name: '了解tower',
-                hasDone: true,
-                assignee: null,
-                checkItem: [],
-            }, {
-                id: 3,
-                name: '了解tower',
-                hasDone: false,
-                assignee: null,
-                checkItem: null,
-            },
-        ]
+        todoList: [],
     }
 
     componentDidMount = async() => {
@@ -94,7 +73,6 @@ export default class Team extends React.Component{
         this.initTeamInfo()
     }
     initTeamInfo = async () => {
-        const mockt = await mock.httpMock('/team/:id/todolist', { id: 1 })
 
         const result = await api('/api/team/info', {
             method: 'POST',
@@ -148,6 +126,11 @@ export default class Team extends React.Component{
             memberList: memberList,
             topicList: sortByCreateTime(result.data.topicList)
         })
+        // 请求todolist数据
+        const resp = await mock.httpMock('/team/:id/todolist/get', { id: this.teamId })
+        if (resp.status === 200) {
+            this.setState({ todoList: resp.data.todoList })
+        }
     }
 
     locationTo = (url) => {
@@ -220,45 +203,78 @@ export default class Team extends React.Component{
     }
 
     // todo
-    handleTodoCheck = (id) => {
-        console.log('handleTodoCheck', id)
-        const todoList = this.state.todoList.slice()
-        todoList.forEach((item) => {
-            if(item.id === id) {
-                item.hasDone = !item.hasDone
-            }
+    handleTodoCheck = async(id) => {
+        const [todoList,todoItem] = updateList(this.state.todoList, id)
+        const resp = await mock.httpMock('/todo/:id/put', { id: id, hasDone: !todoItem.hasDone })
+        if (resp.status ===200) {
+            todoItem.hasDone = !todoItem.hasDone
+            this.setState({ todoList })
+        }
+    }
+
+    handleTodoCreate = async(todoInfo) => {
+        const resp = await mock.httpMock('/todo/:id/post', {
+            teamId: this.teamId,
+            name: todoInfo.name,
+            ddl: todoInfo.date,
+            assigneeId: todoInfo.assigneeId,
         })
-        this.setState({ todoList })
+        if (resp.status === 201) {
+            const todoList = [...this.state.todoList, resp.data.todo]
+            this.setState({todoList})
+        }
     }
 
-    handleTodoCreate(todoInfo) {
-        console.log(todoInfo)
-        // 发请求,结果
-        const result = {
-                id: 4,
-                name: todoInfo.name,
-                hasDone: false,
-                assignee: null,
-                checkItem: null,
-            }
-        // 如果成功,将返回值push进todoList中
-        const todoList = [...this.state.todoList, result]
-        this.setState({todoList})
+    handleTodoModify = async(id, todoInfo) => {
+        const [todoList,todoItem] = updateList(this.state.todoList, id)
+        const resp = await mock.httpMock('/todo/:id/put', {
+            id: id,
+            name: todoInfo.name,
+            ddl: todoInfo.date,
+            assigneeId: todoInfo.assigneeId,
+        })
+        if (resp.status ===200) {
+            todoItem.name = resp.data.todo.name
+            todoItem.ddl = resp.data.todo.ddl
+            todoItem.assignee = resp.data.todo.assignee
+            this.setState({todoList})
+        }
     }
 
-    handleTodoModify(id, todoInfo) {
-        console.log('index', id, todoInfo)
-        // 发请求,获取结果
-        // 如果成功,更新
+    handleAssigneeChange = async(id,e) => {
+        const [todoList,todoItem] = updateList(this.state.todoList, id)
+        const resp = await mock.httpMock('/todo/:id/put', {
+            id: id,
+            assigneeId: e.target.value,
+        })
+        if (resp.status ===200) {
+            todoItem.assignee = resp.data.todo.assignee
+            this.setState({todoList})
+            return true // 用于内部函数判定
+        }
     }
 
-    handleAssigneeChange = (e) => {
-        console.log('handleAssigneeChange', e.target.value);
-        // 直接调用接口改变指派用户
+    handleDateChange = async(id,e) => {
+        const [todoList,todoItem] = updateList(this.state.todoList, id)
+        const resp = await mock.httpMock('/todo/:id/put', {
+            id: id,
+            ddl: e.target.value,
+        })
+        if (resp.status ===200) {
+            todoItem.ddl = resp.data.todo.ddl
+            this.setState({todoList})
+            return true // 用于内部函数判定
+        }
     }
 
-    handleDateChange = (e) => {
-        console.log('handleDateChange', e.target.value);
+    handleTodoDelete = async(id,e) => {
+        const [todoList,todoItem,index] = updateList(this.state.todoList, id)
+        const resp = await mock.httpMock('/common/delete')
+        if (resp.status ===200) {
+            todoList.splice(index,1)
+            this.setState({todoList})
+            return true // 用于内部函数判定
+        }
     }
 
     // todoList
@@ -382,10 +398,11 @@ export default class Team extends React.Component{
                                             {...item}
                                             key={item.id}
                                             memberList={this.state.memberList}
-                                            handleAssigneeChange={this.handleAssigneeChange}
-                                            handleDateChange={this.handleDateChange}
+                                            handleAssigneeChange={this.handleAssigneeChange.bind(this,item.id)}
+                                            handleDateChange={this.handleDateChange.bind(this,item.id)}
                                             handleTodoModify={this.handleTodoModify.bind(this,item.id )}
-                                            handleTodoCheck={this.handleTodoCheck.bind(this, item.id)} />
+                                            handleTodoDelete={this.handleTodoDelete.bind(this,item.id )}
+                                            handleTodoCheck={this.handleTodoCheck.bind(this,item.id)} />
                                     )
                                 })
                             }
