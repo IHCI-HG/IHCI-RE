@@ -16,10 +16,10 @@ class TodoItem extends React.Component {
     }
 
     // 中间步骤省略？
-    handleSave = (params) =>{
-        console.log('handleSave', params)
-        this.props.handleTodoModify(params)
-    }
+    // handleSave = (params) =>{
+    //     console.log('handleSave', params)
+    //     this.props.handleTodoModify(params)
+    // }
 
     handleClose = () => {
         this.setMode('read')
@@ -38,8 +38,8 @@ class TodoItem extends React.Component {
                     value={_props.name}
                     memberList={_props.memberList}
                     confirmLabel="保存"
-                    handleConfirm={this.handleSave.bind(this)}
-                    // handleConfirm={_props.handleTodoModify}
+                    // handleConfirm={this.handleSave.bind(this)}
+                    handleConfirm={_props.handleTodoModify}
                     handleClose={this.handleClose.bind(this)}
                 ></EditTodo>
             )
