@@ -1,5 +1,4 @@
 var Mock = require('mockjs');
-var Random = Mock.Random
 
 // 极简mock
 var http = {
@@ -19,7 +18,7 @@ var http = {
     }
 }
 
-
+// common
 http.listen('/common/delete', function (params) {
     const data = {
         status: 200,
@@ -29,9 +28,16 @@ http.listen('/common/delete', function (params) {
     return Mock.mock(data)
 })
 
+http.listen('/common/post', function (params) {
+    const data = {
+        status: 201,
+        data: {
+        }
+    }
+    return Mock.mock(data)
+})
 
-
-
+// todolist
 http.listen('/team/:id/todolist/get', function (params) {
     const data = {
         'status': 200,
@@ -54,26 +60,8 @@ http.listen('/team/:id/todolist/get', function (params) {
 })
 
 
-http.listen('/todo/:id/put', function (params) {
-    const data = {
-        'status': 200,
-        data: {
-            todo: {
-                id: params.id || '返回id',
-                name: params.name || '返回name',
-                desc: params.desc || 'desc',
-                assignee: {
-                    id: params.assigneeId || '返回assigneeId',
-                    name: '返回name',
-                },
-                ddl: params.ddl || '返回name',
-                hasDone: params.hasDone || '不变',
-            }
-        }
-    }
-    return Mock.mock(data)
-})
 
+// todo
 http.listen('/todo/:id/post', function (params) {
     const data = {
         'status': 201,
@@ -91,6 +79,27 @@ http.listen('/todo/:id/post', function (params) {
                 checkItemDoneNum: 0,
                 checkItemNum: 0,
                 hasDone: false,
+            }
+        }
+    }
+    return Mock.mock(data)
+})
+
+
+http.listen('/todo/:id/put', function (params) {
+    const data = {
+        'status': 200,
+        data: {
+            todo: {
+                id: params.id || '返回id',
+                name: params.name || '返回name',
+                desc: params.desc || 'desc',
+                assignee: {
+                    id: params.assigneeId || '返回assigneeId',
+                    name: '返回name',
+                },
+                ddl: params.ddl || '返回name',
+                hasDone: params.hasDone || '不变',
             }
         }
     }
