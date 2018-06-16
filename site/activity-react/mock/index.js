@@ -38,32 +38,60 @@ http.listen('/common/post', function (params) {
 })
 
 // todolist
+// http.listen('/team/:id/todolist/get', function (params) {
+//     const data = {
+//         'status': 200,
+//         data: {
+//             'todoList|7-10': [{
+//                 'id|+1': '@natural(0,100)',
+//                 name: '@cparagraph(1)',
+//                 hasDone: '@boolean',
+//                 'ddl|0-1': '@date',
+//                 'assignee|0-1': {
+//                     id: '@natural(0,100)',
+//                     username: '@cname',
+//                 },
+//                 checkItemDoneNum: "@natural(0,3)",
+//                 checkItemNum: "@natural(3,5)",
+//             }]
+//         }
+//     }
+//     return Mock.mock(data)
+// })
+
+
 http.listen('/team/:id/todolist/get', function (params) {
     const data = {
         'status': 200,
         data: {
-            'todoList|7-10': [{
-                'id|+1': '@natural(0,100)',
+            'todoList|2': [{
+                'id|+1': '@natural(1000,1100)',
                 name: '@cparagraph(1)',
-                hasDone: '@boolean',
-                'ddl|0-1': '@date',
-                'assignee|0-1': {
-                    id: '@natural(0,100)',
-                    username: '@cname',
-                },
-                checkItemDoneNum: "@natural(0,3)",
-                checkItemNum: "@natural(3,5)",
+                'list|7-10': [{
+                    'id|+1': '@natural(0,100)',
+                    name: '@cparagraph(1)',
+                    hasDone: '@boolean',
+                    'ddl|0-1': '@date',
+                    'assignee|0-1': {
+                        id: '@natural(0,100)',
+                        username: '@cname',
+                    },
+                    checkItemDoneNum: "@natural(0,3)",
+                    checkItemNum: "@natural(3,5)",
+                }]
             }]
         }
     }
     return Mock.mock(data)
 })
 
+
+
 http.listen('/todolist/post', function (params) {
     const data = {
         'status': 201,
         data: {
-            todolist: {
+            todoList: {
                 id: '@natural(100,200)',
                 name: params.name || '',
             }
@@ -77,7 +105,7 @@ http.listen('/todolist/put', function (params) {
     const data = {
         'status': 200,
         data: {
-            todolist: {
+            todoList: {
                 id: params.id,
                 name: params.name || '',
             }

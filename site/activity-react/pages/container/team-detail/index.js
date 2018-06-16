@@ -65,7 +65,7 @@ export default class Team extends React.Component{
         teamInfo: {},
         topicList: [],
         memberList: [],
-        todoList: [],
+        todoListArr: [],
     }
 
     componentDidMount = async() => {
@@ -126,10 +126,10 @@ export default class Team extends React.Component{
             memberList: memberList,
             topicList: sortByCreateTime(result.data.topicList)
         })
-        // 请求todolist数据
+        // 请求todoListArr数据
         const resp = await mock.httpMock('/team/:id/todolist/get', { id: this.teamId })
         if (resp.status === 200) {
-            this.setState({ todoList: resp.data.todoList })
+            this.setState({ todoListArr: resp.data.todoList })
         }
     }
 
@@ -267,7 +267,7 @@ export default class Team extends React.Component{
         }
     }
 
-    handleTodoDelete = async(id,e) => {
+    handleTodoDelete = async(id) => {
         const [todoList,todoItem,index] = updateList(this.state.todoList, id)
         const resp = await mock.httpMock('/common/delete')
         if (resp.status ===200) {
@@ -279,32 +279,46 @@ export default class Team extends React.Component{
 
     // todoList
     handleTodoListCreate = async(info) => {
-        const resp = await mock.httpMock('/todo/post', {
+        const resp = await mock.httpMock('/todolist/post', {
             teamId: this.teamId,
             name: info.name
         })
         if (resp.status === 201) {
-            this.setState({showCreateTodoList: false})
+            const todoListArr = [...this.state.todoListArr, resp.data.todoList]
+            this.setState({showCreateTodoList: false, todoListArr})
         }
     }
 
     handleTodoListModify = async(id, info) => {
-        const resp = await mock.httpMock('/todo/post', {
+        const resp = await mock.httpMock('/todolist/put', {
             id,
             name: info.name
         })
         if (resp.status === 200) {
+            const [todoListArr,todoListItem] = updateList(this.state.todoListArr, id)
+            todoListItem.name = resp.data.todoList.name
+            this.setState({todoListArr})
+        }
+    }
+
+    handleTodoListDelete = async(id) => {
+        const [todoListArr,todoListItem,index] = updateList(this.state.todoListArr, id)
+        const resp = await mock.httpMock('/common/delete')
+        if (resp.status ===200) {
+            todoListArr.splice(index,1)
+            this.setState({todoListArr})
+            return true // 用于内部函数判定
         }
     }
 
     render() {
         let teamInfo = this.state.teamInfo
-        const doneList = this.state.todoList.filter((item) => {
-            return item.hasDone === true
-        })
-        const todoList = this.state.todoList.filter((item) => {
-            return item.hasDone === false
-        })
+        // const doneList = this.state.todoList.filter((item) => {
+        //     return item.hasDone === true
+        // })
+        // const todoList = this.state.todoList.filter((item) => {
+        //     return item.hasDone === false
+        // })
 
         console.log(this.state.memberList)
         return (
@@ -389,6 +403,7 @@ export default class Team extends React.Component{
                                         }}>添加任务
                                         </li>
                                         <li onClick={(e) => {
+                                            console.log('添加任务')
                                             this.setState({showCreateTodoList: true, showMenu: false})
                                             e.stopPropagation()
                                         }}>添加清单
@@ -398,32 +413,55 @@ export default class Team extends React.Component{
                             </div>
                         </div>
 
-                        <div className="todo-list">
-                            {
-                                todoList.map((item) => {
-                                    return (
-                                        <TodoItem
-                                            {...item}
-                                            key={item.id}
-                                            memberList={this.state.memberList}
-                                            handleAssigneeChange={this.handleAssigneeChange.bind(this,item.id)}
-                                            handleDateChange={this.handleDateChange.bind(this,item.id)}
-                                            handleTodoModify={this.handleTodoModify.bind(this,item.id )}
-                                            handleTodoDelete={this.handleTodoDelete.bind(this,item.id )}
-                                            handleTodoCheck={this.handleTodoCheck.bind(this,item.id)} />
-                                    )
-                                })
-                            }
-                        </div>
-                        {
-                            this.state.showCreateTodo &&
-                            <NewTodo
-                                memberList={this.state.memberList}
-                                confirmLabel="添加任务"
-                                handleConfirm={this.handleTodoCreate.bind(this)}
-                                handleClose={(() => {this.setState({showCreateTodo: false})}).bind(this)}>
-                            </NewTodo>
-                        }
+                        {/*<div className="todo-list">*/}
+                            {/*{*/}
+                                {/*todoList.map((item) => {*/}
+                                    {/*return (*/}
+                                        {/*<TodoItem*/}
+                                            {/*{...item}*/}
+                                            {/*key={item.id}*/}
+                                            {/*memberList={this.state.memberList}*/}
+                                            {/*handleAssigneeChange={this.handleAssigneeChange.bind(this,item.id)}*/}
+                                            {/*handleDateChange={this.handleDateChange.bind(this,item.id)}*/}
+                                            {/*handleTodoModify={this.handleTodoModify.bind(this,item.id )}*/}
+                                            {/*handleTodoDelete={this.handleTodoDelete.bind(this,item.id )}*/}
+                                            {/*handleTodoCheck={this.handleTodoCheck.bind(this,item.id)} />*/}
+                                    {/*)*/}
+                                {/*})*/}
+                            {/*}*/}
+                        {/*</div>*/}
+                        {/*{*/}
+                            {/*this.state.showCreateTodo &&*/}
+                            {/*<NewTodo*/}
+                                {/*memberList={this.state.memberList}*/}
+                                {/*confirmLabel="添加任务"*/}
+                                {/*handleConfirm={this.handleTodoCreate.bind(this)}*/}
+                                {/*handleClose={(() => {this.setState({showCreateTodo: false})}).bind(this)}>*/}
+                            {/*</NewTodo>*/}
+                        {/*}*/}
+                        {/*{*/}
+                            {/*this.state.showCreateTodoList &&*/}
+                            {/*<EditTodoList*/}
+                                {/*confirmLabel="保存，开始添加任务"*/}
+                                {/*handleConfirm={this.handleTodoListCreate.bind(this)}*/}
+                                {/*handleClose={(() => {this.setState({showCreateTodoList: false})}).bind(this)}>*/}
+                            {/*</EditTodoList>*/}
+                        {/*}*/}
+                        {/*<div className="todo-list">*/}
+                            {/*{*/}
+                                {/*doneList.map((item) => {*/}
+                                    {/*return (*/}
+                                        {/*<TodoItem*/}
+                                            {/*{...item}*/}
+                                            {/*key={item.id}*/}
+                                            {/*memberList={this.state.memberList}*/}
+                                            {/*handleTodoCheck={this.handleTodoCheck.bind(this, item.id)} />*/}
+                                    {/*)*/}
+                                {/*})*/}
+                            {/*}*/}
+                        {/*</div>*/}
+
+
                         {
                             this.state.showCreateTodoList &&
                             <EditTodoList
@@ -432,22 +470,18 @@ export default class Team extends React.Component{
                                 handleClose={(() => {this.setState({showCreateTodoList: false})}).bind(this)}>
                             </EditTodoList>
                         }
-                        <div className="todo-list">
-                            {
-                                doneList.map((item) => {
-                                    return (
-                                        <TodoItem
-                                            {...item}
-                                            key={item.id}
-                                            memberList={this.state.memberList}
-                                            handleTodoCheck={this.handleTodoCheck.bind(this, item.id)} />
-                                    )
-                                })
-                            }
-                        </div>
-                        <TodoList
-                            handleTodoListModify={this.handleTodoListModify.bind(this, 1 )}
-                        ></TodoList>
+
+                        {   this.state.todoListArr.map((todoList) => {
+                                return (
+                                    <TodoList
+                                        key={todoList.id}
+                                        {...todoList}
+                                        handleTodoListDelete={this.handleTodoListDelete.bind(this,todoList.id )}
+                                        handleTodoListModify={this.handleTodoListModify.bind(this, todoList.id)}
+                                    ></TodoList>
+                                )
+                            })
+                        }
                     </div>
                 </div>
             </Page>

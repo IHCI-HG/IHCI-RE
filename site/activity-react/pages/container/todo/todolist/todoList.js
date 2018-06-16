@@ -6,6 +6,7 @@ class TodoList extends React.Component {
     state = {
         // mode 任务框模式, edit 或者 read
         mode: 'read',
+
     }
 
     setMode(mode) {
@@ -25,32 +26,38 @@ class TodoList extends React.Component {
 
     render() {
         const _props = this.props
-
-        if (this.state.mode === 'edit') {
-            return (
-                <EditTodoList
-                    confirmLabel="保存，开始添加任务"
-                    handleConfirm={this.handleSave.bind(this)}
-                    handleClose={this.handleClose.bind(this)}>
-                </EditTodoList>
-            )
-        }
+        const listType = _props.listType || 'classification'
+        console.log(_props)
 
         return (
             <div className="todolist">
-                <div className="actions">
-                    <i className="icon iconfont">&#xe70b;</i>
-                    <i className="icon iconfont"
-                       onClick={(e) => {
-                           console.log('edit')
-                           this.setMode('edit')
-                           e.stopPropagation()
-                       }}>&#xe6ec;</i>
-                </div>
-                <h4 className="todolist-name">
-                    {/*{_props.name}*/}
-                    11111
-                </h4>
+                {
+                    this.state.mode === 'edit'
+                        ? <EditTodoList
+                            confirmLabel="保存"
+                            handleConfirm={this.handleSave.bind(this)}
+                            handleClose={this.handleClose.bind(this)}>
+                        </EditTodoList>
+                        : <div>
+                            <div className="actions">
+                                <i className="icon iconfont"
+                                   onClick={_props.handleTodoListDelete}>&#xe70b;</i>
+                                <i className="icon iconfont"
+                                   onClick={(e) => {
+                                       console.log('edit')
+                                       this.setMode('edit')
+                                       e.stopPropagation()
+                                   }}>&#xe6ec;</i>
+                            </div>
+                            <h4 className="todolist-name">
+                                {_props.name}
+                            </h4>
+                        </div>
+                }
+                {
+                    listType === 'classification' &&
+                        <div>添加新任务</div>
+                }
             </div>
         )
     }
