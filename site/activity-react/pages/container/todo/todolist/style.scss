@@ -1,24 +1,29 @@
 .todolist {
     position: relative;
-    padding: 5px;
-    margin-bottom: 5px;
-    &:hover {
-        .actions {
-            visibility: visible;
+    .todolist-name {
+        position: relative;
+        padding: 5px;
+        margin-bottom: 5px;
+        padding: 0.04rem 0.04rem 0.04rem 0.186667rem;
+        margin: 0 0 0 -0.133333rem;
+        &:hover {
+            .name-actions {
+                visibility: visible;
+            }
         }
     }
     h4 {
         color: #3e7598;
     }
-    .actions {
+    .name-actions {
         visibility: hidden;
         padding: 2px 4px;
         border-radius: 6px;
         border: 1px solid rgba(200, 200, 200, .6);
         background-color: white;
         position: absolute;
-        left: -1.13rem;
-        top: 3px;
+        left: -1.05rem;
+        top: -0.03rem;
         .icon {
             margin: 0 6px;
         }

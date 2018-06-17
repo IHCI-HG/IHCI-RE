@@ -54,21 +54,23 @@ class TodoItem extends React.Component {
 
         return (
             <div className="todo">
-                <div className="actions">
-                    <i className="icon iconfont"
-                       onClick={_props.handleTodoDelete}
-                    >&#xe70b;</i>
-                    {
-                        !_props.hasDone &&
+                <div className="actions-wrap">
+                    <div className="actions">
                         <i className="icon iconfont"
-                           onClick={(e) => {
-                               console.log('edit')
-                               this.setMode('edit')
-                               e.stopPropagation()
-                           }}>
-                            &#xe6ec;
-                        </i>
-                    }
+                           onClick={_props.handleTodoDelete}
+                        >&#xe70b;</i>
+                        {
+                            !_props.hasDone &&
+                            <i className="icon iconfont"
+                               onClick={(e) => {
+                                   console.log('edit')
+                                   this.setMode('edit')
+                                   e.stopPropagation()
+                               }}>
+                                &#xe6ec;
+                            </i>
+                        }
+                    </div>
                 </div>
                 <div className={`${_props.hasDone ? 'check-box-checked' : 'check-box'}`}
                      onClick={_props.handleTodoCheck}>

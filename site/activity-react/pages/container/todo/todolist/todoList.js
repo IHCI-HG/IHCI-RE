@@ -1,5 +1,6 @@
 import * as React from 'react';
 import EditTodoList from './editTodoList'
+import TodoItem from '../todoItem'
 import NewTodo from '../editTodo'
 import './style.scss'
 
@@ -28,6 +29,12 @@ class TodoList extends React.Component {
     render() {
         const _props = this.props
         const listType = _props.listType || 'classification'
+        const doneList = _props.list.filter((todo) => {
+            return todo.hasDone === true
+        })
+        const todoList = _props.list.filter((todo) => {
+            return todo.hasDone === false
+        })
         console.log(_props)
 
         return (
@@ -40,21 +47,39 @@ class TodoList extends React.Component {
                             handleClose={this.handleClose.bind(this)}>
                         </EditTodoList>
                         : <div>
-                            <div className="actions">
-                                <i className="icon iconfont"
-                                   onClick={_props.handleTodoListDelete}>&#xe70b;</i>
-                                <i className="icon iconfont"
-                                   onClick={(e) => {
-                                       console.log('edit')
-                                       this.setMode('edit')
-                                       e.stopPropagation()
-                                   }}>&#xe6ec;</i>
-                            </div>
                             <h4 className="todolist-name">
+                                <div className="name-actions">
+                                    <i className="icon iconfont"
+                                       onClick={_props.handleTodoListDelete}>&#xe70b;</i>
+                                    <i className="icon iconfont"
+                                       onClick={(e) => {
+                                           console.log('edit')
+                                           this.setMode('edit')
+                                           e.stopPropagation()
+                                       }}>&#xe6ec;</i>
+                                </div>
                                 {_props.name}
                             </h4>
                         </div>
                 }
+
+                {
+                    todoList.map((todo) => {
+                        return (
+                            <TodoItem
+                                {...todo}
+                                key={todo.id}
+                                memberList={_props.memberList}
+                                // handleAssigneeChange={this.handleAssigneeChange.bind(this,todo.id)}
+                                // handleDateChange={this.handleDateChange.bind(this,todo.id)}
+                                // handleTodoModify={this.handleTodoModify.bind(this,todo.id )}
+                                // handleTodoDelete={this.handleTodoDelete.bind(this,todo.id )}
+                                // handleTodoCheck={this.handleTodoCheck.bind(this,todo.id)}
+                            />
+                        )
+                    })
+                }
+
                 {
                     listType === 'classification' && (
                         this.state.showCreateTodo?
@@ -69,6 +94,23 @@ class TodoList extends React.Component {
                                 e.stopPropagation()
                             }}>添加新任务</div>
                     )
+                }
+
+                {
+                    doneList.map((todo) => {
+                        return (
+                            <TodoItem
+                                {...todo}
+                                key={todo.id}
+                                memberList={_props.memberList}
+                                // handleAssigneeChange={this.handleAssigneeChange.bind(this,todo.id)}
+                                // handleDateChange={this.handleDateChange.bind(this,todo.id)}
+                                // handleTodoModify={this.handleTodoModify.bind(this,todo.id )}
+                                // handleTodoDelete={this.handleTodoDelete.bind(this,todo.id )}
+                                // handleTodoCheck={this.handleTodoCheck.bind(this,todo.id)}
+                            />
+                        )
+                    })
                 }
             </div>
         )
