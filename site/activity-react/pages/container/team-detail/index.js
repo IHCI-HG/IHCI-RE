@@ -212,16 +212,18 @@ export default class Team extends React.Component{
         }
     }
 
-    handleTodoCreate = async(todoInfo) => {
-        const resp = await mock.httpMock('/todo/:id/post', {
+    handleTodoCreate = async(index,todoInfo) => {
+        const resp = await mock.httpMock('/todo/post', {
             teamId: this.teamId,
+            // listId: todoInfo.id,
             name: todoInfo.name,
             ddl: todoInfo.date,
             assigneeId: todoInfo.assigneeId,
         })
+        console.log(this.state.todoListArr[index], index)
         if (resp.status === 201) {
-            const todoList = [...this.state.todoList, resp.data.todo]
-            this.setState({todoList})
+            this.state.todoListArr[index].list = [...this.state.todoListArr[index].list, resp.data.todo]
+            this.setState({todoListArr: this.state.todoListArr.slice()})
         }
     }
 
@@ -313,12 +315,7 @@ export default class Team extends React.Component{
 
     render() {
         let teamInfo = this.state.teamInfo
-        // const doneList = this.state.todoList.filter((item) => {
-        //     return item.hasDone === true
-        // })
-        // const todoList = this.state.todoList.filter((item) => {
-        //     return item.hasDone === false
-        // })
+        const unclassified = this.state.todoListArr[0]
 
         console.log(this.state.memberList)
         return (
@@ -460,7 +457,18 @@ export default class Team extends React.Component{
                                 {/*})*/}
                             {/*}*/}
                         {/*</div>*/}
-
+                        {   unclassified &&
+                                <TodoList
+                                    key={unclassified.id}
+                                    {...unclassified}
+                                    listType="unclassified"
+                                    showCreateTodo = {this.state.showCreateTodo}
+                                    memberList={this.state.memberList}
+                                    handleTodoCreate={this.handleTodoCreate.bind(this)}
+                                    handleTodoListDelete={this.handleTodoListDelete.bind(this,unclassified.id )}
+                                    handleTodoListModify={this.handleTodoListModify.bind(this, unclassified.id)}
+                                ></TodoList>
+                        }
 
                         {
                             this.state.showCreateTodoList &&
@@ -471,13 +479,17 @@ export default class Team extends React.Component{
                             </EditTodoList>
                         }
 
-                        {   this.state.todoListArr.map((todoList) => {
+                        {   this.state.todoListArr.map((todoList, index) => {
+                                if (index === 0) {
+                                    return
+                                }
+                                console.log(index)
                                 return (
                                     <TodoList
                                         key={todoList.id}
                                         {...todoList}
                                         memberList={this.state.memberList}
-                                        handleTodoCreate={this.handleTodoCreate.bind(this)}
+                                        handleTodoCreate={this.handleTodoCreate.bind(this, index)}
                                         handleTodoListDelete={this.handleTodoListDelete.bind(this,todoList.id )}
                                         handleTodoListModify={this.handleTodoListModify.bind(this, todoList.id)}
                                     ></TodoList>

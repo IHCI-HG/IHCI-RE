@@ -3,7 +3,11 @@
     padding: 0.266667rem 0.4rem 0.533333rem 0.4rem;
 }
 
-.todo {
+.todo + .todo-complete {
+    margin-top: 20px;
+}
+
+.todo, .todo-complete {
     input {
         border: none;
         border: 1px solid #cccccc;

@@ -11,6 +11,11 @@ class TodoList extends React.Component {
         showCreateTodo: false,
     }
 
+    static defaultProps = {
+        list: [],
+        listType: 'classification'
+    }
+
     setMode(mode) {
         console.log('setMode:', mode);
         this.setState({ mode: mode })
@@ -28,7 +33,7 @@ class TodoList extends React.Component {
 
     render() {
         const _props = this.props
-        const listType = _props.listType || 'classification'
+        const listType = _props.listType
         const doneList = _props.list.filter((todo) => {
             return todo.hasDone === true
         })
@@ -40,6 +45,7 @@ class TodoList extends React.Component {
         return (
             <div className="todolist">
                 {
+                    listType === 'classification' && (
                     this.state.mode === 'edit'
                         ? <EditTodoList
                             confirmLabel="保存"
@@ -61,6 +67,7 @@ class TodoList extends React.Component {
                                 {_props.name}
                             </h4>
                         </div>
+                    )
                 }
 
                 {
@@ -89,10 +96,10 @@ class TodoList extends React.Component {
                                 handleConfirm={_props.handleTodoCreate}
                                 handleClose={(() => {this.setState({showCreateTodo: false})}).bind(this)}>
                             </NewTodo>
-                            :<div onClick={(e) => {
-                                this.setState({showCreateTodo: true})
-                                e.stopPropagation()
-                            }}>添加新任务</div>
+                            :<div className="new-todo"
+                                  onClick={(e) => {
+                                    this.setState({showCreateTodo: true})
+                                    e.stopPropagation()}}>添加新任务</div>
                     )
                 }
 
