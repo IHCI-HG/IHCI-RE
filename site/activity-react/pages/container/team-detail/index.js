@@ -39,18 +39,40 @@ class TopicItem extends React.PureComponent{
 
 
 //工具函数
-function updateList(arr, id) {
+function updateList(arr, index=null, id) {
     const newList = arr.slice()
     let item = null
-    let index =null
-    newList.forEach((innerItem, innerIndex) => {
-        if(innerItem.id === id) {
-            item = innerItem
-            index = innerIndex
-        }
-    })
+    // let index =null
+    if(index) {
+        item = arr[index]
+    } else {
+        newList.forEach((innerItem, innerIndex) => {
+            if (innerItem.id === id) {
+                item = innerItem
+                index = innerIndex
+            }
+        })
+    }
     return [newList, item, index]
 }
+
+// function updateList(arr, id,index=null) {
+//     const newList = arr.slice()
+//     let item = null
+//     // let index =null
+//     if(index) {
+//         item = arr[index]
+//     } else {
+//         newList.forEach((innerItem, innerIndex) => {
+//             if (innerItem.id === id) {
+//                 item = innerItem
+//                 index = innerIndex
+//             }
+//         })
+//     }
+//     return [newList, item, index]
+// }
+
 
 export default class Team extends React.Component{
     state = {
@@ -291,25 +313,28 @@ export default class Team extends React.Component{
         }
     }
 
-    handleTodoListModify = async(id, info) => {
+    handleTodoListModify = async(index, id, info) => {
+        const todoListArr = this.state.todoListArr
         const resp = await mock.httpMock('/todolist/put', {
             id,
             name: info.name
         })
         if (resp.status === 200) {
-            const [todoListArr,todoListItem] = updateList(this.state.todoListArr, id)
-            todoListItem.name = resp.data.todoList.name
-            this.setState({todoListArr})
+            todoListArr[index].name = resp.data.todoList.name
+            this.setState({ todoListArr: todoListArr.slice() })
+            // 重新生成todoListArr,如果后续抽取todoListArr进行短路优化会用上
+            // 目前只针对todoList和todoItem做性能优化
+            return true
         }
     }
 
-    handleTodoListDelete = async(id) => {
-        const [todoListArr,todoListItem,index] = updateList(this.state.todoListArr, id)
-        const resp = await mock.httpMock('/common/delete')
+    handleTodoListDelete = async(index, id) => {
+        const todoListArr = this.state.todoListArr
+        const resp = await mock.httpMock('/common/delete', {id})
+        todoListArr.splice(index, 1)
         if (resp.status ===200) {
-            todoListArr.splice(index,1)
-            this.setState({todoListArr})
-            return true // 用于内部函数判定
+            this.setState({ todoListArr: todoListArr.slice() })
+            return true
         }
     }
 
@@ -465,8 +490,8 @@ export default class Team extends React.Component{
                                     showCreateTodo = {this.state.showCreateTodo}
                                     memberList={this.state.memberList}
                                     handleTodoCreate={this.handleTodoCreate.bind(this)}
-                                    handleTodoListDelete={this.handleTodoListDelete.bind(this,unclassified.id )}
-                                    handleTodoListModify={this.handleTodoListModify.bind(this, unclassified.id)}
+                                    handleTodoListDelete={this.handleTodoListDelete.bind(this, null, unclassified.id )}
+                                    handleTodoListModify={this.handleTodoListModify.bind(this, null, unclassified.id)}
                                 ></TodoList>
                         }
 
@@ -483,15 +508,14 @@ export default class Team extends React.Component{
                                 if (index === 0) {
                                     return
                                 }
-                                console.log(index)
                                 return (
                                     <TodoList
                                         key={todoList.id}
                                         {...todoList}
                                         memberList={this.state.memberList}
                                         handleTodoCreate={this.handleTodoCreate.bind(this, index)}
-                                        handleTodoListDelete={this.handleTodoListDelete.bind(this,todoList.id )}
-                                        handleTodoListModify={this.handleTodoListModify.bind(this, todoList.id)}
+                                        handleTodoListDelete={this.handleTodoListDelete.bind(this, index, todoList.id )}
+                                        handleTodoListModify={this.handleTodoListModify.bind(this, index, todoList.id)}
                                     ></TodoList>
                                 )
                             })

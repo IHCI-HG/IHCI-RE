@@ -40,7 +40,7 @@ class TodoList extends React.Component {
         const todoList = _props.list.filter((todo) => {
             return todo.hasDone === false
         })
-        console.log(_props)
+        // console.log('todolist渲染', _props)
 
         return (
             <div className="todolist">
@@ -49,6 +49,7 @@ class TodoList extends React.Component {
                     this.state.mode === 'edit'
                         ? <EditTodoList
                             confirmLabel="保存"
+                            defaultValue={_props.name}
                             handleConfirm={this.handleSave.bind(this)}
                             handleClose={this.handleClose.bind(this)}>
                         </EditTodoList>

@@ -21,6 +21,10 @@ class EditTodoList extends React.Component {
         e.stopPropagation()
     }
 
+    static defaultProps = {
+        defaultValue: ''
+    }
+
     render() {
         const _props = this.props
         console.log(_props)
@@ -30,7 +34,7 @@ class EditTodoList extends React.Component {
                     <input ref="name"
                            className="dashed-input"
                            placeholder="输入清单名"
-                           defaultValue={_props.value?_props.value:''}>
+                           defaultValue={_props.defaultValue}>
                     </input>
                     <div className="buttons">
                         <button className="confirm"
