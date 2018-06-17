@@ -234,19 +234,19 @@ export default class Team extends React.Component{
         }
     }
 
-    handleTodoCreate = async(index,todoInfo) => {
+    handleTodoCreate = async(index, id,todoInfo) => {
         const resp = await mock.httpMock('/todo/post', {
-            teamId: this.teamId,
-            // listId: todoInfo.id,
+            // teamId: this.teamId,
+            listId: id,
             name: todoInfo.name,
             ddl: todoInfo.date,
             assigneeId: todoInfo.assigneeId,
         })
-        console.log(this.state.todoListArr[index], index)
         if (resp.status === 201) {
             this.state.todoListArr[index].list = [...this.state.todoListArr[index].list, resp.data.todo]
             this.setState({todoListArr: this.state.todoListArr.slice()})
         }
+        return resp
     }
 
     handleTodoModify = async(id, todoInfo) => {
@@ -274,7 +274,7 @@ export default class Team extends React.Component{
         if (resp.status ===200) {
             todoItem.assignee = resp.data.todo.assignee
             this.setState({todoList})
-            return true // 用于内部函数判定
+            return resp
         }
     }
 
@@ -287,7 +287,7 @@ export default class Team extends React.Component{
         if (resp.status ===200) {
             todoItem.ddl = resp.data.todo.ddl
             this.setState({todoList})
-            return true // 用于内部函数判定
+            return resp
         }
     }
 
@@ -297,7 +297,7 @@ export default class Team extends React.Component{
         if (resp.status ===200) {
             todoList.splice(index,1)
             this.setState({todoList})
-            return true // 用于内部函数判定
+            return resp
         }
     }
 
@@ -311,6 +311,7 @@ export default class Team extends React.Component{
             const todoListArr = [...this.state.todoListArr, resp.data.todoList]
             this.setState({showCreateTodoList: false, todoListArr})
         }
+        return resp
     }
 
     handleTodoListModify = async(index, id, info) => {
@@ -324,8 +325,8 @@ export default class Team extends React.Component{
             this.setState({ todoListArr: todoListArr.slice() })
             // 重新生成todoListArr,如果后续抽取todoListArr进行短路优化会用上
             // 目前只针对todoList和todoItem做性能优化
-            return true
         }
+        return resp
     }
 
     handleTodoListDelete = async(index, id) => {
@@ -334,8 +335,8 @@ export default class Team extends React.Component{
         todoListArr.splice(index, 1)
         if (resp.status ===200) {
             this.setState({ todoListArr: todoListArr.slice() })
-            return true
         }
+        return resp
     }
 
     render() {
@@ -513,7 +514,7 @@ export default class Team extends React.Component{
                                         key={todoList.id}
                                         {...todoList}
                                         memberList={this.state.memberList}
-                                        handleTodoCreate={this.handleTodoCreate.bind(this, index)}
+                                        handleTodoCreate={this.handleTodoCreate.bind(this, index, todoList.id)}
                                         handleTodoListDelete={this.handleTodoListDelete.bind(this, index, todoList.id )}
                                         handleTodoListModify={this.handleTodoListModify.bind(this, index, todoList.id)}
                                     ></TodoList>

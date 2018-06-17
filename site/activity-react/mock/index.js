@@ -100,6 +100,7 @@ http.listen('/todo/post', function (params) {
         'status': 201,
         data: {
             todo: {
+                listId: params.listId || null,
                 id: '@natural(100,200)',
                 name: params.name || '',
                 desc: params.desc || '',
