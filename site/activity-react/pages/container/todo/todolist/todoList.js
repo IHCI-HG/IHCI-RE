@@ -88,6 +88,7 @@ class TodoList extends React.Component {
                     })
                 }
 
+                {/*归类list*/}
                 {
                     listType === 'classification' && (
                         this.state.showCreateTodo?
@@ -103,6 +104,20 @@ class TodoList extends React.Component {
                                     e.stopPropagation()}}>添加新任务</div>
                     )
                 }
+
+                {/*未归类list*/}
+                {
+                    listType !== 'classification' && (
+                        _props.showCreateTodo &&
+                            <NewTodo
+                                memberList={_props.memberList}
+                                confirmLabel="添加任务"
+                                handleConfirm={_props.handleTodoCreate}
+                                handleClose={_props.handlecloseEditTodo}>
+                            </NewTodo>
+                    )
+                }
+
 
                 {
                     doneList.map((todo,index) => {
