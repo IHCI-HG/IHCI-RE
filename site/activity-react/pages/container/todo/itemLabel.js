@@ -41,12 +41,14 @@ class ItemLabel extends React.Component {
                         <div className="arrow"></div>
                         <div>
                             <label>将任务指派给</label>
-                            <select onChange={_props.handleAssigneeChange}>
+                            <select onChange={_props.handleAssigneeChange} defaultValue={_props.assigneeId}>
                                 <option value='null'>未指派</option>
                                 {
                                     _props.memberList.map((item) => {
                                         return (
-                                            <option value={item._id} key={item._id}>
+                                            <option value={item._id}
+                                                    // selected={(item._id === _props.assigneeId)&&'selected'}
+                                                    key={item._id}>
                                                 {item.name}
                                             </option>
                                         )

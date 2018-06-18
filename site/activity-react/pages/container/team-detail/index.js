@@ -261,7 +261,6 @@ export default class Team extends React.Component{
     }
 
     handleTodoModify = async(lIndex, lId, id, todoInfo) => {
-        console.log(lIndex, lId, id, todoInfo)
         const resp = await mock.httpMock('/todo/:id/put', {
             id: id,
             name: todoInfo.name,
@@ -283,7 +282,6 @@ export default class Team extends React.Component{
     }
 
     handleTodoCheck = async(lIndex, lId, id, hasDone) => {
-        console.log(lIndex, lId, id, hasDone)
         const resp = await mock.httpMock('/todo/:id/put', { id: id, hasDone: !hasDone })
         if (resp.status ===200) {
             // 更新 todolist
@@ -298,29 +296,36 @@ export default class Team extends React.Component{
         }
     }
 
-
-    handleAssigneeChange = async(id,e) => {
-        const [todoList,todoItem] = updateList(this.state.todoList, id)
+    handleAssigneeChange = async(lIndex, lId, id, e) => {
+        console.log(lIndex, lId, id, e.target.value)
         const resp = await mock.httpMock('/todo/:id/put', {
             id: id,
             assigneeId: e.target.value,
         })
         if (resp.status ===200) {
+            const todoListArr = this.state.todoListArr
+            const todolist = todoListArr[lIndex]
+            const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
             todoItem.assignee = resp.data.todo.assignee
-            this.setState({todoList})
+            todoListArr[lIndex].list = todolist.list.slice()
+            this.setState({ todoListArr })
             return resp
         }
     }
 
-    handleDateChange = async(id,e) => {
-        const [todoList,todoItem] = updateList(this.state.todoList, id)
+    handleDateChange = async(lIndex, lId, id, e) => {
+        console.log(lIndex, lId, id, e.target.value)
         const resp = await mock.httpMock('/todo/:id/put', {
             id: id,
             ddl: e.target.value,
         })
         if (resp.status ===200) {
+            const todoListArr = this.state.todoListArr
+            const todolist = todoListArr[lIndex]
+            const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
             todoItem.ddl = resp.data.todo.ddl
-            this.setState({todoList})
+            todoListArr[lIndex].list = todolist.list.slice()
+            this.setState({ todoListArr })
             return resp
         }
     }
@@ -473,53 +478,7 @@ export default class Team extends React.Component{
                             </div>
                         </div>
 
-                        {/*<div className="todo-list">*/}
-                            {/*{*/}
-                                {/*todoList.map((item) => {*/}
-                                    {/*return (*/}
-                                        {/*<TodoItem*/}
-                                            {/*{...item}*/}
-                                            {/*key={item.id}*/}
-                                            {/*memberList={this.state.memberList}*/}
-                                            {/*handleAssigneeChange={this.handleAssigneeChange.bind(this,item.id)}*/}
-                                            {/*handleDateChange={this.handleDateChange.bind(this,item.id)}*/}
-                                            {/*handleTodoModify={this.handleTodoModify.bind(this,item.id )}*/}
-                                            {/*handleTodoDelete={this.handleTodoDelete.bind(this,item.id )}*/}
-                                            {/*handleTodoCheck={this.handleTodoCheck.bind(this,item.id)} />*/}
-                                    {/*)*/}
-                                {/*})*/}
-                            {/*}*/}
-                        {/*</div>*/}
-                        {/*{*/}
-                            {/*this.state.showCreateTodo &&*/}
-                            {/*<NewTodo*/}
-                                {/*memberList={this.state.memberList}*/}
-                                {/*confirmLabel="添加任务"*/}
-                                {/*handleConfirm={this.handleTodoCreate.bind(this)}*/}
-                                {/*handleClose={(() => {this.setState({showCreateTodo: false})}).bind(this)}>*/}
-                            {/*</NewTodo>*/}
-                        {/*}*/}
-                        {/*{*/}
-                            {/*this.state.showCreateTodoList &&*/}
-                            {/*<EditTodoList*/}
-                                {/*confirmLabel="保存，开始添加任务"*/}
-                                {/*handleConfirm={this.handleTodoListCreate.bind(this)}*/}
-                                {/*handleClose={(() => {this.setState({showCreateTodoList: false})}).bind(this)}>*/}
-                            {/*</EditTodoList>*/}
-                        {/*}*/}
-                        {/*<div className="todo-list">*/}
-                            {/*{*/}
-                                {/*doneList.map((item) => {*/}
-                                    {/*return (*/}
-                                        {/*<TodoItem*/}
-                                            {/*{...item}*/}
-                                            {/*key={item.id}*/}
-                                            {/*memberList={this.state.memberList}*/}
-                                            {/*handleTodoCheck={this.handleTodoCheck.bind(this, item.id)} />*/}
-                                    {/*)*/}
-                                {/*})*/}
-                            {/*}*/}
-                        {/*</div>*/}
+
                         {   unclassified &&
                                 <TodoList
                                     listType="unclassified"
@@ -530,6 +489,8 @@ export default class Team extends React.Component{
                                     handleTodoCreate={this.handleTodoCreate.bind(this, 0, null)}
                                     handleTodoCheck={this.handleTodoCheck.bind(this, 0, null)}
                                     handleTodoModify={this.handleTodoModify.bind(this, 0, null)}
+                                    handleAssigneeChange={this.handleAssigneeChange.bind(this, 0, null)}
+                                    handleDateChange={this.handleDateChange.bind(this, 0, null)}
                                     handleTodoDelete={this.handleTodoDelete.bind(this, 0, null)}
                                     handleTodoListDelete={this.handleTodoListDelete.bind(this, null, unclassified.id )}
                                     handleTodoListModify={this.handleTodoListModify.bind(this, null, unclassified.id)}
@@ -557,6 +518,8 @@ export default class Team extends React.Component{
                                         handleTodoCreate={this.handleTodoCreate.bind(this, index, todoList.id)}
                                         handleTodoCheck={this.handleTodoCheck.bind(this, index, todoList.id)}
                                         handleTodoModify={this.handleTodoModify.bind(this, index, todoList.id)}
+                                        handleAssigneeChange={this.handleAssigneeChange.bind(this, index, todoList.id)}
+                                        handleDateChange={this.handleDateChange.bind(this, index, todoList.id)}
                                         handleTodoDelete={this.handleTodoDelete.bind(this, index, todoList.id)}
                                         handleTodoListDelete={this.handleTodoListDelete.bind(this, index, todoList.id )}
                                         handleTodoListModify={this.handleTodoListModify.bind(this, index, todoList.id)}
