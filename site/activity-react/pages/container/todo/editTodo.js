@@ -20,7 +20,7 @@ class EditTodo extends React.Component {
         // 调用父组件方法，把提交参数传出去
         const resp = await this.props.handleConfirm(params);
         console.log('handleConfirm', resp)
-        if (resp.status === 200 ||resp.status === 201) {
+        if (resp.status === 201) {
             this.refs.name.value = ''
             this.setState({assigneeId: null})
             this.setState({date: null})
@@ -43,6 +43,12 @@ class EditTodo extends React.Component {
     handleDateChange = (e) => {
         console.log('h', e.target.value);
         this.setState({date: e.target.value});
+    }
+
+    componentWillUnmount() {
+        // 如果是修改todoItem，请求成功后组件将注销
+        this.setState({assigneeId: null})
+        this.setState({date: null})
     }
 
     render() {

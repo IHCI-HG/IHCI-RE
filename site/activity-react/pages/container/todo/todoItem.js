@@ -16,9 +16,12 @@ class TodoItem extends React.Component {
     }
 
     // 中间步骤省略？
-    handleSave = (params) =>{
-        this.setMode('read')
-        this.props.handleTodoModify(params)
+    handleSave = async(params) =>{
+        const resp = await this.props.handleTodoModify(params)
+        if (resp.status === 200 ||resp.status === 201) {
+            this.setMode('read')
+        }
+        return resp
     }
 
     handleClose = () => {

@@ -80,7 +80,7 @@ class TodoList extends React.Component {
                                 memberList={_props.memberList}
                                 // handleAssigneeChange={this.handleAssigneeChange.bind(this,todo.id)}
                                 // handleDateChange={this.handleDateChange.bind(this,todo.id)}
-                                // handleTodoModify={this.handleTodoModify.bind(this,todo.id )}
+                                handleTodoModify={_props.handleTodoModify.bind(this,todo.id )}
                                 handleTodoDelete={_props.handleTodoDelete.bind(this,todo.id )}
                                 handleTodoCheck={_props.handleTodoCheck.bind(this, todo.id)}
                             />
@@ -126,9 +126,6 @@ class TodoList extends React.Component {
                                 {...todo}
                                 key={todo.id}
                                 memberList={_props.memberList}
-                                // handleAssigneeChange={this.handleAssigneeChange.bind(this,todo.id)}
-                                // handleDateChange={this.handleDateChange.bind(this,todo.id)}
-                                // handleTodoModify={this.handleTodoModify.bind(this,todo.id )}
                                 handleTodoDelete={_props.handleTodoDelete.bind(this,todo.id)}
                                 handleTodoCheck={_props.handleTodoCheck.bind(this, todo.id)}
                             />

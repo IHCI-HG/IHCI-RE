@@ -260,8 +260,8 @@ export default class Team extends React.Component{
         return resp
     }
 
-    handleTodoModify = async(id, todoInfo) => {
-        const [todoList,todoItem] = updateList(this.state.todoList, id)
+    handleTodoModify = async(lIndex, lId, id, todoInfo) => {
+        console.log(lIndex, lId, id, todoInfo)
         const resp = await mock.httpMock('/todo/:id/put', {
             id: id,
             name: todoInfo.name,
@@ -269,12 +269,35 @@ export default class Team extends React.Component{
             assigneeId: todoInfo.assigneeId,
         })
         if (resp.status ===200) {
+            const todoListArr = this.state.todoListArr
+            const todolist = todoListArr[lIndex]
+            const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
             todoItem.name = resp.data.todo.name
             todoItem.ddl = resp.data.todo.ddl
             todoItem.assignee = resp.data.todo.assignee
-            this.setState({todoList})
+            todolist.list[itemIndex] = todoItem
+            todoListArr[lIndex].list = todolist.list.slice()
+            this.setState({ todoListArr })
+            return resp
         }
     }
+
+    handleTodoCheck = async(lIndex, lId, id, hasDone) => {
+        console.log(lIndex, lId, id, hasDone)
+        const resp = await mock.httpMock('/todo/:id/put', { id: id, hasDone: !hasDone })
+        if (resp.status ===200) {
+            // 更新 todolist
+            const todoListArr = this.state.todoListArr
+            const todolist = todoListArr[lIndex]
+            const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
+            todoItem.hasDone = resp.data.todo.hasDone
+            // ...更新完成时间赋值
+            todolist.list[itemIndex] = todoItem
+            todoListArr[lIndex].list = todolist.list.slice()
+            this.setState({ todoListArr })
+        }
+    }
+
 
     handleAssigneeChange = async(id,e) => {
         const [todoList,todoItem] = updateList(this.state.todoList, id)
@@ -299,22 +322,6 @@ export default class Team extends React.Component{
             todoItem.ddl = resp.data.todo.ddl
             this.setState({todoList})
             return resp
-        }
-    }
-
-    handleTodoCheck = async(lIndex, lId, id, hasDone) => {
-        console.log(lIndex, lId, id, hasDone)
-        const resp = await mock.httpMock('/todo/:id/put', { id: id, hasDone: !hasDone })
-        if (resp.status ===200) {
-            // 更新 todolist
-            const todoListArr = this.state.todoListArr
-            const todolist = todoListArr[lIndex]
-            const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
-            todoItem.hasDone = resp.data.todo.hasDone
-            // ...更新完成时间赋值
-            todolist.list[itemIndex] = todoItem
-            todoListArr[lIndex].list = todolist.list.slice()
-            this.setState({ todoListArr })
         }
     }
 
@@ -515,7 +522,6 @@ export default class Team extends React.Component{
                         {/*</div>*/}
                         {   unclassified &&
                                 <TodoList
-                                    key={unclassified.id}
                                     listType="unclassified"
                                     showCreateTodo = {this.state.showCreateTodo}
                                     handlecloseEditTodo={this.handlecloseEditTodo.bind(this)}
@@ -523,6 +529,7 @@ export default class Team extends React.Component{
                                     memberList={this.state.memberList}
                                     handleTodoCreate={this.handleTodoCreate.bind(this, 0, null)}
                                     handleTodoCheck={this.handleTodoCheck.bind(this, 0, null)}
+                                    handleTodoModify={this.handleTodoModify.bind(this, 0, null)}
                                     handleTodoDelete={this.handleTodoDelete.bind(this, 0, null)}
                                     handleTodoListDelete={this.handleTodoListDelete.bind(this, null, unclassified.id )}
                                     handleTodoListModify={this.handleTodoListModify.bind(this, null, unclassified.id)}
@@ -549,6 +556,7 @@ export default class Team extends React.Component{
                                         memberList={this.state.memberList}
                                         handleTodoCreate={this.handleTodoCreate.bind(this, index, todoList.id)}
                                         handleTodoCheck={this.handleTodoCheck.bind(this, index, todoList.id)}
+                                        handleTodoModify={this.handleTodoModify.bind(this, index, todoList.id)}
                                         handleTodoDelete={this.handleTodoDelete.bind(this, index, todoList.id)}
                                         handleTodoListDelete={this.handleTodoListDelete.bind(this, index, todoList.id )}
                                         handleTodoListModify={this.handleTodoListModify.bind(this, index, todoList.id)}

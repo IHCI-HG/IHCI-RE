@@ -133,7 +133,7 @@ http.listen('/todo/:id/put', function (params) {
                     id: params.assigneeId || '返回assigneeId',
                     name: '返回name',
                 },
-                ddl: params.ddl || '返回name',
+                ddl: params.ddl || '返回时间',
                 hasDone: params.hasDone !== null?params.hasDone : '不变',
             }
         }
