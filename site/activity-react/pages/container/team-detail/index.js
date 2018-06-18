@@ -39,24 +39,7 @@ class TopicItem extends React.PureComponent{
 
 
 //工具函数
-function updateList(arr, index=null, id) {
-    const newList = arr.slice()
-    let item = null
-    // let index =null
-    if(index) {
-        item = arr[index]
-    } else {
-        newList.forEach((innerItem, innerIndex) => {
-            if (innerItem.id === id) {
-                item = innerItem
-                index = innerIndex
-            }
-        })
-    }
-    return [newList, item, index]
-}
-
-// function updateList(arr, id,index=null) {
+// function updateList(arr, index=null, id) {
 //     const newList = arr.slice()
 //     let item = null
 //     // let index =null
@@ -72,6 +55,23 @@ function updateList(arr, index=null, id) {
 //     }
 //     return [newList, item, index]
 // }
+
+function updateList(arr, id,index=null) {
+    const newList = arr.slice()
+    let item = null
+    // let index =null
+    if(index) {
+        item = arr[index]
+    } else {
+        newList.forEach((innerItem, innerIndex) => {
+            if (innerItem.id === id) {
+                item = innerItem
+                index = innerIndex
+            }
+        })
+    }
+    return [newList, item, index]
+}
 
 
 export default class Team extends React.Component{
@@ -225,7 +225,7 @@ export default class Team extends React.Component{
     }
 
     // todo
-    handleTodoCheck = async(id) => {
+    handleTodoCheck = async(lIndex, id) => {
         const [todoList,todoItem] = updateList(this.state.todoList, id)
         const resp = await mock.httpMock('/todo/:id/put', { id: id, hasDone: !todoItem.hasDone })
         if (resp.status ===200) {
@@ -234,7 +234,7 @@ export default class Team extends React.Component{
         }
     }
 
-    handleTodoCreate = async(index, id,todoInfo) => {
+    handleTodoCreate = async(lIndex, id, todoInfo) => {
         const resp = await mock.httpMock('/todo/post', {
             // teamId: this.teamId,
             listId: id,
@@ -242,8 +242,9 @@ export default class Team extends React.Component{
             ddl: todoInfo.date,
             assigneeId: todoInfo.assigneeId,
         })
+        // 返回用户名的显示依赖assigneeId
         if (resp.status === 201) {
-            this.state.todoListArr[index].list = [...this.state.todoListArr[index].list, resp.data.todo]
+            this.state.todoListArr[lIndex].list = [...this.state.todoListArr[lIndex].list, resp.data.todo]
             this.setState({todoListArr: this.state.todoListArr.slice()})
         }
         return resp
@@ -343,7 +344,7 @@ export default class Team extends React.Component{
         let teamInfo = this.state.teamInfo
         const unclassified = this.state.todoListArr[0]
 
-        console.log(this.state.memberList)
+        // console.log(this.state.memberList)
         return (
             <Page title={"团队名称xx - IHCI"}
                 className="discuss-page">
@@ -515,6 +516,7 @@ export default class Team extends React.Component{
                                         {...todoList}
                                         memberList={this.state.memberList}
                                         handleTodoCreate={this.handleTodoCreate.bind(this, index, todoList.id)}
+                                        handleTodoCheck={this.handleTodoCheck.bind(this, todo.todoList.id)}
                                         handleTodoListDelete={this.handleTodoListDelete.bind(this, index, todoList.id )}
                                         handleTodoListModify={this.handleTodoListModify.bind(this, index, todoList.id)}
                                     ></TodoList>

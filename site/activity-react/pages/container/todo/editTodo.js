@@ -9,8 +9,7 @@ class EditTodo extends React.Component {
         date: this.props.date || null,
     }
 
-    handleConfirm = () => {
-        console.log('handleConfirm')
+    handleConfirm = async() => {
         const params = {}
         if (this.props.id) {
             params.id = this.props.id
@@ -18,9 +17,14 @@ class EditTodo extends React.Component {
         params.name = this.refs.name.value
         params.assigneeId = this.state.assigneeId
         params.date = this.state.date
-        this.refs.name.value = ''
         // 调用父组件方法，把提交参数传出去
-        this.props.handleConfirm(params);
+        const resp = await this.props.handleConfirm(params);
+        console.log('handleConfirm', resp)
+        if (resp.status === 200 ||resp.status === 201) {
+            this.refs.name.value = ''
+            this.setState({assigneeId: null})
+            this.setState({date: null})
+        }
     }
 
     handleClose = (e) => {

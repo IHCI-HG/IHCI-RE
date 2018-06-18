@@ -21,10 +21,10 @@ class TodoList extends React.Component {
         this.setState({ mode: mode })
     }
 
-    handleSave = (params) =>{
-        console.log('handleSave', params)
-        this.props.handleTodoListModify(params)
+    handleSave = async(params) =>{
         this.setMode('read')
+        const resp = await this.props.handleTodoListModify(params)
+        return resp
     }
 
     handleClose = () => {
@@ -82,7 +82,7 @@ class TodoList extends React.Component {
                                 // handleDateChange={this.handleDateChange.bind(this,todo.id)}
                                 // handleTodoModify={this.handleTodoModify.bind(this,todo.id )}
                                 // handleTodoDelete={this.handleTodoDelete.bind(this,todo.id )}
-                                // handleTodoCheck={this.handleTodoCheck.bind(this,todo.id)}
+                                handleTodoCheck={this.handleTodoCheck.bind(this,todo.id)}
                             />
                         )
                     })
@@ -115,7 +115,7 @@ class TodoList extends React.Component {
                                 // handleDateChange={this.handleDateChange.bind(this,todo.id)}
                                 // handleTodoModify={this.handleTodoModify.bind(this,todo.id )}
                                 // handleTodoDelete={this.handleTodoDelete.bind(this,todo.id )}
-                                // handleTodoCheck={this.handleTodoCheck.bind(this,todo.id)}
+                                handleTodoCheck={this.handleTodoCheck.bind(this,todo.id)}
                             />
                         )
                     })
