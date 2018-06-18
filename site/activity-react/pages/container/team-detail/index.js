@@ -212,11 +212,13 @@ export default class Team extends React.Component{
         })
         // 返回用户名的显示依赖assigneeId
         if (resp.status === 201) {
-            if (!this.state.todoListArr[lIndex].list) {
-                this.state.todoListArr[lIndex].list = []
+            const todoListArr = this.state.todoListArr
+            const todolist = todoListArr[lIndex]
+            if (!todolist.list) {
+                todolist.list = []
             }
-            this.state.todoListArr[lIndex].list = [...this.state.todoListArr[lIndex].list, resp.data.todo]
-            this.setState({todoListArr: this.state.todoListArr.slice()})
+            todolist.list = [...todolist.list, resp.data.todo]
+            this.setState({ todoListArr })
         }
         return resp
     }
@@ -236,7 +238,7 @@ export default class Team extends React.Component{
             todoItem.ddl = resp.data.todo.ddl
             todoItem.assignee = resp.data.todo.assignee
             todolist.list[itemIndex] = todoItem
-            todoListArr[lIndex].list = todolist.list.slice()
+            todolist.list = todolist.list.slice()
             this.setState({ todoListArr })
             return resp
         }
@@ -252,7 +254,7 @@ export default class Team extends React.Component{
             todoItem.hasDone = resp.data.todo.hasDone
             // ...更新完成时间赋值
             todolist.list[itemIndex] = todoItem
-            todoListArr[lIndex].list = todolist.list.slice()
+            todolist.list = todolist.list.slice()
             this.setState({ todoListArr })
         }
     }
@@ -268,7 +270,7 @@ export default class Team extends React.Component{
             const todolist = todoListArr[lIndex]
             const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
             todoItem.assignee = resp.data.todo.assignee
-            todoListArr[lIndex].list = todolist.list.slice()
+            todolist.list = todolist.list.slice()
             this.setState({ todoListArr })
             return resp
         }
@@ -285,7 +287,7 @@ export default class Team extends React.Component{
             const todolist = todoListArr[lIndex]
             const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
             todoItem.ddl = resp.data.todo.ddl
-            todoListArr[lIndex].list = todolist.list.slice()
+            todolist.list = todolist.list.slice()
             this.setState({ todoListArr })
             return resp
         }
@@ -298,7 +300,7 @@ export default class Team extends React.Component{
             const todoListArr = this.state.todoListArr
             const todolist = todoListArr[lIndex]
             const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
-            todolist.list.splice(itemIndex,1)
+            todolist.list = todolist.list.splice(itemIndex,1).slice()
             this.setState({ todoListArr })
             return resp
         }
