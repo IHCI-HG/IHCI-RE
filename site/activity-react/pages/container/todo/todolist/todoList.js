@@ -40,7 +40,7 @@ class TodoList extends React.Component {
         const todoList = _props.list.filter((todo) => {
             return todo.hasDone === false
         })
-        // console.log('todolist渲染', _props)
+        console.log('todolist渲染', _props)
 
         return (
             <div className="todolist">
@@ -82,7 +82,7 @@ class TodoList extends React.Component {
                                 // handleDateChange={this.handleDateChange.bind(this,todo.id)}
                                 // handleTodoModify={this.handleTodoModify.bind(this,todo.id )}
                                 // handleTodoDelete={this.handleTodoDelete.bind(this,todo.id )}
-                                handleTodoCheck={this.handleTodoCheck.bind(this,todo.id)}
+                                handleTodoCheck={_props.handleTodoCheck.bind(this, todo.id)}
                             />
                         )
                     })
@@ -105,7 +105,7 @@ class TodoList extends React.Component {
                 }
 
                 {
-                    doneList.map((todo) => {
+                    doneList.map((todo,index) => {
                         return (
                             <TodoItem
                                 {...todo}
@@ -115,7 +115,7 @@ class TodoList extends React.Component {
                                 // handleDateChange={this.handleDateChange.bind(this,todo.id)}
                                 // handleTodoModify={this.handleTodoModify.bind(this,todo.id )}
                                 // handleTodoDelete={this.handleTodoDelete.bind(this,todo.id )}
-                                handleTodoCheck={this.handleTodoCheck.bind(this,todo.id)}
+                                handleTodoCheck={_props.handleTodoCheck.bind(this, todo.id)}
                             />
                         )
                     })

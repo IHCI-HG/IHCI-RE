@@ -121,6 +121,7 @@ http.listen('/todo/post', function (params) {
 
 
 http.listen('/todo/:id/put', function (params) {
+
     const data = {
         'status': 200,
         data: {
@@ -133,7 +134,7 @@ http.listen('/todo/:id/put', function (params) {
                     name: '返回name',
                 },
                 ddl: params.ddl || '返回name',
-                hasDone: params.hasDone || '不变',
+                hasDone: params.hasDone !== null?params.hasDone : '不变',
             }
         }
     }

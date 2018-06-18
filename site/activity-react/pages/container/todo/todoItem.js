@@ -73,7 +73,7 @@ class TodoItem extends React.Component {
                     </div>
                 </div>
                 <div className={`${_props.hasDone ? 'check-box-checked' : 'check-box'}`}
-                     onClick={_props.handleTodoCheck}>
+                     onClick={_props.handleTodoCheck.bind(this, _props.hasDone)}>
                     <i className="icon iconfont checked-icon">&#xe750;</i>
                 </div>
                 <div className="todo-wrap">
