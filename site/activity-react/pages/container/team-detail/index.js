@@ -4,8 +4,6 @@ import api from '../../../utils/api';
 import { timeBefore, sortByCreateTime } from '../../../utils/util'
 import Page from '../../../components/page'
 import MemberChosenList from '../../../components/member-chose-list'
-import TodoItem from '../todo/todoItem'
-import NewTodo from '../todo/editTodo'
 import EditTodoList from '../todo/todolist/editTodoList'
 import TodoList from '../todo/todolist/todoList'
 import mock from '../../../mock/index';
@@ -37,24 +35,6 @@ class TopicItem extends React.PureComponent{
     }
 }
 
-
-//工具函数
-function updateList(arr, index=null, id) {
-    const newList = arr.slice()
-    let item = null
-    if(index) {
-        item = arr[index]
-    } else {
-        newList.forEach((innerItem, innerIndex) => {
-            if (innerItem.id === id) {
-                item = innerItem
-                index = innerIndex
-            }
-        })
-    }
-    return [newList, item, index]
-}
-
 function getUpdateItem(arr, id) {
     let item = null
     let index = null
@@ -66,25 +46,6 @@ function getUpdateItem(arr, id) {
     })
     return [item, index]
 }
-
-
-function updateList(arr, id,index=null) {
-    const newList = arr.slice()
-    let item = null
-    // let index =null
-    if(index) {
-        item = arr[index]
-    } else {
-        newList.forEach((innerItem, innerIndex) => {
-            if (innerItem.id === id) {
-                item = innerItem
-                index = innerIndex
-            }
-        })
-    }
-    return [newList, item, index]
-}
-
 
 export default class Team extends React.Component{
     state = {
@@ -445,89 +406,89 @@ export default class Team extends React.Component{
                             })
                         }
                     </div>
+                </div>
 
-                    <div className="todo-board">
-                        <div className="head">
-                            <span className='head-title'>任务</span>
-                            <div className="create-btn">
+                <div className="todo-board">
+                    <div className="head">
+                        <span className='head-title'>任务</span>
+                        <div className="create-btn">
                                 <span onClick={(e) => {
                                     this.setState({showCreateTodo: true})
                                     e.stopPropagation()
                                 }}>添加任务</span>
-                                <i className="icon iconfont"
-                                   onClick={(e) => {
-                                       this.setState({showMenu: !this.state.showMenu})
-                                       e.stopPropagation()
-                                   }}
-                                >&#xe783;</i>
-                                {   this.state.showMenu &&
-                                    <ul className="menu">
-                                        <li onClick={(e) => {
-                                            this.setState({showCreateTodo: true, showMenu: false})
-                                            e.stopPropagation()
-                                        }}>添加任务
-                                        </li>
-                                        <li onClick={(e) => {
-                                            console.log('添加任务')
-                                            this.setState({showCreateTodoList: true, showMenu: false})
-                                            e.stopPropagation()
-                                        }}>添加清单
-                                        </li>
-                                    </ul>
-                                }
-                            </div>
+                            <i className="icon iconfont"
+                               onClick={(e) => {
+                                   this.setState({showMenu: !this.state.showMenu})
+                                   e.stopPropagation()
+                               }}
+                            >&#xe783;</i>
+                            {   this.state.showMenu &&
+                            <ul className="menu">
+                                <li onClick={(e) => {
+                                    this.setState({showCreateTodo: true, showMenu: false})
+                                    e.stopPropagation()
+                                }}>添加任务
+                                </li>
+                                <li onClick={(e) => {
+                                    console.log('添加任务')
+                                    this.setState({showCreateTodoList: true, showMenu: false})
+                                    e.stopPropagation()
+                                }}>添加清单
+                                </li>
+                            </ul>
+                            }
                         </div>
-
-
-                        {   unclassified &&
-                                <TodoList
-                                    listType="unclassified"
-                                    showCreateTodo = {this.state.showCreateTodo}
-                                    handlecloseEditTodo={this.handlecloseEditTodo.bind(this)}
-                                    {...unclassified}
-                                    memberList={this.state.memberList}
-                                    handleTodoCreate={this.handleTodoCreate.bind(this, 0, null)}
-                                    handleTodoCheck={this.handleTodoCheck.bind(this, 0, null)}
-                                    handleTodoModify={this.handleTodoModify.bind(this, 0, null)}
-                                    handleAssigneeChange={this.handleAssigneeChange.bind(this, 0, null)}
-                                    handleDateChange={this.handleDateChange.bind(this, 0, null)}
-                                    handleTodoDelete={this.handleTodoDelete.bind(this, 0, null)}
-                                    handleTodoListDelete={this.handleTodoListDelete.bind(this, null, unclassified.id )}
-                                    handleTodoListModify={this.handleTodoListModify.bind(this, null, unclassified.id)}
-                                ></TodoList>
-                        }
-
-                        {
-                            this.state.showCreateTodoList &&
-                            <EditTodoList
-                                confirmLabel="保存，开始添加任务"
-                                handleConfirm={this.handleTodoListCreate.bind(this)}
-                                handleClose={(() => {this.setState({showCreateTodoList: false})}).bind(this)}>
-                            </EditTodoList>
-                        }
-
-                        {   this.state.todoListArr.map((todoList, index) => {
-                                if (index === 0) {
-                                    return
-                                }
-                                return (
-                                    <TodoList
-                                        key={todoList.id}
-                                        {...todoList}
-                                        memberList={this.state.memberList}
-                                        handleTodoCreate={this.handleTodoCreate.bind(this, index, todoList.id)}
-                                        handleTodoCheck={this.handleTodoCheck.bind(this, index, todoList.id)}
-                                        handleTodoModify={this.handleTodoModify.bind(this, index, todoList.id)}
-                                        handleAssigneeChange={this.handleAssigneeChange.bind(this, index, todoList.id)}
-                                        handleDateChange={this.handleDateChange.bind(this, index, todoList.id)}
-                                        handleTodoDelete={this.handleTodoDelete.bind(this, index, todoList.id)}
-                                        handleTodoListDelete={this.handleTodoListDelete.bind(this, index, todoList.id )}
-                                        handleTodoListModify={this.handleTodoListModify.bind(this, index, todoList.id)}
-                                    ></TodoList>
-                                )
-                            })
-                        }
                     </div>
+
+
+                    {   unclassified &&
+                    <TodoList
+                        listType="unclassified"
+                        showCreateTodo = {this.state.showCreateTodo}
+                        handlecloseEditTodo={this.handlecloseEditTodo.bind(this)}
+                        {...unclassified}
+                        memberList={this.state.memberList}
+                        handleTodoCreate={this.handleTodoCreate.bind(this, 0, null)}
+                        handleTodoCheck={this.handleTodoCheck.bind(this, 0, null)}
+                        handleTodoModify={this.handleTodoModify.bind(this, 0, null)}
+                        handleAssigneeChange={this.handleAssigneeChange.bind(this, 0, null)}
+                        handleDateChange={this.handleDateChange.bind(this, 0, null)}
+                        handleTodoDelete={this.handleTodoDelete.bind(this, 0, null)}
+                        handleTodoListDelete={this.handleTodoListDelete.bind(this, null, unclassified.id )}
+                        handleTodoListModify={this.handleTodoListModify.bind(this, null, unclassified.id)}
+                    ></TodoList>
+                    }
+
+                    {
+                        this.state.showCreateTodoList &&
+                        <EditTodoList
+                            confirmLabel="保存，开始添加任务"
+                            handleConfirm={this.handleTodoListCreate.bind(this)}
+                            handleClose={(() => {this.setState({showCreateTodoList: false})}).bind(this)}>
+                        </EditTodoList>
+                    }
+
+                    {   this.state.todoListArr.map((todoList, index) => {
+                        if (index === 0) {
+                            return
+                        }
+                        return (
+                            <TodoList
+                                key={todoList.id}
+                                {...todoList}
+                                memberList={this.state.memberList}
+                                handleTodoCreate={this.handleTodoCreate.bind(this, index, todoList.id)}
+                                handleTodoCheck={this.handleTodoCheck.bind(this, index, todoList.id)}
+                                handleTodoModify={this.handleTodoModify.bind(this, index, todoList.id)}
+                                handleAssigneeChange={this.handleAssigneeChange.bind(this, index, todoList.id)}
+                                handleDateChange={this.handleDateChange.bind(this, index, todoList.id)}
+                                handleTodoDelete={this.handleTodoDelete.bind(this, index, todoList.id)}
+                                handleTodoListDelete={this.handleTodoListDelete.bind(this, index, todoList.id )}
+                                handleTodoListModify={this.handleTodoListModify.bind(this, index, todoList.id)}
+                            ></TodoList>
+                        )
+                    })
+                    }
                 </div>
             </Page>
         )
