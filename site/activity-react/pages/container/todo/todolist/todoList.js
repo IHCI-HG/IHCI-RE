@@ -81,7 +81,7 @@ class TodoList extends React.Component {
                                 // handleAssigneeChange={this.handleAssigneeChange.bind(this,todo.id)}
                                 // handleDateChange={this.handleDateChange.bind(this,todo.id)}
                                 // handleTodoModify={this.handleTodoModify.bind(this,todo.id )}
-                                // handleTodoDelete={this.handleTodoDelete.bind(this,todo.id )}
+                                handleTodoDelete={_props.handleTodoDelete.bind(this,todo.id )}
                                 handleTodoCheck={_props.handleTodoCheck.bind(this, todo.id)}
                             />
                         )
@@ -129,7 +129,7 @@ class TodoList extends React.Component {
                                 // handleAssigneeChange={this.handleAssigneeChange.bind(this,todo.id)}
                                 // handleDateChange={this.handleDateChange.bind(this,todo.id)}
                                 // handleTodoModify={this.handleTodoModify.bind(this,todo.id )}
-                                // handleTodoDelete={this.handleTodoDelete.bind(this,todo.id )}
+                                handleTodoDelete={_props.handleTodoDelete.bind(this,todo.id)}
                                 handleTodoCheck={_props.handleTodoCheck.bind(this, todo.id)}
                             />
                         )

@@ -241,24 +241,6 @@ export default class Team extends React.Component{
         this.setState({ showCreateTodo: false })
     }
 
-
-    handleTodoCheck = async(lIndex, lId, id, hasDone) => {
-        console.log(lIndex, lId, id, hasDone)
-        const resp = await mock.httpMock('/todo/:id/put', { id: id, hasDone: !hasDone })
-        if (resp.status ===200) {
-            // 更新 todolist
-            const todoListArr = this.state.todoListArr
-            const todolist = todoListArr[lIndex]
-            console.log('todolist', todolist)
-            const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
-            todoItem.hasDone = resp.data.todo.hasDone
-            // ...更新完成时间赋值
-            todolist.list[itemIndex] = todoItem
-            todoListArr[lIndex].list = todolist.list.slice()
-            this.setState({ todoListArr })
-        }
-    }
-
     handleTodoCreate = async(lIndex, id, todoInfo) => {
         const resp = await mock.httpMock('/todo/post', {
             // teamId: this.teamId,
@@ -320,12 +302,31 @@ export default class Team extends React.Component{
         }
     }
 
-    handleTodoDelete = async(id) => {
-        const [todoList,todoItem,index] = updateList(this.state.todoList, id)
+    handleTodoCheck = async(lIndex, lId, id, hasDone) => {
+        console.log(lIndex, lId, id, hasDone)
+        const resp = await mock.httpMock('/todo/:id/put', { id: id, hasDone: !hasDone })
+        if (resp.status ===200) {
+            // 更新 todolist
+            const todoListArr = this.state.todoListArr
+            const todolist = todoListArr[lIndex]
+            const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
+            todoItem.hasDone = resp.data.todo.hasDone
+            // ...更新完成时间赋值
+            todolist.list[itemIndex] = todoItem
+            todoListArr[lIndex].list = todolist.list.slice()
+            this.setState({ todoListArr })
+        }
+    }
+
+    handleTodoDelete = async(lIndex, lId, id) => {
+        console.log(lIndex, lId, id)
         const resp = await mock.httpMock('/common/delete')
         if (resp.status ===200) {
-            todoList.splice(index,1)
-            this.setState({todoList})
+            const todoListArr = this.state.todoListArr
+            const todolist = todoListArr[lIndex]
+            const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
+            todolist.list.splice(itemIndex,1)
+            this.setState({ todoListArr })
             return resp
         }
     }
@@ -515,13 +516,14 @@ export default class Team extends React.Component{
                         {   unclassified &&
                                 <TodoList
                                     key={unclassified.id}
-                                    {...unclassified}
                                     listType="unclassified"
-                                    memberList={this.state.memberList}
                                     showCreateTodo = {this.state.showCreateTodo}
                                     handlecloseEditTodo={this.handlecloseEditTodo.bind(this)}
+                                    {...unclassified}
+                                    memberList={this.state.memberList}
                                     handleTodoCreate={this.handleTodoCreate.bind(this, 0, null)}
                                     handleTodoCheck={this.handleTodoCheck.bind(this, 0, null)}
+                                    handleTodoDelete={this.handleTodoDelete.bind(this, 0, null)}
                                     handleTodoListDelete={this.handleTodoListDelete.bind(this, null, unclassified.id )}
                                     handleTodoListModify={this.handleTodoListModify.bind(this, null, unclassified.id)}
                                 ></TodoList>
@@ -547,6 +549,7 @@ export default class Team extends React.Component{
                                         memberList={this.state.memberList}
                                         handleTodoCreate={this.handleTodoCreate.bind(this, index, todoList.id)}
                                         handleTodoCheck={this.handleTodoCheck.bind(this, index, todoList.id)}
+                                        handleTodoDelete={this.handleTodoDelete.bind(this, index, todoList.id)}
                                         handleTodoListDelete={this.handleTodoListDelete.bind(this, index, todoList.id )}
                                         handleTodoListModify={this.handleTodoListModify.bind(this, index, todoList.id)}
                                     ></TodoList>
