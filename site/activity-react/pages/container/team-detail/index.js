@@ -75,7 +75,6 @@ export default class Team extends React.Component{
                 teamId: this.teamId
             }
         })
-        console.log('result:', result);
 
         if(!result.data) {
             window.toast('团队内容加载出错')
@@ -105,8 +104,6 @@ export default class Team extends React.Component{
             body: { userList: memberIDList }
         })
 
-        console.log('memberResult:', memberResult);
-
         memberResult.data.map((item, idx) => {
             memberList.push({
                 ...item,
@@ -114,7 +111,6 @@ export default class Team extends React.Component{
                 chosen: false,
             })
         })
-        console.log(memberList)
         this.setState({
             isCreator: isCreator,
             teamInfo: teamInfo,
@@ -300,7 +296,8 @@ export default class Team extends React.Component{
             const todoListArr = this.state.todoListArr
             const todolist = todoListArr[lIndex]
             const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
-            todolist.list = todolist.list.splice(itemIndex,1).slice()
+            todolist.list.splice(itemIndex,1)
+            todolist.list = todolist.list.slice()
             this.setState({ todoListArr })
             return resp
         }

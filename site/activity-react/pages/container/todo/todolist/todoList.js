@@ -1,11 +1,9 @@
 import * as React from 'react'
-import PureRenderMixin from '../../../../utils/pure-render/index'
+import shallowEqualIgnoreFun from '../../../../utils/pure-render/shallowEqualIgnoreFun'
 import EditTodoList from './editTodoList'
 import TodoItem from '../todoItem'
 import NewTodo from '../editTodo'
 import './style.scss'
-
-console.log(PureRenderMixin)
 
 
 class TodoList extends React.Component {
@@ -35,7 +33,15 @@ class TodoList extends React.Component {
         this.setMode('read')
     }
 
-    shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+    shouldComponentUpdate (nextProps, nextState) {
+        // 因为有函数bind,影响短路优化,这里忽略函数变化,测试通过，其他地方使用影响未知
+        // console.log(this.props.id,'props', shallowEqualIgnoreFun(this.props, nextProps))
+        // console.log(this.props.id,'state', shallowEqualIgnoreFun(this.state, nextState))
+        return (
+            !shallowEqualIgnoreFun(this.props, nextProps) ||
+            !shallowEqualIgnoreFun(this.state, nextState)
+        );
+    }
 
     render() {
         const _props = this.props
@@ -47,6 +53,7 @@ class TodoList extends React.Component {
             return todo.hasDone === false
         })
         console.log('todolist渲染', _props.id)
+        console.log('list', _props.list)
 
         return (
             <div className="todolist">
