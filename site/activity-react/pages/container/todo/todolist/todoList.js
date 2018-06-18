@@ -1,8 +1,12 @@
-import * as React from 'react';
+import * as React from 'react'
+import PureRenderMixin from '../../../../utils/pure-render/index'
 import EditTodoList from './editTodoList'
 import TodoItem from '../todoItem'
 import NewTodo from '../editTodo'
 import './style.scss'
+
+console.log(PureRenderMixin)
+
 
 class TodoList extends React.Component {
     state = {
@@ -31,6 +35,8 @@ class TodoList extends React.Component {
         this.setMode('read')
     }
 
+    shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
     render() {
         const _props = this.props
         const listType = _props.listType
@@ -40,7 +46,7 @@ class TodoList extends React.Component {
         const todoList = _props.list.filter((todo) => {
             return todo.hasDone === false
         })
-        console.log('todolist渲染', _props)
+        console.log('todolist渲染', _props.id)
 
         return (
             <div className="todolist">

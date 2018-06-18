@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { render } from 'react-dom';
 import { autobind } from 'core-decorators';
-import mock from '../../mock/index';
 
 import Page from '../../components/page';
 
