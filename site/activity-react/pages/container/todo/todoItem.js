@@ -1,4 +1,5 @@
 import * as React from 'react';
+import shallowEqualIgnoreFun from '../../../utils/pure-render/shallowEqualIgnoreFun'
 import EditTodo from './editTodo'
 import './style.scss'
 import ItemLabel from './itemLabel'
@@ -28,10 +29,19 @@ class TodoItem extends React.Component {
         this.setMode('read')
     }
 
+    shouldComponentUpdate (nextProps, nextState) {
+        // console.log(this.props.id,'props', shallowEqualIgnoreFun(this.props, nextProps))
+        // console.log(this.props.id,'state', shallowEqualIgnoreFun(this.state, nextState))
+        return (
+            !shallowEqualIgnoreFun(this.props, nextProps) ||
+            !shallowEqualIgnoreFun(this.state, nextState)
+        );
+    }
 
     render() {
         const _props = this.props
-        // console.log('todoitem渲染', _props.id)
+        console.log('todoitem渲染', _props.id)
+
         if (this.state.mode === 'edit') {
             return (
                 <EditTodo
