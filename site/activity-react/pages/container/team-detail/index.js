@@ -269,6 +269,9 @@ export default class Team extends React.Component{
         })
         // 返回用户名的显示依赖assigneeId
         if (resp.status === 201) {
+            if (!this.state.todoListArr[lIndex].list) {
+                this.state.todoListArr[lIndex].list = []
+            }
             this.state.todoListArr[lIndex].list = [...this.state.todoListArr[lIndex].list, resp.data.todo]
             this.setState({todoListArr: this.state.todoListArr.slice()})
         }
