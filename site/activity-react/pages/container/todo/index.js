@@ -93,6 +93,12 @@ export default class Task extends React.Component{
         })
     }
 
+    initTodoInfo = async() => {
+        const resp = await mock.httpMock('/todolist/:id/get', { id: this.teamId })
+        if (resp.status === 200) {
+            this.setState({ todo: resp.data.todo })
+        }
+    }
 
 
     state = {
@@ -194,30 +200,7 @@ export default class Task extends React.Component{
                 chosen: false,
             },
         ],
-        todo: {
-            id: 1,
-            desc: '分析tower系统功能',
-            name: '使用tower',
-            hasDone: true,
-            ddl: '2010-1-1',
-            assignee:{
-                id: 1,
-                username: '黄',
-                avator: '',
-            },
-            checkItemList:[
-                {
-                    id: 1,
-                    hasDone:false,
-                    content: '试用tower',
-                    assignee: {
-                        id: 1,
-                        username: '黄',
-                        avator: '',
-                    }
-                }
-            ]
-        }
+        todo: {},
     }
 
     createTopicHandle = async () => {

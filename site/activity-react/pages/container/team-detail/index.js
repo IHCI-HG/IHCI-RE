@@ -66,9 +66,19 @@ export default class Team extends React.Component{
     componentDidMount = async() => {
         this.teamId = this.props.params.id
         this.initTeamInfo()
+        this.initTodoListArr()
     }
-    initTeamInfo = async () => {
 
+    initTodoListArr = async() => {
+        // 请求todoListArr数据
+        const resp = await mock.httpMock('/team/:id/todolist/get', { id: this.teamId })
+        console.log(resp)
+        if (resp.status === 200) {
+            this.setState({ todoListArr: resp.data.todoList })
+        }
+    }
+
+    initTeamInfo = async () => {
         const result = await api('/api/team/info', {
             method: 'POST',
             body: {
@@ -117,11 +127,6 @@ export default class Team extends React.Component{
             memberList: memberList,
             topicList: sortByCreateTime(result.data.topicList)
         })
-        // 请求todoListArr数据
-        const resp = await mock.httpMock('/team/:id/todolist/get', { id: this.teamId })
-        if (resp.status === 200) {
-            this.setState({ todoListArr: resp.data.todoList })
-        }
     }
 
     locationTo = (url) => {

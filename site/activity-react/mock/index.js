@@ -146,7 +146,7 @@ http.listen('/todolist/:id/get', function (params) {
     const data = {
         'status': 200,
         data: {
-            'todoList': {
+            'todo': {
                 'id': '@natural(1000,1100)',
                 name: '@cparagraph(1)',
                 'list|7-10': [{
@@ -158,8 +158,16 @@ http.listen('/todolist/:id/get', function (params) {
                         id: '@natural(0,100)',
                         username: '@cname',
                     },
-                    checkItemDoneNum: "@natural(0,3)",
-                    checkItemNum: "@natural(3,5)",
+                    'checkItemNum|5': [{
+                        'id|+1': '@natural(0,100)',
+                        name: '@cparagraph(1)',
+                        hasDone: '@boolean',
+                        'ddl|0-1': '@date',
+                        'assignee|0-1': {
+                            id: '@natural(0,100)',
+                            username: '@cname',
+                        },
+                    }]
                 }]
             }
         }
