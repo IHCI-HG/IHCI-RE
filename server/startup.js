@@ -5,7 +5,7 @@ var fs = require('fs'),                 //test一下
     cluster = require('cluster'),        //test两下
     os = require('os'),
     express = require('express'),
-    commander = require('commander'),
+    commander = require('commander'),      //zcc test
 
     server = require('./server'),
     conf = require('./conf'),
