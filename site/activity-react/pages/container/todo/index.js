@@ -62,7 +62,8 @@ export default class Task extends React.Component{
                 success:true,
                 time: 1515384000000,
                 action:"完成了",
-                task:"任务一"
+                task:"任务一",
+                id:1,
             },
             {
                 creator: {
@@ -76,7 +77,8 @@ export default class Task extends React.Component{
                 success:false,
                 time: 1515384000000,
                 action:"添加了",
-                task:"任务二"
+                task:"任务二",
+                id:2
             },
             {
                 creator: {
@@ -90,7 +92,8 @@ export default class Task extends React.Component{
                 success:false,
                 time: 1515384000000,
                 action:"重新打开了",
-                task:"任务二"
+                task:"任务二",
+                id:3
             },
         ],
         topicList: [
@@ -282,10 +285,8 @@ export default class Task extends React.Component{
                                     <p>
                                         <input type="number" placeholder="复制数量[1~50]" min="1" max="50" name="count" id="count"/>
                                     </p>
-                                    <p>
                                         <button type="submit" className="act" data-disable-with="正在复制...">复制</button>
                                         <div type="button" className="cancel" onClick={() => {this.setState({copyExpanded: false})}}>取消</div>
-                                    </p>
                                 </form>
                             </div>}
                         </div>
@@ -294,33 +295,20 @@ export default class Task extends React.Component{
                             {moveExpanded&&<div className="confirm">
                                 <form method="post" data-remote="">
                                     <p className="title">移动任务到项目</p>
-                                    <p>
-                                        <div className="simple-select select-choose-projects require-select"   onClick={() => {this.setState({showActionList: true})}}>
-                                            <input type="text" className="select-result" placeholder="点击选择项目"/>
-                                            <span className="link-expand" title="所有选项">
-                                                <i className="iconfont icon-unfold"></i>
-                                            </span>
-                                            
-                                            <span className="link-clear" title="清除选择">
-                                                <i className="iconfont icon-close"></i>
-                                            </span>
-                                            {showActionList&&<div className="select-list">
-                                                {actionList.map((item) => {
-                                                    return (
-                                                        <div className="select-item" key={'task name'+ item.id} onClick={()=>{}}>
-                                                            <a href="" className="label"><span>{item.task}</span></a>
-                                                        </div>
-                                                    )
-                                                })
-                                                }
-                                            </div>
+                                    <div className="simple-select select-choose-projects require-select" >
+                                        <select className="select-list">
+                                            {actionList.map((item) => {
+                                                return (
+                                                    <option className="select-item" key={'task name'+ item.id} onClick={()=>{}}>
+                                                        {item.task}
+                                                    </option>
+                                                )
+                                            })
                                             }
-                                        </div>
-                                    </p>
-                                    <p>
+                                        </select>
+                                    </div>
                                         <button type="submit" className="act" data-disable-with="正在移动...">移动</button>
                                         <div type="button" className="cancel" onClick={() => {this.setState({moveExpanded: false})}}>取消</div>
-                                    </p>
                                     </form>
                             </div>}
                         </div>

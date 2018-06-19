@@ -264,7 +264,7 @@
                         border-radius: 4px;
                         box-shadow: 1px 1px 1px rgba(0,0,0,0.1);
                         display: inline-block;
-                        margin: 0 10px 0 0;
+                        margin: 5px 10px 0 0;
                         font-size: 14px;
                         cursor: pointer;
                     }
@@ -275,7 +275,7 @@
                         color: #888;
                         outline: none;
                         display: inline-block;
-                        margin: 0 10px 0 0;
+                        margin: 5px 10px 0 0;
                         border: 1px solid transparent;
                         cursor: pointer;
                     }
@@ -287,78 +287,71 @@
                         border-radius: 4px;
                         box-sizing: border-box;
                         line-height: 18px;
-                        margin: 0;
+                        margin-top:5px;
                         border: 1px solid #ccc;
                         outline: 0;
                         box-shadow: none;
                         overflow: auto;
                     }
-                    p {
-                        margin: 5px 0;
-                        .simple-select {
-                            width: 180px;
-                            position:relative;
-                            .select-result {
-                                height: 26px;
-                                padding: 5px 6px;
+                   
+                    .simple-select {
+                        width: 180px;
+                        position:relative;
+                        .select-result {
+                            height: 26px;
+                            padding: 5px 6px;
+                            font-size: 12px;
+                            border-radius: 4px;
+                            box-sizing: border-box;
+                            line-height: 18px;
+                            margin: 0;
+                            border: 1px solid #ccc;
+                            outline: 0;
+                            box-shadow: none;
+                            overflow: auto;
+                            cursor: pointer;
+                        }
+                        .select-list{
+                            display: block;
+                            width: 100%;
+                            max-height: 199px;
+                            // overflow-x: hidden;
+                            // overflow-y: auto;
+                            background: #ffffff;
+                            border: 1px solid #cccccc;
+                            border-radius: 4px;
+                            margin-top:5px;
+                            .select-item{
+                                display: block;
                                 font-size: 12px;
-                                border-radius: 4px;
-                                box-sizing: border-box;
-                                line-height: 18px;
-                                margin: 0;
-                                border: 1px solid #ccc;
-                                outline: 0;
-                                box-shadow: none;
-                                overflow: auto;
-                                cursor: pointer;
-                            }
-                            .select-list{
-                                display: block;
-                                width: 100%;
-                                max-height: 199px;
-                                // overflow-x: hidden;
-                                // overflow-y: auto;
-                                background: #ffffff;
-                                border: 1px solid #cccccc;
-                                position: absolute;
-                                top: 30px;
-                                border-radius: 4px;
-                                .select-item{
-                                    display: block;
-                                    font-size: 12px;
-                                    line-height: 24px;
-                                    padding: 0 10px;
-                                    color: #666666;
-                                    border-bottom: 1px solid #dfdfdf;
-                                    cursor: pointer;
-                                    // overflow: hidden;
-                                    white-space: nowrap;
-                                    text-overflow: ellipsis;
-                                    z-index: 99;
-                                    &:hover{
-                                        background: #efefef;
-                                    }
-                                    .label{
-                                        color: #666666;
-                                        text-decoration: none;
-                                    }
-                                }
-                            }
-                            .link-expand {
-                                display: block;
-                                width: 24px;
-                                height: 24px;
                                 line-height: 24px;
-                                text-align: center;
-                                font-size: 14px;
-                                color: #999999;
-                                position: absolute;
-                                top: 1px;
-                                right: 1px;
+                                padding: 0 10px;
+                                color: #666666;
+                                border-bottom: 1px solid #dfdfdf;
                                 cursor: pointer;
+                                // overflow: hidden;
+                                white-space: nowrap;
+                                text-overflow: ellipsis;
+                                z-index: 99;
                                 &:hover{
-                                    opacity: 0.8;
+                                    background: #efefef;
                                 }
+                            }
+                        }
+                        .link-expand {
+                            display: block;
+                            width: 24px;
+                            height: 24px;
+                            line-height: 24px;
+                            text-align: center;
+                            font-size: 14px;
+                            color: #999999;
+                            position: absolute;
+                            top: 1px;
+                            right: 1px;
+                            cursor: pointer;
+                            &:hover{
+                                opacity: 0.8;
                             }
                         }
                     }
