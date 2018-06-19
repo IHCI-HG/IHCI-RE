@@ -9,8 +9,9 @@ import lo from 'lodash';
 import apiAuth from '../components/auth/api-auth'
 
 var OSSW = require('ali-oss').Wrapper;
+var mongoose = require('mongoose')
 
-var fileDB = mongoose.model('file')
+var file = require('../models/file');
 
 import { getTempSTS } from '../components/oss-utils/oss-utils'
 import { mongo } from 'mongoose';
@@ -20,7 +21,7 @@ const getOssStsToken = async (req, res, next) => {
     try {
         const token = await getTempSTS('session')
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作成功' },
+            state: { code: 0, msg: '操作成功' },
             data: token
         });
     } catch (error) {
@@ -32,14 +33,13 @@ const getOssStsToken = async (req, res, next) => {
     }
 }
 
-const uploadFile = async (req,res,next) => {
+const uploadFile = async (req, res, next) => {
 
     const fileInfo = req.body.fileInfo || {} 
     const userId = req.rSession.userId
 
     try {
-        let fileObj = await fileDB.createFile(fileInfo.teamId,fileInfo.dir,fileInfo.fileName,fileInfo.ossKey)
-        await fileDB.appendFile(fileInfo.teamId,fileInfo.dir,fileObj)
+        let fileObj = await file.createFile(fileInfo.teamId,fileInfo.dir,fileInfo.fileName,fileInfo.ossKey)
 
         resProcessor.jsonp(req, res, {
             state: {code: 0,msg: "Successfully appended file"},
@@ -48,14 +48,41 @@ const uploadFile = async (req,res,next) => {
             }
         });
     } catch (error) {
+        console.log(error)
         resProcessor.jsonp(req, res, {
             state: {code: 1,msg: "File append failed"},
-            data: {}
+            data: {},
+            info: fileInfo,
+        });
+    }
+}
+
+const getDirFileList = async (req, res, next) => {
+    const dirInfo = req.body.dirInfo || {} 
+    const userId = req.rSession.userId
+
+    try {
+
+        let fileList = await file.getDirFileList(dirInfo.teamId,dirInfo.dir)
+
+        resProcessor.jsonp(req, res, {
+            state: {code: 0,msg: "Successfully got list of files"},
+            data: {
+                fileList: fileList
+            }
+        });
+    } catch (error) {
+        console.log(error)
+        resProcessor.jsonp(req, res, {
+            state: {code: 1,msg: "Can't get files"},
+            data: {},
+            info: dirInfo,
         });
     }
 }
 
 module.exports = [
-    ['GET', '/api/getOssStsToken', apiAuth, getOssStsToken]
-    ['POST','/api/uploadFile',apiAuth,uploadFile]
+    ['GET', '/api/getOssStsToken', apiAuth, getOssStsToken],
+    ['POST','/api/file/uploadFile',apiAuth, uploadFile],
+    ['GET','/api/file/getDirFileList',apiAuth, getDirFileList]
 ];

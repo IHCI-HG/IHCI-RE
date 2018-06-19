@@ -9,7 +9,10 @@ import Page from '../../../components/page'
 export default class Team extends React.Component{
 
     state =  {
-        chosenFile: {}
+        chosenFile: {},
+        teamId: 'aaaaaaaaaaaa',
+        dir: '/',
+        ossKey: '',
     }
 
     componentDidMount = async() => {
@@ -20,31 +23,52 @@ export default class Team extends React.Component{
         this.fileInput.click()
     }
 
-    handleChange = (e) => {
-        console.log(e.target.files[0]);
+    handleChange = async (e) => {
+
+        var file = e.target.files[0];
         this.setState({
-            chosenFile: e.target.files[0]
+            chosenFile: file
         })
+
+        console.log(file)
 
         const result = await api('/api/file/uploadFile', {
             method: 'POST',
             body: {
                 fileInfo: {
-                   teamId: 'teamxxx',
-                   dir: '/',
-                   fileName: e.target.files[0].name,
-                   ossKey: ""
+                   teamId: this.state.teamId,
+                   dir: this.state.dir,
+                   fileName: file.name,
+                   ossKey: this.ossKey
+                }
+            }
+        })
+            
+        console.log(result);
 
+        if(result.state.code === 0) {
+            window.toast("Appended")
+        }
+
+        fileUploader('teamxxx', '/aa', file)
+    }
+
+    getDirFileList = async () => {
+        const result = await api('/api/file/getDirFileList',{
+            method: 'GET',
+            body: {
+                dirInfo: {
+                    teamId: this.state.teamId,
+                    dir: this.state.dir,
                 }
             }
         })
 
-        if(result.state.code === 0) {
-            console.log(result);
-            window.toast("Appended")
-        }
+        console.log(result);
 
-        fileUploader('teamxxx', '/aa', e.target.files[0])
+        if(result.state.code == 0) {
+            windows.toast("Got file list")
+        }
     }
 
     render() {
@@ -55,6 +79,8 @@ export default class Team extends React.Component{
                 <div>选中的文件: {this.state.chosenFile.name}</div>
 
                 <input type="file" ref={(fileInput) => this.fileInput = fileInput} onChange={this.handleChange}></input>
+
+                <div onClick={this.getDirFileList}>ShowFiles</div>
             </Page>
         )
     }

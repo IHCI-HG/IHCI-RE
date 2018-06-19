@@ -14,6 +14,7 @@ const fileSchema = new Schema({
     dir: String, // 文件所在目录,对team唯一, 由dirValidate方法约束
 })
 
+
 /*
     文件夹对象
     dir对象的 dir字段不包含自身
@@ -33,13 +34,14 @@ const folderSchema = new Schema({
     dir: String, // 文件夹所在目录, 对team唯一, 由dirFileExist方法约束
 })
 
+
 fileSchema.statics = {
-    createFile: function(teamId, dir, fileName, ossKey) {
+    createFile: async function(teamId, dir, fileName, ossKey) {
         return this.create({
             ossKey: ossKey,
             fileName: fileName,
             team: mongoose.Types.ObjectId(teamId),
-            dir: dir,
+            dir: dir
         })
     },
     delFileByDir: function(teamId, dir, fileName) {
@@ -352,3 +354,6 @@ const delFolder = async function(teamId, dir, folderName) {
 
     folderDB.delFileByDir(teamId, dir, folderName)
 }
+
+exports.createFile = createFile;
+exports.getDirFileList = getDirFileList;
