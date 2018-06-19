@@ -1,0 +1,19 @@
+#container {
+    height: 100%;
+    overflow: hidden;
+    background: #fff;
+
+    img {
+        width: 231px;
+        height: 262px;
+        display: block;
+        margin: 150px auto 0 auto; 
+    }
+
+    .des {
+        font-size: 34px; /*px*/
+        text-align: center;
+        padding: 50px 100px;
+    }
+}
+

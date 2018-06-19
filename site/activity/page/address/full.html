@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>full</title>
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="description" content="">
+    <meta name="keyword" content="">   
+    <script src="../../components_modules/lib-flexible/1.0.0/lib-flexible.js"></script><!--ignore-->
+    <script type="text/javascript" src="../../components_modules/require/2.1.18/require.js"></script><!--ignore-->
+</head>
+
+<body>
+    <div id="container">
+        <img src="./img/full.png" alt="">
+        <p class="des">{{blankFont}}</p>
+    </div>
+
+    <!--SCRIPT_PLACEHOLDER-->
+    <script>
+        (function (win) {
+            require(['./full'], function (index) {
+                initData = {
+                    // sysTime: [[SYSTIME]]
+                }
+                index.init(initData);
+            });
+        })(window);
+    </script><!--ignore-->
+</body>
+
+</html>

@@ -1,0 +1,178 @@
+/*
+KISSY CSS Reset
+理念：清除和重置是紧密不可分的
+特色：1.适应中文 2.基于最新主流浏览器
+维护：玉伯(lifesinger@gmail.com), 正淳(ragecarrier@gmail.com)
+*/
+
+/* 清除内外边距 */
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+hr,
+p,
+blockquote,
+/* structural elements 结构元素 */
+dl,
+dt,
+dd,
+ul,
+ol,
+li,
+/* list elements 列表元素 */
+pre,
+/* text formatting elements 文本格式元素 */
+fieldset,
+lengend,
+button,
+input,
+textarea,
+/* form elements 表单元素 */
+th,
+td {
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+    /* table elements 表格元素 */
+    margin: 0;
+    padding: 0;
+
+    word-wrap: break-word;
+    word-break: break-all;
+
+    -webkit-appearance: none;
+}
+
+/* 设置默认字体 */
+body,
+button,
+input,
+select,
+textarea {
+    /* for ie */
+    /*font: 12px/1 Tahoma, Helvetica, Arial, "宋体", sans-serif;*/
+    font: 12px/1 "微软雅黑",Tahoma, Helvetica, Arial, '\5b8b\4f53', sans-serif; /*no*/
+}
+
+h1 {
+    font-size: 18px; /*no*/
+}
+h2 {
+    font-size: 16px; /*no*/
+}
+h3 {
+    font-size: 14px; /*no*/
+}
+h4,
+h5,
+h6 {
+    font-size: 100%; /*no*/
+}
+
+address,
+cite,
+dfn,
+em,
+var {
+    font-style: normal;
+} /* 将斜体扶正 */
+code,
+kbd,
+pre,
+samp,
+tt {
+    font-family: "微软雅黑",Tahoma, Helvetica, Arial, '\5b8b\4f53', sans-serif;
+} /* 统一等宽字体 */
+small {
+    font-size: 12px; /*no*/
+} /* 小于 12px 的中文很难阅读，让 small 正常化 */
+
+/* 重置列表元素 */
+ul,
+ol {
+    list-style: none;
+}
+
+/* 重置文本格式元素 */
+a {
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: none;
+}
+a:active {
+    text-decoration: none;
+}
+
+abbr[title],
+acronym[title] {
+    cursor: help;
+    /* 注：1.ie6 不支持 abbr; 2.这里用了属性选择符，ie6 下无效果 */
+
+    border-bottom: 1px dotted; /*no*/
+}
+
+q:before,
+q:after {
+    content: '';
+}
+
+/* 重置表单元素 */
+legend {
+    color: #000;
+} /* for ie6 */
+fieldset,
+img {
+    border: none;
+} /* img 搭车：让链接里的 img 无边框 */
+/* 注：optgroup 无法扶正 */
+
+/* 重置表格元素 */
+table {
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+/* 重置 hr */
+hr {
+    height: 1px; /*no*/
+
+    border: none;
+}
+
+/* 让非ie浏览器默认也显示垂直滚动条，防止因滚动条引起的闪烁 */
+html {
+    overflow-y: scroll;
+
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+/*去除input[type=number]默认样式*/
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+    margin: 0;
+
+    -webkit-appearance: none;
+}
+
+/*默认 placeholder 颜色*/
+::-webkit-input-placeholder {
+    color: #b2b2b2;
+}
+:-ms-input-placeholder {
+    color: #b2b2b2;
+}
+:-moz-placeholder {
+    color: #b2b2b2;
+}
+::-moz-placeholder {
+    color: #b2b2b2;
+}
+
+body{
+    color: #333;
+    background-color: #f0f0f0;
+}

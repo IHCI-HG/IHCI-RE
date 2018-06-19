@@ -1,0 +1,182 @@
+.discuss-page {
+ 
+    .sp-nav {
+        padding: 10px 0 30px 0;
+        font-size: 20px;
+
+        .to-team {
+            font-weight: bold;
+            font-size: 20px;
+            cursor: pointer;
+            color: rgb(42, 42, 50);
+        }
+    }
+
+    .discuss-con {
+        margin-top: 40px;
+        padding: 20px 30px 40px 30px;
+
+        .team-info {
+            display: flex;
+            justify-content: space-between;
+            .right {
+                display: flex;
+                align-items: center;
+                flex-shrink: 0;
+            }
+
+            .admin {
+                height: 100px;
+                width: 100px;
+                text-align: center;
+                cursor: pointer;
+                .admin-con {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    height: 70px;
+                    width: 100px;
+
+                    font-size: 26px; 
+                }
+            }
+
+        }
+
+        .head {
+            padding: 40px 0;
+            font-size: 30px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+
+            .create-btn {
+                font-size: 16px;
+                padding: 10px;
+                border: 1px solid #e6e6e6; /*no*/
+                border-radius: 4px;
+                margin-left: 30px;
+                cursor: pointer;
+
+                &:hover {
+                    background-color: #e6e6e646;
+                }
+            }
+        }
+        .team-info {
+            display: flex;
+        }
+        .team-des {
+            margin-bottom: 40px;
+        }
+        .div-line {
+           border: 1px solid #e6e6e6; /*no*/
+        }
+    }
+
+    .create-area {
+        .topic-name {
+            display: block;
+            border: 1px solid #e6e6e6; 
+            border-radius: 4px;
+            width: 100%;
+            height: 50px;
+            line-height: 50px;
+            font-size: 22px;
+            padding: 0 20px;
+            margin-bottom: 30px;
+        }
+    
+        .topic-content {
+            display: block;
+            width: 100%;
+            border: 1px solid #e6e6e6; /*no*/
+            border-radius: 4px;
+            height: 200px;
+            resize: none;
+            font-size: 20px;
+            padding: 20px;
+            line-height: 1.4;
+            margin-bottom: 30px;
+        }
+
+        .infrom {
+            margin-bottom: 20px;
+        }
+
+        .btn-con {
+            display: flex;
+            align-items: center;
+        }
+        .create-btn {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 120px;
+            height: 50px;
+            border-radius: 8px;
+            background-color: rgb(255, 158, 41);
+            color: #fff;
+            font-weight: bold;
+            margin-right: 30px;
+        }
+        .cancle {
+            color: #333;
+            cursor: pointer;
+        }
+        
+    }
+
+    .topic-list {
+        margin-top: 50px;
+    }
+
+    .topic-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-sizing: border-box;
+        border-bottom: 1px solid #e6e6e6; /*no*/
+
+        height: 120px;
+        cursor: pointer;
+        
+        .head-img {
+            height: 80px;
+            width: 80px;
+            border-radius: 100px;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+        .name {
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+        .main {
+            flex-grow: 1;
+            max-width: 70%;
+            .topic-title {
+                color: #333;
+                font-size: 20px;
+                overflow: hidden;
+                text-overflow:ellipsis;
+                white-space: nowrap;
+                margin-bottom: 10px;
+            }
+            .topic-content {
+                color: #666;
+                overflow: hidden;
+                text-overflow:ellipsis;
+                white-space: nowrap;
+            }
+        }
+        .time {
+            flex-shrink: 0;
+            margin-left: 20px;
+            min-width: 100px;
+            text-align: center;
+        }
+    }
+
+}
