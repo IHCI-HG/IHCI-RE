@@ -93,7 +93,12 @@ export default class Team extends React.Component{
         location.href = url
     }
 
-
+    testSearch = async() =>{                               //test
+        const result = await api('/api/searchTopic',{
+            method: 'POST',
+            body:{}
+        })
+    }
     state = {
         teamList: [
             // {
@@ -108,6 +113,7 @@ export default class Team extends React.Component{
     render() {
         return (
             <Page title="团队 - IHCI" className="team-page">
+                <div className="submit-btn" onClick={this.testSearch}>测试搜索</div>
                 <div className="carete" onClick={() => {this.locationTo('/team-create')}}> 创建团队 </div>
 
                 <div className="head" onClick={this.starHandle}>星标团队</div>
