@@ -11,6 +11,10 @@ class TodoItem extends React.Component {
         mode: 'read',
     }
 
+    static defaultProps = {
+        detail: ''
+    }
+
     setMode(mode) {
         console.log('setMode:', mode);
         this.setState({ mode: mode })
@@ -46,19 +50,23 @@ class TodoItem extends React.Component {
 
         if (this.state.mode === 'edit') {
             return (
-                <EditTodo
-                    assigneeId={_props.assignee?_props.assignee.id:null}
-                    date={_props.ddl}
-                    id={_props.id}
-                    value={_props.name}
-                    memberList={_props.memberList}
-                    confirmLabel="保存"
-                    handleConfirm={this.handleSave.bind(this)}
-                    // handleConfirm={_props.handleTodoModify}
-                    handleClose={this.handleClose.bind(this)}
-                ></EditTodo>
+                <div>
+                    <EditTodo
+                        assigneeId={_props.assignee?_props.assignee.id:null}
+                        date={_props.ddl}
+                        id={_props.id}
+                        value={_props.name}
+                        memberList={_props.memberList}
+                        detail={_props.detail}
+                        desc={_props.desc}
+                        confirmLabel="保存"
+                        handleConfirm={this.handleSave.bind(this)}
+                        handleClose={this.handleClose.bind(this)}
+                    ></EditTodo>
+                </div>
             )
         }
+
 
         let hasDoneNum = 0;
         if (this.props.list) {
@@ -119,6 +127,9 @@ class TodoItem extends React.Component {
                             handleDateChange={_props.handleDateChange}
                             handleAssigneeChange={_props.handleAssigneeChange}>
                         </ItemLabel>
+                    }
+                    {   _props.detail === 'detail' &&
+                    <div>{_props.desc}</div>
                     }
                 </div>
             </div>

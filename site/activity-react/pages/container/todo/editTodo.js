@@ -9,12 +9,18 @@ class EditTodo extends React.Component {
         date: this.props.date || null,
     }
 
+    static defaultProps = {
+        detail: ''
+    }
+
     handleConfirm = async() => {
         const params = {}
         if (this.props.id) {
             params.id = this.props.id
         }
         params.name = this.refs.name.value
+        if (this.props.detail === 'detail')
+            params.desc = this.refs.desc.value
         params.assigneeId = this.state.assigneeId
         params.date = this.state.date
         // 调用父组件方法，把提交参数传出去
@@ -22,6 +28,8 @@ class EditTodo extends React.Component {
         console.log('handleConfirm', resp)
         if (resp.status === 201) {
             this.refs.name.value = ''
+            if (this.props.detail === 'detail')
+                this.refs.desc.value = ''
             this.setState({assigneeId: null})
             this.setState({date: null})
         }
@@ -69,6 +77,10 @@ class EditTodo extends React.Component {
                                handleDateChange={this.handleDateChange.bind(this)}
                                handleAssigneeChange={this.handleAssigneeChange.bind(this)}>
                     </ItemLabel>
+                    {   _props.detail === 'detail' &&
+                        <input className="todo-desc" ref="desc" defaultValue={_props.desc?_props.desc:''}>
+                        </input>
+                    }
                     <div className="buttons">
                         <button className="confirm"
                                 onClick={this.handleConfirm}>{_props.confirmLabel}</button>

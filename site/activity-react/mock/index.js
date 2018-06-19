@@ -150,6 +150,7 @@ http.listen('/todolist/:id/get', function (params) {
                 'teamId': '5b1f440ea7975b4dc11788f5',
                 'id': '@natural(1000,1100)',
                 hasDone: '@boolean',
+                desc: '@cparagraph(2)',
                 name: '@cparagraph(1)',
                 'list|7-10': [{
                     'id|+1': '@natural(0,100)',
@@ -176,8 +177,5 @@ http.listen('/todolist/:id/get', function (params) {
     }
     return Mock.mock(data)
 })
-
-
-
 
 export default http

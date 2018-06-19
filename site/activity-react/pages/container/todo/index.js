@@ -280,12 +280,14 @@ export default class Task extends React.Component{
             id: this.props.params.id,
             name: todoInfo.name,
             ddl: todoInfo.date,
+            desc: todoInfo.desc,
             assigneeId: todoInfo.assigneeId,
         })
         if (resp.status ===200) {
             const todo = this.state.todo
             todo.name = resp.data.todo.name
             todo.ddl = resp.data.todo.ddl
+            todo.desc = resp.data.todo.desc
             todo.assignee = resp.data.todo.assignee
             this.setState({ todo })
         }
@@ -343,6 +345,7 @@ export default class Task extends React.Component{
                          {...this.state.todo}
                          // checkItemNum
                          // checkItemDoneNum
+                         detail = 'detail'
                          memberList={this.state.memberList}
                          handleAssigneeChange={this.handleAssigneeChange}
                          handleDateChange={this.handleDateChange}
