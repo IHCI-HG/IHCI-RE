@@ -318,9 +318,13 @@
                             // overflow-x: hidden;
                             // overflow-y: auto;
                             background: #ffffff;
+                            color: #666666;
                             border: 1px solid #cccccc;
                             border-radius: 4px;
                             margin-top:5px;
+                            .default{
+                                display:none
+                            }
                             .select-item{
                                 display: block;
                                 font-size: 12px;
