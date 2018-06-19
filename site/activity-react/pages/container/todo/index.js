@@ -31,75 +31,12 @@ class TopicItem extends React.PureComponent{
 }
 
 export default class Task extends React.Component{
-    componentDidMount = async() => {
-        this.teamId = this.props.params.id
-        this.initTeamInfo()
-    }
-
-    locationTo = (url) => {
-        this.props.router.push(url)
-    }
-
-    initTeamInfo = async () => {
-        const result = await api('/api/team/info', {
-            method: 'POST',
-            body: {
-                teamId: this.teamId
-            }
-        })
-
-        if(!result.data) {
-            window.toast('团队内容加载出错')
-        }
-
-        const teamInfo = {}
-        teamInfo._id = result.data._id 
-        teamInfo.name = result.data.name
-        teamInfo.teamImg = result.data.teamImg
-        teamInfo.desc = result.data.teamDes
-
-
-        const memberList = []
-        const memberIDList = []
-
-        const curUserId = this.props.personInfo._id
-
-        let isCreator = false
-        result.data.memberList.map((item) => {
-            if(item.userId == curUserId) {
-                isCreator = true
-            }
-            memberIDList.push(item.userId)
-        })
-        const memberResult = await api('/api/userInfoList', {
-            method: 'POST',
-            body: { userList: memberIDList }
-        })
-
-        memberResult.data.map((item, idx) => {
-            memberList.push({
-                ...item,
-                ...result.data.memberList[idx],
-                chosen: false,
-            })
-        })
-
-        this.setState({
-            isCreator: isCreator,
-            teamInfo: teamInfo,
-            memberNum: result.data.memberList.length,
-            memberList: memberList,
-            topicList: sortByCreateTime(result.data.topicList)
-        })
-    }
-
-
-
     state = {
         showCreateTopic: false,
         isCreator: false,
         showButton:true,
         moveExpanded:false,
+        showActionList:false,
         copyExpanded:false,
         createTopicName: '',
         createTopicContent: '',
@@ -315,6 +252,7 @@ export default class Task extends React.Component{
         let actionList = this.state.actionList
         let moveExpanded = this.state.moveExpanded
         let copyExpanded = this.state.copyExpanded
+        let showActionList = this.state.showActionList
         return (
             <Page title={"任务详情"} className="discuss-page">
 
@@ -336,32 +274,8 @@ export default class Task extends React.Component{
 
 
                     <div className="detail-actions">
-                        <div className={"item "+((moveExpanded)?"expanded":"")} onMouseLeave={() => {this.setState({moveExpanded: false})}}>
-                            {!moveExpanded&&<a onMouseOver={() => {this.setState({moveExpanded: true,copyExpanded: false})}}>移动</a>}
-                            {moveExpanded&&<div className="confirm">
-                                <form method="post" data-remote="">
-                                    <p className="title">移动任务到项目</p>
-                                    <p>
-                                        <div className="simple-select select-choose-projects require-select">
-                                            <input type="text" className="select-result" autocomplete="off" placeholder="点击选择项目"/>
-                                            <span className="link-expand" title="所有选项">
-                                                <i className="iconfont icon-unfold"></i>
-                                            </span>
-                                            <span className="link-clear" title="清除选择">
-                                                <i className="iconfont icon-close"></i>
-                                            </span>
-
-                                        </div>
-                                    </p>
-                                    <p>
-                                        <button type="submit" className="act" data-disable-with="正在移动...">移动</button>
-                                        <div type="button" className="cancel" onClick={() => {this.setState({moveExpanded: false})}}>取消</div>
-                                    </p>
-                                    </form>
-                            </div>}
-                        </div>
-                        <div className={"item "+((copyExpanded)?"expanded":"")} onMouseLeave={() => {this.setState({copyExpanded: false})}}>
-                            {!copyExpanded&&<a onMouseOver={() => {this.setState({copyExpanded: true,moveExpanded: false})}}>复制</a>}
+                        <div className={"item "+((copyExpanded)?"expanded":"")} onMouseEnter={() => {this.setState({copyExpanded: true,moveExpanded: false})}} onMouseLeave={() => {this.setState({copyExpanded: false})}}>
+                            {!copyExpanded&&<a>复制</a>}
                             {copyExpanded&&<div className="confirm">
                                 <form  method="post" data-remote="">
                                     <p className="title">复制任务到当前任务清单</p>
@@ -373,6 +287,41 @@ export default class Task extends React.Component{
                                         <div type="button" className="cancel" onClick={() => {this.setState({copyExpanded: false})}}>取消</div>
                                     </p>
                                 </form>
+                            </div>}
+                        </div>
+                        <div className={"item "+((moveExpanded)?"expanded":"")} onMouseEnter={() => {this.setState({moveExpanded: true,copyExpanded: false})}} onMouseLeave={() => {this.setState({moveExpanded: false})}}>
+                            {!moveExpanded&&<a >移动</a>}
+                            {moveExpanded&&<div className="confirm">
+                                <form method="post" data-remote="">
+                                    <p className="title">移动任务到项目</p>
+                                    <p>
+                                        <div className="simple-select select-choose-projects require-select"   onClick={() => {this.setState({showActionList: true})}}>
+                                            <input type="text" className="select-result" placeholder="点击选择项目"/>
+                                            <span className="link-expand" title="所有选项">
+                                                <i className="iconfont icon-unfold"></i>
+                                            </span>
+                                            
+                                            <span className="link-clear" title="清除选择">
+                                                <i className="iconfont icon-close"></i>
+                                            </span>
+                                            {showActionList&&<div className="select-list">
+                                                {actionList.map((item) => {
+                                                    return (
+                                                        <div className="select-item" key={'task name'+ item.id} onClick={()=>{}}>
+                                                            <a href="" className="label"><span>{item.task}</span></a>
+                                                        </div>
+                                                    )
+                                                })
+                                                }
+                                            </div>
+                                            }
+                                        </div>
+                                    </p>
+                                    <p>
+                                        <button type="submit" className="act" data-disable-with="正在移动...">移动</button>
+                                        <div type="button" className="cancel" onClick={() => {this.setState({moveExpanded: false})}}>取消</div>
+                                    </p>
+                                    </form>
                             </div>}
                         </div>
                     </div>
