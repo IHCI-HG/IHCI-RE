@@ -336,8 +336,8 @@ export default class Task extends React.Component{
 
 
                     <div className="detail-actions">
-                        <div className={"item "+((moveExpanded)?"expanded":"")}>
-                            {!moveExpanded&&<a onClick={() => {this.setState({moveExpanded: true,copyExpanded: false})}}>移动</a>}
+                        <div className={"item "+((moveExpanded)?"expanded":"")} onMouseLeave={() => {this.setState({moveExpanded: false})}}>
+                            {!moveExpanded&&<a onMouseOver={() => {this.setState({moveExpanded: true,copyExpanded: false})}}>移动</a>}
                             {moveExpanded&&<div className="confirm">
                                 <form method="post" data-remote="">
                                     <p className="title">移动任务到项目</p>
@@ -360,8 +360,8 @@ export default class Task extends React.Component{
                                     </form>
                             </div>}
                         </div>
-                        <div className={"item "+((copyExpanded)?"expanded":"")}>
-                            {!copyExpanded&&<a onClick={() => {this.setState({copyExpanded: true,moveExpanded: false})}}>复制</a>}
+                        <div className={"item "+((copyExpanded)?"expanded":"")} onMouseLeave={() => {this.setState({copyExpanded: false})}}>
+                            {!copyExpanded&&<a onMouseOver={() => {this.setState({copyExpanded: true,moveExpanded: false})}}>复制</a>}
                             {copyExpanded&&<div className="confirm">
                                 <form  method="post" data-remote="">
                                     <p className="title">复制任务到当前任务清单</p>
