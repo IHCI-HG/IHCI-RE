@@ -8,18 +8,6 @@ import TodoItem from './todoItem'
 
 import MemberChosenList from '../../../components/member-chose-list'
 
-class TeamChoseItem extends React.PureComponent{
-    render() {
-        return(
-            <div className="admin-team-item">
-                <div className="team-img"></div>
-                <div className="team-name">{this.props.name}</div>
-                {this.props.active && <span className="check">√</span>}
-            </div>
-        )
-    }
-}
-
 class TopicItem extends React.PureComponent{
     render() {
         return(
@@ -297,9 +285,7 @@ export default class Task extends React.Component{
         location.href = '/team-admin/' + this.teamId
     }
 
-    loadmore = () => {
 
-    }
     handleTodoCheck = (id) => {
         console.log('handleTodoCheck', id)
         this.state.todo.hasDone = !this.state.todo.hasDone
@@ -321,6 +307,8 @@ export default class Task extends React.Component{
         console.log('handleDateChange', e.target.value);
     }
 
+    // handleTodoDelete
+
     render() {
         let taskInfo = this.state.taskInfo
         let teamInfo = this.state.teamInfo
@@ -339,6 +327,14 @@ export default class Task extends React.Component{
                          handleDateChange={this.handleDateChange}
                          handleTodoModify={this.handleTodoModify.bind(this,this.state.todo.id )}
                          handleTodoCheck={this.handleTodoCheck.bind(this, this.state.todo.id)} />
+
+                     <div>
+
+                     </div>
+
+
+
+
                     <div className="detail-actions">
                         <div className={"item "+((moveExpanded)?"expanded":"")}>
                             {!moveExpanded&&<a onClick={() => {this.setState({moveExpanded: true,copyExpanded: false})}}>移动</a>}

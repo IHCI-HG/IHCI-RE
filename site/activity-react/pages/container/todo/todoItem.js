@@ -4,7 +4,7 @@ import EditTodo from './editTodo'
 import './style.scss'
 import ItemLabel from './itemLabel'
 
-
+// 通用item: todo&check
 class TodoItem extends React.Component {
     state = {
         // mode 任务框模式, edit 或者 read
