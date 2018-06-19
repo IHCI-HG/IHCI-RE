@@ -2,7 +2,7 @@ import * as React from 'react';
 import './style.scss'
 import mock from '../../../mock';
 import api from '../../../utils/api';
-import { timeBefore, sortByCreateTime, timeParse } from '../../../utils/util'
+import { timeBefore, sortByCreateTime } from '../../../utils/util'
 import Page from '../../../components/page'
 import TodoItem from './todoItem'
 
@@ -195,13 +195,7 @@ export default class Task extends React.Component{
         user:{
             headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
         },
-        memberList: [
-            {
-                _id: 11,
-                name: '萨乌丁',
-                chosen: false,
-            },
-        ],
+        memberList: [],
         todo: {},
     }
 
@@ -270,29 +264,67 @@ export default class Task extends React.Component{
         location.href = '/team-admin/' + this.teamId
     }
 
-
-    handleTodoCheck = (id) => {
-        console.log('handleTodoCheck', id)
-        this.state.todo.hasDone = !this.state.todo.hasDone
-        this.setState({ todo: this.state.todo })
+    handleTodoCheck = async(hasDone) => {
+        const resp = await mock.httpMock('/todo/:id/put', { id: this.props.params.id, hasDone: !hasDone })
+        const todo = this.state.todo
+        if (resp.status ===200) {
+            todo.hasDone = resp.data.todo.hasDone
+        }
+        this.setState({ todo })
     }
 
-    handleTodoModify(id, todoInfo) {
-        console.log('index', id, todoInfo)
-        // 发请求,获取结果
-        // 如果成功,更新
+
+    handleTodoModify = async(todoInfo) => {
+        console.log(todoInfo)
+        const resp = await mock.httpMock('/todo/:id/put', {
+            id: this.props.params.id,
+            name: todoInfo.name,
+            ddl: todoInfo.date,
+            assigneeId: todoInfo.assigneeId,
+        })
+        if (resp.status ===200) {
+            const todo = this.state.todo
+            todo.name = resp.data.todo.name
+            todo.ddl = resp.data.todo.ddl
+            todo.assignee = resp.data.todo.assignee
+            this.setState({ todo })
+        }
+        return resp
     }
 
-    handleAssigneeChange = (e) => {
-        console.log('handleAssigneeChange', e.target.value);
-        // 直接调用接口改变指派用户
+    handleAssigneeChange = async(e) => {
+        console.log(e.target.value)
+        const resp = await mock.httpMock('/todo/:id/put', {
+            id: this.props.params.id,
+            assigneeId: e.target.value,
+        })
+        if (resp.status ===200) {
+            const todo = this.state.todo
+            todo.assignee = resp.data.todo.assignee
+            this.setState({ todo })
+        }
     }
 
-    handleDateChange = (e) => {
-        console.log('handleDateChange', e.target.value);
+    handleDateChange = async(e) => {
+        const resp = await mock.httpMock('/todo/:id/put', {
+            id: this.props.params.id,
+            ddl: e.target.value,
+        })
+        if (resp.status ===200) {
+            const todo = this.state.todo
+            todo.ddl = resp.data.todo.ddl
+            this.setState({ todo })
+        }
     }
 
-    // handleTodoDelete
+
+    handleTodoDelete = async() => {
+        const resp = await mock.httpMock('/common/delete', { id: this.props.params.id })
+        if (resp.status ===200) {
+            this.props.router.push(`/team/${this.state.todo.teamId}`)
+        }
+    }
+
 
     render() {
         let taskInfo = this.state.taskInfo
@@ -300,6 +332,8 @@ export default class Task extends React.Component{
         let actionList = this.state.actionList
         let moveExpanded = this.state.moveExpanded
         let copyExpanded = this.state.copyExpanded
+
+
         return (
             <Page title={"任务详情"} className="discuss-page">
 
@@ -307,12 +341,14 @@ export default class Task extends React.Component{
 
                      <TodoItem
                          {...this.state.todo}
+                         // checkItemNum
+                         // checkItemDoneNum
                          memberList={this.state.memberList}
                          handleAssigneeChange={this.handleAssigneeChange}
                          handleDateChange={this.handleDateChange}
-                         handleTodoModify={this.handleTodoModify.bind(this,this.state.todo.id )}
-                         handleTodoCheck={this.handleTodoCheck.bind(this, this.state.todo.id)} />
-
+                         handleTodoModify={this.handleTodoModify}
+                         handleTodoCheck={this.handleTodoCheck}
+                         handleTodoDelete={this.handleTodoDelete}/>
                      <div>
 
                      </div>
@@ -410,12 +446,7 @@ export default class Task extends React.Component{
                         </div>
                         {/* <div className="create-btn" onClick={() => {this.setState({showCreateTopic: true})}}>发起讨论</div> */}
                     </div>
-                    
-
-                    
-
                 </div>
-
             </Page>
         )
     }

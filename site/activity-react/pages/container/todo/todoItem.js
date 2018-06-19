@@ -19,6 +19,7 @@ class TodoItem extends React.Component {
     // 中间步骤省略？
     handleSave = async(params) =>{
         const resp = await this.props.handleTodoModify(params)
+        console.log('resp', resp)
         if (resp.status === 200 ||resp.status === 201) {
             this.setMode('read')
         }
@@ -41,6 +42,7 @@ class TodoItem extends React.Component {
     render() {
         const _props = this.props
         console.log('todoitem渲染', _props.id)
+        console.log('_props', _props)
 
         if (this.state.mode === 'edit') {
             return (
@@ -59,8 +61,8 @@ class TodoItem extends React.Component {
         }
 
         let hasDoneNum = 0;
-        if (this.props.checkItem) {
-            hasDoneNum = this.props.checkItem.filter(function (item) {
+        if (this.props.list) {
+            hasDoneNum = this.props.list.filter(function (item) {
                 return item.hasDone === true
             }).length;
         }
@@ -98,8 +100,8 @@ class TodoItem extends React.Component {
                     </span>
                     {/*如果存在item计数，优先使用*/}
                     {
-                        (_props.checkItem&& _props.checkItem.length>0)
-                            ?<span className="todo-progress">`(${hasDoneNum}/${_props.checkItem != null && _props.checkItem.length})`</span>
+                        (_props.list&& _props.list.length>0)
+                            ?<span className="todo-progress">{`${hasDoneNum}/${_props.list != null && _props.list.length}`}</span>
                             :<span className="todo-progress">{_props.checkItemDoneNum}/{_props.checkItemNum}</span>
                     }
                     { _props.checkItem && <i className="icon iconfont todo-twr">&#xe6e7;</i> }
