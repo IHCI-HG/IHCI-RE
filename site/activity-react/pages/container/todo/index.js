@@ -1,6 +1,6 @@
 import * as React from 'react';
 import './style.scss'
-
+import mock from '../../../mock';
 import api from '../../../utils/api';
 import { timeBefore, sortByCreateTime, timeParse } from '../../../utils/util'
 import Page from '../../../components/page'
@@ -32,8 +32,9 @@ class TopicItem extends React.PureComponent{
 
 export default class Task extends React.Component{
     componentDidMount = async() => {
-        this.teamId = this.props.params.id
+        await this.initTodoInfo()
         this.initTeamInfo()
+
     }
 
     locationTo = (url) => {
@@ -44,11 +45,11 @@ export default class Task extends React.Component{
         const result = await api('/api/team/info', {
             method: 'POST',
             body: {
-                teamId: this.teamId
+                teamId: this.state.todo.teamId
             }
         })
 
-        if(!result.data) {
+        if(!result.data) {  // data = {} 无效判断
             window.toast('团队内容加载出错')
         }
 
@@ -95,6 +96,7 @@ export default class Task extends React.Component{
 
     initTodoInfo = async() => {
         const resp = await mock.httpMock('/todolist/:id/get', { id: this.teamId })
+        console.log('resp',resp)
         if (resp.status === 200) {
             this.setState({ todo: resp.data.todo })
         }
