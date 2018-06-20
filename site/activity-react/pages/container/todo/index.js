@@ -116,7 +116,7 @@ export default class Task extends React.Component{
         showCreateCheck: false,
         actionList:[],
         topicListArr: [],
-        moveToTeamName: '',
+        teamToMove: '',
         user: {
             headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
         },
@@ -155,7 +155,10 @@ export default class Task extends React.Component{
     }
 
     moveToTeamHandle = async () => {
-        
+        const resp = await mock.httpMock('/todo/:id/put', { teamId: this.state.teamToMove})
+        if (resp.status ===200) {
+           
+        }
     }
 
     topicNameInputHandle = (e) => {
@@ -172,8 +175,8 @@ export default class Task extends React.Component{
 
     selectedHandle = (e) => {
         this.setState({
-            moveToTeamName: e.target.value
-        })
+            teamToMove: e.target.value
+        },console.log(this.state.teamToMove))
     }
 
     memberChoseHandle = (tarId) => {
@@ -411,11 +414,11 @@ export default class Task extends React.Component{
                                 <form method="post" data-remote="">
                                     <p className="title">移动任务到小组</p>
                                     <div className="simple-select select-choose-projects require-select" >
-                                        <select onChange={this.selectedHandle} value={this.state.moveToTeamName} className="select-list">
+                                        <select onChange={this.selectedHandle} value={this.state.teamToMove} className="select-list">
                                             <option className="default">点击选择小组</option>
                                             {this.state.teamList.map((item) => {
                                                 return (
-                                                    <option className="select-item" key={'team name'+ item._id} value={item.name}>
+                                                    <option className="select-item" key={'team name'+ item._id} value={item.teamId}>
                                                         {item.name}
                                                     </option>
                                                 )
