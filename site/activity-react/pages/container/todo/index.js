@@ -411,7 +411,7 @@ export default class Task extends React.Component{
                         <div className={"item "+((moveExpanded)?"expanded":"")} >
                             {!moveExpanded&&<a onClick={() => {this.setState({moveExpanded: true,copyExpanded: false})}}>移动</a>}
                             {moveExpanded&&<div className="confirm">
-                                <form method="post" data-remote="">
+                                <form>
                                     <p className="title">移动任务到小组</p>
                                     <div className="simple-select select-choose-projects require-select" >
                                         <select onChange={this.selectedHandle} value={this.state.teamToMove} className="select-list">
@@ -428,7 +428,7 @@ export default class Task extends React.Component{
                                     </div>
                                     <button className="act" onClick={this.moveToTeamHandle}>移动</button>
                                     <div type="button" className="cancel" onClick={() => {this.setState({moveExpanded: false})}}>取消</div>
-                                    </form>
+                                </form>
                             </div>}
                         </div>
                     </div>
