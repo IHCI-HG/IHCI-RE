@@ -49,7 +49,7 @@ http.listen('/team/:id/todolist/get', function (params) {
                     'id|+1': '@natural(0,100)',
                     name: '@cparagraph(1)',
                     hasDone: '@boolean',
-                    completeTime: '@dateTime',
+                    completeTime: '6 20, 2018 10:03:15',
                     'ddl|0-1': '@date',
                     'assignee|0-1': {
                         id: '@natural(0,100)',
@@ -58,6 +58,42 @@ http.listen('/team/:id/todolist/get', function (params) {
                     checkItemDoneNum: "@natural(0,3)",
                     checkItemNum: "@natural(3,5)",
                 }]
+            }]
+        }
+    }
+    return Mock.mock(data)
+})
+
+http.listen('/team/:id/todo/get', function (params) {
+    Mock.Random.extend({
+        icon: function() {
+            var icons = ['icon-enterinto_fill', 'icon-addition_fill', 'icon-success_fill']
+            return this.pick(icons)
+        }
+    })
+    Mock.Random.extend({
+        action: function() {
+            var actions = ['完成了', '添加了', '重新打开了']
+            return this.pick(actions)
+        }
+    })
+    const data = {
+        'status': 200,
+        data: {
+            'actionList|3': [{
+                'id|+1': '@natural(1000,1100)',
+                icon:'@ICON',
+                success:'@boolean',
+                time: '@datetime("yy-MM-dd a HH:mm:ss")',
+                action:'@ACTION',
+                task:'@cparagraph(1)',
+                creator: {
+                    'id|+1': '@natural(1000,1100)',
+                    name: '@cparagraph(1)',
+                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
+                    phone: '@natural(0000000000000,9999999999999)',
+                    mail: 'ada@qq.com',
+                }, 
             }]
         }
     }
@@ -110,7 +146,7 @@ http.listen('/todo/:id/get', function (params) {
                     'id|+1': '@natural(0,100)',
                     name: '@cparagraph(1)',
                     hasDone: '@boolean',
-                    completeTime: '@dateTime',
+                    completeTime: '6 20, 2018 10:03:15',
                     'ddl|0-1': '@date',
                     'assignee|0-1': {
                         id: '@natural(0,100)',
@@ -161,7 +197,7 @@ http.listen('/todo/:id/put', function (params) {
                 },
                 ddl: params.ddl || '返回时间',
                 hasDone: params.hasDone !== null?params.hasDone : '不变',
-                completeTime: '@dateTime',
+                completeTime: '6 20, 2018 10:03:15',
             }
         }
     }
@@ -204,7 +240,7 @@ http.listen('/check_item/:id/put', function (params) {
                 },
                 ddl: params.ddl || '返回时间',
                 hasDone: params.hasDone !== null?params.hasDone : '不变',
-                completeTime: '@dateTime',
+                completeTime: '6 20, 2018 10:03:15',
             }
         }
     }

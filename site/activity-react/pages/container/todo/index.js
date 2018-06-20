@@ -48,6 +48,12 @@ export default class Task extends React.Component{
         await this.initTodoInfo()
         this.initTeamInfo()
 
+        // ??? /team/:id/todo/get初始化actionList？
+        const resp = await mock.httpMock('/team/:id/todo/get', { id: this.teamId })
+        console.log("resp",resp)
+        if (resp.status === 200) {
+            this.setState({ actionList: resp.data.actionList })
+        }
     }
 
     locationTo = (url) => {
@@ -118,9 +124,10 @@ export default class Task extends React.Component{
     state = {
         showCreateTopic: false,
         isCreator: false,
-        showButton:true,
-        moveExpanded:false,
-        copyExpanded:false,
+        showButton: true,
+        moveExpanded: false,
+        showActionList: false,
+        copyExpanded: false,
         createTopicName: '',
         createTopicContent: '',
         memberNum: 0,
@@ -133,50 +140,7 @@ export default class Task extends React.Component{
             desc: '完成IHCI平台搭建',
             managed: true,
         },
-        actionList:[
-            {
-                creator: {
-                    id: 1,
-                    name: '阿鲁巴大将军',
-                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                    phone: '17728282828',
-                    mail: 'ada@qq.com',
-                }, 
-                icon:"icon-success_fill",
-                success:true,
-                time: 1515384000000,
-                action:"完成了",
-                task:"任务一"
-            },
-            {
-                creator: {
-                    id: 1,
-                    name: '阿鲁巴大将军',
-                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                    phone: '17728282828',
-                    mail: 'ada@qq.com',
-                },
-                icon:"icon-addition_fill",
-                success:false,
-                time: 1515384000000,
-                action:"添加了",
-                task:"任务二"
-            },
-            {
-                creator: {
-                    id: 1,
-                    name: '阿鲁巴大将军',
-                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                    phone: '17728282828',
-                    mail: 'ada@qq.com',
-                },
-                icon:"icon-enterinto_fill",
-                success:false,
-                time: 1515384000000,
-                action:"重新打开了",
-                task:"任务二"
-            },
-        ],
+        actionList:[],
         topicList: [
             {
                 topicId: 1,
@@ -190,7 +154,7 @@ export default class Task extends React.Component{
                 name: '这是一条讨论的name1',
                 content: '嘻嘻嘻嘻嘻',
                 time: 1515384000000,
-            },{
+            }, {
                 topicId: 2,
                 creator: {
                     id: 1,
@@ -205,7 +169,7 @@ export default class Task extends React.Component{
                 time: 1515384000000,
             }
         ],
-        user:{
+        user: {
             headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
         },
         memberList: [],
@@ -420,7 +384,7 @@ export default class Task extends React.Component{
     render() {
         let taskInfo = this.state.taskInfo
         let teamInfo = this.state.teamInfo
-        let actionList = this.state.actionList
+        let actionList = this.state.actionList || []
         let moveExpanded = this.state.moveExpanded
         let copyExpanded = this.state.copyExpanded
         const _props = this.props
@@ -479,43 +443,40 @@ export default class Task extends React.Component{
                      }
 
                     <div className="detail-actions">
-                        <div className={"item "+((moveExpanded)?"expanded":"")} onMouseLeave={() => {this.setState({moveExpanded: false})}}>
-                            {!moveExpanded&&<a onMouseOver={() => {this.setState({moveExpanded: true,copyExpanded: false})}}>移动</a>}
-                            {moveExpanded&&<div className="confirm">
-                                <form method="post" data-remote="">
-                                    <p className="title">移动任务到项目</p>
-                                    <p>
-                                        <div className="simple-select select-choose-projects require-select">
-                                            <input type="text" className="select-result" autocomplete="off" placeholder="点击选择项目"/>
-                                            <span className="link-expand" title="所有选项">
-                                                <i className="iconfont icon-unfold"></i>
-                                            </span>
-                                            <span className="link-clear" title="清除选择">
-                                                <i className="iconfont icon-close"></i>
-                                            </span>
-
-                                        </div>
-                                    </p>
-                                    <p>
-                                        <button type="submit" className="act" data-disable-with="正在移动...">移动</button>
-                                        <div type="button" className="cancel" onClick={() => {this.setState({moveExpanded: false})}}>取消</div>
-                                    </p>
-                                    </form>
-                            </div>}
-                        </div>
-                        <div className={"item "+((copyExpanded)?"expanded":"")} onMouseLeave={() => {this.setState({copyExpanded: false})}}>
-                            {!copyExpanded&&<a onMouseOver={() => {this.setState({copyExpanded: true,moveExpanded: false})}}>复制</a>}
+                        <div className={"item "+((copyExpanded)?"expanded":"")}>
+                            {!copyExpanded&&<a  onClick={() => {this.setState({copyExpanded: true,moveExpanded: false})}}>复制</a>}
                             {copyExpanded&&<div className="confirm">
                                 <form  method="post" data-remote="">
                                     <p className="title">复制任务到当前任务清单</p>
                                     <p>
                                         <input type="number" placeholder="复制数量[1~50]" min="1" max="50" name="count" id="count"/>
                                     </p>
-                                    <p>
                                         <button type="submit" className="act" data-disable-with="正在复制...">复制</button>
                                         <div type="button" className="cancel" onClick={() => {this.setState({copyExpanded: false})}}>取消</div>
-                                    </p>
                                 </form>
+                            </div>}
+                        </div>
+                        <div className={"item "+((moveExpanded)?"expanded":"")} >
+                            {!moveExpanded&&<a onClick={() => {this.setState({moveExpanded: true,copyExpanded: false})}}>移动</a>}
+                            {moveExpanded&&<div className="confirm">
+                                <form method="post" data-remote="">
+                                    <p className="title">移动任务到项目</p>
+                                    <div className="simple-select select-choose-projects require-select" >
+                                        <select className="select-list">
+                                            <option className="default"  selected = "selected">点击选择项目</option>
+                                            {actionList.map((item) => {
+                                                return (
+                                                    <option className="select-item" key={'task name'+ item.id} onClick={()=>{}}>
+                                                        {item.task}
+                                                    </option>
+                                                )
+                                            })
+                                            }
+                                        </select>
+                                    </div>
+                                    <button type="submit" className="act" data-disable-with="正在移动...">移动</button>
+                                    <div type="button" className="cancel" onClick={() => {this.setState({moveExpanded: false})}}>取消</div>
+                                    </form>
                             </div>}
                         </div>
                     </div>
@@ -525,7 +486,7 @@ export default class Task extends React.Component{
                             return(
                                 <div className="action-item">
                                     <i className={"iconfont "+item.icon+((item.success)?" success":"")}></i>
-                                    <div className={"action "+((item.success)?" success":"")}>{timeBefore(item.time)} {item.creator.name} {item.action}{item.task} </div>
+                                    <div className={"action "+((item.success)?" success":"")}>{item.time} {item.creator.name} {item.action}{item.task} </div>
                                 </div>
                             )
                         })
@@ -553,7 +514,6 @@ export default class Task extends React.Component{
                         this.state.showButton && <input type="text" onClick={() => {this.setState({showCreateTopic: true,showButton:false})}} className="topic-name" placeholder="点击发表评论" /> }
                             {
                                 this.state.showCreateTopic && <div className="create-area">
-                                    {/* <input type="text" className="topic-name" onChange={this.topicNameInputHandle} value={this.state.createTopicName} placeholder="话题" /> */}
                                     <textarea className="topic-content" onChange={this.topicContentInputHandle} value={this.state.createTopicContent} placeholder="说点什么"></textarea>
                                     
                                     <div className="infrom">请选择要通知的人：</div>
@@ -565,8 +525,7 @@ export default class Task extends React.Component{
                                     </div>
                                 </div>
                             } 
-                        </div>
-                        {/* <div className="create-btn" onClick={() => {this.setState({showCreateTopic: true})}}>发起讨论</div> */}
+                        </div> 
                     </div>
                 </div>
             </Page>

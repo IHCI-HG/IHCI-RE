@@ -144,7 +144,7 @@ class TodoItem extends React.Component {
                     { _props.hasDone?
                         <span>
                             <span className="remark">{_props.assignee&&_props.assignee.username}</span>
-                            <span className="remark">{timeBefore(_props.completeTime)}</span>
+                            <span className="remark">{timeBefore(Date.parse(_props.completeTime))}</span>
                         </span>
                         :< ItemLabel
                             // 使用用户传入，不用id
