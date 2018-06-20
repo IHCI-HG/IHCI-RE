@@ -64,43 +64,6 @@ http.listen('/team/:id/todolist/get', function (params) {
     return Mock.mock(data)
 })
 
-http.listen('/team/:id/todo/get', function (params) {
-    Mock.Random.extend({
-        icon: function() {
-            var icons = ['icon-enterinto_fill', 'icon-addition_fill', 'icon-success_fill']
-            return this.pick(icons)
-        }
-    })
-    Mock.Random.extend({
-        action: function() {
-            var actions = ['完成了', '添加了', '重新打开了']
-            return this.pick(actions)
-        }
-    })
-    const data = {
-        'status': 200,
-        data: {
-            'actionList|3': [{
-                'id|+1': '@natural(1000,1100)',
-                icon:'@ICON',
-                success:'@boolean',
-                time: '@datetime("yy-MM-dd a HH:mm:ss")',
-                action:'@ACTION',
-                task:'@cparagraph(1)',
-                creator: {
-                    'id|+1': '@natural(1000,1100)',
-                    name: '@cparagraph(1)',
-                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                    phone: '@natural(0000000000000,9999999999999)',
-                    mail: 'ada@qq.com',
-                }, 
-            }]
-        }
-    }
-    return Mock.mock(data)
-})
-
-
 
 http.listen('/todolist/post', function (params) {
     const data = {
@@ -153,7 +116,20 @@ http.listen('/todo/:id/get', function (params) {
                         username: '@cname',
                     },
                 }]
-            }
+            },
+            'topicList|5':[{
+                'id|+1': '@natural(1000,1100)',
+                creator: {
+                    'id|+1': '@natural(1000,1100)',
+                    name: '@cparagraph(1)',
+                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
+                    phone: '@natural(0000000000000,9999999999999)',
+                    mail: 'ada@qq.com',
+                }, 
+                title: '@cparagraph(1)',
+                content: '@cparagraph(1)',
+                time: '@datetime("yy-MM-dd a HH:mm:ss")',
+            }]
         }
     }
     return Mock.mock(data)
@@ -176,18 +152,40 @@ http.listen('/todo/post', function (params) {
                 checkItemDoneNum: 0,
                 checkItemNum: 0,
                 hasDone: false,
-            }
+            },
         }
     }
     return Mock.mock(data)
 })
 
+http.listen('/todo/:id/post', function (params) {
+    const data = {
+        'status': 201,
+        data: {
+            topic:{
+                id: params.teamId || null,
+                creator: {
+                    id: '@natural(1000,1100)',
+                    name: '@cparagraph(1)',
+                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
+                    phone: '@natural(0000000000000,9999999999999)',
+                    mail: 'ada@qq.com',
+                }, 
+                title: params.title || '',
+                content:  params.content || '',
+                time: params.time || '',
+            },
+        }
+    }
+    return Mock.mock(data)
+})
 
 http.listen('/todo/:id/put', function (params) {
     const data = {
         'status': 200,
         data: {
             todo: {
+                teamId:params.teamId || '返回teamId',
                 id: params.id || '返回id',
                 name: params.name || '返回name',
                 desc: params.desc || 'desc',

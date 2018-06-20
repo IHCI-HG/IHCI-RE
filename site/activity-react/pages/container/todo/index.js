@@ -24,14 +24,14 @@ function getUpdateItem(arr, id) {
 class TopicItem extends React.PureComponent{
     render() {
         return(
-            <div className="topic-item" key={"topic-item-" + this.props._id} onClick={() => {this.props.locationTo('/discuss/topic/' + this.props._id)}}>
+            <div className="topic-item"  onClick={() => {this.props.locationTo('/discuss/topic/' + this.props._id)}}>
                 <div className="imgInfo">
                     <img src={this.props.creator.headImg} alt="" className="head-img" />
                 </div>
                 <div className="info">
                     <div className="send">
                         <div className="name">{this.props.creator.name}</div>
-                        <div className="time">{timeBefore(this.props.create_time)}</div>
+                        <div className="time">{this.props.time}</div>
                     </div>
                     <div className="main">
                         <div className="topic-title">{this.props.title}</div>
@@ -46,71 +46,44 @@ class TopicItem extends React.PureComponent{
 export default class Task extends React.Component{
     componentDidMount = async() => {
         await this.initTodoInfo()
-        this.initTeamInfo()
-
-        // ??? /team/:id/todo/get初始化actionList？
-        const resp = await mock.httpMock('/team/:id/todo/get', { id: this.teamId })
-        console.log("resp",resp)
-        if (resp.status === 200) {
-            this.setState({ actionList: resp.data.actionList })
-        }
+        this.initTeamList()
+        this.initTopicListArr()
     }
 
     locationTo = (url) => {
         this.props.router.push(url)
     }
 
-    initTeamInfo = async () => {
-        const result = await api('/api/team/info', {
+    initTeamList = async () => {
+        const result = await api('/api/getMyInfo', {
+            method: 'GET',
+            body: {}
+        })
+        const teamList = result.data.teamList
+        const teamIdList = []
+        teamList.map((item) => {
+            teamIdList.push(item.teamId)
+        })
+
+        const listResult = await api('/api/team/infoList', {
             method: 'POST',
             body: {
-                teamId: this.state.todo.teamId
+                teamIdList: teamIdList
             }
         })
+        const teamInfoList = listResult.data
 
-        if(!result.data) {  // data = {} 无效判断
-            window.toast('团队内容加载出错')
-        }
-
-        const teamInfo = {}
-        teamInfo._id = result.data._id 
-        teamInfo.name = result.data.name
-        teamInfo.teamImg = result.data.teamImg
-        teamInfo.desc = result.data.teamDes
-
-
-        const memberList = []
-        const memberIDList = []
-
-        const curUserId = this.props.personInfo._id
-
-        let isCreator = false
-        result.data.memberList.map((item) => {
-            if(item.userId == curUserId) {
-                isCreator = true
-            }
-            memberIDList.push(item.userId)
-        })
-        const memberResult = await api('/api/userInfoList', {
-            method: 'POST',
-            body: { userList: memberIDList }
-        })
-
-        memberResult.data.map((item, idx) => {
-            memberList.push({
+        teamList.map((item, idx) => {
+            teamList[idx] = {
                 ...item,
-                ...result.data.memberList[idx],
-                chosen: false,
-            })
+                ...teamInfoList[idx],
+                managed: (item.role == 'creator' || item.role == 'admin')
+            }
         })
 
         this.setState({
-            isCreator: isCreator,
-            teamInfo: teamInfo,
-            memberNum: result.data.memberList.length,
-            memberList: memberList,
-            topicList: sortByCreateTime(result.data.topicList)
-        })
+            teamList: teamList
+        },console.log(teamList))
     }
 
     initTodoInfo = async() => {
@@ -118,6 +91,15 @@ export default class Task extends React.Component{
         // console.log('resp',resp)
         if (resp.status === 200) {
             this.setState({ todo: resp.data.todo })
+        }
+    }
+
+    initTopicListArr = async() => {
+        // 请求topicListArr数据
+        const resp = await mock.httpMock('/todo/:id/get', { id: this.teamId })
+        console.log(resp)
+        if (resp.status === 200) {
+            this.setState({ topicListArr: resp.data.topicList })
         }
     }
 
@@ -132,48 +114,21 @@ export default class Task extends React.Component{
         createTopicContent: '',
         memberNum: 0,
         showCreateCheck: false,
-
-        teamInfo: {
-            _id: 1,
-            name: 'IHCI平台搭建项目组',
-            teamImg: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1522401625&di=bcc173556f4ce40a5b92ff96402a053b&imgtype=jpg&er=1&src=http%3A%2F%2Fwx3.sinaimg.cn%2Forj360%2F7fa53ff0gy1fc1phl41r6j20hs0hsmxn.jpg',
-            desc: '完成IHCI平台搭建',
-            managed: true,
-        },
         actionList:[],
-        topicList: [
-            {
-                topicId: 1,
-                creator: {
-                    id: 1,
-                    name: '阿鲁巴大将军',
-                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                    phone: '17728282828',
-                    mail: 'ada@qq.com',
-                },
-                name: '这是一条讨论的name1',
-                content: '嘻嘻嘻嘻嘻',
-                time: 1515384000000,
-            }, {
-                topicId: 2,
-                creator: {
-                    id: 1,
-                    name: '阿鲁巴大将军',
-                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                    phone: '17728282828',
-                    mail: 'ada@qq.com',
-                },
-                name: '这是一条讨论的name2',
-                // title:'hahah',
-                content: '哈哈哈哈哈',
-                time: 1515384000000,
-            }
-        ],
+        topicListArr: [],
+        moveToTeamName: '',
         user: {
             headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
         },
-        memberList: [],
+        memberList: [
+            {
+                _id: 11,
+                name: '萨乌丁',
+                chosen: false,
+            },
+        ],
         todo: {},
+        teamList:[],
     }
 
     createTopicHandle = async () => {
@@ -183,36 +138,24 @@ export default class Task extends React.Component{
                 informList.push(item._id)
             }
         })
-
-        const result = await api('/api/topic/createTopic', {
-            method: 'POST',
-            body: {
+        var time = new Date()
+        const resp = await mock.httpMock('/todo/:id/post', {
                 teamId: this.teamId,
-                name: this.state.createTopicName,
-                content: this.state.createTopicContent,
-                informList: informList,
-            }
-        })
-
-        if(result.state.code == 0) {
-            const topicList = this.state.topicList
-            const time = new Date().getTime()
-            topicList.unshift({
-                _id: result.data._id,
-                creator: this.props.personInfo,
                 title: this.state.createTopicName,
                 content: this.state.createTopicContent,
-                time: time,
-            })
-            this.setState({
-                topicList: topicList,
-                showCreateTopic: false,
-                createTopicName: '',
-                createTopicContent: '',
-            })
-        } else {
-            window.toast(result.state.msg)
+                informList: informList,
+                time: time.toLocaleString(),
+        })
+        if (resp.status === 201) {
+            const topicList = this.state.topicListArr
+            topicList.push(resp.data.topic)
+            this.setState({ topicListArr:topicList })
         }
+        return resp
+    }
+
+    moveToTeamHandle = async () => {
+        
     }
 
     topicNameInputHandle = (e) => {
@@ -224,6 +167,12 @@ export default class Task extends React.Component{
     topicContentInputHandle = (e) => {
         this.setState({
             createTopicContent: e.target.value
+        })
+    }
+
+    selectedHandle = (e) => {
+        this.setState({
+            moveToTeamName: e.target.value
         })
     }
 
@@ -382,8 +331,8 @@ export default class Task extends React.Component{
     }
 
     render() {
-        let taskInfo = this.state.taskInfo
-        let teamInfo = this.state.teamInfo
+        // let taskInfo = this.state.taskInfo
+        // let teamInfo = this.state.teamInfo
         let actionList = this.state.actionList || []
         let moveExpanded = this.state.moveExpanded
         let copyExpanded = this.state.copyExpanded
@@ -437,7 +386,7 @@ export default class Task extends React.Component{
                              onClick={(e) => {
                                  this.setState({showCreateCheck: true})
                                  e.stopPropagation()}}>
-                             <i class="icon iconfont">&#xe6e0;</i>
+                             <i className="icon iconfont">&#xe6e0;</i>
                              添加检查项
                          </div>
                      }
@@ -460,21 +409,21 @@ export default class Task extends React.Component{
                             {!moveExpanded&&<a onClick={() => {this.setState({moveExpanded: true,copyExpanded: false})}}>移动</a>}
                             {moveExpanded&&<div className="confirm">
                                 <form method="post" data-remote="">
-                                    <p className="title">移动任务到项目</p>
+                                    <p className="title">移动任务到小组</p>
                                     <div className="simple-select select-choose-projects require-select" >
-                                        <select className="select-list">
-                                            <option className="default"  selected = "selected">点击选择项目</option>
-                                            {actionList.map((item) => {
+                                        <select onChange={this.selectedHandle} value={this.state.moveToTeamName} className="select-list">
+                                            <option className="default">点击选择小组</option>
+                                            {this.state.teamList.map((item) => {
                                                 return (
-                                                    <option className="select-item" key={'task name'+ item.id} onClick={()=>{}}>
-                                                        {item.task}
+                                                    <option className="select-item" key={'team name'+ item._id} value={item.name}>
+                                                        {item.name}
                                                     </option>
                                                 )
                                             })
                                             }
                                         </select>
                                     </div>
-                                    <button type="submit" className="act" data-disable-with="正在移动...">移动</button>
+                                    <button className="act" onClick={this.moveToTeamHandle}>移动</button>
                                     <div type="button" className="cancel" onClick={() => {this.setState({moveExpanded: false})}}>取消</div>
                                     </form>
                             </div>}
@@ -495,9 +444,9 @@ export default class Task extends React.Component{
                     
                     <div className="topic-list">
                         {
-                            this.state.topicList.map((item) => {
+                            this.state.topicListArr.map((item) => {
                                 return (
-                                    <TopicItem locationTo={this.locationTo} {...item} />
+                                    <TopicItem key={"topic-item-" + item.id} locationTo={this.locationTo} {...item} />
                                 )
                             })
                         }
@@ -514,8 +463,8 @@ export default class Task extends React.Component{
                         this.state.showButton && <input type="text" onClick={() => {this.setState({showCreateTopic: true,showButton:false})}} className="topic-name" placeholder="点击发表评论" /> }
                             {
                                 this.state.showCreateTopic && <div className="create-area">
+                                    <input type="text" className="topic-name" onChange={this.topicNameInputHandle} value={this.state.createTopicName} placeholder="话题" />
                                     <textarea className="topic-content" onChange={this.topicContentInputHandle} value={this.state.createTopicContent} placeholder="说点什么"></textarea>
-                                    
                                     <div className="infrom">请选择要通知的人：</div>
                                     <MemberChosenList choseHandle={this.memberChoseHandle} memberList={this.state.memberList}/>
 
