@@ -7,6 +7,19 @@
 
     padding: 0 50px;
 
+    .search-bar{
+        .searchBox{
+            display: flex;
+            align-items: center;
+        }
+        .searchInput{
+            border-radius: 15px;
+            width:230px;
+            padding:5px;
+            margin: 10px;
+        }
+    }
+
     .logo {
         margin-right: 100px;
     }
