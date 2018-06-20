@@ -3,11 +3,14 @@
     padding: 0.266667rem 0.4rem 0.533333rem 0.4rem;
 }
 
-.todo + .todo-complete {
-    margin-top: 20px;
+.todolist {
+    .todo + .todo-complete {
+        margin-top: 20px;
+    }
 }
 
-.todo, .todo-complete {
+
+.todo, .todo-complete, .check, .check-complete {
     input {
         border: none;
         border: 1px solid #cccccc;
@@ -95,6 +98,7 @@
             width: 664px;
             margin: 15px 0;
         }
+
         .todo-twr {
             vertical-align: middle;
         }
@@ -202,6 +206,36 @@
             font-weight: bold;
         }
     }
+}
+
+.check, .check-complete {
+    .check-box, .check-box-checked, .check-box-disable {
+        border-radius: 50%;
+    }
+}
+
+.check-complete {
+    .todo-wrap .name {
+        color: #999;
+        text-decoration: line-through;
+    }
+    .check-box-disable {
+        border-radius: 50%;
+    }
+}
+
+
+.checkitem-list {
+    margin-left: 30px;
+}
+
+.new-check {
+    display: inline-block;
+    font-size: 14px;
+    padding: 10px 5px 10px 38px;
+    color: #999;
+    margin-bottom: 20px;
+    font-weight: bold;
 }
 
 

@@ -241,8 +241,8 @@ export default class Team extends React.Component{
             todolist.list[itemIndex] = todoItem
             todolist.list = todolist.list.slice()
             this.setState({ todoListArr })
-            return resp
         }
+        return resp
     }
 
     handleTodoCheck = async(lIndex, lId, id, hasDone) => {
@@ -330,8 +330,6 @@ export default class Team extends React.Component{
         if (resp.status === 200) {
             todoListArr[index].name = resp.data.todoList.name
             this.setState({ todoListArr: todoListArr.slice() })
-            // 重新生成todoListArr,如果后续抽取todoListArr进行短路优化会用上
-            // 目前只针对todoList和todoItem做性能优化
         }
         return resp
     }
@@ -339,10 +337,13 @@ export default class Team extends React.Component{
     handleTodoListDelete = async(index, id) => {
         const todoListArr = this.state.todoListArr
         const resp = await mock.httpMock('/common/delete', {id})
-        todoListArr.splice(index, 1)
+        // todoListArr.splice(index, 1) // 删除使用index导致错误
+        const [todolist, todolistIndex] = getUpdateItem(todoListArr, id)
+        todoListArr.splice(todolistIndex, 1)
         if (resp.status ===200) {
             this.setState({ todoListArr: todoListArr.slice() })
         }
+        console.log(todoListArr)
         return resp
     }
 

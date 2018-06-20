@@ -49,6 +49,7 @@ http.listen('/team/:id/todolist/get', function (params) {
                     'id|+1': '@natural(0,100)',
                     name: '@cparagraph(1)',
                     hasDone: '@boolean',
+                    completeTime: '@dateTime',
                     'ddl|0-1': '@date',
                     'assignee|0-1': {
                         id: '@natural(0,100)',
@@ -95,6 +96,33 @@ http.listen('/todolist/put', function (params) {
 
 
 // todo
+http.listen('/todo/:id/get', function (params) {
+    const data = {
+        'status': 200,
+        data: {
+            'todo': {
+                'teamId': '5b1f440ea7975b4dc11788f5',
+                'id': '@natural(1000,1100)',
+                hasDone: '@boolean',
+                desc: '@cparagraph(2)',
+                name: '@cparagraph(1)',
+                'list|7-10': [{
+                    'id|+1': '@natural(0,100)',
+                    name: '@cparagraph(1)',
+                    hasDone: '@boolean',
+                    completeTime: '@dateTime',
+                    'ddl|0-1': '@date',
+                    'assignee|0-1': {
+                        id: '@natural(0,100)',
+                        username: '@cname',
+                    },
+                }]
+            }
+        }
+    }
+    return Mock.mock(data)
+})
+
 http.listen('/todo/post', function (params) {
     const data = {
         'status': 201,
@@ -104,7 +132,6 @@ http.listen('/todo/post', function (params) {
                 id: '@natural(100,200)',
                 name: params.name || '',
                 desc: params.desc || '',
-                // assignee: null,
                 assignee: {
                     id: params.assigneeId || 'null',
                     name: '返回name',
@@ -121,7 +148,6 @@ http.listen('/todo/post', function (params) {
 
 
 http.listen('/todo/:id/put', function (params) {
-
     const data = {
         'status': 200,
         data: {
@@ -135,6 +161,7 @@ http.listen('/todo/:id/put', function (params) {
                 },
                 ddl: params.ddl || '返回时间',
                 hasDone: params.hasDone !== null?params.hasDone : '不变',
+                completeTime: '@dateTime',
             }
         }
     }
@@ -142,40 +169,47 @@ http.listen('/todo/:id/put', function (params) {
 })
 
 
-http.listen('/todolist/:id/get', function (params) {
+http.listen('/check_item/post', function (params) {
     const data = {
-        'status': 200,
+        status: 201,
         data: {
-            'todo': {
-                'teamId': '5b1f440ea7975b4dc11788f5',
-                'id': '@natural(1000,1100)',
-                hasDone: '@boolean',
-                desc: '@cparagraph(2)',
-                name: '@cparagraph(1)',
-                'list|7-10': [{
-                    'id|+1': '@natural(0,100)',
-                    name: '@cparagraph(1)',
-                    hasDone: '@boolean',
-                    'ddl|0-1': '@date',
-                    'assignee|0-1': {
-                        id: '@natural(0,100)',
-                        username: '@cname',
-                    },
-                    'checkItemNum|5': [{
-                        'id|+1': '@natural(0,100)',
-                        name: '@cparagraph(1)',
-                        hasDone: '@boolean',
-                        'ddl|0-1': '@date',
-                        'assignee|0-1': {
-                            id: '@natural(0,100)',
-                            username: '@cname',
-                        },
-                    }]
-                }]
+            checkItem: {
+                todoId: params.todoId || null,
+                id: '@natural(100,200)',
+                name: params.name || '',
+                assignee: {
+                    id: params.assigneeId || 'null',
+                    name: '返回name',
+                },
+                ddl: params.ddl || null,
+                hasDone: false,
             }
         }
     }
     return Mock.mock(data)
 })
+
+
+http.listen('/check_item/:id/put', function (params) {
+    const data = {
+        status: 200,
+        data: {
+            checkItem: {
+                todoId: params.todoId || null,
+                id: params.id || '返回id',
+                name: params.name || '返回name',
+                assignee: {
+                    id: params.assigneeId || '返回assigneeId',
+                    name: '返回name',
+                },
+                ddl: params.ddl || '返回时间',
+                hasDone: params.hasDone !== null?params.hasDone : '不变',
+                completeTime: '@dateTime',
+            }
+        }
+    }
+    return Mock.mock(data)
+})
+
 
 export default http

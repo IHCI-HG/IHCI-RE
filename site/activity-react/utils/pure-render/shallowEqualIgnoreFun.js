@@ -38,7 +38,7 @@ function shallowEqual(objA, objB) {
     for (var i = 0; i < keysA.length; i++) {
         if ((typeof objA[keysA[i]]) !== 'function') {
             if (!hasOwnProperty.call(objB, keysA[i]) || !is(objA[keysA[i]], objB[keysA[i]])) {
-                console.log(i, typeof objA[keysA[i]], keysA[i])
+                // console.log(i, typeof objA[keysA[i]], keysA[i])
                 return false;
             }
         }

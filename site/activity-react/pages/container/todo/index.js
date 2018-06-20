@@ -5,8 +5,21 @@ import api from '../../../utils/api';
 import { timeBefore, sortByCreateTime } from '../../../utils/util'
 import Page from '../../../components/page'
 import TodoItem from './todoItem'
+import NewCheck from './editTodo'
 
 import MemberChosenList from '../../../components/member-chose-list'
+
+function getUpdateItem(arr, id) {
+    let item = null
+    let index = null
+    arr.forEach((innerItem, innerIndex) => {
+        if (innerItem.id === id) {
+            item = innerItem
+            index = innerIndex
+        }
+    })
+    return [item, index]
+}
 
 class TopicItem extends React.PureComponent{
     render() {
@@ -95,13 +108,12 @@ export default class Task extends React.Component{
     }
 
     initTodoInfo = async() => {
-        const resp = await mock.httpMock('/todolist/:id/get', { id: this.teamId })
-        console.log('resp',resp)
+        const resp = await mock.httpMock('/todo/:id/get', { id: this.teamId })
+        // console.log('resp',resp)
         if (resp.status === 200) {
             this.setState({ todo: resp.data.todo })
         }
     }
-
 
     state = {
         showCreateTopic: false,
@@ -112,6 +124,7 @@ export default class Task extends React.Component{
         createTopicName: '',
         createTopicContent: '',
         memberNum: 0,
+        showCreateCheck: false,
 
         teamInfo: {
             _id: 1,
@@ -264,6 +277,7 @@ export default class Task extends React.Component{
         location.href = '/team-admin/' + this.teamId
     }
 
+    // todo
     handleTodoCheck = async(hasDone) => {
         const resp = await mock.httpMock('/todo/:id/put', { id: this.props.params.id, hasDone: !hasDone })
         const todo = this.state.todo
@@ -272,7 +286,6 @@ export default class Task extends React.Component{
         }
         this.setState({ todo })
     }
-
 
     handleTodoModify = async(todoInfo) => {
         console.log(todoInfo)
@@ -319,7 +332,6 @@ export default class Task extends React.Component{
         }
     }
 
-
     handleTodoDelete = async() => {
         const resp = await mock.httpMock('/common/delete', { id: this.props.params.id })
         if (resp.status ===200) {
@@ -327,6 +339,83 @@ export default class Task extends React.Component{
         }
     }
 
+    // check
+    handleCheckCreate = async(todoInfo) => {
+        const resp = await mock.httpMock('/check_item/post', {
+            todoId: this.props.params.id,
+            name: todoInfo.name,
+            ddl: todoInfo.date,
+            assigneeId: todoInfo.assigneeId,
+        })
+        if (resp.status === 201) {
+            const todo = this.state.todo
+            todo.list = [...todo.list, resp.data.checkItem]
+            this.setState({ todo })
+        }
+        return resp
+    }
+
+    handleCheckModify = async(index, id, checkItemInfo) => {
+        const resp = await mock.httpMock('/check_item/:id/put', {
+            id: id,
+            name: checkItemInfo.name,
+            ddl: checkItemInfo.date,
+            assigneeId: checkItemInfo.assigneeId,
+        })
+        const todo = this.state.todo
+        if (resp.status ===200) {
+            todo.list[index].name = resp.data.checkItem.name
+            todo.list[index].ddl = resp.data.checkItem.ddl
+            todo.list[index].assignee = resp.data.checkItem.assignee
+        }
+        this.setState({ todo })
+        return resp
+    }
+
+    handleCheckAssigneeChange = async(index, id, e) => {
+        const resp = await mock.httpMock('/check_item/:id/put', {
+            id: id,
+            assigneeId: e.target.value,
+        })
+        const todo = this.state.todo
+        if (resp.status ===200) {
+            todo.list[index].assignee = resp.data.checkItem.assignee
+        }
+        this.setState({ todo })
+        return resp
+    }
+
+    handleCheckDateChange = async(index, id, e) => {
+        const resp = await mock.httpMock('/check_item/:id/put', {
+            id: id,
+            ddl: e.target.value,
+        })
+        const todo = this.state.todo
+        if (resp.status ===200) {
+            todo.list[index].ddl = resp.data.checkItem.ddl
+        }
+        this.setState({ todo })
+        return resp
+    }
+
+    handleCheckCheck = async(index, id, hasDone) => {
+        const resp = await mock.httpMock('/check_item/:id/put', { id: id, hasDone: !hasDone })
+        const todo = this.state.todo
+        if (resp.status ===200) {
+            todo.list[index].hasDone = resp.data.checkItem.hasDone
+        }
+        this.setState({ todo })
+    }
+
+    handleCheckDelete = async(index, id, hasDone) => {
+        const resp = await mock.httpMock('/check_item/:id/put', { id: id })
+        const todo = this.state.todo
+        if (resp.status ===200) {
+            const [checkItem, checkItemList] = getUpdateItem(todo.list, id)
+            todo.list.splice(checkItemList, 1)
+        }
+        this.setState({ todo })
+    }
 
     render() {
         let taskInfo = this.state.taskInfo
@@ -334,6 +423,7 @@ export default class Task extends React.Component{
         let actionList = this.state.actionList
         let moveExpanded = this.state.moveExpanded
         let copyExpanded = this.state.copyExpanded
+        const _props = this.props
 
 
         return (
@@ -343,8 +433,6 @@ export default class Task extends React.Component{
 
                      <TodoItem
                          {...this.state.todo}
-                         // checkItemNum
-                         // checkItemDoneNum
                          detail = 'detail'
                          memberList={this.state.memberList}
                          handleAssigneeChange={this.handleAssigneeChange}
@@ -352,12 +440,43 @@ export default class Task extends React.Component{
                          handleTodoModify={this.handleTodoModify}
                          handleTodoCheck={this.handleTodoCheck}
                          handleTodoDelete={this.handleTodoDelete}/>
-                     <div>
-
+                     <div className="checkitem-list">
+                         {
+                             this.state.todo.list &&
+                                 this.state.todo.list.map((cItem, index) => {
+                                 return (
+                                     <TodoItem
+                                         key={cItem.id}
+                                         type="check"
+                                         {...cItem}
+                                         memberList={this.state.memberList}
+                                         handleAssigneeChange={this.handleCheckAssigneeChange.bind(this, index, cItem.id)}
+                                         handleDateChange={this.handleCheckDateChange.bind(this, index, cItem.id)}
+                                         handleTodoModify={this.handleCheckModify.bind(this, index, cItem.id)}
+                                         handleTodoCheck={this.handleCheckCheck.bind(this, index, cItem.id)}
+                                         handleTodoDelete={this.handleCheckDelete.bind(this, index, cItem.id)}
+                                     />
+                                 )
+                             })
+                         }
                      </div>
-
-
-
+                     {this.state.showCreateCheck?
+                         <NewCheck
+                             memberList={this.state.memberList}
+                             confirmLabel="保存"
+                             handleConfirm={this.handleCheckCreate}
+                             handleClose={() => {
+                                 this.setState({ showCreateCheck: false})
+                             }}
+                         />:
+                         <div className="new-check"
+                             onClick={(e) => {
+                                 this.setState({showCreateCheck: true})
+                                 e.stopPropagation()}}>
+                             <i class="icon iconfont">&#xe6e0;</i>
+                             添加检查项
+                         </div>
+                     }
 
                     <div className="detail-actions">
                         <div className={"item "+((moveExpanded)?"expanded":"")} onMouseLeave={() => {this.setState({moveExpanded: false})}}>

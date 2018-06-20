@@ -25,7 +25,7 @@ class EditTodo extends React.Component {
         params.date = this.state.date
         // 调用父组件方法，把提交参数传出去
         const resp = await this.props.handleConfirm(params);
-        console.log('handleConfirm', resp)
+        // console.log('handleConfirm', resp)
         if (resp.status === 201) {
             this.refs.name.value = ''
             if (this.props.detail === 'detail')
@@ -44,12 +44,12 @@ class EditTodo extends React.Component {
     }
 
     handleAssigneeChange = (e) => {
-        console.log(e.target.value);
+        // console.log(e.target.value);
         this.setState({assigneeId: e.target.value});
     }
 
     handleDateChange = (e) => {
-        console.log('h', e.target.value);
+        // console.log('h', e.target.value);
         this.setState({date: e.target.value});
     }
 
@@ -61,7 +61,7 @@ class EditTodo extends React.Component {
 
     render() {
         const _props = this.props
-        console.log(_props)
+        // console.log(_props)
         return (
             <div className="todo">
                 <div className='check-box-disable'></div>

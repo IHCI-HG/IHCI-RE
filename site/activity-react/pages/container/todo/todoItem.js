@@ -3,6 +3,8 @@ import shallowEqualIgnoreFun from '../../../utils/pure-render/shallowEqualIgnore
 import EditTodo from './editTodo'
 import './style.scss'
 import ItemLabel from './itemLabel'
+import { timeBefore } from '../../../utils/util'
+
 
 // 通用item: todo&check
 class TodoItem extends React.Component {
@@ -12,18 +14,19 @@ class TodoItem extends React.Component {
     }
 
     static defaultProps = {
-        detail: ''
+        detail: '',
+        type: 'todo'
     }
 
     setMode(mode) {
-        console.log('setMode:', mode);
+        // console.log('setMode:', mode);
         this.setState({ mode: mode })
     }
 
     // 中间步骤省略？
     handleSave = async(params) =>{
         const resp = await this.props.handleTodoModify(params)
-        console.log('resp', resp)
+        // console.log('resp', resp)
         if (resp.status === 200 ||resp.status === 201) {
             this.setMode('read')
         }
@@ -33,6 +36,33 @@ class TodoItem extends React.Component {
     handleClose = () => {
         this.setMode('read')
     }
+
+    caculateHasDoneNum = () => {
+        let hasDoneNum = 0;
+        if (this.props.list) {
+            hasDoneNum = this.props.list.filter(function (item) {
+                return item.hasDone === true
+            }).length;
+        }
+        return hasDoneNum
+    }
+
+    caculateStyle = () => {
+        if (this.props.type === 'check') {
+            // check
+            if (this.props.hasDone === true) {
+                return 'check-complete'
+            }
+            return 'check'
+        } else {
+            // todo
+            if (this.props.hasDone === true) {
+                return 'todo-complete'
+            }
+            return 'todo'
+        }
+    }
+
 
     shouldComponentUpdate (nextProps, nextState) {
         // console.log(this.props.id,'props', shallowEqualIgnoreFun(this.props, nextProps))
@@ -46,7 +76,7 @@ class TodoItem extends React.Component {
     render() {
         const _props = this.props
         console.log('todoitem渲染', _props.id)
-        console.log('_props', _props)
+        // console.log('_props', _props)
 
         if (this.state.mode === 'edit') {
             return (
@@ -67,16 +97,11 @@ class TodoItem extends React.Component {
             )
         }
 
-
-        let hasDoneNum = 0;
-        if (this.props.list) {
-            hasDoneNum = this.props.list.filter(function (item) {
-                return item.hasDone === true
-            }).length;
-        }
+        const hasDoneNum = this.caculateHasDoneNum()
+        const componentClass = this.caculateStyle()
 
         return (
-            <div className={_props.hasDone ? 'todo-complete': 'todo'}>
+            <div className={componentClass}>
                 <div className="actions-wrap">
                     <div className="actions">
                         <i className="icon iconfont"
@@ -86,7 +111,7 @@ class TodoItem extends React.Component {
                             !_props.hasDone &&
                             <i className="icon iconfont"
                                onClick={(e) => {
-                                   console.log('edit')
+                                   // console.log('edit')
                                    this.setMode('edit')
                                    e.stopPropagation()
                                }}>
@@ -100,9 +125,11 @@ class TodoItem extends React.Component {
                     <i className="icon iconfont checked-icon">&#xe750;</i>
                 </div>
                 <div className="todo-wrap">
-                    <span onClick={() => {
-                        console.log('toDetail')
-                        location.href = `/todo/${this.props.id}`
+                    <span className="name"
+                        onClick={() => {
+                            if (_props.detail === 'detail' || _props.type === 'check')
+                                return
+                            location.href = `/todo/${this.props.id}`
                     }}>
                         {_props.name}
                     </span>
@@ -110,14 +137,14 @@ class TodoItem extends React.Component {
                     {
                         (_props.list&& _props.list.length>0)
                             ?<span className="todo-progress">{`${hasDoneNum}/${_props.list != null && _props.list.length}`}</span>
-                            :<span className="todo-progress">{_props.checkItemDoneNum}/{_props.checkItemNum}</span>
+                            :(_props.checkItemNum &&<span className="todo-progress">{_props.checkItemDoneNum}/{_props.checkItemNum}</span>)
                     }
                     { _props.checkItem && <i className="icon iconfont todo-twr">&#xe6e7;</i> }
 
                     { _props.hasDone?
                         <span>
                             <span className="remark">{_props.assignee&&_props.assignee.username}</span>
-                            <span className="remark">刚刚</span>
+                            <span className="remark">{timeBefore(_props.completeTime)}</span>
                         </span>
                         :< ItemLabel
                             // 使用用户传入，不用id
@@ -129,7 +156,7 @@ class TodoItem extends React.Component {
                         </ItemLabel>
                     }
                     {   _props.detail === 'detail' &&
-                    <div>{_props.desc}</div>
+                    <div className="todo-desc">{_props.desc}</div>
                     }
                 </div>
             </div>
