@@ -94,17 +94,17 @@ export default class Team extends React.Component{
     }
 
     testSearch = async() =>{                               //test
-        const result = await api('/api/search',{
+        const result = await api('/api/member',{
             method: 'POST',
             body:{
-                keyWord: "话题",
+               //keyWord: "话题",
                 //type: "REPLY_TOPIC"
-                 type: "CREATE_TOPIC",
-                 teamId: "5b25efb27a64f221c424d285"
+                // type: "CREATE_TOPIC",
+                 //teamId: "5b23321b89f52f2eb41fff74"
 
             }
         })
-        window.alert(result.state.msg+result.data.length+"条结果")
+        //window.alert(result.state.msg+result.data.length+"条结果")
     }
     state = {
         teamList: [
