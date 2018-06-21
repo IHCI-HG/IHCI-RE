@@ -1,7 +1,11 @@
 var conf = require('../../conf')
 
 import fetch from 'isomorphic-fetch';
+<<<<<<< HEAD
 import { redisPromiseGet, redisPromiseSet } from '../../middleware/redis-utils/redis-utils'
+=======
+import {redisPromiseGet, redisPromiseSet} from '../../middleware/redis-utils/redis-utils'
+>>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
 
 var mongoose = require('mongoose')
 var userDB = mongoose.model('user')
@@ -50,21 +54,33 @@ function formatDate(date, formatStr) {
 };
 
 // 网页登录，用 code 拿用户的 access_token (包括openid 和 unionid)
+<<<<<<< HEAD
 export const web_codeToAccessToken = async function (code) {
+=======
+export const web_codeToAccessToken = async function(code) {
+>>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
     const result = await fetch(`https://api.weixin.qq.com/sns/oauth2/access_token?appid=${conf.webAppId}&secret=${conf.webAppSe}&code=${code}&grant_type=authorization_code`)
     const data = await result.json()
     return data
 }
 
 // 网页登录，用access_token + openid 拿用户信息
+<<<<<<< HEAD
 export const web_accessTokenToUserInfo = async function (accessToken, openid) {
+=======
+export const web_accessTokenToUserInfo = async function(accessToken, openid) {
+>>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
     const result = await fetch(`https://api.weixin.qq.com/sns/userinfo?access_token=${accessToken}&openid=${openid}`)
     const data = await result.json()
     return data
 }
 
 // 网页登录，用token拿用户信息
+<<<<<<< HEAD
 export const web_codeToUserInfo = async function (code) {
+=======
+export const web_codeToUserInfo = async function(code) {
+>>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
     const accessTokenResult = await web_TokenToAccessToken()
     const result = await fetch(`https://api.weixin.qq.com/sns/userinfo?access_token=${accessTokenResult.access_token}&openid=${accessTokenResult.openid}`)
     const data = await result.json()
@@ -72,17 +88,29 @@ export const web_codeToUserInfo = async function (code) {
 }
 
 // 服务号拿access_token
+<<<<<<< HEAD
 export const pub_getAccessToken = async function () {
 
     // 先从缓存中找access_token
     let accseeToken = await redisPromiseGet('pub_access_token')
     if (accseeToken) {
+=======
+export const pub_getAccessToken = async function() {
+
+    // 先从缓存中找access_token
+    let accseeToken = await redisPromiseGet('pub_access_token')
+    if(accseeToken) {
+>>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
         return accseeToken
     }
 
     const result = await fetch(`https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${conf.pubAppId}&secret=${conf.pubAppSe}`)
     const data = await result.json()
+<<<<<<< HEAD
     if (data.access_token) {
+=======
+    if(data.access_token) {
+>>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
         redisPromiseSet('pub_access_token', data.access_token, (data.expires_in || 200) - 200)
         return data.access_token
     }
@@ -90,18 +118,30 @@ export const pub_getAccessToken = async function () {
 }
 
 // 服务号获取用户信息
+<<<<<<< HEAD
 export const pub_openidToUserInfo = async function (openid) {
+=======
+export const pub_openidToUserInfo = async function(openid) {
+>>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
     const accseeToken = await pub_getAccessToken()
 
     const result = await fetch(`https://api.weixin.qq.com/cgi-bin/user/info?access_token=${accseeToken}&openid=${openid}&lang=zh_CN`)
     const data = await result.json()
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
     return data
 }
 
 
 // 服务号推送模板消息通用方法
+<<<<<<< HEAD
 export const pub_pushTemplateMsg = async function (openid, templateId, url, data) {
+=======
+export const pub_pushTemplateMsg = async function(openid, templateId, url, data) {
+>>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
     const accseeToken = await pub_getAccessToken()
     const result = await fetch(`https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=${accseeToken}`, {
         method: 'post',
@@ -125,6 +165,7 @@ export const pub_pushTemplateMsg = async function (openid, templateId, url, data
 // 3进度信息：XXX 创建了讨论
 // 点击参与讨论
 // 点击: /discuss/topic/+topicId
+<<<<<<< HEAD
 export const createTopicTemplate = async function (userIdList, topicObj) {
     console.log("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
     console.log(topicObj._id);
@@ -135,12 +176,26 @@ export const createTopicTemplate = async function (userIdList, topicObj) {
             pub_pushTemplateMsg(
                 item.openid,
                 'p6pZBXX0SaqODRDZgY_3NqyIAK0mYN9HXYq6yMLyA04',
+=======
+export const createTopicTemplate = async function(userIdList, topicObj) {
+    const openidList = await userDB.openidList(userIdList)
+
+    openidList.map((item) => {
+        if(typeof item.openid == 'string') {
+            pub_pushTemplateMsg(
+                item.openid, 
+                'p6pZBXX0SaqODRDZgY_3NqyIAK0mYN9HXYq6yMLyA04', 
+>>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
                 'http://www.animita.cn/team/discuss/topic/' + topicObj._id,
                 {
                     "first": {
                         "value": topicObj.creator.name + " 创建了讨论",
                     },
+<<<<<<< HEAD
                     "keyword1": {
+=======
+                    "keyword1":{
+>>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
                         "value": topicObj.title,
                     },
                     "keyword2": {
@@ -149,7 +204,11 @@ export const createTopicTemplate = async function (userIdList, topicObj) {
                     "keyword3": {
                         "value": topicObj.content,
                     },
+<<<<<<< HEAD
                     "remark": {
+=======
+                    "remark":{
+>>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
                         "value": "点击查看",
                     }
                 }
@@ -167,6 +226,7 @@ export const createTopicTemplate = async function (userIdList, topicObj) {
 // 3进度信息：XXX 创建了讨论
 // 点击参与讨论
 // 点击: /discuss/topic/+topicId
+<<<<<<< HEAD
 export const replyTopicTemplate = async function (userIdList, discussObj) {
     const openidList = await userDB.openidList(userIdList)
 
@@ -175,12 +235,26 @@ export const replyTopicTemplate = async function (userIdList, discussObj) {
             pub_pushTemplateMsg(
                 item.openid,
                 'p6pZBXX0SaqODRDZgY_3NqyIAK0mYN9HXYq6yMLyA04',
+=======
+export const replyTopicTemplate = async function(userIdList, discussObj) {
+    const openidList = await userDB.openidList(userIdList)
+
+    openidList.map((item) => {
+        if(typeof item.openid == 'string') {
+            pub_pushTemplateMsg(
+                item.openid, 
+                'p6pZBXX0SaqODRDZgY_3NqyIAK0mYN9HXYq6yMLyA04', 
+>>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
                 'http://www.animita.cn/team/discuss/topic/' + discussObj.topicId,
                 {
                     "first": {
                         "value": discussObj.creator.name + " 回复了讨论",
                     },
+<<<<<<< HEAD
                     "keyword1": {
+=======
+                    "keyword1":{
+>>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
                         "value": discussObj.title,
                     },
                     "keyword2": {
@@ -189,7 +263,11 @@ export const replyTopicTemplate = async function (userIdList, discussObj) {
                     "keyword3": {
                         "value": discussObj.content,
                     },
+<<<<<<< HEAD
                     "remark": {
+=======
+                    "remark":{
+>>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
                         "value": "点击查看",
                     }
                 }
@@ -198,6 +276,7 @@ export const replyTopicTemplate = async function (userIdList, discussObj) {
     })
 }
 
+<<<<<<< HEAD
 //申请加入团队审核
 export const applyIntoTeam = async function (userIdList, userObj) {
     const opneidList = await userDB.openidList(userIdList)
@@ -255,3 +334,5 @@ export const admitIntoTeam = async function (userIdList, teamObj) {
         }
     })
 }
+=======
+>>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418

@@ -44,6 +44,10 @@
     "lodash.merge": "^4.6.0",
     "lru-cache": "4.0.1",
     "mkdirp": "^0.5.1",
+<<<<<<< HEAD
+=======
+    "mockjs": "^1.0.1-beta3",
+>>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
     "moment": "^2.19.1",
     "mongodb": "^3.0.3",
     "morgan": "1.6.1",
@@ -55,6 +59,10 @@
     "rc-touchable": "^1.2.3",
     "react": "^16.2.0",
     "react-addons-css-transition-group": "^15.5.2",
+<<<<<<< HEAD
+=======
+    "react-addons-pure-render-mixin": "^15.6.2",
+>>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
     "react-addons-shallow-compare": "^15.5.2",
     "react-apollo": "^1.4.11",
     "react-copy-to-clipboard": "^5.0.1",

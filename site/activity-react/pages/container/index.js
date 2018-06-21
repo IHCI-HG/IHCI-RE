@@ -14,11 +14,19 @@ import TeamAdmin from './team-admin'
 import TeamJoin from './team-join'
 import TeamCreate from './team-create'
 import Person from './person'
+<<<<<<< HEAD
 import Discuss from './discuss'
+=======
+import TeamDetail from './team-detail'
+>>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
 import Topic from './topic'
 import Timeline from './timeline'  
 import Member from './member'  
 import Sign from './sign'
+<<<<<<< HEAD
+=======
+import TaskDetail from './todo'
+>>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
 
 class App extends React.Component{
     state = {
@@ -106,10 +114,18 @@ const routeConfig = [
             { path: 'sign', component: Sign },
             { path: 'team-create', component: TeamCreate },
             { path: 'person', component: Person },
+<<<<<<< HEAD
             { path: 'discuss/:id', component: Discuss },
             { path: 'discuss/topic/:id', component: Topic },
             { path: 'timeline', component: Timeline },
             { path: 'member', component: Member },
+=======
+            { path: 'team/:id', component: TeamDetail },
+            { path: 'discuss/topic/:id', component: Topic },
+            { path: 'timeline', component: Timeline },
+            { path: 'member', component: Member },
+            { path: 'todo/:id', component: TaskDetail },
+>>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
         ]
     }
 ]

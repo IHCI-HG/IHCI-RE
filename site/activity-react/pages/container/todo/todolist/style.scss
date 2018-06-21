@@ -1,0 +1,38 @@
+.todolist {
+    margin-bottom: 30px;
+    position: relative;
+    .todolist-name {
+        position: relative;
+        margin-bottom: 5px;
+        padding: 5px;
+        &:hover {
+            .name-actions {
+                visibility: visible;
+            }
+        }
+    }
+    h4 {
+        color: #3e7598;
+    }
+    .name-actions {
+        visibility: hidden;
+        padding: 2px 4px;
+        border-radius: 6px;
+        border: 1px solid rgba(200, 200, 200, .6);
+        background-color: white;
+        position: absolute;
+        left: -1.05rem;
+        top: -0.03rem;
+        .icon {
+            margin: 0 6px;
+        }
+    }
+    .new-todo {
+        display: inline-block;
+        font-size: 14px;
+        padding: 10px 5px 10px 38px;
+        color: #4ea5ad;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+}

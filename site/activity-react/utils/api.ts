@@ -54,3 +54,11 @@ export function authApi(un: string, pw: string): any {
     })
     return result
 }
+<<<<<<< HEAD
+=======
+
+
+// post put(patch) delete get
+// restful
+
+>>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
