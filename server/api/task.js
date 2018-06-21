@@ -59,7 +59,8 @@ const updateTasklist = async (req,res,next) => {
     const teamId = req.body.teamId;
 
     const editTasklist = {
-        name: name
+        name: name,
+        listid: listId
     }
 
     if(!listId) {
@@ -75,11 +76,18 @@ const updateTasklist = async (req,res,next) => {
         const result = await tasklistDB.updateTasklist(listId,editTasklist);
 
         await teamDB.updateTasklist(teamId, listId, editTasklist)
-
-        resProcessor.jsonp(req, res, {
-            state: { code: 0, msg: '请求成功' },
-            data: result
-        })
+        
+        if(result.ok) {
+            resProcessor.jsonp(req, res, {
+                state: { code: 0, msg: '请求成功' },
+                data: editTasklist
+            })
+        } else {
+            resProcessor.jsonp(req, res, {
+                state: { code: 1, msg: '操作失败' },
+                data: {}
+            });
+        }
     } catch(error) {
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: '操作失败' },
