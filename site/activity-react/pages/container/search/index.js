@@ -286,7 +286,7 @@ export default class SearchResult extends React.Component{
     render() {
         const showList = this.state.showList
         return (
-            <Page className="result-page">
+            <Page title='搜索 - IHCI'  className="result-page">
                 
                 {
                     this.state.showTeamFilter && <div className="team-list" onMouseLeave={this.teamFilterHandle}>

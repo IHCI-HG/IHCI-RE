@@ -193,7 +193,7 @@ export default class News extends React.Component{
     render() {
         const showList = this.state.showList
         return (
-            <Page className="news-page">
+            <Page title='动态 - IHCI' className="news-page">
                 
                 {
                     this.state.showTeamFilter && <div className="team-list" onMouseLeave={this.teamFilterHandle}>
