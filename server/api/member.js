@@ -36,14 +36,14 @@ const member = async (req, res, next) => {
     const memberList = []
     await Promise.all ( memberId.map(async item => {
         const memberObj = await userDB.findByUserId(item)  
-        console.log("这是我cha的数据:",memberObj)
-        memberList.push(memberObj.personInfo)            
+   //   console.log("这是我cha的数据:",memberObj._id)
+        memberList.push(memberObj)       //修改      
         }))        
     resProcessor.jsonp(req, res, {
         state: { code: 0 },
         data: memberList
     });
-
+   // console.log("这是的数据:",memberList)
 }
 
 module.exports = [

@@ -159,4 +159,5 @@ module.exports = [
     ['GET', '/discuss/topic/:id', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/timeline', clientParams(),    routerAuthJudge, pageHandle() ],
     ['GET', '/member', clientParams(),   routerAuthJudge, pageHandle() ],
+    ['GET', '/search', clientParams(),   routerAuthJudge, pageHandle() ],
 ];

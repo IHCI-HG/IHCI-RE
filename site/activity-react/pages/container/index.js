@@ -21,6 +21,7 @@ import Topic from './topic'
 import Timeline from './timeline'  
 import Member from './member'  
 import Sign from './sign'
+import SearchResult from './search'
 
 class App extends React.Component{
     state = {
@@ -29,6 +30,7 @@ class App extends React.Component{
         personInfo: {
             teamList: []
         },
+        searchText : '',
     }
     componentWillMount = async() => { 
         this.setHeadImg()
@@ -50,10 +52,21 @@ class App extends React.Component{
         }
     }
 
+    handleSearchTextChange = (e) =>{
+        this.setState({
+            searchText : e.target.value
+        })
+    }
+
+    handleSearchRequest = (e) => {
+        location.href = '/search' + (this.state.searchText? '?text=' + this.state.searchText : '') 
+        e.preventDefault();
+    }
+
     routerHandle = (toUrl) => {
         this.activeTagHandle(toUrl)
         this.props.router.push(toUrl)
-    } 
+    }
 
     // 处理路由变化的时候高亮的tag
     activeTagHandle = (url) => {
@@ -68,6 +81,9 @@ class App extends React.Component{
         }
         if(/timeline/.test(url)) {
             this.setState({activeTag: 'timeline'})
+        }
+        if(/search/.test(url)) {
+            this.setState({activeTag: 'search'})
         }
     }
 
@@ -84,6 +100,14 @@ class App extends React.Component{
                         </div>
                     </div>
                     <div className="person">
+                        <div className='search-bar'>
+                            <form className="searchBox" onSubmit={this.handleSearchRequest}>
+                                <span className="iconfont icon-search" onClick={()=>{this.searchInputr.focus()}}></span>
+                                <input className='searchInput' ref={(input) => { this.searchInputr = input; }} type="text" onChange={this.handleSearchTextChange} placeholder="搜索"/>
+                            </form>
+                            {/* <span className="iconfont icon-search" onClick={this.testHandle.bind(this, '/search', 'test', '5b208f7283ea922626e46793')}></span> */}
+                        
+                        </div>
                         <Link className='nav-item' activeClassName='nav-item active' to="/person">
                             <img className="head-img" src={this.state.headImg} />
                         </Link>
@@ -113,6 +137,7 @@ const routeConfig = [
             { path: 'discuss/topic/:id', component: Topic },
             { path: 'timeline', component: Timeline },
             { path: 'member', component: Member },
+            { path: 'search', component: SearchResult },
         ]
     }
 ]

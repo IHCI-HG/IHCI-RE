@@ -69,7 +69,7 @@ userSchema.statics = {
     baseInfoById: async function(userId) {
         const result = await this.findById(userId)
         if(result.personInfo) {
-            result.personInfo._id = result._id
+            result.personInfo._id = result.id  //源代码是result_id
             return result.personInfo
         } else {
             return {
