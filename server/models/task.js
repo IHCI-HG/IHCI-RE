@@ -10,6 +10,7 @@ const taskSchema = new Schema({
     creator: { type: mongoose.Schema.Types.Mixed, require: true },
     fileList: [mongoose.Schema.Types.Mixed],
     teamId: String,
+    tasklistId: String,
     deadline: String,
     completed_time: String,
     header: String,
@@ -26,13 +27,14 @@ const taskSchema = new Schema({
 })
 
 taskSchema.statics = {
-    createTask: async function (title, content, creator, fileList, teamId, deadline, header) {
+    createTask: async function (title, content, creator, fileList, teamId, tasklistId, deadline, header) {
         return this.create({
             title: title,
             content: content,
             creator: creator,
             fileList: fileList || [],
             teamId: teamId,
+            tasklistId: tasklistId,
             deadline: deadline,
             header: header,
             checkitemList: [],

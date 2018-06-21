@@ -65,6 +65,9 @@ const login = async (req, res, next) => {
     const username = lo.get(req, 'body.username')
     const password = lo.get(req, 'body.password')
 
+    console.log("..................................");
+    console.log(req);
+    console.log("..................................");
 
     if(!username || !password) {
         resProcessor.jsonp(req, res, {

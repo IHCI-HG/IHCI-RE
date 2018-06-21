@@ -12,6 +12,7 @@ const teamSchema = new mongoose.Schema({
     topicList: [mongoose.Schema.Types.Mixed],
     memberList: [mongoose.Schema.Types.Mixed],
     taskList: [mongoose.Schema.Types.Mixed],
+    tasklistList: [mongoose.Schema.Types.Mixed]
 })
 
 /* memberListItem
@@ -102,6 +103,12 @@ teamSchema.statics = {
         ).update(
             { _id: teamId, "taskList._id": mongoose.Types.ObjectId(taskId) },
             { $set: { "taskList.$.deadline": editTask.deadline } }
+        ).update(
+            { _id: teamId, "taskList._id": mongoose.Types.ObjectId(taskId) },
+            { $set: { "taskList.$.completed_time": editTask.completed_time } }
+        ).update(
+            { _id: teamId, "taskList._id": mongoose.Types.ObjectId(taskId) },
+            { $set: { "taskList.$.state": editTask.state } }
         ).exec()
     },
     delTask: async function (teamId, taskId) {
@@ -111,6 +118,25 @@ teamSchema.statics = {
         ).exec()
     },
 
+    //tasklist操作
+    addTasklist: async function (teamId, tasklistObj) {
+        return this.update(
+            { _id: teamId },
+            { $push: { tasklistList: tasklistObj } }
+        ).exec()
+    },
+    updateTasklist: async function (teamId, tasklistId, editTasklist) {
+        return this.update(
+            { _id: teamId, "tasklistList._id": mongoose.Types.ObjectId(tasklistId) },
+            { $set: { "tasklistList.$.name": editTasklist.name } }
+        ).exec()
+    },
+    delTasklist: async function (teamId, tasklistId) {
+        return this.update(
+            { _id: teamId },
+            { $pull: { "tasklistList._id": tasklistId } }
+        ).exec()
+    },
 }
 
 mongoose.model('team', teamSchema);
