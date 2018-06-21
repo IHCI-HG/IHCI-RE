@@ -75,11 +75,12 @@ export default class News extends React.Component{
 
     initTimelineData = async () => {
         const queryTeamId = this.props.location.query.teamId
-
+        const queryUserId = this.props.location.query.userId
         const result = await api('/api/timeline/getTimeline', {
             method: 'POST',
-            body: queryTeamId ? {
-                teamId: queryTeamId
+            body: queryTeamId||queryUserId ? {
+                teamId: queryTeamId,
+                userId: queryUserId
             } : {}
         })
         this.setState({
@@ -87,7 +88,11 @@ export default class News extends React.Component{
         }, () => {
             this.appendToShowList(this.state.newsList)
         })
-
+        if(queryUserId){
+            this.setState({
+                showFilter: false
+            })
+        }
     }
 
     initTeamList = () => {
@@ -148,7 +153,7 @@ export default class News extends React.Component{
         showList: {
             keyList : [],
         },
-
+        showFilter: true,
         showTeamFilter: false,
         teamList: [],
     }
@@ -224,7 +229,8 @@ export default class News extends React.Component{
                 
 
                 <div className="news-list page-wrap">
-                    <div className='news-filter' onClick={this.teamFilterHandle}>
+                {
+                    this.state.showFilter&&<div className='news-filter' onClick={this.teamFilterHandle}>
                         筛选动态： {
                             this.props.location.query.teamId ? this.props.personInfo.teamList.map((item) => {
                                 if(item.teamId == this.props.location.query.teamId)
@@ -232,6 +238,7 @@ export default class News extends React.Component{
                             }) : "根据团队"
                         }
                     </div>
+                }
                     {
                         showList.keyList.map((timeKey) => {
                             return (
