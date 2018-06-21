@@ -7,10 +7,6 @@ import api from '../../../utils/api';
 import { timeParse, formatDate } from '../../../utils/util'
 import Page from '../../../components/page'
 
-// function jumpHandle(text, teamId, type){
-//     console.log((text, teamId, type))
-    
-// }
 
 class TeamChoseItem extends React.PureComponent{
     doJump = () => {
@@ -314,7 +310,6 @@ export default class SearchResult extends React.Component{
                         }
                     </div>
                 }
-
                 {
                     this.state.showTypeFilter && <div className="type-list" onMouseLeave={this.typeFilterHandle}>
                         {/* <input type="text" className="search" onChange={this.searchInputHandle} /> */}
