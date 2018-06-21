@@ -357,4 +357,5 @@ const delFolder = async function(teamId, dir, folderName) {
 }
 
 exports.createFile = createFile;
+exports.createFolder = createFolder;
 exports.getDirFileList = getDirFileList;

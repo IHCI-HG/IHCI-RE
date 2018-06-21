@@ -33,7 +33,7 @@ const getOssStsToken = async (req, res, next) => {
     }
 }
 
-const uploadFile = async (req, res, next) => {
+const createFile = async (req, res, next) => {
 
     const fileInfo = req.body.fileInfo || {} 
     const userId = req.rSession.userId
@@ -42,7 +42,7 @@ const uploadFile = async (req, res, next) => {
         let fileObj = await file.createFile(fileInfo.teamId,fileInfo.dir,fileInfo.fileName,fileInfo.ossKey)
 
         resProcessor.jsonp(req, res, {
-            state: {code: 0,msg: "Successfully appended file"},
+            state: {code: 0,msg: "Successfully created file"},
             data: {
                 fileObj: fileObj
             }
@@ -50,10 +50,33 @@ const uploadFile = async (req, res, next) => {
     } catch (error) {
         console.log(error)
         resProcessor.jsonp(req, res, {
-            state: {code: 1,msg: "File append failed"},
+            state: {code: 1,msg: "File create failed"},
             data: {},
             info: fileInfo,
         });
+    }
+}
+
+const createFolder = async (req, res, next) => {
+    const folderInfo = req.body.folderInfo || {}
+    const userId = req.rSession.userId
+
+    try {
+        let folderObj = await file.createFolder(folderInfo.teamId,folderInfo.dir,folderInfo.folderName)
+
+        resProcessor.jsonp(req, res, {
+            state: {code: 0,msg: "Successfully created folder"},
+            data: {
+                folderObj: folderObj
+            }
+        })
+    } catch (error) {
+        console.log(error)
+        resProcessor.jsonp(req, res, {
+            state: {code: 1,msg: "Folder create failed"},
+            data: {},
+            info: folderInfo,
+        })
     }
 }
 
@@ -83,6 +106,7 @@ const getDirFileList = async (req, res, next) => {
 
 module.exports = [
     ['GET', '/api/getOssStsToken', apiAuth, getOssStsToken],
-    ['POST','/api/file/uploadFile',apiAuth, uploadFile],
+    ['POST','/api/file/createFile',apiAuth, createFile],
+    ['POST','/api/file/createFolder',apiAuth, createFolder],
     ['POST','/api/file/getDirFileList',apiAuth, getDirFileList]
 ];

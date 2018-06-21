@@ -10,6 +10,7 @@ export default class Team extends React.Component{
 
     state =  {
         chosenFile: {},
+        folderName: '',
         teamId: 'aaaaaaaaaaaa',
         dir: '/',
         ossKey: '',
@@ -23,7 +24,7 @@ export default class Team extends React.Component{
         this.fileInput.click()
     }
 
-    handleChange = async (e) => {
+    uploadFileHandle = async (e) => {
 
         var file = e.target.files[0];
         this.setState({
@@ -32,7 +33,7 @@ export default class Team extends React.Component{
 
         console.log(file)
 
-        const result = await api('/api/file/uploadFile', {
+        const result = await api('/api/file/createFile', {
             method: 'POST',
             body: {
                 fileInfo: {
@@ -47,13 +48,33 @@ export default class Team extends React.Component{
         console.log(result);
 
         if(result.state.code === 0) {
-            window.toast("Appended")
+            window.toast("File appended")
         }
 
         fileUploader('teamxxx', '/aa', file)
     }
 
-    getDirFileList = async () => {
+    createFolderHandle = async () => {
+        const result = await api('/api/file/createFolder',{
+            method: 'POST',
+            body: {
+                folderInfo: {
+                    teamId: this.state.teamId,
+                    dir: this.state.dir,
+                    folderName: this.folderName
+                }
+            }
+        })
+        
+        console.log(result);
+        
+        if(result.state.code === 0) {
+            window.toast("Folder created")
+        }
+
+    }
+
+    getDirFileListHandle = async () => {
         const result = await api('/api/file/getDirFileList',{
             method: 'POST',
             body: {
@@ -71,6 +92,12 @@ export default class Team extends React.Component{
         }
     }
 
+    folderNameChangeHandle = (e) => {
+        this.setState({
+            folderName: e.target.value
+        })
+    }
+
     render() {
         return (
             <Page title="这是个测试用页面" className='test-page'>
@@ -78,9 +105,15 @@ export default class Team extends React.Component{
                 <div onClick={this.openFileInput}>上传文件</div>
                 <div>选中的文件: {this.state.chosenFile.name}</div>
 
-                <input type="file" ref={(fileInput) => this.fileInput = fileInput} onChange={this.handleChange}></input>
+                <input type="file" ref={(fileInput) => this.fileInput = fileInput} onChange={this.uploadFileHandle}></input>
 
-                <div onClick={this.getDirFileList}>ShowFiles</div>
+                <div onClick={this.getDirFileListHandle}>ShowFiles</div>
+                    
+                <div className="folder_name">文件夹名称</div>
+                <input type="text" value={this.state.folderName} className="folder_input" onChange={this.folderNameChangeHandle} />
+                    
+                <div className="sava-btn" onClick={this.createFolderHandle}>Confirm</div>
+            
             </Page>
         )
     }
