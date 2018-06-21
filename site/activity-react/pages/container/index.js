@@ -99,15 +99,15 @@ class App extends React.Component{
                             <span className={this.state.activeTag == 'member' ? 'nav-item active' : 'nav-item'} onClick={this.routerHandle.bind(this, '/member')}>成员</span>
                         </div>
                     </div>
-                    <div className='search-bar'>
-                        <form className="searchBox" onSubmit={this.handleSearchRequest}>
-                            <input className='searchInput' type="text" onChange={this.handleSearchTextChange} placeholder="type in keywords to search"/>
-                            <span className="iconfont icon-search" onClick={this.handleSearchRequest}></span>
-                        </form>
-                        {/* <span className="iconfont icon-search" onClick={this.testHandle.bind(this, '/search', 'test', '5b208f7283ea922626e46793')}></span> */}
-                    
-                    </div>
                     <div className="person">
+                        <div className='search-bar'>
+                            <form className="searchBox" onSubmit={this.handleSearchRequest}>
+                                <span className="iconfont icon-search" onClick={()=>{this.searchInputr.focus()}}></span>
+                                <input className='searchInput' ref={(input) => { this.searchInputr = input; }} type="text" onChange={this.handleSearchTextChange} placeholder="搜索"/>
+                            </form>
+                            {/* <span className="iconfont icon-search" onClick={this.testHandle.bind(this, '/search', 'test', '5b208f7283ea922626e46793')}></span> */}
+                        
+                        </div>
                         <Link className='nav-item' activeClassName='nav-item active' to="/person">
                             <img className="head-img" src={this.state.headImg} />
                         </Link>
