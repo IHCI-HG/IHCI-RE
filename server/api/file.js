@@ -84,5 +84,5 @@ const getDirFileList = async (req, res, next) => {
 module.exports = [
     ['GET', '/api/getOssStsToken', apiAuth, getOssStsToken],
     ['POST','/api/file/uploadFile',apiAuth, uploadFile],
-    ['GET','/api/file/getDirFileList',apiAuth, getDirFileList]
+    ['POST','/api/file/getDirFileList',apiAuth, getDirFileList]
 ];

@@ -55,7 +55,7 @@ export default class Team extends React.Component{
 
     getDirFileList = async () => {
         const result = await api('/api/file/getDirFileList',{
-            method: 'GET',
+            method: 'POST',
             body: {
                 dirInfo: {
                     teamId: this.state.teamId,
@@ -67,7 +67,7 @@ export default class Team extends React.Component{
         console.log(result);
 
         if(result.state.code == 0) {
-            windows.toast("Got file list")
+            window.toast("Got file list")
         }
     }
 

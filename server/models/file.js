@@ -155,7 +155,8 @@ const dirFileExist = async function (teamId, dir, fileName) {
 }
 
 const getDirFileList = async function(teamId, dir) {
-    const folderObj = await folderObj.findOne({
+    console.log(dir)
+    const folderObj = await folderDB.findOne({
         team: mongoose.Types.ObjectId(teamId),
         dir: dir
     }).exec()
