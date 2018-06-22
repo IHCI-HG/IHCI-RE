@@ -7,7 +7,7 @@ var fs = require('fs'),                 //test一下
     express = require('express'),
     commander = require('commander'),      //zcc test
 
-    server = require('./server'),
+    server = require('./server'),//ceshwedwedwedwe
     conf = require('./conf'),
 
     numCPUs = os.cpus().length,
