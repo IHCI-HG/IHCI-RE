@@ -13,7 +13,7 @@ import Page from '../../../components/page'
 export default class News extends React.Component{
     componentDidMount = async() => {
         await this.initTeamList()
-        await this.initMemberData()
+        await this.initMemberData()          //cccccccccccccccccgit
 
     }
     initTeamList = async () => {
