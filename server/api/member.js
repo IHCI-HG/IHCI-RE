@@ -11,7 +11,7 @@ var mongoose = require('mongoose')
 var teamDB = mongoose.model('team')
 var userDB = mongoose.model('user')
 var timelineDB = mongoose.model('timeline')
-const member = async (req, res, next) => {
+const member = async (req, res, next) => {         
     const teamId = req.body.teamId
     const userId = req.rSession.userId 
     const memberId = []
@@ -36,7 +36,6 @@ const member = async (req, res, next) => {
     const memberList = []
     await Promise.all ( memberId.map(async item => {
         const memberObj = await userDB.findByUserId(item)  
-   //   console.log("这是我cha的数据:",memberObj._id)
         memberList.push(memberObj)       //修改      
         }))        
     resProcessor.jsonp(req, res, {
