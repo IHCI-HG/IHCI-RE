@@ -53,8 +53,13 @@ class App extends React.Component{
     }
 
     handleSearchTextChange = (e) =>{
+        var searchInputText =  e.target.value
+        var length = searchInputText.length
+        if (length > 42)
+            searchInputText = searchInputText.substring(0,42)
+
         this.setState({
-            searchText : e.target.value
+            searchText : searchInputText
         })
     }
 

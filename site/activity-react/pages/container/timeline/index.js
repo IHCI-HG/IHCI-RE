@@ -95,29 +95,58 @@ export default class News extends React.Component{
             shownTeam: this.props.personInfo && this.props.personInfo.teamList || [],
         })
     }
+    
+    getMoreTimelineData = async () => {
+        const queryTeamId = this.props.location.query.teamId
+        const lastStamp = this.state.lastStamp
+        // const result = await api('/api/timeline/getTimeline', {
+        //     method: 'POST',
+        //     body: {
+        //         teamId: queryTeamId ? queryTeamId :'',
+        //         lastStamp: lastStamp? lastStamp: '',
+        //     }
+        // })
+        const result = {data:[]}
+        this.setState({
+            newsList: result.data
+        }, () => {
+            this.appendToShowList(this.state.newsList)
+        })
+    }
 
     appendToShowList = (list) => {
         let showList = this.state.showList
-
-        list.map((item) => {
-            var timeKey = timeParse(item.create_time)
-            if(!showList[timeKey]) {
-                showList.keyList.push(timeKey)
-                showList[timeKey] = {}
-                showList[timeKey].teamKeyList = []
-            }
-            if(!showList[timeKey][item.teamId]) {
-                showList[timeKey].teamKeyList.push(item.teamId)
-                showList[timeKey][item.teamId] = {}
-                showList[timeKey][item.teamId].teamName = item.teamName
-                showList[timeKey][item.teamId].newsList = []
-            }
-            showList[timeKey][item.teamId].newsList.push(item)
-        })
-
-        this.setState({
-            showList: showList
-        })
+        var listLength = list.length
+        if(listLength > 0){
+            list.map((item) => {
+                var timeKey = timeParse(item.create_time)
+                if(!showList[timeKey]) {
+                    showList.keyList.push(timeKey)
+                    showList[timeKey] = {}
+                    showList[timeKey].teamKeyList = []
+                }
+                if(!showList[timeKey][item.teamId]) {
+                    showList[timeKey].teamKeyList.push(item.teamId)
+                    showList[timeKey][item.teamId] = {}
+                    showList[timeKey][item.teamId].teamName = item.teamName
+                    showList[timeKey][item.teamId].newsList = []
+                }
+                showList[timeKey][item.teamId].newsList.push(item)
+            })
+            this.setState({
+                showList: showList,
+                lastStamp: list[listLength - 1].create_time
+            })
+        }
+        else if (showList.keyList.length == 0){
+            this.setState({
+                noResult: true,
+            })
+        } else {
+            this.setState({
+                noMoreResult: true,
+            })
+        }
     }
 
     typeMap = {
@@ -150,6 +179,8 @@ export default class News extends React.Component{
 
         showTeamFilter: false,
         teamList: [],
+        noResult: false,
+        noMoreResult: false,
     }
 
 
@@ -257,7 +288,13 @@ export default class News extends React.Component{
                         })
                     } 
 
-                    <div className="load-more" onClick={() => {}}>点击加载更多</div>
+                    {this.state.noResult && <div className='null-info'>无动态</div>}
+                    <div className='load-more-bar'>
+                        {!this.state.noResult && !this.state.noQuery && !this.state.noMoreResult && <div className="load-more" onClick={this.getMoreTimelineData}>
+                            点击加载更多
+                        </div>}
+                        {this.state.noMoreResult && <div className="no-more-result-alert">没有更多动态！</div>}
+                    </div>
                 </div>
 
                 
