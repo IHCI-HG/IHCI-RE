@@ -73,7 +73,7 @@ export default class MainPage extends React.Component {
         const result = await authApi(this.state.username, this.state.password)
         if(result.state.code === 0) {
             window.toast("登录成功")
-            window.location.href = '/team'
+            // window.location.href = '/team'
         } else {
             window.toast(result.state.msg || "登录失败")
         }
