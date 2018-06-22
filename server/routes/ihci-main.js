@@ -140,6 +140,7 @@ const joinTeam = async (req, res, next) => {
 module.exports = [
     // 主页
     ['GET', '/', clientParams(), mainPage],
+
     ['GET', '/auth', clientParams(), wxAuthCodeHandle , mainPage],
     ['GET', '/team', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/sign', clientParams(), routerAuthJudge, pageHandle() ],

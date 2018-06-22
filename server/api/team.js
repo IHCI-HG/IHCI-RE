@@ -12,6 +12,8 @@ import {
     web_codeToAccessToken, 
     web_accessTokenToUserInfo,
     web_codeToUserInfo,
+    applyIntoTeam,
+    admitIntoTeam
 } from '../components/wx-utils/wx-utils'
 
 var mongoose = require('mongoose')
@@ -90,6 +92,11 @@ const joinTeam = async (req, res, next) => {
             });
             return
         }
+
+        //提交申请
+        // let userObj = userDB.baseInfoById(userId);
+        // applyIntoTeam(teamObj.memberList,userObj);
+
 
         await teamDB.addMember(teamId, userId, 'member')
         await userDB.addTeam(userId, teamObj, 'member')
