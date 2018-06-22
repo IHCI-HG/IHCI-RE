@@ -1,20 +1,20 @@
 require('babel-polyfill');
 
-var fs = require('fs'),                 //test一下
+var fs = require('fs'),                 
     path = require('path'),
-    cluster = require('cluster'),        //test两下
+    cluster = require('cluster'),       
     os = require('os'),
     express = require('express'),
-    commander = require('commander'),      //zcc test
+    commander = require('commander'),      
 
-    server = require('./server'),//ceshwedwedwedwe
+    server = require('./server'),
     conf = require('./conf'),
 
     numCPUs = os.cpus().length,
     maxClusterCount = numCPUs,
     clusterCount = 1,
 
-    app = server.app,//gitswdwgit 
+    app = server.app,
 
     // 模式定义
     DEV = 'development',
