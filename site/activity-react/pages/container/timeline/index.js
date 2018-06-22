@@ -115,7 +115,6 @@ export default class News extends React.Component{
             showList[timeKey][item.teamId].newsList.push(item)
         })
 
-        console.log(showList);
         this.setState({
             showList: showList
         })
