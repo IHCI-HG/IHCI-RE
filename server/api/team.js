@@ -12,11 +12,6 @@ import {
     web_codeToAccessToken, 
     web_accessTokenToUserInfo,
     web_codeToUserInfo,
-<<<<<<< HEAD
-    applyIntoTeam,
-    admitIntoTeam
-=======
->>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
 } from '../components/wx-utils/wx-utils'
 
 var mongoose = require('mongoose')
@@ -30,10 +25,6 @@ const creatTeam = async (req, res, next) => {
     const teamInfo = req.body.teamInfo || {}
     const userId = req.rSession.userId
 
-<<<<<<< HEAD
-
-=======
->>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
     if(!teamInfo.name || !teamInfo.teamImg || !teamInfo.teamDes) {
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: "参数不全" },
@@ -100,13 +91,6 @@ const joinTeam = async (req, res, next) => {
             return
         }
 
-<<<<<<< HEAD
-        //提交申请
-        // let userObj = userDB.baseInfoById(userId);
-        // applyIntoTeam(teamObj.memberList,userObj);
-
-=======
->>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
         await teamDB.addMember(teamId, userId, 'member')
         await userDB.addTeam(userId, teamObj, 'member')
         teamObj = await teamDB.findByTeamId(teamId)

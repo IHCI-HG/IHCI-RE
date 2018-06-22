@@ -65,13 +65,6 @@ const login = async (req, res, next) => {
     const username = lo.get(req, 'body.username')
     const password = lo.get(req, 'body.password')
 
-<<<<<<< HEAD
-    console.log("..................................");
-    console.log(req);
-    console.log("..................................");
-
-=======
->>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
     if(!username || !password) {
         resProcessor.jsonp(req, res, {
             state: { code: 1 , msg: '参数不全'},
@@ -115,10 +108,6 @@ const getMyInfo = async (req, res, next) => {
 }
 
 const logout = async (req, res, next) => {
-<<<<<<< HEAD
-
-=======
->>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
     req.rSession.userId = null
 
     resProcessor.jsonp(req, res, {

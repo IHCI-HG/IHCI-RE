@@ -19,10 +19,6 @@ var discussDB = mongoose.model('discuss')
 var timelineDB = mongoose.model('timeline')
 
 const createTopic = async (req, res, next) => {
-<<<<<<< HEAD
-
-=======
->>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
     const teamId = req.body.teamId
     const topicName = req.body.name
     const topicContent = req.body.content
@@ -44,11 +40,6 @@ const createTopic = async (req, res, next) => {
         const teamObj = await teamDB.findByTeamId(teamId)
         await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'CREATE_TOPIC', result._id, result.title, result)
 
-<<<<<<< HEAD
-        console.log("topicId:"+ result._id);
-
-=======
->>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
         //如果有需要通知的人，则走微信模板消息下发流程
         if(informList && informList.length) {
             createTopicTemplate(informList, result)
@@ -120,10 +111,6 @@ const editTopic = async (req, res, next) => {
 
 
 const createDiscuss = async (req, res, next) => {
-<<<<<<< HEAD
-
-=======
->>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
     const teamId = req.body.teamId
     const topicId = req.body.topicId
     const content = req.body.content
@@ -226,10 +213,6 @@ const topicInfo = async (req, res, next) => {
     const topicId = req.query.topicId
     const userId = req.rSession.userId 
 
-<<<<<<< HEAD
-
-=======
->>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
     if(!topicId) {
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: "参数不全" },
@@ -240,11 +223,7 @@ const topicInfo = async (req, res, next) => {
 
     try {
         const topicObj = await topicDB.findByTopicId(topicId)
-<<<<<<< HEAD
-
-=======
     
->>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
             data: topicObj

@@ -48,6 +48,9 @@ userSchema.statics = {
                 ...userInfo,
                 username: username,
                 password: crypto.createHmac('sha1', conf.salt).update(password).digest('hex'),
+                personInfo: {
+
+                }
             })
         }
     },
@@ -65,8 +68,18 @@ userSchema.statics = {
     },
     baseInfoById: async function(userId) {
         const result = await this.findById(userId)
-        result.personInfo._id = result._id
-        return result.personInfo
+        if(result.personInfo) {
+            result.personInfo._id = result._id
+            return result.personInfo
+        } else {
+            return {
+                "headImg": "",
+                "name": "未设置姓名用户",
+                "phone": "未设置",
+                "mail": "未设置"
+            }
+        }
+
     },
     findByUnionId: async function(unionid) {
         const result = await this.findOne({unionid: unionid}).exec()
