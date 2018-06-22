@@ -14,7 +14,7 @@ var fs = require('fs'),                 //test一下
     maxClusterCount = numCPUs,
     clusterCount = 1,
 
-    app = server.app,//dqwdqwdqwdqwd
+    app = server.app,//gitswdwgit 
 
     // 模式定义
     DEV = 'development',
