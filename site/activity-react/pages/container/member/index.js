@@ -108,7 +108,7 @@ export default class News extends React.Component{
                     {
                         this.state.memberList.map((item) => {
                             return(
-                                <div className="member-item" onClick={()=>this.locationTo('/timeline?userId='+ item._id)} >
+                                <div className="member-item" key={"member-list-" + item._id} onClick={()=>this.locationTo('/timeline?userId='+ item._id)} >
                                     <img src={item.personInfo.headImg} alt="" className="head-img"/>
                                     <span className="name">{item.personInfo.name}</span>
                                     <span className="phone">{item.personInfo.phone}</span>
