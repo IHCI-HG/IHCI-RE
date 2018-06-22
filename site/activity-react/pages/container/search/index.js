@@ -150,6 +150,26 @@ export default class SearchResult extends React.Component{
         })
     }
 
+    showMore = async () => {
+        const queryText = this.props.location.query.text
+        const queryTeamId = this.props.location.query.teamId
+        const queryType = this.props.location.query.type
+        const result = await api('/api/search', {
+            method: 'POST',
+            body: {
+                keyWord: queryText ? queryText : '',
+                teamId: queryTeamId ? queryTeamId :'',
+                type: queryType ? queryType : '',
+                timeStamp: this.state.resultList[this.state.resultList.length-1].create_time
+            }
+        })
+        this.setState({
+            resultList: result.data
+        }, () => {
+            this.appendToShowList(this.state.resultList)
+        })
+    }
+    
     initTeamList = () => {
         this.setState({
             shownTeam: this.props.personInfo && this.props.personInfo.teamList || [],
@@ -381,7 +401,7 @@ export default class SearchResult extends React.Component{
                         })
                     } 
                     {this.state.noResult && <div className='null-info'>无结果</div>}
-                    {!this.state.noResult && !this.state.noQuery &&<div className="load-more" onClick={() => {}}>点击加载更多</div>}
+                    {!this.state.noResult && !this.state.noQuery &&<div className="load-more" onClick={this.showMore}>点击加载更多</div>}
                 </div>
 
             </Page>

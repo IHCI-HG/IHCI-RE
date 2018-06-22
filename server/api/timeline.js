@@ -33,6 +33,7 @@ const returnAll = async (req, res, next) => {
 const returnByTeamList = async (req, res, next) => {
     const teamId = req.body.teamId
     const personId = req.body.userId
+    const timeStamp = req.body.timeStamp
     const userId = req.rSession.userId 
     const teamIdList = []
     const result = []
@@ -71,10 +72,25 @@ const returnByTeamList = async (req, res, next) => {
             result.push(item)
         })
     }
-    console.log("返回的数据",result)
+
+    //console.log("返回的数据",result)
+    const Result = []
+    if(!timeStamp){
+        result.map((item, index)=>{
+            if(index<20){
+                Result.push(item)
+            }
+        })              
+    }else{
+        result.map((item)=>{
+            if(Result.length<10&&item.create_time<timeStamp){
+                Result.push(item)
+            }
+        })
+    }
     resProcessor.jsonp(req, res, {
         state: { code: 0 },
-        data: result
+        data: Result
     });
 }
 
