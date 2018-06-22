@@ -22,6 +22,7 @@ import Timeline from './timeline'  
 import Member from './member'  
 import Sign from './sign'
 import SearchResult from './search'
+import Inform from './inform'
 
 class App extends React.Component{
     state = {
@@ -32,7 +33,7 @@ class App extends React.Component{
         },
         searchText : '',
     }
-    componentWillMount = async() => { 
+    componentWillMount = async() => {
         this.setHeadImg()
     }
     componentDidMount = async() => {
@@ -59,7 +60,7 @@ class App extends React.Component{
     }
 
     handleSearchRequest = (e) => {
-        location.href = '/search' + (this.state.searchText? '?text=' + this.state.searchText : '') 
+        location.href = '/search' + (this.state.searchText? '?text=' + this.state.searchText : '')
         e.preventDefault();
     }
 
@@ -106,7 +107,7 @@ class App extends React.Component{
                                 <input className='searchInput' ref={(input) => { this.searchInputr = input; }} type="text" onChange={this.handleSearchTextChange} placeholder="搜索"/>
                             </form>
                             {/* <span className="iconfont icon-search" onClick={this.testHandle.bind(this, '/search', 'test', '5b208f7283ea922626e46793')}></span> */}
-                        
+
                         </div>
                         <Link className='nav-item' activeClassName='nav-item active' to="/person">
                             <img className="head-img" src={this.state.headImg} />
@@ -138,6 +139,7 @@ const routeConfig = [
             { path: 'timeline', component: Timeline },
             { path: 'member', component: Member },
             { path: 'search', component: SearchResult },
+            { path: 'inform', component: Inform },
         ]
     }
 ]
