@@ -42,7 +42,6 @@ const member = async (req, res, next) => {
         state: { code: 0 },
         data: memberList
     });
-   // console.log("这是的数据:",memberList)
 }
 
 module.exports = [
