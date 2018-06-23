@@ -93,7 +93,11 @@ export default class News extends React.Component{
                 showFilter: false
             })
         }
-       // console.log("我是：",this.state.newsList[this.state.newsList.length-1].create_time )
+        if(result.data.length<20){
+            this.setState({
+                showmore: false
+            })
+        }
     }
 
     initTeamList = () => {
@@ -123,7 +127,7 @@ export default class News extends React.Component{
                 showFilter: false
             })
         }
-        if(result.data.length==0){
+        if(result.data.length<10){
             this.setState({
                 showmore: false
             })

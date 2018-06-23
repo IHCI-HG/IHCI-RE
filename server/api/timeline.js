@@ -30,7 +30,7 @@ const returnAll = async (req, res, next) => {
 }
 
 // 如果传了teamID，就返回该teamID的动态，如果没有传，就返回该用户全部的动态
-const returnByTeamList = async (req, res, next) => {
+const returnTimeline = async (req, res, next) => {
     const teamId = req.body.teamId
     const personId = req.body.userId
     const timeStamp = req.body.timeStamp
@@ -94,29 +94,6 @@ const returnByTeamList = async (req, res, next) => {
     });
 }
 
-// const returnByPerson = async (req, res, next) => {
-//     const personId = req.body.userId
-//     const userId = req.rSession.userId 
-//     const teamIdList = []
-//     const userObj = await userDB.findById(userId)
-//     userObj.teamList.map((item) => {
-//         teamIdList.push(item.teamId)
-//     })
-//     const allTimeline = await timelineDB.findByTeamIdList(teamIdList)
-//     //console.log("返回的数据",allTimeline)
-//     const personTimeline = []
-//     allTimeline.map((item)=>{
-//         if(item.creator._id==personId){
-//             personTimeline.push(item)
-//         }
-//     })
-//     //console.log("个人动态：",personTimeline)
-//     resProcessor.jsonp(req, res, {
-//         state: { code: 0 },
-//         data: personTimeline
-//     });
-// }
 module.exports = [
-    ['POST', '/api/timeline/getTimeline', returnByTeamList],
-   // ['POST', '/api/timeline/personTimeline', returnByPerson],
+    ['POST', '/api/timeline/getTimeline', returnTimeline],
 ];
