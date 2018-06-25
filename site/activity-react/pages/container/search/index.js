@@ -159,16 +159,15 @@ export default class SearchResult extends React.Component{
         var queryTeamId = this.props.location.query.teamId
         var queryType = this.props.location.query.type
         var lastStamp = this.state.lastStamp
-        // var result = await api('/api/search', {
-        //     method: 'POST',
-        //     body: {
-        //         keyWord: queryText ? queryText : '',
-        //         teamId: queryTeamId ? queryTeamId :'',
-        //         type: queryType ? queryType : '',
-        //         lastStamp: lastStamp? lastStamp: '',
-        //     }
-        // })
-        var result = {data:[]}
+        var result = await api('/api/search', {
+            method: 'POST',
+            body: {
+                keyWord: queryText ? queryText : '',
+                teamId: queryTeamId ? queryTeamId :'',
+                type: queryType ? queryType : '',
+                timeStamp: lastStamp? lastStamp: '',
+            }
+        })
         this.setState({
             resultList: result.data
         }, () => {
@@ -184,7 +183,7 @@ export default class SearchResult extends React.Component{
 
     appendToShowList = (list) => {
         let showList = this.state.showList
-
+        console.log(list)
         var listLength = list.length
         if(listLength > 0){
             list.map((item) => {
@@ -207,14 +206,16 @@ export default class SearchResult extends React.Component{
                 lastStamp: list[listLength - 1].create_time
             })
         }
-        else if (showList.keyList.length == 0){
-            this.setState({
-                noResult: true,
-            })
-        } else {
-            this.setState({
-                noMoreResult: true,
-            })
+        else{ 
+        if (showList.keyList.length == 0){
+                this.setState({
+                    noResult: true,
+                })
+            } else {
+                this.setState({
+                    noMoreResult: true,
+                })
+            }
         }
         // console.log(showList.keyList.length == 0)
         // console.log(this.state)
