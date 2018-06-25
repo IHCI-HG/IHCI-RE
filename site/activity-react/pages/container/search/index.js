@@ -183,7 +183,7 @@ export default class SearchResult extends React.Component{
 
     appendToShowList = (list) => {
         let showList = this.state.showList
-        console.log(list)
+        // console.log(list)
         var listLength = list.length
         if(listLength > 0){
             list.map((item) => {
@@ -217,8 +217,7 @@ export default class SearchResult extends React.Component{
                 })
             }
         }
-        // console.log(showList.keyList.length == 0)
-        // console.log(this.state)
+
     }
 
     filterHandle = (params) =>{
