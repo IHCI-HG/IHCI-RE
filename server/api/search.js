@@ -64,10 +64,6 @@ const search = async (req, res, next) => {
                 result.push(item)           
             })
         }
-<<<<<<< HEAD
-        // console.log("这是搜索结果：", result)
-        if(result.length){
-=======
         const Result = []
         if(!timeStamp){
             result.map((item, index)=>{
@@ -84,7 +80,6 @@ const search = async (req, res, next) => {
         }
         //console.log("这是搜索结果：", result)
         if(Result.length){
->>>>>>> dev-zcc
             resProcessor.jsonp(req, res, {
                 state: { code: 0, msg:"检索成功"},
                 data: Result
