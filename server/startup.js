@@ -1,11 +1,20 @@
 require('babel-polyfill');
 
+<<<<<<< HEAD
 var fs = require('fs'),
     path = require('path'),
     cluster = require('cluster'),
     os = require('os'),
     express = require('express'),
     commander = require('commander'),
+=======
+var fs = require('fs'),                 
+    path = require('path'),
+    cluster = require('cluster'),       
+    os = require('os'),
+    express = require('express'),
+    commander = require('commander'),      
+>>>>>>> dev-zcc
 
     server = require('./server'),
     conf = require('./conf'),

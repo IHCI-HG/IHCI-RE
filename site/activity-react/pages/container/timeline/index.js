@@ -87,7 +87,20 @@ export default class News extends React.Component{
         }, () => {
             this.appendToShowList(this.state.newsList)
         })
+<<<<<<< HEAD
 
+=======
+        if(queryUserId){
+            this.setState({
+                showFilter: false
+            })
+        }
+        if(result.data.length<20){
+            this.setState({
+                showmore: false
+            })
+        }
+>>>>>>> dev-zcc
     }
 
     initTeamList = () => {
@@ -96,6 +109,33 @@ export default class News extends React.Component{
         })
     }
 
+    getMoreTimeLine = async () => {
+        const queryTeamId = this.props.location.query.teamId
+        const queryUserId = this.props.location.query.userId
+        const result = await api('/api/timeline/getTimeline', {
+            method: 'POST',
+            body: queryTeamId||queryUserId ? {
+                teamId: queryTeamId,
+                userId: queryUserId,
+                timeStamp: this.state.newsList[this.state.newsList.length-1].create_time
+            } : {timeStamp: this.state.newsList[this.state.newsList.length-1].create_time}
+        })
+        this.setState({
+            newsList: result.data
+        }, () => {
+            this.appendToShowList(this.state.newsList)
+        })
+        if(queryUserId){
+            this.setState({
+                showFilter: false
+            })
+        }
+        if(result.data.length<10){
+            this.setState({
+                showmore: false
+            })
+        }
+    }
     appendToShowList = (list) => {
         let showList = this.state.showList
 
@@ -150,6 +190,7 @@ export default class News extends React.Component{
 
         showTeamFilter: false,
         teamList: [],
+        showmore: true,
     }
 
 
@@ -257,7 +298,7 @@ export default class News extends React.Component{
                         })
                     } 
 
-                    <div className="load-more" onClick={() => {}}>点击加载更多</div>
+                  {this.state.showmore&&<div className="load-more" onClick={this.getMoreTimeLine}>点击加载更多</div>}  
                 </div>
 
                 

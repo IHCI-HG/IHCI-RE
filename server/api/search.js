@@ -22,6 +22,7 @@ var timelineDB = mongoose.model('timeline')
 const search = async (req, res, next) => {
     const keyWord = req.body.keyWord
     const teamId = req.body.teamId
+    const timeStamp = req.body.timeStamp
     const type = req.body.type
     const userId = req.rSession.userId 
     if(keyWord){
@@ -63,11 +64,30 @@ const search = async (req, res, next) => {
                 result.push(item)           
             })
         }
+<<<<<<< HEAD
         // console.log("这是搜索结果：", result)
         if(result.length){
+=======
+        const Result = []
+        if(!timeStamp){
+            result.map((item, index)=>{
+                if(index<20){
+                    Result.push(item)
+                }
+            })              
+        }else{
+            result.map((item)=>{
+                if(Result.length<10&&item.create_time<timeStamp){
+                    Result.push(item)
+                }
+            })
+        }
+        //console.log("这是搜索结果：", result)
+        if(Result.length){
+>>>>>>> dev-zcc
             resProcessor.jsonp(req, res, {
                 state: { code: 0, msg:"检索成功"},
-                data: result
+                data: Result
             });
         }else{
             resProcessor.jsonp(req, res, {
