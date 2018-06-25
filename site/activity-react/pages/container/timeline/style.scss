@@ -153,33 +153,17 @@
         }
     }
 
-    .load-more-bar{
-        display: flex;
-        align-items: center;
+    .load-more {
+        cursor: pointer;
+        margin: auto;
+        height: 40px;
+        line-height: 40px;
+        padding: 0 30px;
+        border-radius: 6px;
+        width: 200px;
 
-        .load-more {
-            cursor: pointer;
-            margin: auto;
-            height: 40px;
-            line-height: 40px;
-            padding: 0 30px;
-            border-radius: 6px;
-            width: 200px;
-
-            background-color: #e6e6e6;
-            text-align: center;
-
-            
-        }
-        .no-more-result-alert{
-            cursor: default;
-            margin: auto;
-            height: 40px;
-            line-height: 40px;
-            padding: 0 30px;
-            border-radius: 6px;
-            width: 200px;
-            text-align: center;
-        }
+        background-color: #e6e6e6;
+        text-align: center;
     }
+        
 }
