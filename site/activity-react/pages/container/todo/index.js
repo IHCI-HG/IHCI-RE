@@ -96,6 +96,10 @@ export default class Task extends React.Component{
 
     initTopicListArr = async() => {
         // 请求topicListArr数据
+        // const result = await api('/api/', {
+        //     method: 'GET',
+        //     body: {id:this.params.id}
+        // })
         const resp = await mock.httpMock('/todo/:id/get', { id: this.teamId })
         console.log(resp)
         if (resp.status === 200) {
@@ -490,18 +494,6 @@ export default class Task extends React.Component{
                                 </form>
                             </div>}
                         </div>
-                    </div>
-                    <div className="action-list">
-                    {
-                        actionList.map((item) => {
-                            return(
-                                <div className="action-item">
-                                    <i className={"iconfont "+item.icon+((item.success)?" success":"")}></i>
-                                    <div className={"action "+((item.success)?" success":"")}>{item.time} {item.creator.name} {item.action}{item.task} </div>
-                                </div>
-                            )
-                        })
-                    }
                     </div>
                     
                     <div className="topic-list">
