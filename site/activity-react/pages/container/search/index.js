@@ -32,12 +32,17 @@ class SearchResultItem extends React.PureComponent{
         'CREATE_TOPIC': '讨论：',
         'REPLY_TOPIC': '回复：',
         'UPLOAD_FILE': '文件：',
-        'RELEASE_TASK': '任务',
+        'RELEASE_TASK': '任务：',
+        'EDIT_TOPIC': '编辑：',
+        'EDIT_REPLY': '编辑：',
     }
 
     render() {
         switch (this.props.type) {
             case 'CREATE_TOPIC':
+            case 'REPLY_TOPIC':
+            case 'EDIT_TOPIC':
+            case 'EDIT_REPLY':
                 return(
                     <div className='search-result-item-wrap'>
                         <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
@@ -56,26 +61,26 @@ class SearchResultItem extends React.PureComponent{
                     </div>
                 )
                 break;
-            case 'REPLY_TOPIC':
-                return (
-                    <div className='search-result-item-wrap'>
-                        <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
-                        <img src={this.props.creator.headImg} alt="" className="head-img" />
+            // case 'REPLY_TOPIC':
+            //     return (
+            //         <div className='search-result-item-wrap'>
+            //             <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
+            //             <img src={this.props.creator.headImg} alt="" className="head-img" />
 
-                        <div className="result-con">
-                            <div className="des-line">
-                                <span className="type">{this.typeMap[this.props.type]}</span>
-                                <span className="topic">{this.props.content.title}</span>
-                            </div>
+            //             <div className="result-con">
+            //                 <div className="des-line">
+            //                     <span className="type">{this.typeMap[this.props.type]}</span>
+            //                     <span className="topic">{this.props.content.title}</span>
+            //                 </div>
 
-                            <div className="content">
-                                <span className="name">{this.props.creator.name}</span>-
-                                <span className="content">{this.props.content.content}</span>
-                            </div>
-                        </div>
-                    </div>
-                )
-                break;
+            //                 <div className="content">
+            //                     <span className="name">{this.props.creator.name}</span>-
+            //                     <span className="content">{this.props.content.content}</span>
+            //                 </div>
+            //             </div>
+            //         </div>
+            //     )
+            //     break;
             // case 'UPLOAD_FILE':
             //     return (
             //         <div className='search-result-item-wrap'>
@@ -146,7 +151,6 @@ export default class SearchResult extends React.Component{
                 type: queryType ? queryType : '',
             }
         })
-        // console.log(result)
         this.setState({
             resultList: result.data
         }, () => {
@@ -183,7 +187,6 @@ export default class SearchResult extends React.Component{
 
     appendToShowList = (list) => {
         let showList = this.state.showList
-        // console.log(list)
         var listLength = list.length
         if(listLength > 0){
             list.map((item) => {

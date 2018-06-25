@@ -25,48 +25,48 @@ class TimelineItem extends React.PureComponent{
     typeMap = {
         'CREATE_TOPIC': '创建了讨论：',
         'REPLY_TOPIC': '回复了讨论：',
+        'EDIT_TOPIC': '编辑了回复：',
+        'EDIT_REPLY': '编辑了话题：',
     }
 
     render() {
-        switch (this.props.type) {
-            case 'CREATE_TOPIC':
-                return(
-                    <div className='news-item-wrap'>
-                        <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
-                        <img src={this.props.creator.headImg} alt="" className="head-img" />
+        return(
+            <div className='news-item-wrap'>
+                <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
+                <img src={this.props.creator.headImg} alt="" className="head-img" />
 
-                        <div className="news-con">
-                            <div className="des-line">
-                                <span className="name">{this.props.creator.name}</span>
-                                <span className="type">{this.typeMap[this.props.type]}</span>
-                                <span className="topic">{this.props.content.title}</span>
-                            </div>
-
-                            <div className="content">{this.props.content.content}</div>
-                        </div>
+                <div className="news-con">
+                    <div className="des-line">
+                        <span className="name">{this.props.creator.name}</span>
+                        <span className="type">{this.typeMap[this.props.type]}</span>
+                        <span className="topic">{this.props.content.title}</span>
                     </div>
-                )
-            case 'REPLY_TOPIC':
-                return (
-                    <div className='news-item-wrap'>
-                        <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
-                        <img src={this.props.creator.headImg} alt="" className="head-img" />
 
-                        <div className="news-con">
-                            <div className="des-line">
-                                <span className="name">{this.props.creator.name}</span>
-                                <span className="type">{this.typeMap[this.props.type]}</span>
-                                <span className="topic">{this.props.content.title}</span>
-                            </div>
+                    <div className="content">{this.props.content.content}</div>
+                </div>
+            </div>
+        )
+            // case 'REPLY_TOPIC':
+            //     return (
+            //         <div className='news-item-wrap'>
+            //             <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
+            //             <img src={this.props.creator.headImg} alt="" className="head-img" />
 
-                            <div className="content">{this.props.content.content}</div>
-                        </div>
-                    </div>
-                )
-                break;
-            default:
-                return ''
-        }
+            //             <div className="news-con">
+            //                 <div className="des-line">
+            //                     <span className="name">{this.props.creator.name}</span>
+            //                     <span className="type">{this.typeMap[this.props.type]}</span>
+            //                     <span className="topic">{this.props.content.title}</span>
+            //                 </div>
+
+            //                 <div className="content">{this.props.content.content}</div>
+            //             </div>
+            //         </div>
+            //     )
+            //     break;
+            // default:
+            //     return ''
+        // }
     }
 }
 
@@ -154,6 +154,7 @@ export default class News extends React.Component{
         }
     }
     appendToShowList = (list) => {
+        console.log(list)
         let showList = this.state.showList
         var listLength = list.length
         if(listLength > 0){
@@ -191,6 +192,8 @@ export default class News extends React.Component{
     typeMap = {
         'CREATE_TOPIC': '创建了讨论：',
         'REPLY_TOPIC': '回复了讨论：',
+        'EDIT_TOPIC': '编辑了回复：',
+        'EDIT_REPLY': '编辑了话题：',
     }
 
     state = {
