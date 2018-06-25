@@ -113,6 +113,7 @@ export default class Task extends React.Component{
         createTopicName: '',
         createTopicContent: '',
         memberNum: 0,
+        loadMoreCount: 0,
         showCreateCheck: false,
         actionList:[],
         topicListArr: [],
@@ -141,7 +142,7 @@ export default class Task extends React.Component{
         })
         var time = new Date()
         const resp = await mock.httpMock('/todo/:id/post', {
-                teamId: this.teamId,
+                // teamId: this.teamId,
                 title: this.state.createTopicName,
                 content: this.state.createTopicContent,
                 informList: informList,
@@ -150,9 +151,35 @@ export default class Task extends React.Component{
         if (resp.status === 201) {
             const topicList = this.state.topicListArr
             topicList.push(resp.data.topic)
-            this.setState({ topicListArr:topicList })
+            this.setState({ 
+                topicListArr:topicList,
+                createTopicName:"",
+                createTopicContent:"",
+             })
         }
         return resp
+    }
+
+    loadMoreHandle = () => {
+        this.setState({
+            loadMoreCount:this.state.loadMoreCount+1
+        },async () => {
+            let showTopicList = this.state.topicListArr
+            let moreList = []
+            const resp = await mock.httpMock('/todo/:id/get', { 
+                id: this.teamId,
+                loadMoreCount: this.state.loadMoreCount
+            })
+            if (resp.status === 200) {
+                moreList = resp.data.topicList
+            }
+            moreList.map((item)=>{
+                showTopicList.push(item)
+            })
+            this.setState({
+                topicListArr:showTopicList
+            })
+        })  
     }
 
     moveToTeamHandle = async () => {
@@ -486,6 +513,8 @@ export default class Task extends React.Component{
                             })
                         }
                     </div>
+
+                    <div className="load-more" onClick={this.loadMoreHandle}>点击加载更多</div>
                     
                     {/* <div className="div-line"></div> */}
                     

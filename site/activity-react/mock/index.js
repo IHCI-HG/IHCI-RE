@@ -164,7 +164,7 @@ http.listen('/todo/:id/post', function (params) {
         'status': 201,
         data: {
             topic:{
-                id: params.teamId || null,
+                id: '@natural(100,200)',
                 creator: {
                     id: '@natural(1000,1100)',
                     name: '@cparagraph(1)',
