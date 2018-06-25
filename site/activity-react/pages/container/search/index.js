@@ -7,6 +7,9 @@ import api from '../../../utils/api';
 import { timeParse, formatDate } from '../../../utils/util'
 import Page from '../../../components/page'
 
+const newSearchItemNum = 20
+const moreSearchItemNum = 10
+
 
 class TeamChoseItem extends React.PureComponent{
     doJump = () => {
@@ -119,7 +122,7 @@ class SearchResultItem extends React.PureComponent{
 
 export default class SearchResult extends React.Component{
     componentDidMount = async() => {
-        const queryText = this.props.location.query.text
+        var queryText = this.props.location.query.text
         if (queryText){
             await this.initSearchResultData()
         }
@@ -132,15 +135,37 @@ export default class SearchResult extends React.Component{
     }
 
     initSearchResultData = async () => {
-        const queryText = this.props.location.query.text
-        const queryTeamId = this.props.location.query.teamId
-        const queryType = this.props.location.query.type
-        const result = await api('/api/search', {
+        var queryText = this.props.location.query.text
+        var queryTeamId = this.props.location.query.teamId
+        var queryType = this.props.location.query.type
+        var result = await api('/api/search', {
             method: 'POST',
             body: {
                 keyWord: queryText ? queryText : '',
                 teamId: queryTeamId ? queryTeamId :'',
                 type: queryType ? queryType : '',
+            }
+        })
+        // console.log(result)
+        this.setState({
+            resultList: result.data
+        }, () => {
+            this.appendToShowList(this.state.resultList)
+        })
+    }
+
+    getMoreSearchResultData = async () => {
+        var queryText = this.props.location.query.text
+        var queryTeamId = this.props.location.query.teamId
+        var queryType = this.props.location.query.type
+        var lastStamp = this.state.lastStamp
+        var result = await api('/api/search', {
+            method: 'POST',
+            body: {
+                keyWord: queryText ? queryText : '',
+                teamId: queryTeamId ? queryTeamId :'',
+                type: queryType ? queryType : '',
+                timeStamp: lastStamp? lastStamp: '',
             }
         })
         this.setState({
@@ -150,26 +175,6 @@ export default class SearchResult extends React.Component{
         })
     }
 
-    showMore = async () => {
-        const queryText = this.props.location.query.text
-        const queryTeamId = this.props.location.query.teamId
-        const queryType = this.props.location.query.type
-        const result = await api('/api/search', {
-            method: 'POST',
-            body: {
-                keyWord: queryText ? queryText : '',
-                teamId: queryTeamId ? queryTeamId :'',
-                type: queryType ? queryType : '',
-                timeStamp: this.state.resultList[this.state.resultList.length-1].create_time
-            }
-        })
-        this.setState({
-            resultList: result.data
-        }, () => {
-            this.appendToShowList(this.state.resultList)
-        })
-    }
-    
     initTeamList = () => {
         this.setState({
             shownTeam: this.props.personInfo && this.props.personInfo.teamList || [],
@@ -179,7 +184,8 @@ export default class SearchResult extends React.Component{
     appendToShowList = (list) => {
         let showList = this.state.showList
         // console.log(list)
-        if(list.length > 0){
+        var listLength = list.length
+        if(listLength > 0){
             list.map((item) => {
                 var timeKey = timeParse(item.create_time)
                 if(!showList[timeKey]) {
@@ -196,31 +202,34 @@ export default class SearchResult extends React.Component{
                 showList[timeKey][item.teamId].resultList.push(item)
             })
             this.setState({
-                showList: showList
+                showList: showList,
+                lastStamp: list[listLength - 1].create_time
             })
         }
-        else{
-            this.setState({
-                noResult: true,
-            })
+        else{ 
+        if (showList.keyList.length == 0){
+                this.setState({
+                    noResult: true,
+                })
+            } else {
+                this.setState({
+                    noMoreResult: true,
+                })
+            }
         }
-        
+
     }
 
     filterHandle = (params) =>{
-        const queryText = this.props.location.query.text
-        const queryTeamId = this.props.location.query.teamId
-        const queryType = this.props.location.query.type
+        var queryText = this.props.location.query.text
+        var queryTeamId = this.props.location.query.teamId
+        var queryType = this.props.location.query.type
+        var teamId = params.teamId
+        var type = params.type
+        var path = '/search?text=' + queryText
 
-        const teamId = params.teamId
-        const type = params.type
-        // console.log(type == '')
-        // console.log(!(typeof(type) == 'undefined'))
-        const path = '/search?text=' + queryText
         path += (!(typeof(teamId) == 'undefined')) ? (teamId == '' ? '': ('&teamId=' + teamId)) : (queryTeamId ? ('&teamId=' + queryTeamId) :'')
         path += (!(typeof(type) == 'undefined')) ? (type == '' ? '': ('&type=' + type)) : (queryType ? ('&type=' + queryType) :'')
-        // console.log(params)
-        // console.log(path)
         location.href = path
     }
 
@@ -232,7 +241,6 @@ export default class SearchResult extends React.Component{
     }
 
     state = {
-        // type: create, reply
         resultList: [],
 
         // showList的数据结构长这样
@@ -257,7 +265,10 @@ export default class SearchResult extends React.Component{
         showTeamFilter: false,
         showTypeFilter: false,
         teamList: [],
-        searchParams: {}
+        searchParams: {},
+        lastStamp : '',
+        noResult: false,
+        noMoreResult: false,
     }
 
 
@@ -274,14 +285,13 @@ export default class SearchResult extends React.Component{
         })
     }
 
-    
 
     searchInputHandle = (e) => {
         this.setState({
             searchInput: e.target.value
         })
 
-        const teamList = []
+        var teamList = []
         var partten = new RegExp(e.target.value)
         if(e.target.value) {
             this.props.personInfo.teamList.map((item) => {
@@ -300,7 +310,7 @@ export default class SearchResult extends React.Component{
     }
 
     render() {
-        const showList = this.state.showList
+        var showList = this.state.showList
         return (
             <Page title='搜索 - IHCI'  className="result-page">
                 
@@ -401,7 +411,14 @@ export default class SearchResult extends React.Component{
                         })
                     } 
                     {this.state.noResult && <div className='null-info'>无结果</div>}
-                    {!this.state.noResult && !this.state.noQuery &&<div className="load-more" onClick={this.showMore}>点击加载更多</div>}
+                    <div className='load-more-bar'>
+                        {!this.state.noResult && !this.state.noQuery && !this.state.noMoreResult && <div className="load-more" onClick={this.getMoreSearchResultData}>
+                            点击加载更多
+                        </div>}
+                        {this.state.noMoreResult && <div className="no-more-result-alert">没有更多结果！</div>}
+                    </div>
+
+                   
                 </div>
 
             </Page>
