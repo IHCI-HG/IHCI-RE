@@ -3,21 +3,24 @@ import './style.scss'
 
 import api from '../../../utils/api';
 import fileUploader from '../../../utils/file-uploader';
+import fileDownloader from '../../../utils/file-downloader';
 import Page from '../../../components/page'
+import { resultKeyNameFromField } from 'apollo-client/data/storeUtils';
 
 
 export default class Team extends React.Component{
 
     state =  {
         chosenFile: {},
+        fileList: [],
         folderName: '',
-        teamId: 'aaaaaaaaaaaa',
+        teamId: '5b30ab66748668336444b67b',
         dir: '/',
         ossKey: '',
     }
 
     componentDidMount = async() => {
-
+        this.getDirFileListHandle()
     }
 
     openFileInput = () => {
@@ -52,6 +55,7 @@ export default class Team extends React.Component{
         }
 
         fileUploader('teamxxx', '/aa', file)
+        this.getDirFileListHandle()
     }
 
     createFolderHandle = async () => {
@@ -61,7 +65,7 @@ export default class Team extends React.Component{
                 folderInfo: {
                     teamId: this.state.teamId,
                     dir: this.state.dir,
-                    folderName: this.folderName
+                    folderName: this.state.folderName
                 }
             }
         })
@@ -72,6 +76,7 @@ export default class Team extends React.Component{
             window.toast("Folder created")
         }
 
+        //this.getDirFileListHandle()
     }
 
     getDirFileListHandle = async () => {
@@ -89,6 +94,9 @@ export default class Team extends React.Component{
 
         if(result.state.code == 0) {
             window.toast("Got file list")
+            this.setState({
+                fileList: result.data.fileList
+            })
         }
     }
 
@@ -96,6 +104,47 @@ export default class Team extends React.Component{
         this.setState({
             folderName: e.target.value
         })
+    }
+
+    downloadFileHandle = async () => {
+
+        const result = await api('/api/file/downloadFile',{
+            method: 'POST',
+            body: {
+                fileInfo: {
+                    teamId: 'teamxxx',
+                    dir: '/aa',
+                    fileName: 'start.sh'
+                }
+            }
+        })
+
+        console.log(result)
+
+        /*
+        if(result.state.code == 0) {
+            window.toast("Downloaded file")
+        }
+        */
+    }
+
+    test = async () => {
+        
+    }
+
+    /*
+    showFilesHandle = async () => {
+        console.log(this.fileList);
+    }
+    */
+
+    deleteHandle = async (file) => {
+        if(file.fileType == 'file')
+        {
+            await api('/api/file/delFile'),{
+
+            }
+        }
     }
 
     render() {
@@ -107,12 +156,26 @@ export default class Team extends React.Component{
 
                 <input type="file" ref={(fileInput) => this.fileInput = fileInput} onChange={this.uploadFileHandle}></input>
 
-                <div onClick={this.getDirFileListHandle}>ShowFiles</div>
+                <div className="files">
+                {
+                    this.state.fileList.map((item) => {
+                        return (
+                            <div className="fileName" key={'fileName-'+item._id}>
+                                <span className="name">{item.name}</span>
+                                <span className="del" onClick={this.deleteHandle.bind(this,item)}>   delete</span>
+                            </div>
+                        )
+                    })
+                }
+                </div>
                     
                 <div className="folder_name">文件夹名称</div>
                 <input type="text" value={this.state.folderName} className="folder_input" onChange={this.folderNameChangeHandle} />
                     
-                <div className="sava-btn" onClick={this.createFolderHandle}>Confirm</div>
+                <div className="savaBtn" onClick={this.createFolderHandle}>Confirm</div>
+                <div className="downBtn" onClick={this.downloadFileHandle}>Download</div>
+
+                <div className="test" onClick={this.test}> test </div>
             
             </Page>
         )

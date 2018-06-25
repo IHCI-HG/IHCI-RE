@@ -94,4 +94,4 @@ const fileUploader = async (teamId, dir, file) => {
     return result
 }   
 
-export default fileUploader
+export default fileUploader = fileUploader

@@ -1,9 +1,28 @@
 var OSSW = require('ali-oss').Wrapper;
 import api from './api'
 
+const getOssClient = async () => {
+    const result = await api('/api/getOssStsToken', {
+        method: 'GET',
+        body: {}
+    })
+    const token = result.data
+
+    const client = new OSSW({
+        region: token.region,
+        accessKeyId: token.AccessKeyId,
+        secure: false,
+        accessKeySecret: token.AccessKeySecret,
+        stsToken: token.SecurityToken,
+        bucket: token.bucket,
+    });
+    return client
+}
+
+
 const fileDownloader = async (teamId, dir, fileName) => {
 
-    if(typeof teamId != 'string' || typeof dir != 'string' || typeof file.name != 'string') {
+    if(typeof teamId != 'string' || typeof dir != 'string' || typeof fileName != 'string') {
         throw '参数错误'
 
         return '参数错误'
@@ -17,7 +36,7 @@ const fileDownloader = async (teamId, dir, fileName) => {
 
     const client = await getOssClient()
 
-    const ossKey = `${teamId}${dir}/${file.name}`
+    const ossKey = `${teamId}${dir}/${fileName}`
 
     //Buffer
     var result = await client.get(ossKey);
@@ -25,4 +44,4 @@ const fileDownloader = async (teamId, dir, fileName) => {
     return result
 }   
 
-module.exports.fileDownloader = fileDownloader
+export default fileDownloader = fileDownloader

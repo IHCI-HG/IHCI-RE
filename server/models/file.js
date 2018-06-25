@@ -20,6 +20,7 @@ const fileSchema = new Schema({
     dir对象的 dir字段不包含自身
     根目录为/ 
     例如在根目录下有一个叫aaa的文件夹，则aaa文件夹对象的目录依旧为/
+    path为/aaa
 */
 const folderSchema = new Schema({
     create_time: { type: String, default : Date.now},
@@ -32,6 +33,7 @@ const folderSchema = new Schema({
     team: {type: Schema.Types.ObjectId, ref: 'team', index: true},
     folderName: String,
     dir: String, // 文件夹所在目录, 对team唯一, 由dirFileExist方法约束
+    path: String
 })
 
 
@@ -75,16 +77,21 @@ folderSchema.statics = {
         })
     },
     createFolder: function(teamId, dir, folderName) {
+        if(dir == '/') dir = '';
+        console.log(dir)
+        console.log(folderName)
+        console.log(dir+'/'+folderName)
         return this.create({
             folderName: folderName,
             fileList: [],
             team: mongoose.Types.ObjectId(teamId),
             dir: dir,
+            path: dir+'/'+folderName
         })
     },
     appendFile: async function(teamId, dir, fileObj) {
         return this.update(
-            {team: mongoose.Types.ObjectId(teamId), dir: dir},
+            {team: mongoose.Types.ObjectId(teamId), path: dir},
             { $push: { fileList : {
                 fileType: 'file',
                 _id: fileObj._id,
@@ -104,20 +111,20 @@ folderSchema.statics = {
      */
     dropFile: async function(teamId, dir, fileName) {
         return this.update(
-            {team: mongoose.Types.ObjectId(teamId), dir: dir},
+            {team: mongoose.Types.ObjectId(teamId), path: dir},
             { $pull: { fileList : {
                 fileName: fileName
             }}}
         ).exec()
     },
 
-    appendFolder: (teamId, dir, folderObj) => {
+    appendFolder: async function(teamId, dir, folderObj) {
         return this.update(
-            {team: mongoose.Types.ObjectId(teamId), dir: dir},
+            {team: mongoose.Types.ObjectId(teamId), path: dir},
             { $push: { fileList : {
                 fileType: 'folder',
-                fileId: folderObj._id,
-                fileName: folderObj.folderName,
+                _id: folderObj._id,
+                name: folderObj.folderName,
                 OssKey: null
             }}}
         ).exec()
@@ -138,7 +145,7 @@ const folderDB = mongoose.model('folder', folderSchema);
 const dirFileExist = async function (teamId, dir, fileName) {
     const folderObj = await folderDB.findOne({
         team: mongoose.Types.ObjectId(teamId),
-        dir: dir
+        path: dir
     }).exec()
 
     if(!folderObj) {
@@ -158,15 +165,17 @@ const getDirFileList = async function(teamId, dir) {
     console.log(dir)
     const folderObj = await folderDB.findOne({
         team: mongoose.Types.ObjectId(teamId),
-        dir: dir
+        path: dir
     }).exec()
     return folderObj.fileList
 }
 
 const createFile = async function(teamId, dir, fileName, ossKey) {
+    console.log(dir);
+    console.log(teamId);
     const folderObj = await folderDB.findOne({
         team: mongoose.Types.ObjectId(teamId),
-        dir: dir
+        path: dir
     }).exec()
     if(!folderObj) {
         throw '目录不存在'
@@ -190,7 +199,7 @@ const createFile = async function(teamId, dir, fileName, ossKey) {
 const createFolder = async function(teamId, dir, folderName) {
     let folderObj = await folderDB.findOne({
         team: mongoose.Types.ObjectId(teamId),
-        dir: dir
+        path: dir
     }).exec()
     if(!folderObj) {
         throw '目录不存在'
@@ -207,7 +216,7 @@ const createFolder = async function(teamId, dir, folderName) {
     }
 
     folderObj = await folderDB.createFolder(teamId, dir, folderName)
-    await folderDB.appendFile(teamId, dir, folderObj)
+    await folderDB.appendFolder(teamId, dir, folderObj)
 
     return folderObj
 }
@@ -215,7 +224,7 @@ const createFolder = async function(teamId, dir, folderName) {
 const delFile = async function(teamId, dir, fileName) {
     const folderObj = await folderDB.findOne({
         team: mongoose.Types.ObjectId(teamId),
-        dir: dir
+        path: dir
     }).exec()
 
     if(!folderObj) {
@@ -254,7 +263,7 @@ const moveFile = async function(teamId, dir, fileName, tarDir) {
 
     const folderObj = await folderDB.findOne({
         team: mongoose.Types.ObjectId(teamId),
-        dir: dir
+        path: dir
     }).exec()
     if(!folderObj) {
         throw '目录不存在'
@@ -262,7 +271,7 @@ const moveFile = async function(teamId, dir, fileName, tarDir) {
 
     const tarFolderObj = await folderDB.findOne({
         team: mongoose.Types.ObjectId(teamId),
-        dir: tarDir
+        path: tarDir
     }).exec()
     if(!folderObj) {
         throw '目标目录不存在'
@@ -300,7 +309,7 @@ const moveFolder = async function(teamId, dir, folderName, tarDir) {
 
     const folderObj = await folderDB.findOne({
         team: mongoose.Types.ObjectId(teamId),
-        dir: dir
+        path: dir
     }).exec()
     if(!folderObj) {
         throw '目录不存在'
@@ -308,7 +317,7 @@ const moveFolder = async function(teamId, dir, folderName, tarDir) {
 
     const tarFolderObj = await folderDB.findOne({
         team: mongoose.Types.ObjectId(teamId),
-        dir: tarDir
+        path: tarDir
     }).exec()
     if(!folderObj) {
         throw '目标目录不存在'
@@ -324,9 +333,9 @@ const moveFolder = async function(teamId, dir, folderName, tarDir) {
     })
 
     // todo 完成操作
-    // await folderDB.modifyDir(teamId, dir, fileName, tarDir)
-    // await folderDB.dropFile(teamId, dir, fileName)
-    // await folderDB.appendFile(teamId, tarDir, fileName)
+    await folderDB.modifyDir(teamId, dir, fileName, tarDir)
+    await folderDB.dropFile(teamId, dir, fileName)
+    await folderDB.appendFile(teamId, tarDir, fileName)
 
     return true
 }
@@ -359,3 +368,7 @@ const delFolder = async function(teamId, dir, folderName) {
 exports.createFile = createFile;
 exports.createFolder = createFolder;
 exports.getDirFileList = getDirFileList;
+exports.moveFile = moveFile;
+exports.moveFolder = moveFolder;
+exports.delFile = delFile;
+exports.delFolder = delFolder;
