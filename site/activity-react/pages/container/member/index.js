@@ -8,12 +8,7 @@ import Page from '../../../components/page'
 
 export default class News extends React.Component{
     componentDidMount = async() => {
-<<<<<<< HEAD
         console.log(INIT_DATA);
-=======
-        await this.initTeamList()
-        await this.initMemberData()          //cccccccccccccccccgit
->>>>>>> dev-zcc
 
     }
     starHandle = async (id) => {

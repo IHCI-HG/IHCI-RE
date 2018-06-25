@@ -87,9 +87,6 @@ export default class News extends React.Component{
         }, () => {
             this.appendToShowList(this.state.newsList)
         })
-<<<<<<< HEAD
-
-=======
         if(queryUserId){
             this.setState({
                 showFilter: false
@@ -100,7 +97,6 @@ export default class News extends React.Component{
                 showmore: false
             })
         }
->>>>>>> dev-zcc
     }
 
     initTeamList = () => {
