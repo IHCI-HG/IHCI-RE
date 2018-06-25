@@ -36,7 +36,8 @@ const search = async (req, res, next) => {
             })
         }
         const allTimeline = await timelineDB.findByTeamIdList(teamIdList)
-        const  str = new RegExp(keyWord)
+        const key = keyWord.replace(/([\^\$\(\)\*\+\?\.\\\|\[\]\{\}])/g, "\\$1");
+        const  str = new RegExp(key)
         const searchResult =[]
         allTimeline.map((item)=> {
              if(str.test(item.title)||str.test(item.content.content)){
