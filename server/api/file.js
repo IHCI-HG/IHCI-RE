@@ -104,9 +104,55 @@ const getDirFileList = async (req, res, next) => {
     }
 }
 
+const moveFile = async (req, res, next) => {
+    const fileInfo = req.body.dirInfo || {} 
+    const userId = req.rSession.userId
+
+    try {
+
+        await file.moveFile(fileInfo.teamId, fileInfo.dir, fileInfo.fileName, fileInfo.tarDir)
+
+        resProcessor.jsonp(req, res, {
+            state: {code: 0,msg: "Successfully Move File"},
+            data: {}
+        });
+    } catch (error) {
+        console.log(error)
+        resProcessor.jsonp(req, res, {
+            state: {code: 1,msg: "Can't move file"},
+            data: {},
+            info: dirInfo,
+        });
+    }
+}
+
+
+const moveFolder = async (req, res, next) => {
+    const fileInfo = req.body.dirInfo || {} 
+
+    try {
+
+        await file.moveFile(fileInfo.teamId, fileInfo.dir, fileInfo.fileName, fileInfo.tarDir)
+
+        resProcessor.jsonp(req, res, {
+            state: {code: 0,msg: "Successfully Move Folder"},
+            data: {}
+        });
+    } catch (error) {
+        console.log(error)
+        resProcessor.jsonp(req, res, {
+            state: {code: 1,msg: "Can't move folder"},
+            data: {},
+            info: dirInfo,
+        });
+    }
+}
+
 module.exports = [
     ['GET', '/api/getOssStsToken', apiAuth, getOssStsToken],
     ['POST','/api/file/createFile',apiAuth, createFile],
     ['POST','/api/file/createFolder',apiAuth, createFolder],
-    ['POST','/api/file/getDirFileList',apiAuth, getDirFileList]
+    ['POST','/api/file/getDirFileList',apiAuth, getDirFileList],
+    ['POST','/api/file/moveFile', apiAuth, moveFile],
+    ['POST','/api/file/moveFolder', apiAuth, moveFolder]
 ];
