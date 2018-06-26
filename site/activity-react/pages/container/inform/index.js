@@ -64,12 +64,12 @@ export default class Infs extends React.Component{
       }
 
       initInformData = async () => {
-          const queryTopicId = this.props.location.query.topicId
+          const queryTeamId = this.props.location.query.topicId
 
-          const result = await api('/api/topic/addTopicReader', {
+          const result = await api('/api/timeline/getTimeline', {
               method: 'POST',
-              body: queryTopicId ? {
-                  topicId: queryTopicId
+              body: queryTeamId ? {
+                  teamId: queryTeamId
               } : {}
           })
           this.setState({
