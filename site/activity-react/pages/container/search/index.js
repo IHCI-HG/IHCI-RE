@@ -33,14 +33,16 @@ class SearchResultItem extends React.PureComponent{
         'REPLY_TOPIC': '回复：',
         'UPLOAD_FILE': '文件：',
         'RELEASE_TASK': '任务：',
-        'EDIT_REPLAY': '修改：',
-        'EDIT_TOPIC': '修改：'
+        'EDIT_REPLAY': '编辑回复：',
+        'EDIT_TOPIC': '编辑主题：'
     }
 
     render() {
         switch (this.props.type) {
             case 'CREATE_TOPIC':
             case 'REPLY_TOPIC':
+            case 'EDIT_REPLAY':
+            case 'EDIT_TOPIC':
                 return(
                     <div className='search-result-item-wrap'>
                         <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
