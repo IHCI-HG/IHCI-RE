@@ -495,14 +495,14 @@ const taskList = async (req, res, nect) => {
             const task = []
             for (var j = 0; j < result.taskList.length; j++) {
                 const obj = {
-                    taskId:  result.taskList[j]._id,
-                    title:  result.taskList[j].title,
-                    content:  result.taskList[j].content,
-                    deadline:  result.taskList[j].deadline,
-                    state:  result.taskList[j].state,
+                    taskId: result.taskList[j]._id,
+                    title: result.taskList[j].title,
+                    content: result.taskList[j].content,
+                    deadline: result.taskList[j].deadline,
+                    state: result.taskList[j].state,
                     completed_time: result.taskList[j].completed_time,
                     header: {
-                        headerId:  result.taskList[j].header
+                        headerId: result.taskList[j].header
                     }
                 }
                 task.push(obj)

@@ -23,6 +23,7 @@ var tasklistDB = mongoose.model('tasklist')
 const createTasklist = async (req, res, next) => {
     const userId = req.rSession.userId;
     const listname = req.body.name;
+    const listDesc = req.body.desc;
     const teamId = req.body.teamId;
 
     if (!listname || !teamId) {
@@ -35,13 +36,14 @@ const createTasklist = async (req, res, next) => {
 
     try {
         const userObj = await userDB.findByUserId(userId);
-        const tasklist = await tasklistDB.createTasklist(userObj, listname, teamId);
+        const tasklist = await tasklistDB.createTasklist(userObj, listname, desc, teamId);
 
         await teamDB.addTasklist(teamId, tasklist)
 
         const result = {
             id: tasklist._id,
-            name: listname
+            name: listname,
+            desc: listDesc
         }
 
         resProcessor.jsonp(req, res, {
@@ -62,10 +64,12 @@ const updateTasklist = async (req, res, next) => {
     const listId = req.body.listId;
     const name = req.body.name;
     const teamId = req.body.teamId;
+    const desc = req.body.desc;
 
     const editTasklist = {
         name: name,
-        listid: listId
+        listid: listId,
+        desc: desc
     }
 
     if (!listId) {
@@ -618,12 +622,14 @@ const editCheckitem = async (req, res, next) => {
     }
 }
 
-const copyTask = async (req, res, text) => {
+
+//文威 6.22修改
+const taskCopy = async (req, res, next) => {
     const taskId = req.body.taskId;
     const teamId = req.body.teamId;
     const copyCount = req.body.copyCount;
 
-    if (!taskId || !teamId || !copyCount) {
+    if (!taskId || copyCount <= 0) {
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: "参数不全" },
             data: {}
@@ -632,7 +638,19 @@ const copyTask = async (req, res, text) => {
     }
 
     try {
-        const taskObj = await taskDB.findByTaskId(taskId);
+        var returnObj = [];
+        var copyObj = await taskDB.findByTaskId(taskId);
+        delete copyObj._id;
+
+        for (var i = 0; i < copyCount; i++) {
+            var taskObj = await taskDB.create(copyObj);
+            teamDB.addTask(teamId, taskObj);
+            returnObj.push(taskObj);
+        }
+        resProcessor.jsonp(req, res, {
+            state: { code: 0, msg: '请求成功' },
+            data: returnObj
+        });
 
     } catch (error) {
         resProcessor.jsonp(req, res, {
@@ -643,6 +661,191 @@ const copyTask = async (req, res, text) => {
     }
 }
 
+const taskMove = async (req, res, next) => {
+    const taskId = req.body.taskId;
+    const teamId = req.body.teamIdMoveTo;
+    const tasklistId = req.body.tasklistId;
+
+    if (!taskId || !teamId) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 0, msg: "参数不全" },
+            data: {}
+        });
+        return
+    }
+
+    try {
+
+        var result = await taskDB.findByTaskId(taskId);
+        result.create_time = Date.now;
+        result.teamId = teamId;
+        result.tasklistId = tasklistId || {};
+        result.deadline = undefined;
+        result.completed_time = undefined;
+        result.header = undefined;
+        result.state = false;
+
+        for (x in result.checkitemList) {
+            x.create_time = Date.now;
+            x.header = undefined;
+            x.deadline = undefined;
+            x.completed_time = undefined;
+        }
+        result = taskDB.updateTask(taskId, result);
+
+
+        resProcessor.jsonp(req, res, {
+            state: { code: 0, msg: '请求成功' },
+            data: result
+        });
+    } catch (error) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: '操作失败' },
+            data: {}
+        });
+        console.error(error);
+    }
+}
+
+const createDiscuss = async (req, res, next) => {
+    const taskId = req.body.taskId;
+    const teamId = req.body.teamId
+    //const topicId = req.body.topicId
+    const content = req.body.content
+    const informList = req.body.informList || []
+
+    // todo 回复可以添加附件，这里留着
+    const fileList = req.body.fileList || []
+
+    const userId = req.rSession.userId
+
+    // todo 各种权限判断
+
+    if (!teamId || !taskId || !content) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: "参数不全" },
+            data: {}
+        });
+        return
+    }
+
+
+
+    try {
+        const userObj = await userDB.baseInfoById(userId)
+        const result = await discussDB.createDiscuss(teamId, "", "", content, userObj, fileList);
+        taskDB.addDiscuss(taskId, result._id);
+
+        const teamObj = await teamDB.findByTeamId(teamId)
+
+        //await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'REPLY_TOPIC', result._id, topicObj.title, result)
+
+        //如果有需要通知的人，则走微信模板消息下发流程
+        if (informList && informList.length) {
+            replyTopicTemplate(informList, result)
+        }
+
+        resProcessor.jsonp(req, res, {
+            state: { code: 0, msg: '请求成功' },
+            data: result
+        });
+    } catch (error) {
+        console.error(error);
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: '操作失败' },
+            data: {}
+        });
+    }
+}
+
+const editDiscuss = async (req, res, next) => {
+    const taskId = req.body.taskId;
+    const discussId = req.body.discussId
+    const content = req.body.content
+    const informList = req.body.informList || []
+
+    // todo 回复可以添加附件，这里留着
+    const fileList = req.body.fileList || []
+
+    const userId = req.rSession.userId
+
+    // todo 各种权限判断
+
+    if (!discussId || !taskId || !content) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: "参数不全" },
+            data: {}
+        });
+        return
+    }
+
+
+    try {
+
+        const result = await discussDB.updateDiscuss(discussId, { content: content })
+
+        //todo 还要在timeline表中增加项目
+
+        //如果有需要通知的人，则走微信模板消息下发流程
+        if (informList && informList.length) {
+            replyTopicTemplate(informList, result)
+        }
+
+        resProcessor.jsonp(req, res, {
+            state: { code: 0, msg: '请求成功' },
+            data: result
+        });
+    } catch (error) {
+        console.error(error);
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: '操作失败' },
+            data: {}
+        });
+    }
+}
+
+const delDiscuss = async (req, res, next) => {
+    const taskId = req.body.taskId;
+    const teamId = req.body.teamId;
+    const discussId = req.body.discussId;
+    //const topicId = req.body.topicId
+    //const content = req.body.content
+    //const informList = req.body.informList || []
+
+    // todo 回复可以添加附件，这里留着
+    //const fileList = req.body.fileList || []
+
+    const userId = req.rSession.userId
+
+    // todo 各种权限判断
+
+    if (!teamId || !taskId || !discussId) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: "参数不全" },
+            data: {}
+        });
+        return
+    }
+
+
+
+    try {
+        const result = await discussDB.delDiscussById(discussId);
+        const result1 = await taskDB.delDiscuss(taskId, discussId);
+        //await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'REPLY_TOPIC', result._id, topicObj.title, result)
+
+        resProcessor.jsonp(req, res, {
+            state: { code: 0, msg: '请求成功' },
+            data: result1
+        });
+    } catch (error) {
+        console.error(error);
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: '操作失败' },
+            data: {}
+        });
+    }
+}
 
 
 module.exports = [
@@ -657,4 +860,12 @@ module.exports = [
     ['POST', '/api/task/dropCheckitem', apiAuth, dropCheckitem],
     ['GET', '/api/task/findCheckitem', apiAuth, findCheckitem],
     ['POST', '/api/task/editCheckitem', apiAuth, editCheckitem],
+
+    ['POST', '/api/task/taskCopy', apiAuth, taskCopy],
+    ['POST', '/api/task/taskMove', apiAuth, taskMove],
+
+    //6.26
+    ['POST', '/api/task/createDiscuss', apiAuth, createDiscuss],
+    ['POST', '/api/task/editDiscuss', apiAuth, editDiscuss],
+    ['POST', '/api/task/delDiscuss', apiAuth, delDiscuss],
 ]

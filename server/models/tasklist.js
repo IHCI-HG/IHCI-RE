@@ -6,16 +6,18 @@ const Schema = mongoose.Schema
 const tasklistSchema = new Schema({
     create_time: { type: String, default: Date.now },
     name: String,
+    desc: String,
     creator: { type: mongoose.Schema.Types.Mixed, require: true },
     teamId: String,
     taskList: []
 })
 
 tasklistSchema.statics = {
-    createTasklist: async function (creator, name, teamId) {
+    createTasklist: async function (creator, name, desc, teamId) {
         return this.create({
-            creator: creator,
             name: name,
+            desc: desc,
+            creator: creator,
             teamId: teamId
         })
     },
@@ -32,7 +34,7 @@ tasklistSchema.statics = {
     updateTasklist: async function (tasklistId, editTasklist) {
         return this.update(
             { _id: tasklistId },
-            { $set: { "name": editTasklist.name } }
+            { $set: { name: editTasklist.name, desc: editTasklist.desc } }
         ).exec()
     },
 

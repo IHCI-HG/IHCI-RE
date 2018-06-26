@@ -76,13 +76,11 @@ teamSchema.statics = {
         ).exec()
     },
     updateTopic: async function (teamId, topicId, editTopic) {
-        return this.update(
+        const result = await this.update(
             { _id: teamId, "topicList._id": mongoose.Types.ObjectId(topicId) },
-            { $set: { "topicList.$.title": editTopic.title } }
-        ).update(
-            { _id: teamId, "topicList._id": mongoose.Types.ObjectId(topicId) },
-            { $set: { "topicList.$.content": editTopic.content } }
+            { $set: { "topicList.$.title": editTopic.title, "topicList.$.content": editTopic.content } }
         ).exec()
+        return result;
     },
     delTopic: async function (teamId, topicId) {
         return this.update(

@@ -23,7 +23,8 @@ const taskSchema = new Schema({
         deadline: String,
         completed_time: String,
         state: Boolean,
-    }]
+    }],
+    discussList: [mongoose.Schema.Types.Mixed]
 })
 
 taskSchema.statics = {
@@ -38,7 +39,8 @@ taskSchema.statics = {
             deadline: deadline,
             header: header,
             checkitemList: [],
-            state: false
+            state: false,
+            discussList: []
         })
     },
 
@@ -101,24 +103,7 @@ taskSchema.statics = {
         ).exec()
     },
 
-    // updateCheckitem: async function (taskId, checkitemId, checkitemObj) {
-    //     return this.update(
-    //         { _id: taskId, "checkitemList._id": mongoose.Types.ObjectId(checkitemId) },
-    //         { $set: { "checkitemList.$.content": checkitemObj.content } }
-    //     ).update(
-    //         { _id: taskId, "checkitemList._id": mongoose.Types.ObjectId(checkitemId) },
-    //         { $set: { "checkitemList.$.header": checkitemObj.header } }
-    //     ).update(
-    //         { _id: taskId, "checkitemList._id": mongoose.Types.ObjectId(checkitemId) },
-    //         { $set: { "checkitemList.$.deadline": checkitemObj.deadline } }
-    //     ).update(
-    //         { _id: taskId, "checkitemList._id": mongoose.Types.ObjectId(checkitemId) },
-    //         { $set: { "checkitemList.$.completed_time": checkitemObj.completed_time } }
-    //     ).update(
-    //         { _id: taskId, "checkitemList._id": mongoose.Types.ObjectId(checkitemId) },
-    //         { $set: { "checkitemList.$.state": checkitemObj.state } }
-    //     ).exec()
-    // }
+
 
     updateCheckitem: async function (taskId, checkitemId, checkitemObj) {
         return this.update(
@@ -133,6 +118,16 @@ taskSchema.statics = {
                 }
             }
         ).exec()
+    },
+
+    addDiscuss: async function (taskId, discussId) {
+        const result = await this.update({ _id: taskId }, { $push: { discussList: { _id: discussId } } });
+        return result;
+    },
+
+    delDiscuss: async function (taskId, discussId) {
+        const result = await this.update({ _id: taskId }, { $pull: { discussList: { _id: mongoose.Types.ObjectId(discussId) } } });
+        return result;
     }
 
 }
