@@ -34,7 +34,7 @@ class SearchResultItem extends React.PureComponent{
         'UPLOAD_FILE': '文件：',
         'RELEASE_TASK': '任务：',
         'EDIT_REPLAY': '编辑回复：',
-        'EDIT_TOPIC': '编辑主题：'
+        'EDIT_TOPIC': '编辑讨论：'
     }
 
     render() {
