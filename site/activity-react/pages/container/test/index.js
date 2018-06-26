@@ -16,7 +16,7 @@ export default class Team extends React.Component{
         folderName: '',
         teamId: '5b31a62f4393cd221bc16f8c',
         dir: '/',
-        tarDir: '',
+        tarDir: 'tarDir',
         ossKey: '',
     }
 
@@ -245,6 +245,7 @@ export default class Team extends React.Component{
 
                 <input type="file" ref={(fileInput) => this.fileInput = fileInput} onChange={this.uploadFileHandle}></input>
 
+                <div className="current_files">Current_files:</div>
                 <div className="files">
                 {
                     this.state.fileList.map((item) => {
@@ -261,6 +262,7 @@ export default class Team extends React.Component{
                 }
                 </div>
                     
+                <div className="create_folder">Create folder:</div> 
                 <div className="folder_name">文件夹名称</div>
                 <input type="text" value={this.state.folderName} className="folder_input" onChange={this.folderNameChangeHandle} />
                     
