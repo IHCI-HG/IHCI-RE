@@ -353,17 +353,36 @@ export default class Task extends React.Component{
     }
 
     handleCheckModify = async(index, id, checkItemInfo) => {
-        const resp = await mock.httpMock('/check_item/:id/put', {
-            id: id,
-            name: checkItemInfo.name,
-            ddl: checkItemInfo.date,
-            assigneeId: checkItemInfo.assigneeId,
+
+        const editCheckitem = {}
+        editCheckitem.name = checkItemInfo.name;
+        editCheckitem.ddl = checkItemInfo.date;
+        editCheckitem.assigneeId = checkItemInfo.assigneeId;
+        const todoId = this.props.params.id;
+        const checkitemId = id;
+
+        const resp = await api('/api/task/editCheckitem', {
+            method: 'POST',
+            body: {
+                todoId,
+                checkitemId,
+                editCheckitem
+            }
         })
+        console.log('resp', resp)
+        // const resp = await mock.httpMock('/check_item/:id/put', {
+        //     id: id,
+        //     name: checkItemInfo.name,
+        //     ddl: checkItemInfo.date,
+        //     assigneeId: checkItemInfo.assigneeId,
+        // })
         const todo = this.state.todo
-        if (resp.status ===200) {
-            todo.list[index].name = resp.data.checkItem.name
-            todo.list[index].ddl = resp.data.checkItem.ddl
-            todo.list[index].assignee = resp.data.checkItem.assignee
+        const rAssignee = {}
+        rAssignee.id = resp.data.header
+        if (resp.state.code === 0) {
+            todo.list[index].name = resp.data.content
+            todo.list[index].ddl = resp.data.deadline
+            todo.list[index].assignee = rAssignee
         }
         this.setState({ todo })
         return resp
