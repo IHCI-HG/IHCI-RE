@@ -185,7 +185,7 @@ const createTask = async (req, res, next) => {
 
     const userId = req.rSession.userId;
     const taskTitle = req.body.name;
-    const taskContent = req.body.desc;
+    const taskContent = req.body.desc || "";
     const fileList = req.body.fileList || [];
     const teamId = req.body.teamId || "";
     const tasklistId = req.body.listId || "";

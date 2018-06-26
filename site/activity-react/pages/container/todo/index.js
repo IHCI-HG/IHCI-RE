@@ -160,6 +160,10 @@ export default class Task extends React.Component{
 
     initTopicListArr = async() => {
         // 请求topicListArr数据
+        // const result = await api('/api/', {
+        //     method: 'GET',
+        //     body: {id:this.params.id}
+        // })
         const resp = await mock.httpMock('/todo/:id/get', { id: this.teamId })
         console.log(resp)
         if (resp.status === 200) {
@@ -167,6 +171,39 @@ export default class Task extends React.Component{
         }
     }
 
+<<<<<<< HEAD
+=======
+    state = {
+        showCreateTopic: false,
+        isCreator: false,
+        showButton: true,
+        moveExpanded: false,
+        showActionList: false,
+        copyExpanded: false,
+        createTopicName: '',
+        createTopicContent: '',
+        memberNum: 0,
+        loadMoreCount: 0,
+        showCreateCheck: false,
+        actionList:[],
+        topicListArr: [],
+        copyNumber:0,
+        teamToMove: '请选择小组',
+        user: {
+            headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
+        },
+        memberList: [
+            {
+                _id: 11,
+                name: '萨乌丁',
+                chosen: false,
+            },
+        ],
+        todo: {},
+        teamList:[],
+    }
+
+>>>>>>> 1bfbc03ccdf5047627f9fe3d6f3f4761599c9230
     createTopicHandle = async () => {
         const informList = []
         this.state.memberList.map((item) => {
@@ -176,7 +213,7 @@ export default class Task extends React.Component{
         })
         var time = new Date()
         const resp = await mock.httpMock('/todo/:id/post', {
-                teamId: this.teamId,
+                // teamId: this.teamId,
                 title: this.state.createTopicName,
                 content: this.state.createTopicContent,
                 informList: informList,
@@ -185,9 +222,35 @@ export default class Task extends React.Component{
         if (resp.status === 201) {
             const topicList = this.state.topicListArr
             topicList.push(resp.data.topic)
-            this.setState({ topicListArr:topicList })
+            this.setState({
+                topicListArr:topicList,
+                createTopicName:"",
+                createTopicContent:"",
+             })
         }
         return resp
+    }
+
+    loadMoreHandle = () => {
+        this.setState({
+            loadMoreCount:this.state.loadMoreCount+1
+        },async () => {
+            let showTopicList = this.state.topicListArr
+            let moreList = []
+            const resp = await mock.httpMock('/todo/:id/get', {
+                id: this.teamId,
+                loadMoreCount: this.state.loadMoreCount
+            })
+            if (resp.status === 200) {
+                moreList = resp.data.topicList
+            }
+            moreList.map((item)=>{
+                showTopicList.push(item)
+            })
+            this.setState({
+                topicListArr:showTopicList
+            })
+        })
     }
 
     moveToTeamHandle = async () => {
@@ -597,7 +660,6 @@ export default class Task extends React.Component{
                         })
                     }
                     </div>
-
                     <div className="topic-list">
                         {
                             this.state.topicListArr.map((item) => {
@@ -608,7 +670,8 @@ export default class Task extends React.Component{
                         }
                     </div>
 
-                    {/* <div className="div-line"></div> */}
+
+                    <div className="load-more" onClick={this.loadMoreHandle}>点击加载更多</div>
 
                     <div className="create-topic">
                         <div className="imgInfo">

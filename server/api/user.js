@@ -70,6 +70,10 @@ const login = async (req, res, next) => {
     console.log(req);
     console.log("..................................");
 
+<<<<<<< HEAD
+=======
+    console.log(req.body)
+>>>>>>> 1bfbc03ccdf5047627f9fe3d6f3f4761599c9230
     if(!username || !password) {
         resProcessor.jsonp(req, res, {
             state: { code: 1 , msg: '参数不全'},

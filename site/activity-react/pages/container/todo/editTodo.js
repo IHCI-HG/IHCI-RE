@@ -26,7 +26,7 @@ class EditTodo extends React.Component {
         // 调用父组件方法，把提交参数传出去
         const resp = await this.props.handleConfirm(params);
         // console.log('handleConfirm', resp)
-        if (resp.status === 201) {
+        if (resp.state.code === 0) {
             this.refs.name.value = ''
             if (this.props.detail === 'detail')
                 this.refs.desc.value = ''
