@@ -90,7 +90,10 @@ const editTopic = async (req, res, next) => {
 
         const result1 = await topicDB.updateTopic(topicId, editTopic)
         const result2 = await teamDB.updateTopic(teamId, topicId, editTopic)
-        
+
+        const userObj = await userDB.baseInfoById(userId)
+        const teamObj = await teamDB.findByTeamId(teamId)
+        await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'EDIT_TOPIC', result1._id, result1.title, result1)
         //todo 还要在timeline表中增加项目
 
         resProcessor.jsonp(req, res, {
@@ -163,6 +166,7 @@ const createDiscuss = async (req, res, next) => {
 }
 
 const editDiscuss = async (req, res, next) => {
+    const teamId = req.body.teamId
     const topicId = req.body.topicId
     const discussId = req.body.discussId
     const content = req.body.content
@@ -192,7 +196,11 @@ const editDiscuss = async (req, res, next) => {
         const result = await discussDB.updateDiscuss(discussId, {content: content})
         await topicDB.updateDiscuss(topicId, discussId, content)
 
-        //todo 还要在timeline表中增加项目
+        const userObj = await userDB.baseInfoById(userId)
+        const topicObj = await topicDB.findByTopicId(topicId)
+        const teamObj = await teamDB.findByTeamId(teamId)
+        await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'EDIT_REPLY', result._id, topicObj.title, result)
+        console.log(teamId, teamObj.name, userObj, 'EDIT_REPLY', result._id, topicObj.title, result)
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
