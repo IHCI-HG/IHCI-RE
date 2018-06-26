@@ -171,39 +171,6 @@ export default class Task extends React.Component{
         }
     }
 
-<<<<<<< HEAD
-=======
-    state = {
-        showCreateTopic: false,
-        isCreator: false,
-        showButton: true,
-        moveExpanded: false,
-        showActionList: false,
-        copyExpanded: false,
-        createTopicName: '',
-        createTopicContent: '',
-        memberNum: 0,
-        loadMoreCount: 0,
-        showCreateCheck: false,
-        actionList:[],
-        topicListArr: [],
-        copyNumber:0,
-        teamToMove: '请选择小组',
-        user: {
-            headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-        },
-        memberList: [
-            {
-                _id: 11,
-                name: '萨乌丁',
-                chosen: false,
-            },
-        ],
-        todo: {},
-        teamList:[],
-    }
-
->>>>>>> 1bfbc03ccdf5047627f9fe3d6f3f4761599c9230
     createTopicHandle = async () => {
         const informList = []
         this.state.memberList.map((item) => {
