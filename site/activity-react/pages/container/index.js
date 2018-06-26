@@ -21,17 +21,16 @@ import Topic from './topic'
 import Timeline from './timeline'  
 import Member from './member'  
 import Sign from './sign'
-import SearchResult from './search'
 import Inform from './inform'
 
 class App extends React.Component{
     state = {
         activeTag : '',
         headImg: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnregyyDrMvhEDpfC4wFetzykulWRVMGF-jp7RXIIqZ5ffEdawIA',
+        infoImg: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1529474819406&di=267791f485fba8aa30e0adc8f0eede6b&imgtype=0&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimgad%2Fpic%2Fitem%2Fb8014a90f603738d6c070f19b81bb051f819ecb8.jpg'
         personInfo: {
             teamList: []
         },
-        searchText : '',
     }
     componentWillMount = async() => {
         this.setHeadImg()
@@ -53,17 +52,6 @@ class App extends React.Component{
         }
     }
 
-    handleSearchTextChange = (e) =>{
-        this.setState({
-            searchText : e.target.value
-        })
-    }
-
-    handleSearchRequest = (e) => {
-        location.href = '/search' + (this.state.searchText? '?text=' + this.state.searchText : '')
-        e.preventDefault();
-    }
-
     routerHandle = (toUrl) => {
         this.activeTagHandle(toUrl)
         this.props.router.push(toUrl)
@@ -83,9 +71,6 @@ class App extends React.Component{
         if(/timeline/.test(url)) {
             this.setState({activeTag: 'timeline'})
         }
-        if(/search/.test(url)) {
-            this.setState({activeTag: 'search'})
-        }
     }
 
     render() {
@@ -100,19 +85,15 @@ class App extends React.Component{
                             <span className={this.state.activeTag == 'member' ? 'nav-item active' : 'nav-item'} onClick={this.routerHandle.bind(this, '/member')}>成员</span>
                         </div>
                     </div>
-                    <div className="person">
-                        <div className='search-bar'>
-                            <form className="searchBox" onSubmit={this.handleSearchRequest}>
-                                <span className="iconfont icon-search" onClick={()=>{this.searchInputr.focus()}}></span>
-                                <input className='searchInput' ref={(input) => { this.searchInputr = input; }} type="text" onChange={this.handleSearchTextChange} placeholder="搜索"/>
-                            </form>
-                            {/* <span className="iconfont icon-search" onClick={this.testHandle.bind(this, '/search', 'test', '5b208f7283ea922626e46793')}></span> */}
-
-                        </div>
+                    <div className="right">
                         <Link className='nav-item' activeClassName='nav-item active' to="/person">
                             <img className="head-img" src={this.state.headImg} />
                         </Link>
+                        <Link className='nav-item' activeClassName='nav-item active' to="/inform">
+                            <img className="head-img" src={this.state.infoImg} />
+                        </Link>
                     </div>
+
                 </div>
                 { this.props.children && React.cloneElement(this.props.children, {personInfo: this.state.personInfo}) }
             </div>
@@ -138,7 +119,6 @@ const routeConfig = [
             { path: 'discuss/topic/:id', component: Topic },
             { path: 'timeline', component: Timeline },
             { path: 'member', component: Member },
-            { path: 'search', component: SearchResult },
             { path: 'inform', component: Inform },
         ]
     }
