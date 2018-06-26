@@ -33,16 +33,12 @@ class SearchResultItem extends React.PureComponent{
         'REPLY_TOPIC': '回复：',
         'UPLOAD_FILE': '文件：',
         'RELEASE_TASK': '任务：',
-        'EDIT_TOPIC': '编辑：',
-        'EDIT_REPLY': '编辑：',
     }
 
     render() {
         switch (this.props.type) {
             case 'CREATE_TOPIC':
             case 'REPLY_TOPIC':
-            case 'EDIT_TOPIC':
-            case 'EDIT_REPLY':
                 return(
                     <div className='search-result-item-wrap'>
                         <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
@@ -245,22 +241,6 @@ export default class SearchResult extends React.Component{
 
     state = {
         resultList: [],
-
-        // showList的数据结构长这样
-        // showList: {
-        //     timeKeyList: ['20170101', '20170102'],
-        //     '20170101': {
-        //         'teamKeyList': ['teamId1','teamId2']                
-        //         'teamId1' : {
-        //             teamName: '这是团队名称111',
-        //             resultList: []
-        //         },
-        //         'teamId2' : {
-        //             teamName: '这是团队名称222',
-        //             resultList: []
-        //         },
-        //     },
-        // }
         showList: {
             keyList : [],
         },
