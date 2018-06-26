@@ -255,6 +255,7 @@ const delFolder = async (req, res, next) => {
 }
 
 
+
 module.exports = [
     ['GET', '/api/getOssStsToken', apiAuth, getOssStsToken],
     ['POST','/api/file/createFile',apiAuth, createFile],

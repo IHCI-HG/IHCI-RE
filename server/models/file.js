@@ -321,6 +321,9 @@ const moveFile = async function(teamId, dir, fileName, tarDir) {
  * @returns 
  */
 const moveFolder = async function(teamId, dir, folderName, tarDir) {
+
+    //TODO: fix bugs here
+ 
     const tarDirFileNameExist = await dirFileExist(teamId, tarDir, folderName)
     if(tarDirFileNameExist) {
         throw '目标目录存在同名文件'
@@ -351,7 +354,6 @@ const moveFolder = async function(teamId, dir, folderName, tarDir) {
         }
     })
 
-    // todo 完成操作
     await folderDB.modifyDir(teamId, dir, folderName, tarDir)
     await folderDB.appendFolder(teamId, tarDir, folderObj)
     await folderDB.dropFile(teamId, dir, folderName)
