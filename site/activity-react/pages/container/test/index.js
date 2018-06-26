@@ -14,8 +14,9 @@ export default class Team extends React.Component{
         chosenFile: {},
         fileList: [],
         folderName: '',
-        teamId: '5b30ab66748668336444b67b',
+        teamId: '5b31a62f4393cd221bc16f8c',
         dir: '/',
+        tarDir: '',
         ossKey: '',
     }
 
@@ -76,7 +77,8 @@ export default class Team extends React.Component{
             window.toast("Folder created")
         }
 
-        //this.getDirFileListHandle()
+        this.getDirFileListHandle()
+        this.state.folderName = ''
     }
 
     getDirFileListHandle = async () => {
@@ -103,6 +105,12 @@ export default class Team extends React.Component{
     folderNameChangeHandle = (e) => {
         this.setState({
             folderName: e.target.value
+        })
+    }
+
+    tarDirChangeHandle = (e) => {
+        this.setState({
+            tarDir: e.target.value
         })
     }
 
@@ -141,10 +149,91 @@ export default class Team extends React.Component{
     deleteHandle = async (file) => {
         if(file.fileType == 'file')
         {
-            await api('/api/file/delFile'),{
+            const result = await api('/api/file/delFile',{
+                method: 'POST',
+                body: {
+                    fileInfo: {
+                        teamId: this.state.teamId,
+                        dir: this.state.dir,
+                        fileName: file.name
+                    }
+                }
 
-            }
+            })
+
+            console.log(result)
         }
+        else 
+        {
+            const result = await api('/api/file/delFolder',{
+                method: 'POST',
+                body: {
+                    folderInfo: {
+                        teamId: this.state.teamId,
+                        dir: this.state.dir,
+                        folderName: file.name,
+                    }
+                }
+            })
+
+            console.log(result)
+        }
+        this.getDirFileListHandle()
+    }
+
+    moveHandle = async (file) => {
+        console.log(file)
+        if(file.fileType == 'file')
+        {
+            const result = await api('/api/file/moveFile',{
+                method: 'POST',
+                body: {
+                    fileInfo: {
+                        teamId: this.state.teamId,
+                        dir: this.state.dir,
+                        fileName: file.name,
+                        tarDir: this.state.tarDir 
+                    }
+                }
+            })
+
+            console.log(result)
+        }
+        else 
+        {
+            const result = await api('/api/file/moveFolder',{
+                method: 'POST',
+                body:{
+                    folderInfo: {
+                        teamId: this.state.teamId,
+                        dir: this.state.dir,
+                        folderName: file.name,
+                        tarDir: this.state.tarDir
+                    }
+                }
+            })
+            
+            console.log(result)
+        }
+
+        this.setState({
+            tarDir: ''
+        })
+        this.getDirFileListHandle()
+    }
+
+    viewHandle = async (file) => {
+        console.log(file)
+        if(file.fileType == 'folder') 
+        {
+            var path;
+            if(this.state.dir == '/') path = this.state.dir+file.name;
+            else path = this.state.dir+'/'+file.name;
+            console.log(path);
+            this.state.dir = path;
+            console.log(this.state.dir)
+        }
+        this.getDirFileListHandle()
     }
 
     render() {
@@ -163,6 +252,9 @@ export default class Team extends React.Component{
                             <div className="fileName" key={'fileName-'+item._id}>
                                 <span className="name">{item.name}</span>
                                 <span className="del" onClick={this.deleteHandle.bind(this,item)}>   delete</span>
+                                <input type="text" value={this.state.tarDir} className="tarDir_input" onChange={this.tarDirChangeHandle} />
+                                <span className="move" onClick={this.moveHandle.bind(this,item)}>   move</span>
+                                <span className="view" onClick={this.viewHandle.bind(this,item)}>   view</span>
                             </div>
                         )
                     })

@@ -238,7 +238,7 @@ const delFolder = async (req, res, next) => {
     const folderInfo = req.body.folderInfo || {}
 
     try{
-        await file.delFile(folderInfo.teamId,folderInfo.dir,folderInfo.folderName)
+        await file.delFolder(folderInfo.teamId,folderInfo.dir,folderInfo.folderName)
 
         resProcessor.jsonp(req, res, {
             state: {code: 0, msg: "Successfully deleted folder"},

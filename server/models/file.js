@@ -69,6 +69,19 @@ fileSchema.statics = {
     },
 }
 folderSchema.statics = {
+    modifyDir: function(teamId, dir, folderName, tarDir) {
+        var path;
+        if(tarDir == '/') path = tarDir+folderName;
+        else path = tarDir+'/'+folderName;
+        return this.update({
+            team: mongoose.Types.ObjectId(teamId),
+            dir: dir,
+            folderName: folderName
+        },{
+            dir: tarDir,
+            path: path
+        }).exec()
+    },
     findByDir: function(teamId, dir, folderName) {
         return this.findOne({
             team: mongoose.Types.ObjectId(teamId),
@@ -77,16 +90,15 @@ folderSchema.statics = {
         })
     },
     createFolder: function(teamId, dir, folderName) {
-        if(dir == '/') dir = '';
-        console.log(dir)
-        console.log(folderName)
-        console.log(dir+'/'+folderName)
+        var path;
+        if(dir == '/') path = dir+folderName;
+        else path = dir+'/'+folderName;
         return this.create({
             folderName: folderName,
             fileList: [],
             team: mongoose.Types.ObjectId(teamId),
             dir: dir,
-            path: dir+'/'+folderName
+            path: path
         })
     },
     appendFile: async function(teamId, dir, fileObj) {
@@ -100,7 +112,13 @@ folderSchema.statics = {
             }}}
         ).exec()
     },
-
+    delFolderByDir: function(teamId, dir, folderName) {
+        return this.remove({
+            team: mongoose.Types.ObjectId(teamId),
+            dir: dir,
+            folderName: folderName
+        }).exec()
+    },
     /**
      * 删除file或者folder都是dropFile这个方法
      * 
@@ -110,10 +128,11 @@ folderSchema.statics = {
      * @returns 
      */
     dropFile: async function(teamId, dir, fileName) {
+        console.log(fileName);
         return this.update(
             {team: mongoose.Types.ObjectId(teamId), path: dir},
             { $pull: { fileList : {
-                fileName: fileName
+                name: fileName
             }}}
         ).exec()
     },
@@ -287,8 +306,8 @@ const moveFile = async function(teamId, dir, fileName, tarDir) {
     }
 
     await fileDB.modifyDir(teamId, dir, fileName, tarDir)
+    await folderDB.appendFile(teamId, tarDir, fileObj)
     await folderDB.dropFile(teamId, dir, fileName)
-    await folderDB.appendFile(teamId, tarDir, fileName)
 
     return true
 }
@@ -333,9 +352,9 @@ const moveFolder = async function(teamId, dir, folderName, tarDir) {
     })
 
     // todo 完成操作
-    await folderDB.modifyDir(teamId, dir, fileName, tarDir)
-    await folderDB.dropFile(teamId, dir, fileName)
-    await folderDB.appendFile(teamId, tarDir, fileName)
+    await folderDB.modifyDir(teamId, dir, folderName, tarDir)
+    await folderDB.appendFolder(teamId, tarDir, folderObj)
+    await folderDB.dropFile(teamId, dir, folderName)
 
     return true
 }
@@ -362,7 +381,8 @@ const delFolder = async function(teamId, dir, folderName) {
         }
     })
 
-    folderDB.delFileByDir(teamId, dir, folderName)
+    folderDB.delFolderByDir(teamId, dir, folderName)
+    await folderDB.dropFile(teamId, dir, folderName)
 }
 
 exports.createFile = createFile;
