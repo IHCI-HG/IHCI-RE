@@ -45,6 +45,9 @@ export default function api(url: string, options: IApiOptions = {
 // 这是登录专用的 api
 export function authApi(un: string, pw: string): any {
     const hpw = crypto.createHmac('sha1', '7e1977739c748beac0c0fd14fd26a544').update(pw).digest('hex');
+    console.log({
+        username: un,
+        password: hpw})
     const result = api('/api/login', {
         method: 'POST',
         body: {
@@ -54,8 +57,4 @@ export function authApi(un: string, pw: string): any {
     })
     return result
 }
-
-
-// post put(patch) delete get
-// restful
 

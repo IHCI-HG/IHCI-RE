@@ -23,6 +23,8 @@ const config = {
         publicPath: '/activity-react/',
         devtool: 'inline-source-map',
     },
+<<<<<<< HEAD
+=======
     test: {
         cssName: '[name].[chunkhash].css',
         jsName: '[name].[chunkhash].js',
@@ -31,6 +33,7 @@ const config = {
         assetsReceiver: 'http://receiver.dev1.qlchat.com/receiver',
         assetsToDir: '/data/nodeapp/resources/rs'
     },
+>>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
     prod: {
         cssName: '[name].[chunkhash].css',
         jsName: '[name].[chunkhash].js',

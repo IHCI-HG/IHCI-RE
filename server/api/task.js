@@ -203,15 +203,18 @@ const findTasklistById = async (req, res, next) => {
 }
 
 const createTask = async (req, res, next) => {
+
     const userId = req.rSession.userId;
     const taskTitle = req.body.name;
-    const taskContent = req.body.desc;
+    const taskContent = req.body.desc || "";
     const fileList = req.body.fileList || [];
     const teamId = req.body.teamId || "";
     const tasklistId = req.body.listId || "";
     const taskDeadline = req.body.ddl || "";
     const taskHeader = req.body.assigneeId || "";
 
+
+    console.log('createTask', req.body);
     console.log("teamId:" + teamId);
 
     if (!taskTitle) {
@@ -226,11 +229,15 @@ const createTask = async (req, res, next) => {
         const userObj = await userDB.findByUserId(userId);
         const result = await taskDB.createTask(taskTitle, taskContent, userObj, fileList, teamId, tasklistId, taskDeadline, taskHeader);
 
-        // if (teamId) {
-        //     await teamDB.addTask(teamId, result)
-        //     // const teamObj = await teamDB.findByTeamId(teamId)
-        //     // await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'CREATE_TASK', result._id, result.title, result)
-        // }
+        console.log("userObj:" + userObj);
+        console.log("result:" + result);
+
+
+        if (teamId) {
+            await teamDB.addTask(teamId, result)
+            // const teamObj = await teamDB.findByTeamId(teamId)
+            // await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'CREATE_TASK', result._id, result.title, result)
+        }
 
         if (tasklistId) {
             //如果是有清单的则在清单中添加
@@ -328,8 +335,8 @@ const editTask = async (req, res, next) => {
 
     try {
         var taskObj = await taskDB.findByTaskId(taskId);
-        const userObj = await userDB.findByUserId(userId);
-        const teamObj = await teamDB.findByTeamId(teamId);
+        // const userObj = await userDB.findByUserId(userId);
+        // const teamObj = await teamDB.findByTeamId(teamId);
 
         if (!taskObj) {
             resProcessor.jsonp(req, res, {
@@ -414,6 +421,7 @@ const addCheckitem = async (req, res, next) => {
     const content = req.body.name;
     const header = req.body.assigneeId || "";
     const deadline = req.body.ddl || "";
+    console.log('assigneeId', header)
 
     const userId = req.rSession.userId;
 
@@ -578,6 +586,9 @@ const editCheckitem = async (req, res, next) => {
             }
         }
 
+        console.log('editCheckitem.state', editCheckitem.state);
+        console.log('checkitemObj.state', checkitemObj.state);
+
         checkitemObj.content = editCheckitem.name || checkitemObj.content || "";
         checkitemObj.header = editCheckitem.assigneeId || checkitemObj.header || "";
         checkitemObj.deadline = editCheckitem.ddl || checkitemObj.deadline || "";
@@ -589,7 +600,7 @@ const editCheckitem = async (req, res, next) => {
             checkitemObj.completed_time = "";
         }
 
-        console.log(checkitemObj);
+        console.log('checkitemObj', checkitemObj);
 
         const result1 = taskDB.updateCheckitem(taskId, checkitemId, checkitemObj);
         // await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'EDIT_CHECKITEM', checkitemId, checkitemObj.content, checkitemObj)

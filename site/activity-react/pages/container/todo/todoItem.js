@@ -26,8 +26,7 @@ class TodoItem extends React.Component {
     // 中间步骤省略？
     handleSave = async(params) =>{
         const resp = await this.props.handleTodoModify(params)
-        // console.log('resp', resp)
-        if (resp.status === 200 ||resp.status === 201) {
+        if (resp.state.code === 0) {
             this.setMode('read')
         }
         return resp
