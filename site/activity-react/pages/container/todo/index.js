@@ -46,7 +46,7 @@ class TopicItem extends React.PureComponent{
 export default class Task extends React.Component{
     componentDidMount = async() => {
         await this.initTodoInfo()
-        this.initTeamList()
+        this.initMemberList()
         this.initTopicListArr()
     }
 
@@ -54,43 +54,85 @@ export default class Task extends React.Component{
         this.props.router.push(url)
     }
 
-    initTeamList = async () => {
-        const result = await api('/api/getMyInfo', {
-            method: 'GET',
-            body: {}
-        })
-        const teamList = result.data.teamList
-        const teamIdList = []
-        teamList.map((item) => {
-            teamIdList.push(item.teamId)
-        })
+    initMemberList = async () => {
+        let memberList =[]
+        let memberIDList =[]
 
-        const listResult = await api('/api/team/infoList', {
+        console.log('initTeamInfo', this.state.todo.teamId)
+        const result = await api('/api/team/info', {
             method: 'POST',
             body: {
-                teamIdList: teamIdList
+                teamId: this.state.todo.teamId
             }
         })
-        const teamInfoList = listResult.data
 
-        teamList.map((item, idx) => {
-            teamList[idx] = {
+        if(!result.data) {
+            window.toast('团队内容加载出错')
+        }
+
+        const curUserId = this.props.personInfo._id
+
+        let isCreator = false
+        result.data.memberList.map((item) => {  // 判断是否是创建者 ？
+            if(item.userId == curUserId) {
+                isCreator = true
+            }
+            memberIDList.push(item.userId)
+        })
+        const memberResult = await api('/api/userInfoList', {
+            method: 'POST',
+            body: { userList: memberIDList }
+        })
+
+        memberResult.data.map((item, idx) => {
+            memberList.push({
                 ...item,
-                ...teamInfoList[idx],
-                managed: (item.role == 'creator' || item.role == 'admin')
-            }
+                ...result.data.memberList[idx],
+                chosen: false,
+            })
         })
-
+        console.log('memberList', memberList)
         this.setState({
-            teamList: teamList
-        },console.log(teamList))
+            isCreator: isCreator,
+            memberList: memberList,
+            topicList: sortByCreateTime(result.data.topicList)
+        })
     }
 
     initTodoInfo = async() => {
-        const resp = await mock.httpMock('/todo/:id/get', { id: this.teamId })
-        // console.log('resp',resp)
-        if (resp.status === 200) {
-            this.setState({ todo: resp.data.todo })
+        // const resp = await mock.httpMock('/todo/:id/get', { id: this.teamId })
+        const resp = await api('/api/task/taskInfo', {
+            method: 'GET',
+            body: {
+                taskId: '5b2cbab1954b9c1e002c25cb'
+            }
+        })
+        // 后端数据接口适配
+        console.log('checkitemList', resp.data.checkitemList)
+        const todo = {}
+        todo.id = resp.data._id
+        todo.hasDone = resp.data.state
+        todo.desc = resp.data.content
+        todo.name = resp.data.title
+        todo.list = []
+        todo.teamId = resp.data.teamId
+        todo.assignee = {}
+        todo.assignee.id = resp.header
+        // 没有username,根据memberList获取
+        resp.data.checkitemList.forEach(function (item) {
+            const listItem = {}
+            listItem.id = item._id
+            listItem.name = item.content
+            listItem.hasDone = false
+            listItem.ddl = item.deadline
+            listItem.assignee = {}
+            listItem.assignee.id = item.header
+            todo.list.push(listItem)
+        })
+
+        console.log('数据', todo.id, todo.hasDone, todo.desc, todo.name);
+        if (resp.state.code === 0) {
+            this.setState({ todo })
         }
     }
 
@@ -121,13 +163,7 @@ export default class Task extends React.Component{
         user: {
             headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
         },
-        memberList: [
-            {
-                _id: 11,
-                name: '萨乌丁',
-                chosen: false,
-            },
-        ],
+        memberList: [],
         todo: {},
         teamList:[],
     }
@@ -289,12 +325,25 @@ export default class Task extends React.Component{
 
     // check
     handleCheckCreate = async(todoInfo) => {
-        const resp = await mock.httpMock('/check_item/post', {
-            todoId: this.props.params.id,
-            name: todoInfo.name,
-            ddl: todoInfo.date,
-            assigneeId: todoInfo.assigneeId,
+        const resp = await api('/api/task/addCheckitem', {
+            method: 'POST',
+            body: {
+                todoId: this.props.params.id,
+                name: todoInfo.name,
+                ddl: todoInfo.date,
+                assigneeId: todoInfo.assigneeId,
+            }
         })
+
+        console.log('assigneeId', todoInfo.assigneeId)
+        // const resp = await mock.httpMock('/check_item/post', {
+        //     todoId: this.props.params.id,
+        //     name: todoInfo.name,
+        //     ddl: todoInfo.date,
+        //     assigneeId: todoInfo.assigneeId,
+        // })
+        console.log('resp', resp)
+
         if (resp.status === 201) {
             const todo = this.state.todo
             todo.list = [...todo.list, resp.data.checkItem]
@@ -381,7 +430,7 @@ export default class Task extends React.Component{
 
                      <TodoItem
                          {...this.state.todo}
-                         detail = 'detail'
+                         detail='detail'
                          memberList={this.state.memberList}
                          handleAssigneeChange={this.handleAssigneeChange}
                          handleDateChange={this.handleDateChange}

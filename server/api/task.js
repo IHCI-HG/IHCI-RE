@@ -182,6 +182,7 @@ const findTasklistById = async (req, res, next) => {
 }
 
 const createTask = async (req, res, next) => {
+
     const userId = req.rSession.userId;
     const taskTitle = req.body.name;
     const taskContent = req.body.desc;
@@ -191,6 +192,8 @@ const createTask = async (req, res, next) => {
     const taskDeadline = req.body.ddl || "";
     const taskHeader = req.body.assigneeId || "";
 
+
+    console.log('createTask', req.body);
     console.log("teamId:" + teamId);
 
     if (!taskTitle) {
@@ -204,6 +207,9 @@ const createTask = async (req, res, next) => {
     try {
         const userObj = await userDB.findByUserId(userId);
         const result = await taskDB.createTask(taskTitle, taskContent, userObj, fileList, teamId, tasklistId, taskDeadline, taskHeader);
+
+        console.log("userObj:" + userObj);
+        console.log("result:" + result);
 
 
         if (teamId) {
@@ -387,6 +393,7 @@ const addCheckitem = async (req, res, next) => {
     const content = req.body.name;
     const header = req.body.assigneeId || "";
     const deadline = req.body.ddl || "";
+    console.log('assigneeId', header)
 
     const userId = req.rSession.userId;
 
