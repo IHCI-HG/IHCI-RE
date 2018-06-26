@@ -204,24 +204,40 @@ export default class Team extends React.Component{
     }
 
     handleTodoCreate = async(lIndex, id, todoInfo) => {
-        const resp = await mock.httpMock('/todo/post', {
-            // teamId: this.teamId,
-            listId: id,
-            name: todoInfo.name,
-            ddl: todoInfo.date,
-            assigneeId: todoInfo.assigneeId,
+        const result = await api('/api/task/create', {
+            method: 'POST',
+            body:{
+                teamId: this.teamId,
+                listId: id,
+                name: todoInfo.name,
+                ddl: todoInfo.date,
+                assigneeId: todoInfo.assigneeId,
+            }
         })
         // 返回用户名的显示依赖assigneeId
-        if (resp.status === 201) {
+        if (result.state.code === 0) {
+            let todo = {
+                listId: result.data.tasklistId,
+                id: result.data._id,
+                name: result.data.title,
+                assignee: {
+                    id: result.data.assigneeId || 'null',
+                    name: '返回name',
+                },
+                ddl: result.data.deadline,
+                checkItemDoneNum: 0,
+                // checkItemNum: 0,
+                hasDone: false,
+            }
             const todoListArr = this.state.todoListArr
             const todolist = todoListArr[lIndex]
             if (!todolist.list) {
                 todolist.list = []
             }
-            todolist.list = [...todolist.list, resp.data.todo]
+            todolist.list = [...todolist.list, todo]
             this.setState({ todoListArr })
         }
-        return resp
+        return result
     }
 
     handleTodoModify = async(lIndex, lId, id, todoInfo) => {
@@ -317,17 +333,19 @@ export default class Team extends React.Component{
                 name: info.name
             }
         })
-        let createTodo = {
-            id:result.data._id,
-            name:result.data.name,
-            list:result.data.taskList,
+        if (result.state.code === 0) {
+            let createTodo = {
+                id:result.data._id,
+                name:result.data.name,
+                list:result.data.taskList,
+            }
+            const todoListArr = this.state.todoListArr
+            todoListArr = [...todoListArr, createTodo]
+            this.setState({
+                showCreateTodoList: false,
+                todoListArr
+            },console.log(this.state.todoListArr))
         }
-        const todoListArr = this.state.todoListArr
-        todoListArr = [...todoListArr, createTodo]
-        this.setState({
-            showCreateTodoList: false,
-            todoListArr
-        },console.log(this.state.todoListArr))
     }
 
     handleTodoListModify = async(index, id, info) => {
