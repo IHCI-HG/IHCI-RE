@@ -94,10 +94,6 @@ const editTopic = async (req, res, next) => {
         const userObj = await userDB.baseInfoById(userId)
         const teamObj = await teamDB.findByTeamId(teamId)
         await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'EDIT_TOPIC', result1._id, result1.title, result1)
-
-        console.log('\n\n\n')
-        console.log('changing topic')
-        console.log('\n\n\n')
         //todo 还要在timeline表中增加项目
 
         resProcessor.jsonp(req, res, {

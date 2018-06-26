@@ -25,8 +25,8 @@ class TimelineItem extends React.PureComponent{
     typeMap = {
         'CREATE_TOPIC': '创建了讨论：',
         'REPLY_TOPIC': '回复了讨论：',
-        'EDIT_TOPIC': '编辑了回复：',
-        'EDIT_REPLY': '编辑了话题：',
+        'EDIT_TOPIC': '编辑了讨论：',
+        'EDIT_REPLY': '编辑了回复：',
     }
 
     render() {
