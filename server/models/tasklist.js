@@ -46,7 +46,7 @@ tasklistSchema.statics = {
     delTask: async function (tasklistId, taskId) {
         return this.update(
             { _id: tasklistId },
-            { $pull: { "taskList._id": taskId } }
+            { $pull: { taskList: { _id: mongoose.Types.ObjectId(taskId) } } }
         ).exec()
     },
 

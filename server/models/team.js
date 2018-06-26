@@ -87,7 +87,7 @@ teamSchema.statics = {
     delTopic: async function (teamId, topicId) {
         return this.update(
             { _id: teamId },
-            { $pull: { "topicList._id": topicId } }
+            { $pull: { topicList: { _id: mongoose.Types.ObjectId(topicId) } } }
         ).exec()
     },
 
@@ -133,7 +133,13 @@ teamSchema.statics = {
     delTask: async function (teamId, taskId) {
         return this.update(
             { _id: teamId },
-            { $pull: { "taskList._id": taskId } }
+            {
+                $pull: {
+                    taskList: {
+                        _id: mongoose.Types.ObjectId(taskId)
+                    }
+                }
+            }
         ).exec()
     },
 
@@ -153,7 +159,14 @@ teamSchema.statics = {
     delTasklist: async function (teamId, tasklistId) {
         return this.update(
             { _id: teamId },
-            { $pull: { "tasklistList._id": tasklistId } }
+            {
+                $pull: {
+                    tasklistList:
+                        {
+                            _id: mongoose.Types.ObjectId(tasklistId)
+                        }
+                }
+            }
         ).exec()
     },
 
