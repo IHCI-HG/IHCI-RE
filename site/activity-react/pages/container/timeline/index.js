@@ -116,7 +116,6 @@ export default class News extends React.Component{
                 timeStamp: lastStamp? lastStamp: '',
             }
         })
-        // const result = {data:[]}
         this.setState({
             newsList: result.data
         }, () => {
@@ -129,30 +128,7 @@ export default class News extends React.Component{
         }
     }
 
-    getMoreTimeLine = async () => {
-        const queryTeamId = this.props.location.query.teamId
-        const queryUserId = this.props.location.query.userId
-        const result = await api('/api/timeline/getTimeline', {
-            method: 'POST',
-            body: queryTeamId||queryUserId ? {
-                teamId: queryTeamId,
-                userId: queryUserId,
-                timeStamp: this.state.newsList[this.state.newsList.length-1].create_time
-            } : {timeStamp: this.state.newsList[this.state.newsList.length-1].create_time}
-        })
-        this.setState({
-            newsList: result.data
-        }, () => {
-            this.appendToShowList(this.state.newsList)
-        })
-        if(queryUserId){
-            this.setState({
-                showFilter: false
-            })
-        }
-    }
     appendToShowList = (list) => {
-        console.log(list)
         let showList = this.state.showList
         var listLength = list.length
         if(listLength > 0){
@@ -190,8 +166,6 @@ export default class News extends React.Component{
     typeMap = {
         'CREATE_TOPIC': '创建了讨论：',
         'REPLY_TOPIC': '回复了讨论：',
-        'EDIT_TOPIC': '编辑了回复：',
-        'EDIT_REPLY': '编辑了话题：',
     }
 
     state = {
@@ -253,12 +227,6 @@ export default class News extends React.Component{
             })
         }
     }
-
-    // routerTo = (url) => {
-    //     this.props.router.push(url)
-    //     // await this.componentDidMount()
-    //     // this.render()
-    // }
 
     render() {
         const showList = this.state.showList
