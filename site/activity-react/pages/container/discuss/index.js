@@ -45,6 +45,20 @@ export default class Team extends React.Component{
         this.props.router.push(url)
     }
 
+    getDirFileList = async () => {
+        const result = await api('/api/file/getDirFileList',{
+            method: 'POST',
+            body: {
+                dirInfo: {
+                    teamId: this.teamId,
+                    dir: this.state.dir,
+                }
+            }
+        })
+
+        console.log(result);
+    }
+
     initTeamInfo = async () => {
         const result = await api('/api/team/info', {
             method: 'POST',
@@ -116,41 +130,8 @@ export default class Team extends React.Component{
             managed: true,
         },
 
-        topicList: [
-            {
-                topicId: 1,
-                creator: {
-                    id: 1,
-                    name: '阿鲁巴大将军',
-                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                    phone: '17728282828',
-                    mail: 'ada@qq.com',
-                },
-                name: '这是一条讨论的name1',
-                content: 'ssssssssssssssss',
-                time: 1515384000000,
-            },{
-                topicId: 2,
-                creator: {
-                    id: 1,
-                    name: '阿鲁巴大将军',
-                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                    phone: '17728282828',
-                    mail: 'ada@qq.com',
-                },
-                name: '这是一条讨论的name2',
-                content: 'ssssssssssssssssddddddd',
-                time: 1515384000000,
-            }
-        ],
-
-        memberList: [
-            {
-                _id: 11,
-                name: '萨乌丁',
-                chosen: false,
-            },
-        ],
+        topicList: [],
+        memberList: [],
 
     }
 
@@ -250,6 +231,23 @@ export default class Team extends React.Component{
                     <div className="div-line"></div>
 
                     <div className="head">
+                        <span className='head-title'>文件</span>
+                        <div className="create-btn" onClick={() => { this.setState({ showCreateTopic: true }) }}>上传文件</div>
+                        <div className="create-btn" onClick={() => { this.setState({ showCreateTopic: true }) }}>创建文件夹</div>
+                    </div>
+
+                    <div className="file-list">
+                        <div className="file-line">
+                            <div className="name header">名称</div>
+                            <div className="size header">大小</div>
+                            <div className="last-modify header">最后修改时间</div>
+                        </div>
+                        
+                    </div>
+
+
+                {/*
+                    <div className="head">
                         <span className='head-title'>讨论</span> 
                         <div className="create-btn" onClick={() => {this.setState({showCreateTopic: true})}}>发起讨论</div>
                     </div>
@@ -278,6 +276,9 @@ export default class Team extends React.Component{
                             })
                         }
                     </div>
+                */}
+
+
 
                 </div>
 

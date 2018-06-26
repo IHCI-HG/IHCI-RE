@@ -74,6 +74,35 @@
         }
     }
 
+    .file-list {
+        .file-line {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #e6e6e6; /*no*/
+        }
+        .header {
+            font-size: 12px;
+            line-height: 50px;
+            color: #999;
+        }
+        div {
+            flex-grow: 0;
+            flex-shrink: 0;
+            overflow: hidden;
+            text-overflow:ellipsis;
+            white-space: nowrap;
+        }
+        .name {
+            width: 70%;
+        }
+        .size {
+            width: 15%;
+        }
+        .last-modify {
+            width: 15%;
+        }
+    }
+
     .create-area {
         .topic-name {
             display: block;
