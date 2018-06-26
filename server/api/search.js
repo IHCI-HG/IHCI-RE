@@ -46,18 +46,18 @@ const search = async (req, res, next) => {
          })
         const result = []
         if(type){
-            const flag = (type=="CREATE_TOPIC")||(type=="EDITOR_TOPIC")
+            const flag = (type=="CREATE_TOPIC")||(type=="EDIT_TOPIC")
             console.log("flag", flag)
             searchResult.map((item) => {    
                 if(flag){
-                    if((item.type=="CREATE_TOPIC")||(item.type=="EDITOR_TOPIC")){
+                    if((item.type=="CREATE_TOPIC")||(item.type=="EDIT_TOPIC")){
                         if(str.test(item.title)||str.test(item.content.content)){                    
                         result.push(item)
                         }
                      }  
                      
                  }
-                else if((item.type=="REPLY_TOPIC")||(item.type=="REPLY_EDITOR")&&str.test(item.content.content)){
+                else if((item.type=="REPLY_TOPIC")||(item.type=="EDIT_REPLAY")&&str.test(item.content.content)){
                        result.push(item)
                      }                 
             })
