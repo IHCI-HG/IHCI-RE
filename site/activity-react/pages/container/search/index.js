@@ -186,6 +186,7 @@ export default class SearchResult extends React.Component{
     }
 
     appendToShowList = (list) => {
+        console.log(list)
         let showList = this.state.showList
         var listLength = list.length
         if(listLength > 0){
@@ -234,6 +235,7 @@ export default class SearchResult extends React.Component{
         path += (!(typeof(teamId) == 'undefined')) ? (teamId == '' ? '': ('&teamId=' + teamId)) : (queryTeamId ? ('&teamId=' + queryTeamId) :'')
         path += (!(typeof(type) == 'undefined')) ? (type == '' ? '': ('&type=' + type)) : (queryType ? ('&type=' + queryType) :'')
         location.href = path
+
     }
 
     typeMap = {
