@@ -14,6 +14,7 @@ import TeamAdmin from './team-admin'
 import TeamJoin from './team-join'
 import TeamCreate from './team-create'
 import Person from './person'
+
 import TeamDetail from './team-detail'
 import Topic from './topic'
 import Timeline from './timeline'  
@@ -107,6 +108,9 @@ const routeConfig = [
             { path: 'sign', component: Sign },
             { path: 'team-create', component: TeamCreate },
             { path: 'person', component: Person },
+            { path: 'discuss/topic/:id', component: Topic },
+            { path: 'timeline', component: Timeline },
+            { path: 'member', component: Member },
             { path: 'team/:id', component: TeamDetail },
             { path: 'discuss/topic/:id', component: Topic },
             { path: 'timeline', component: Timeline },

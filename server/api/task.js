@@ -305,8 +305,8 @@ const editTask = async (req, res, next) => {
 
     try {
         var taskObj = await taskDB.findByTaskId(taskId);
-        const userObj = await userDB.findByUserId(userId);
-        const teamObj = await teamDB.findByTeamId(teamId);
+        // const userObj = await userDB.findByUserId(userId);
+        // const teamObj = await teamDB.findByTeamId(teamId);
 
         if (!taskObj) {
             resProcessor.jsonp(req, res, {
@@ -549,14 +549,17 @@ const editCheckitem = async (req, res, next) => {
             }
         }
 
+        console.log('editCheckitem.state', editCheckitem.state);
+        console.log('checkitemObj.state', checkitemObj.state);
+
         checkitemObj.content = editCheckitem.name || checkitemObj.content || "";
         checkitemObj.header = editCheckitem.assigneeId || checkitemObj.header || "";
         checkitemObj.deadline = editCheckitem.ddl || checkitemObj.deadline || "";
         checkitemObj.completed_time = editCheckitem.completed_time || checkitemObj.completed_time || "";
-        checkitemObj.state = editCheckitem.state || checkitemObj.state || "false";
+        checkitemObj.state = editCheckitem.state || "false";
 
 
-        console.log(checkitemObj);
+        console.log('checkitemObj', checkitemObj);
 
         const result1 = taskDB.updateCheckitem(taskId, checkitemId, checkitemObj);
         // await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'EDIT_CHECKITEM', checkitemId, checkitemObj.content, checkitemObj)

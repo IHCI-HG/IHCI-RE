@@ -32,6 +32,9 @@ export function isPc() {
 <<<<<<< HEAD
 
 =======
+<<<<<<< HEAD
+
+=======
 export function isQlchat() {
     return ua.toLowerCase().match(/qlchat/i) == "qlchat";
 }
@@ -46,3 +49,4 @@ export function getQlchatVersion() {
     return;
 }
 >>>>>>> 34489639a34bf3809a59fa7dedf402a6837210d2
+>>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
