@@ -57,7 +57,7 @@ const search = async (req, res, next) => {
                      }  
                      
                  }
-                else if((item.type=="REPLY_TOPIC")||(item.type=="EDIT_REPLAY")&&str.test(item.content.content)){
+                else if((item.type=="REPLY_TOPIC")||(item.type=="EDIT_REPLY")&&str.test(item.content.content)){
                        result.push(item)
                      }                 
             })
