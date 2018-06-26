@@ -310,15 +310,24 @@ export default class Team extends React.Component{
 
     // todoList
     handleTodoListCreate = async(info) => {
-        const resp = await mock.httpMock('/todolist/post', {
-            teamId: this.teamId,
-            name: info.name
+        const result = await api('/api/task/createTaskList', {
+            method: 'POST',
+            body: {
+                teamId: this.teamId,
+                name: info.name
+            }
         })
-        if (resp.status === 201) {
-            const todoListArr = [...this.state.todoListArr, resp.data.todoList]
-            this.setState({showCreateTodoList: false, todoListArr})
+        let createTodo = {
+            id:result.data._id,
+            name:result.data.name,
+            list:result.data.taskList,
         }
-        return resp
+        const todoListArr = this.state.todoListArr
+        todoListArr = [...todoListArr, createTodo]
+        this.setState({
+            showCreateTodoList: false,
+            todoListArr
+        },console.log(this.state.todoListArr))
     }
 
     handleTodoListModify = async(index, id, info) => {

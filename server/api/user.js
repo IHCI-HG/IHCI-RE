@@ -69,7 +69,7 @@ const login = async (req, res, next) => {
     console.log(req);
     console.log("..................................");
 
-
+    console.log(req.body)
     if(!username || !password) {
         resProcessor.jsonp(req, res, {
             state: { code: 1 , msg: '参数不全'},
