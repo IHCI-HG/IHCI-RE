@@ -12,7 +12,7 @@ const tasklistSchema = new Schema({
 })
 
 tasklistSchema.statics = {
-    createTasklist: async function (creator,name,teamId) {
+    createTasklist: async function (creator, name, teamId) {
         return this.create({
             creator: creator,
             name: name,
@@ -53,7 +53,16 @@ tasklistSchema.statics = {
     updateTask: async function (tasklistId, taskId, editTask) {
         return this.update(
             { _id: tasklistId, "taskList._id": mongoose.Types.ObjectId(taskId) },
-            { $set: { "taskList.$": editTask } }
+            {
+                $set: {
+                    "taskList.$.title": editTask.title,
+                    "taskList.$.header": editTask.header,
+                    "taskList.$.content": editTask.content,
+                    "taskList.$.deadline": editTask.deadline,
+                    "taskList.$.completed_time": editTask.completed_time,
+                    "taskList.$.state": editTask.state
+                }
+            }
         ).exec()
     },
 

@@ -101,7 +101,15 @@ teamSchema.statics = {
     updateTask: async function (teamId, taskId, editTask) {
         return this.update(
             { _id: teamId, "taskList._id": mongoose.Types.ObjectId(taskId) },
-            { $set: { "taskList.$": editTask } }
+            {
+                $set: {
+                    "taskList.$.header": editTask.header,
+                    "taskList.$.content": editTask.content,
+                    "taskList.$.deadline": editTask.deadline,
+                    "taskList.$.completed_time": editTask.completed_time,
+                    "taskList.$.state": editTask.state
+                }
+            }
         ).exec()
     },
     // updateTask: async function (teamId, taskId, editTask) {
