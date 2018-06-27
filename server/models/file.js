@@ -13,6 +13,7 @@ const fileSchema = new Schema({
     fileName: String,
     team: {type: Schema.Types.ObjectId, ref: 'team', index: true},
     dir: String, // 文件所在目录,对team唯一, 由dirValidate方法约束
+    size: String,
 })
 
 
@@ -32,6 +33,7 @@ const folderSchema = new Schema({
         name: String,
         OssKey: String, // 如果是folder该字段就为null
         last_modify_time: String,
+        size: String,
     }],
     team: {type: Schema.Types.ObjectId, ref: 'team', index: true},
     folderName: String,
@@ -41,13 +43,14 @@ const folderSchema = new Schema({
 
 
 fileSchema.statics = {
-    createFile: async function(teamId, dir, fileName, ossKey) {
+    createFile: async function(teamId, dir, fileName, ossKey,size) {
         return this.create({
             OssKey: ossKey,
             fileName: fileName,
             team: mongoose.Types.ObjectId(teamId),
             dir: dir,
             last_modify_time: Date.now,
+            size: size,
         })
     },
     delFileByDir: function(teamId, dir, fileName) {
@@ -135,6 +138,7 @@ folderSchema.statics = {
                 name: fileObj.fileName,
                 OssKey: fileObj.OssKey,
                 last_modify_time: Date.now(),
+                size: fileObj.size,
             }}}
         ).exec()
     },
@@ -242,7 +246,7 @@ const getDirFileList = async function(teamId, dir) {
     return folderObj.fileList
 }
 
-const createFile = async function(teamId, dir, fileName, ossKey) {
+const createFile = async function(teamId, dir, fileName, ossKey,size) {
     const folderObj = await folderDB.findOne({
         team: mongoose.Types.ObjectId(teamId),
         path: dir
@@ -261,7 +265,7 @@ const createFile = async function(teamId, dir, fileName, ossKey) {
         throw '文件名已存在'
     }
 
-    const fileObj = await fileDB.createFile(teamId, dir, fileName, ossKey)
+    const fileObj = await fileDB.createFile(teamId, dir, fileName, ossKey,size)
     await folderDB.appendFile(teamId, dir, fileObj)
     return fileObj
 }

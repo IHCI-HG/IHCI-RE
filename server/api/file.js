@@ -80,7 +80,7 @@ const createFile = async (req, res, next) => {
     const userId = req.rSession.userId
 
     try {
-        let fileObj = await file.createFile(fileInfo.teamId,fileInfo.dir,fileInfo.fileName,fileInfo.ossKey)
+        let fileObj = await file.createFile(fileInfo.teamId,fileInfo.dir,fileInfo.fileName,fileInfo.ossKey,fileInfo.size)
 
         resProcessor.jsonp(req, res, {
             state: {code: 0,msg: "Successfully created file"},
