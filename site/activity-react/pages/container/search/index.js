@@ -186,7 +186,6 @@ export default class SearchResult extends React.Component{
     }
 
     appendToShowList = (list) => {
-        console.log(list)
         let showList = this.state.showList
         var listLength = list.length
         if(listLength > 0){

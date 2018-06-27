@@ -21,6 +21,7 @@ import Topic from './topic'
 import Timeline from './timeline'  
 import Member from './member'  
 import Sign from './sign'
+import SearchResult from './search'
 import Inform from './inform'
 
 class App extends React.Component{
@@ -141,7 +142,9 @@ const routeConfig = [
             { path: 'discuss/topic/:id', component: Topic },
             { path: 'timeline', component: Timeline },
             { path: 'member', component: Member },
+            { path: 'search', component: SearchResult },
             { path: 'inform', component: Inform },
+            
         ]
     }
 ]
