@@ -321,3 +321,68 @@ export const delTaskTemplate = async function (headerList, taskObj) {
     })
 }
 
+
+export const delHeaderTemplate = async function (headerList, taskObj, headername) {
+    const openidList = await userDB.openidList(headerList)
+    console.log(taskObj.header)
+
+    openidList.map((item) => {
+        if (typeof item.openid == 'string') {
+            pub_pushTemplateMsg(
+                item.openid,
+                'p6pZBXX0SaqODRDZgY_3NqyIAK0mYN9HXYq6yMLyA04',
+                'http://www.animita.cn/todo/' + taskObj._id,
+                {
+                    "first": {
+                        "value": taskObj.creator.name + " 取消了分配给" + headername + "的任务",
+                    },
+                    "keyword1": {
+                        "value": taskObj.title,
+                    },
+                    "keyword2": {
+                        "value": formatDate(new Date()),
+                    },
+                    "keyword3": {
+                        "value": taskObj.content,
+                    },
+                    "remark": {
+                        "value": "点击查看",
+                    }
+                }
+            )
+        }
+    })
+}
+
+export const compTaskTemplate = async function (creatorId, taskObj , headername) {
+    const openidList = await userDB.openidList(creatorId)
+    console.log(taskObj.header)
+
+    openidList.map((item) => {
+        if (typeof item.openid == 'string') {
+            pub_pushTemplateMsg(
+                item.openid,
+                'p6pZBXX0SaqODRDZgY_3NqyIAK0mYN9HXYq6yMLyA04',
+                'http://www.animita.cn/todo/' + taskObj._id,
+                {
+                    "first": {
+                        "value": headername + " 完成了任务",
+                    },
+                    "keyword1": {
+                        "value": taskObj.title,
+                    },
+                    "keyword2": {
+                        "value": formatDate(new Date()),
+                    },
+                    "keyword3": {
+                        "value": "已完成",
+                    },
+                    "remark": {
+                        "value": "点击查看",
+                    }
+                }
+            )
+        }
+    })
+}
+

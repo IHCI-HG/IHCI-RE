@@ -8,7 +8,14 @@ import apiAuth from '../components/auth/api-auth'
 import {
     createTopicTemplate,
     replyTopicTemplate,
+<<<<<<< HEAD
     createTaskTemplate
+=======
+    createTaskTemplate,
+    delTaskTemplate,
+    delHeaderTemplate,
+    compTaskTemplate
+>>>>>>> 743650044e1cb9972b5d0093a8b1fc5f6993e1ea
 } from '../components/wx-utils/wx-utils'
 
 var mongoose = require('mongoose')
@@ -222,9 +229,6 @@ const createTask = async (req, res, next) => {
     const taskHeader = req.body.assigneeId || "";
 
 
-    console.log('createTask', req.body);
-    console.log("teamId:" + teamId);
-
     if (!taskTitle) {
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: "参数不全" },
@@ -247,8 +251,11 @@ const createTask = async (req, res, next) => {
             await teamDB.addTask(teamId, result)
         }
 
+<<<<<<< HEAD
         // const user = await userDB.findByUserId(taskHeader)
         // const headername = user.username
+=======
+>>>>>>> 743650044e1cb9972b5d0093a8b1fc5f6993e1ea
         const taskObj = {
             id: result._id,
             title: result.title,
@@ -264,6 +271,8 @@ const createTask = async (req, res, next) => {
 
         //todo 有负责人，走微信模板下发流程
         if (taskHeader) {
+            const user = await userDB.findByUserId(taskHeader)
+            const headername = user.username
             createTaskTemplate(headerList, result, headername)
         }
 
@@ -306,6 +315,16 @@ const delTask = async (req, res, next) => {
             } else {
                 await teamDB.delTask(teamId, taskId);
             }
+<<<<<<< HEAD
+=======
+
+            const headerList = []
+            headerList.push(taskObj.header)
+            console.log(taskObj.header)
+            if (taskObj.header) {
+                delTaskTemplate(headerList, taskObj)
+            }
+>>>>>>> 743650044e1cb9972b5d0093a8b1fc5f6993e1ea
             resProcessor.jsonp(req, res, {
                 state: { code: 0, msg: '请求成功' },
                 data: result
@@ -344,9 +363,8 @@ const editTask = async (req, res, next) => {
     }
 
     try {
-        var taskObj = await taskDB.findByTaskId(taskId);
-        // const userObj = await userDB.findByUserId(userId);
-        // const teamObj = await teamDB.findByTeamId(teamId);
+        const taskObj = await taskDB.findByTaskId(taskId)
+        console.log(taskObj)
 
         if (!taskObj) {
             resProcessor.jsonp(req, res, {
@@ -362,32 +380,56 @@ const editTask = async (req, res, next) => {
         task.deadline = editTask.ddl || taskObj.deadline;
         task.header = editTask.assigneeId || taskObj.header;
         if (editTask.hasDone == "true") {
-            taskObj.state = true;
-            taskObj.completed_time = new Date();
+            task.state = true;
+            task.completed_time = new Date();
         } else {
-            taskObj.state = false;
-            taskObj.completed_time = "";
+            task.state = false;
+            task.completed_time = "";
         }
 
         console.log(taskObj);
 
-        const result1 = await taskDB.updateTask(taskId, taskObj);
+        const result1 = await taskDB.updateTask(taskId, task);
         if (tasklistId) {
-            await tasklistDB.updateTask(tasklistId, taskId, taskObj);
+            await tasklistDB.updateTask(tasklistId, taskId, task);
         } else {
-            await teamDB.updateTask(teamId, taskId, taskObj);
+            await teamDB.updateTask(teamId, taskId, task);
         }
 
         //todo 给负责人发送微信下发模板
+        if (editTask.assigneeId != taskObj.header) {
+            if (editTask.assigneeId && !taskObj.header) {
+                const headerObj = userDB.findByUserId(editTask.assigneeId);
+                const headername = headerObj.username;
+                const headerList = []
+                headerList.push(editTask.assigneeId)
+                createTaskTemplate(headerList, taskObj, headername)
+            } else if(editTask.assigneeId = "" && taskObj.header){
+                const headerObj = userDB.findByUserId(taskObj.header);
+                const headername = headerObj.username;
+                const headerList = []
+                headerList.push(taskObj.header)
+                delHeaderTemplate(headerList, taskObj, headername)
+            }
+        }
+
+        if(editTask.hasDone == "true") {
+            if(task.header) {
+                const headerObj = userDB.findByUserId(task.header);
+                const headername = headerObj.username;
+                const creatorId = []
+                creatorId.push(taskObj.creator._id)
+                compTaskTemplate(creatorId, taskObj, headername)
+            }
+        }
 
         //todo 还要在timeline中添加项目
         // await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'EDIT_TASK', result1._id, result1.title, result1)
 
-        taskObj.creator = null
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
-            data: taskObj
+            data: task
         })
 
     } catch (error) {
