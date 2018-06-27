@@ -459,7 +459,7 @@ const taskList = async (req, res, nect) => {
         return
     }
     try {
-        let teamObj = (await teamDB.findByTeamId(teamId)).toObject()
+        let team = await teamDB.findByTeamId(teamId)
         if (!teamObj) {
             resProcessor.jsonp(req, res, {
                 state: { code: 1, msg: '团队不存在' },
@@ -467,6 +467,7 @@ const taskList = async (req, res, nect) => {
             });
             return
         }
+        const teamObj = team.toObject()
         const taskListTemp = teamObj.taskList
         const taskList = []
         for (var i = 0; i < taskListTemp.length; i++) {
@@ -482,15 +483,15 @@ const taskList = async (req, res, nect) => {
                 }
             }
             taskList.push(obj)
-            // taskList[i].creator.teamList = null
-            // taskList[i].creator.password = ""
-            // taskList[i].creator.create_time = ""
-            // taskList[i].creator.personInfo = null
         }
         const tasklistListTemp = teamObj.tasklistList
         const tasklistList = []
         for (var i = 0; i < tasklistListTemp.length; i++) {
-            const result = (await tasklistDB.findByTasklistId(tasklistListTemp[i]._id)).toObject()
+            const temp = await tasklistDB.findByTasklistId(tasklistListTemp[i]._id)
+            if(!temp) {
+                continue;
+            }
+            const result = temp.toObject()
             console.log(result)
             const task = []
             for (var j = 0; j < result.taskList.length; j++) {
