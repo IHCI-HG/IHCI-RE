@@ -37,12 +37,8 @@ const createTasklist = async (req, res, next) => {
     }
 
     try {
-        const userObj = (await userDB.findByUserId(userId)).toObject();
-        const simpleUser = {
-            _id: userObj._id,
-            name: userObj.username
-        }
-        const tasklist = await tasklistDB.createTasklist(simpleUser, listname, listDesc, teamId);
+        const userObj = await userDB.findByUserId(userId);
+        const tasklist = await tasklistDB.createTasklist(userObj, listname, listDesc, teamId);
 
         await teamDB.addTasklist(teamId, tasklist)
 
@@ -74,7 +70,7 @@ const updateTasklist = async (req, res, next) => {
 
     const editTasklist = {
         name: name,
-        listId: listId,
+        listid: listId,
         desc: desc
     }
 
@@ -87,6 +83,7 @@ const updateTasklist = async (req, res, next) => {
     }
 
     try {
+        const userObj = await userDB.findByUserId(userId);
         const result = await tasklistDB.updateTasklist(listId, editTasklist);
 
         await teamDB.updateTasklist(teamId, listId, editTasklist)
@@ -111,6 +108,7 @@ const updateTasklist = async (req, res, next) => {
     }
 
 }
+
 
 const delTasklist = async (req, res, next) => {
     const userId = req.rSession.userId;
@@ -163,15 +161,18 @@ const findTasklistById = async (req, res, next) => {
         for (var i = 0; i < taskNum; i++) {
             const taskObj = await taskDB.findByTaskId(result.taskList[i]._id);
             const checkitemList = taskObj.checkitemList;
-            console.log(checkitemList)
             checkitemNum += taskObj.checkitemList.length;
             for (var i = 0; i < checkitemList.length; i++) {
-                console.log(checkitemList[i].state);
                 if (checkitemList[i].state == true) {
                     checkitemDoneNum += 1;
                 }
             }
         }
+        // result["taskNum"] = taskNum;
+        // result["checkItemNum"] = checkitemNum;
+        // result["checkItemDoneNum"] = checkitemDoneNum;
+
+        console.log(result);
         const taskarr = []
         for (var i = 0; i < result.taskList.length; i++) {
             const userObj = await userDB.findByUserId(result.taskList[i].header);
@@ -220,6 +221,10 @@ const createTask = async (req, res, next) => {
     const tasklistId = req.body.listId || "";
     const taskDeadline = req.body.ddl || "";
     const taskHeader = req.body.assigneeId || "";
+
+
+    console.log('createTask', req.body);
+    console.log("teamId:" + teamId);
 
     if (!taskTitle) {
         resProcessor.jsonp(req, res, {
@@ -298,6 +303,7 @@ const delTask = async (req, res, next) => {
         console.log(taskObj)
         console.log("................................")
         const result = await taskDB.delTaskById(taskId);
+        console.log(result);
         if (result.ok == 1) {
             if (tasklistId) {
                 await tasklistDB.delTask(tasklistId, taskId);
@@ -336,6 +342,7 @@ const editTask = async (req, res, next) => {
     const taskId = req.body.taskId;
     const tasklistId = req.body.listId;
     const editTask = req.body.editTask;
+    console.log(tasklistId);
 
     const userId = req.rSession.userId;
 
@@ -349,6 +356,8 @@ const editTask = async (req, res, next) => {
 
     try {
         var taskObj = await taskDB.findByTaskId(taskId);
+        // const userObj = await userDB.findByUserId(userId);
+        // const teamObj = await teamDB.findByTeamId(teamId);
 
         if (!taskObj) {
             resProcessor.jsonp(req, res, {
@@ -364,28 +373,32 @@ const editTask = async (req, res, next) => {
         task.deadline = editTask.ddl || taskObj.deadline;
         task.header = editTask.assigneeId || taskObj.header;
         if (editTask.hasDone == "true") {
-            task.state = true;
-            task.completed_time = new Date();
+            taskObj.state = true;
+            taskObj.completed_time = new Date();
         } else {
-            task.state = false;
-            task.completed_time = "";
+            taskObj.state = false;
+            taskObj.completed_time = "";
         }
 
-        const result1 = await taskDB.updateTask(taskId, task);
+        console.log(taskObj);
+
+        const result1 = await taskDB.updateTask(taskId, taskObj);
         if (tasklistId) {
-            await tasklistDB.updateTask(tasklistId, taskId, task);
+            await tasklistDB.updateTask(tasklistId, taskId, taskObj);
         } else {
-            await teamDB.updateTask(teamId, taskId, task);
+            await teamDB.updateTask(teamId, taskId, taskObj);
         }
 
         //todo 给负责人发送微信下发模板
 
         //todo 还要在timeline中添加项目
-        // await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'EDIT_TASK', result1._id, result1.title, result1
+        // await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'EDIT_TASK', result1._id, result1.title, result1)
+
+        taskObj.creator = null
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
-            data: task
+            data: taskObj
         })
 
     } catch (error) {
@@ -467,6 +480,7 @@ const addCheckitem = async (req, res, next) => {
     const content = req.body.name;
     const header = req.body.assigneeId || "";
     const deadline = req.body.ddl || "";
+    console.log('assigneeId', header)
 
     const userId = req.rSession.userId;
 
@@ -630,6 +644,9 @@ const editCheckitem = async (req, res, next) => {
                 break;
             }
         }
+
+        console.log('editCheckitem.state', editCheckitem.state);
+        console.log('checkitemObj.state', checkitemObj.state);
 
         checkitemObj.content = editCheckitem.name || checkitemObj.content || "";
         checkitemObj.header = editCheckitem.assigneeId || checkitemObj.header || "";

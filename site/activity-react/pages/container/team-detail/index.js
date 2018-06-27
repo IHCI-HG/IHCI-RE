@@ -104,8 +104,9 @@ export default class Team extends React.Component{
             todoListItem.list = []
             item.taskList.map((mapTodoItem)=>{
                 let todoItem = {}
-                todoItem.id = mapTodoItem.id
+                todoItem.id = mapTodoItem.taskId
                 todoItem.name = mapTodoItem.title
+                todoItem.completeTime = mapTodoItem.completed_time
                 todoItem.hasDone = mapTodoItem.state
                 todoItem.ddl = mapTodoItem.deadline
                 todoItem.assignee = {
@@ -116,6 +117,7 @@ export default class Team extends React.Component{
             todoList.push(todoListItem)
         })
         todoListArr = [unclassified,...todoList]
+        console.log(todoListArr)
         if (resp.state.code === 0) {
             this.setState({ todoListArr })
         }
@@ -260,11 +262,12 @@ export default class Team extends React.Component{
         // 返回用户名的显示依赖assigneeId
         if (result.state.code === 0) {
             let todo = {
-                listId: result.data.tasklistId,
-                id: result.data._id,
+                listId: result.data.listId,
+                id: result.data.id,
                 name: result.data.title,
+                desc: result.data.content,
                 assignee: {
-                    id: result.data.assigneeId || 'null',
+                    id: result.data.header,
                 },
                 ddl: result.data.deadline,
                 checkItemDoneNum: 0,
@@ -381,21 +384,23 @@ export default class Team extends React.Component{
             method: 'POST',
             body: {
                 teamId: this.teamId,
-                name: info.name
+                name: info.name,
             }
         })
+        console.log(info)
+        console.log(result)
         if (result.state.code === 0) {
             let createTodo = {
-                id:result.data._id,
+                id:result.data.id,
                 name:result.data.name,
-                list:result.data.taskList,
+                list:[],
             }
             const todoListArr = this.state.todoListArr
             todoListArr = [...todoListArr, createTodo]
             this.setState({
                 showCreateTodoList: false,
                 todoListArr
-            },console.log(this.state.todoListArr))
+            })
         }
     }
 
@@ -428,7 +433,6 @@ export default class Team extends React.Component{
     render() {
         let teamInfo = this.state.teamInfo
         const unclassified = this.state.todoListArr[0]
-
         // console.log(this.state.memberList)
         return (
             <Page title={"团队名称xx - IHCI"}
@@ -557,7 +561,7 @@ export default class Team extends React.Component{
                         }
                         return (
                             <TodoList
-                                key={todoList._id}
+                                key={todoList.id}
                                 {...todoList}
                                 memberList={this.state.memberList}
                                 handleTodoCreate={this.handleTodoCreate.bind(this, index, todoList.id)}

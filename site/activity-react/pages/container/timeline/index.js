@@ -172,11 +172,7 @@ export default class News extends React.Component{
             this.props.personInfo.teamList.map((item) => {
                 if(partten.test(item.teamName)) {
                     teamList.push(item)
-<<<<<<< HEAD
-                }
-=======
                 } 
->>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
             })
             this.setState({
                 teamList: teamList

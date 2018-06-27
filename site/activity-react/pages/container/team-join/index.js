@@ -34,19 +34,7 @@ export default class TeamAdmin extends React.Component{
         
         setTimeout(() => {
             if(result.state.code == 0) {
-<<<<<<< HEAD
                 location.href = "/team/" + this.state.teamObj._id
-=======
-<<<<<<< HEAD
-                location.href = "/discuss/" + this.state.teamObj._id
-=======
-<<<<<<< HEAD
-                location.href = "/team/" + this.state.teamObj._id
-=======
-                location.href = "/discuss/" + this.state.teamObj._id
->>>>>>> 34489639a34bf3809a59fa7dedf402a6837210d2
->>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
->>>>>>> 6fa09423c8a1c436e936af59fbae288bd9a80e1f
             }
         }, 400);
 
