@@ -392,7 +392,7 @@ export default class Discuss extends React.Component{
                                     return (
                                         <div className="file-line files" key={item.fileType + '-' + item._id}>
                                             <div className="name">{item.name}</div>
-                                            <div className="size">大小</div>
+                                            <div className="size">{item.size}</div>
                                             <div className="last-modify">{formatDate(item.last_modify_time)}</div>
                                             <div className="tools">
                                                 <span onClick={() => {this.downloadHandle(item.ossKey)}}>下载</span>
@@ -404,7 +404,7 @@ export default class Discuss extends React.Component{
                                 }
                             })
                         }
-                        <div className='show-all-file'> 查看全部文件 </div>
+                        <div className='show-all-file' onClick={() => {location.href = '/files/' + this.teamId}}> 查看全部文件 </div>
 
                         
                     </div>
