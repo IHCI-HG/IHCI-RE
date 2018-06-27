@@ -2,8 +2,9 @@ import * as React from 'react';
 import './style.scss'
 
 import api from '../../../utils/api';
-import { timeBefore, sortByCreateTime } from '../../../utils/util'
+import { timeBefore, sortByCreateTime, formatDate } from '../../../utils/util'
 import Page from '../../../components/page'
+import fileUploader from '../../../utils/file-uploader';
 
 import MemberChosenList from '../../../components/member-chose-list'
 
@@ -35,29 +36,58 @@ class TopicItem extends React.PureComponent{
     }
 }
 
-export default class Team extends React.Component{
+export default class Discuss extends React.Component{
+
+    state = {
+        showCreateTopic: true,
+        isCreator: false,
+
+        createTopicName: '',
+        createTopicContent: '',
+        memberNum: 0,
+
+        teamInfo: {
+            _id: 1,
+            name: 'IHCI平台搭建项目组',
+            teamImg: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1522401625&di=bcc173556f4ce40a5b92ff96402a053b&imgtype=jpg&er=1&src=http%3A%2F%2Fwx3.sinaimg.cn%2Forj360%2F7fa53ff0gy1fc1phl41r6j20hs0hsmxn.jpg',
+            desc: '完成IHCI平台搭建',
+            managed: true,
+        },
+
+        topicList: [],
+        memberList: [],
+
+        fileList: [],
+        showCreateFolder: false,
+        createFolderName: '新建文件夹',
+    }
+
     componentDidMount = async() => {
         this.teamId = this.props.params.id
         this.initTeamInfo()
+        this.initTeamFile()
     }
 
     locationTo = (url) => {
         this.props.router.push(url)
     }
 
-    getDirFileList = async () => {
+    initTeamFile = async() => {
         const result = await api('/api/file/getDirFileList',{
             method: 'POST',
             body: {
                 dirInfo: {
                     teamId: this.teamId,
-                    dir: this.state.dir,
+                    dir: '/',
                 }
             }
         })
-
-        console.log(result);
-    }
+        if(result && result.data && result.data.fileList && result.data.fileList.length) {
+            this.setState({
+                fileList: result.data.fileList
+            })
+        }
+    } 
 
     initTeamInfo = async () => {
         const result = await api('/api/team/info', {
@@ -112,28 +142,6 @@ export default class Team extends React.Component{
         })
     }
 
-
-
-    state = {
-        showCreateTopic: true,
-        isCreator: false,
-
-        createTopicName: '',
-        createTopicContent: '',
-        memberNum: 0,
-
-        teamInfo: {
-            _id: 1,
-            name: 'IHCI平台搭建项目组',
-            teamImg: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1522401625&di=bcc173556f4ce40a5b92ff96402a053b&imgtype=jpg&er=1&src=http%3A%2F%2Fwx3.sinaimg.cn%2Forj360%2F7fa53ff0gy1fc1phl41r6j20hs0hsmxn.jpg',
-            desc: '完成IHCI平台搭建',
-            managed: true,
-        },
-
-        topicList: [],
-        memberList: [],
-
-    }
 
     createTopicHandle = async () => {
         const informList = []
@@ -200,11 +208,113 @@ export default class Team extends React.Component{
         location.href = '/team-admin/' + this.teamId
     }
 
+    createFolderHandle = async () => {
+        this.setState({showCreateFolder: true})
+    }
+
+    createFolderNameInputHandle = (e) => {
+        this.setState({
+            createFolderName: e.target.value
+        })
+    }
+
+    createFolderComfirmHandle = async () => {
+        const result = await api('/api/file/createFolder',{
+            method: 'POST',
+            body: {
+                folderInfo: {
+                    teamId: this.teamId,
+                    dir: '/',
+                    folderName: this.state.createFolderName
+                }
+            }
+        })
+        
+        if(result.state.code === 0) {
+            window.toast("Folder created")
+            this.setState({showCreateFolder: false, createFolderName: '新建文件夹'})
+        } else {
+            window.toast(result.state.msg)
+        }
+        this.initTeamFile()
+    }
+
+    createFolderCancelHandle = () => {
+        this.setState({showCreateFolder: false, createFolderName: '新建文件夹'})
+    }
+
+    openFileInput = () => {
+        this.fileInput.click()
+    }
+
+    uploadFileHandle = async (e) => {
+
+        var file = e.target.files[0];
+        this.setState({
+            chosenFile: file
+        })
+        console.log(file)
+        const result = await api('/api/file/createFile', {
+            method: 'POST',
+            body: {
+                fileInfo: {
+                   teamId: this.teamId,
+                   size: file.size,
+                   dir: '/',
+                   fileName: file.name,
+                   ossKey: `${this.teamId}/${file.name}`
+                }
+            }
+        })
+        console.log(result);
+        if(result.state.code === 0) {
+            window.toast("Folder created")
+        } else {
+            window.toast(result.state.msg)
+        }
+        fileUploader(this.teamId, '', file)
+
+        this.initTeamFile()
+    }
+
+    deleteHandle = async (type, name) => {
+        if(type == 'file')
+        {
+            const result = await api('/api/file/delFile',{
+                method: 'POST',
+                body: {
+                    fileInfo: {
+                        teamId: this.teamId,
+                        dir: '/',
+                        fileName: name
+                    }
+                }
+            })
+        }
+        else 
+        {
+            const result = await api('/api/file/delFolder',{
+                method: 'POST',
+                body: {
+                    folderInfo: {
+                        teamId: this.teamId,
+                        dir: '/',
+                        folderName: name
+                    }
+                }
+            })
+        }
+
+        this.initTeamFile()
+    }
+
+
     render() {
         let teamInfo = this.state.teamInfo
 
         return (
             <Page title={"团队名称xx - IHCI"} className="discuss-page">
+                <input className='file-input-hidden' type="file" ref={(fileInput) => this.fileInput = fileInput} onChange={this.uploadFileHandle}></input>
 
                 <div className="discuss-con page-wrap">
                     <div className="team-info">
@@ -232,16 +342,66 @@ export default class Team extends React.Component{
 
                     <div className="head">
                         <span className='head-title'>文件</span>
-                        <div className="create-btn" onClick={() => { this.setState({ showCreateTopic: true }) }}>上传文件</div>
-                        <div className="create-btn" onClick={() => { this.setState({ showCreateTopic: true }) }}>创建文件夹</div>
+                        <div className="create-btn" onClick={this.openFileInput}>上传文件</div>
+                        <div className="create-btn" onClick={this.createFolderHandle}>创建文件夹</div>
                     </div>
 
                     <div className="file-list">
-                        <div className="file-line">
-                            <div className="name header">名称</div>
-                            <div className="size header">大小</div>
-                            <div className="last-modify header">最后修改时间</div>
+                        <div className="file-line header">
+                            <div className="name">名称</div>
+                            <div className="size">大小</div>
+                            <div className="last-modify">最后修改时间</div>
+                            <div className="tools"></div>
                         </div>
+
+                        {
+                            this.state.showCreateFolder ? <div className="file-line files">
+                                <div className="name">
+                                    <input autoFocus="autofocus" type="text" className="folder-name" onChange={this.createFolderNameInputHandle} value={this.state.createFolderName} />
+                                </div>
+                                <div className="tools">
+                                    <span onClick={this.createFolderComfirmHandle}>创建</span>
+                                    <span onClick={this.createFolderCancelHandle}>取消</span>
+                                </div>
+                            </div> : ''
+                        }
+
+                        {
+                            this.state.fileList.map((item, idx) => {
+                                if(idx > 10) {
+                                    return
+                                }
+                                if (item.fileType == 'folder') {
+                                    return (
+                                        <div className="file-line files" key={item.fileType + '-' + item._id}>
+                                            <div className="name">{'(文件夹)'}{item.name}</div>
+                                            <div className="size">-</div>
+                                            <div className="last-modify">{formatDate(item.last_modify_time)}</div>
+                                            <div className="tools">
+                                                <span>移动</span>
+                                                <span onClick={() => {this.deleteHandle('folder', item.name)}}>删除</span>
+                                            </div>
+                                        </div>
+                                    )
+                                }
+                                if (item.fileType == 'file') {
+                                    return (
+                                        <div className="file-line files" key={item.fileType + '-' + item._id}>
+                                            <div className="name">{item.name}</div>
+                                            <div className="size">大小</div>
+                                            <div className="last-modify">{formatDate(item.last_modify_time)}</div>
+                                            <div className="tools">
+                                                <span>下载</span>
+                                                <span>移动</span>
+                                                <span onClick={() => {this.deleteHandle('file', item.name)}}>删除</span>
+                                            </div>
+                                        </div>
+                                    )
+                                }
+                            })
+                        }
+                        <div className='show-all-file'> 查看全部文件 </div>
+
                         
                     </div>
 
