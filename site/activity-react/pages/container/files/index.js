@@ -4,7 +4,7 @@ import './style.scss'
 import { timeBefore, sortByCreateTime, formatDate } from '../../../utils/util'
 import api from '../../../utils/api';
 import Page from '../../../components/page'
-
+import fileUploader from '../../../utils/file-uploader';
 
 export default class Files extends React.Component {
     componentDidMount = async () => {
@@ -31,7 +31,26 @@ export default class Files extends React.Component {
             return
         }
         let splitDir = this.curDir.split('/')
-        // splitDir.
+        let totalDirList = []
+        splitDir.map((item, idx) => {
+            if(idx == 0) {
+                totalDirList.push({
+                    name: '根目录',
+                    dir: ''
+                })
+            } else {
+                totalDirList.push({
+                    name: item,
+                    dir: totalDirList[idx - 1].dir + '/' + item
+                }) 
+            }
+        })
+        totalDirList[0].dir = '/'
+
+        console.log(totalDirList);
+        this.setState({
+            dirList: totalDirList
+        })
     }
 
     initTeamInfo = async () => {
@@ -54,7 +73,7 @@ export default class Files extends React.Component {
             body: {
                 dirInfo: {
                     teamId: this.teamId,
-                    dir: '/',
+                    dir: this.curDir,
                 }
             }
         })
@@ -81,7 +100,7 @@ export default class Files extends React.Component {
             body: {
                 folderInfo: {
                     teamId: this.teamId,
-                    dir: '/',
+                    dir: this.curDir,
                     folderName: this.state.createFolderName
                 }
             }
@@ -128,7 +147,7 @@ export default class Files extends React.Component {
                 fileInfo: {
                     teamId: this.teamId,
                     size: file.size,
-                    dir: '/',
+                    dir: this.curDir,
                     fileName: file.name,
                     ossKey: `${this.teamId}/${file.name}`
                 }
@@ -178,6 +197,18 @@ export default class Files extends React.Component {
         window.open(window.location.origin + '/static/' + ossKey)
     }
 
+    headDirClickHandle = (dir) => {
+        if(dir == '/') {
+            window.location.href = '/files/' + this.teamId
+        } else {
+            window.location.href = '/files/' + this.teamId + '?dir=' + dir
+        }
+    }
+
+    folderClickHandle = (folderName) => {
+        window.location.href = '/files/' + this.teamId + '?dir=' + this.curDir + (this.curDir == '/' ? '' : '/') + folderName
+    }
+
     render() {
         return (
             <Page title="文件" className="file-page">
@@ -193,11 +224,19 @@ export default class Files extends React.Component {
                         {
                             this.state.dirList.length ? 
                             <div> 
-
+                                {
+                                    this.state.dirList.map((item, idx) => (
+                                        <span onClick={() => {this.headDirClickHandle(item.dir)} }>{item.name} {idx == this.state.dirList.length - 1 ? '' : '>'} </span>
+                                    ))
+                                }
                             </div> 
-                            : 
-                            <div>文件</div> 
+                            :  ''
                         }
+                    </div>
+
+                    <div className="head">
+                        <div className="create-btn" onClick={this.openFileInput}>上传文件</div>
+                        <div className="create-btn" onClick={this.createFolderHandle}>创建文件夹</div>
                     </div>
 
                     <div className="file-list">
@@ -225,7 +264,7 @@ export default class Files extends React.Component {
                                 if (item.fileType == 'folder') {
                                     return (
                                         <div className="file-line files" key={item.fileType + '-' + item._id}>
-                                            <div className="name">{'(文件夹)'}{item.name}</div>
+                                            <div className="name" onClick={() => {this.folderClickHandle(item.name)}}>{'(文件夹)'}{item.name}</div>
                                             <div className="size">-</div>
                                             <div className="last-modify">{formatDate(item.last_modify_time)}</div>
                                             <div className="tools">
@@ -242,7 +281,7 @@ export default class Files extends React.Component {
                                             <div className="size">{item.size}</div>
                                             <div className="last-modify">{formatDate(item.last_modify_time)}</div>
                                             <div className="tools">
-                                                <span onClick={() => { this.downloadHandle(item.ossKey) }}>下载</span>
+                                                <span onClick={() => { this.downloadHandle(item.OssKey) }}>下载</span>
                                                 <span>移动</span>
                                                 <span onClick={() => { this.deleteHandle('file', item.name) }}>删除</span>
                                             </div>
