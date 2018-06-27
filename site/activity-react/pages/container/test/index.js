@@ -14,7 +14,7 @@ export default class Team extends React.Component{
         chosenFile: {},
         fileList: [],
         folderName: '',
-        teamId: '5b31a62f4393cd221bc16f8c',
+        teamId: '5b31f6df26bd470d618e262f',
         dir: '/',
         tarDir: '',
         ossKey: '',

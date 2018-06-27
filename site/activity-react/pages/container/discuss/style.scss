@@ -79,12 +79,26 @@
             display: flex;
             align-items: center;
             border-bottom: 1px solid #e6e6e6; /*no*/
+
+            &.files {
+                font-size: 14px;
+                line-height: 50px; 
+            }
+            &.header {
+                font-size: 12px;
+                line-height: 50px;
+                color: #999;
+            }
         }
-        .header {
-            font-size: 12px;
+        .folder-name {
+            display: block;
+            border: none;
+            flex-grow: 1;
+            height: 50px;
+            font-size: 14px;
             line-height: 50px;
-            color: #999;
         }
+
         div {
             flex-grow: 0;
             flex-shrink: 0;
@@ -93,7 +107,7 @@
             white-space: nowrap;
         }
         .name {
-            width: 70%;
+            width: 50%;
         }
         .size {
             width: 15%;
@@ -101,6 +115,12 @@
         .last-modify {
             width: 15%;
         }
+        .tools {
+            width: 20%;
+            span {
+                margin-right: 10px;
+            }
+        } 
     }
 
     .create-area {
