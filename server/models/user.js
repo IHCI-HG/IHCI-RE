@@ -35,7 +35,9 @@ const userSchema = new mongoose.Schema({
     openid: String,
     unionid: { type: String, index: true },
     subState: Boolean,
-    wxUserInfo: mongoose.Schema.Types.Mixed
+    wxUserInfo: mongoose.Schema.Types.Mixed,
+
+    noticeList: [mongoose.Schema.Types.Mixed]
 })
 
 userSchema.statics = {
@@ -48,9 +50,6 @@ userSchema.statics = {
                 ...userInfo,
                 username: username,
                 password: crypto.createHmac('sha1', conf.salt).update(password).digest('hex'),
-                personInfo: {
-
-                }
             })
         }
     },
@@ -68,18 +67,8 @@ userSchema.statics = {
     },
     baseInfoById: async function(userId) {
         const result = await this.findById(userId)
-        if(result.personInfo) {
-            result.personInfo._id = result._id
-            return result.personInfo
-        } else {
-            return {
-                "headImg": "",
-                "name": "未设置姓名用户",
-                "phone": "未设置",
-                "mail": "未设置"
-            }
-        }
-
+        result.personInfo._id = result._id
+        return result.personInfo
     },
     findByUnionId: async function(unionid) {
         const result = await this.findOne({unionid: unionid}).exec()
@@ -175,7 +164,69 @@ userSchema.statics = {
             {_id: userId, "teamList.teamId": teamId},
             {$set: { "teamList.$.role": role}},
         ).exec()
-    }
+    },
+
+
+    //topic相关
+    addCreateNotice: async function(userId, topicObj) {
+        return this.update(
+            { _id: userId },
+            {
+                $addToSet: {
+                    noticeList: {
+                        create_time: topicObj.create_time,
+                        noticeId: topicObj._id.toString(),
+                        teamId: topicObj.teamId.toString(),
+                        creator: topicObj.creator.username.toString(),
+                        noticeTitle: topicObj.title,
+                        noticeContent: topicObj.content,
+                        //kind: { type:String, create},
+                        readState: false,
+                    }
+                }
+            }
+        ).exec()
+    },
+
+    addReplyNotice: async function(userId, discussObj) {
+        return this.update(
+            { _id: userId },
+            {
+                $addToSet: {
+                    noticeList: {
+                        create_time: discussObj.create_time,
+                        noticeId: discussObj._id.toString(),
+                        teamId: discussObj.teamId.toString(),
+                        creator: discussObj.creator.username,
+                        noticeTitle: discussObj.title,
+                        noticeContent: discussObj.content,
+                        //kind: { type:String, reply},
+                        readState: false,
+                    }
+                }
+            }
+        ).exec()
+    },
+
+    readTopic: async function(userId, topicId) {
+        topicId = topicId.toString()
+        return this.update(
+            {_id: userId, "noticeList.noticeId": topicId},
+            {$set: {"noticeList.$.readState": true}},
+        ).exec()
+    },
+
+
+    findNotice: function(userId) {
+        const queryList = this.findById(userId).noticeList
+
+        if(queryList && queryList.length) {
+            return this.find({$or: queryList}).sort({create_time: -1}).exec()
+        } else {
+            return []
+        }
+    },
+
 
 }
 

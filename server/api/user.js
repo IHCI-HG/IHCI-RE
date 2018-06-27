@@ -263,6 +263,52 @@ const userInfoList = async (req, res, next) => {
 }
 
 
+// const showNoticeList = async (req, res, next) => {
+
+//     const topicIdList = req.body.topicIdList
+
+//     if(!topicIdList || !topicIdList.length) {
+//         resProcessor.jsonp(req, res, {
+//             state: { code: 1, msg: "参数不全" },
+//             data: {}
+//         });
+//         return
+//     }
+
+//     try {
+//         const promiseList = []
+//         topicIdList.map((item) => {
+//             if(ite)
+//             promiseList.push(topicDB.findByTopicId(item))
+//         })
+//         const result = await Promise.all(promiseList)
+//         resProcessor.jsonp(req, res, {
+//             state: { code: 0, msg: '请求成功' },
+//             data: result
+//         });
+//     } catch (error) {
+//         console.error(error);
+//         resProcessor.jsonp(req, res, {
+//             state: { code: 1, msg: '操作失败' },
+//             data: {}
+//         });
+//     }
+//
+//}
+
+
+const showNoticeList = async (req, res, next) => {
+    const userId = req.rSession.userId 
+    
+    const allNotice = await userDB.findNotice(userId)
+
+    resProcessor.jsonp(req, res, {
+        state: { code: 0 },
+        data: allNotice
+    });
+}
+
+
 module.exports = [
     ['GET', '/api/base/sys-time', sysTime],
     
@@ -278,5 +324,8 @@ module.exports = [
 
     ['POST', '/api/signUp', signUp],
     ['POST', '/api/setUserInfo', apiAuth, setUserInfo],
+
+
+    ['POST', '/api/showNoticeList', showNoticeList],
 
 ];

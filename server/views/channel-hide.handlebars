@@ -10,15 +10,41 @@
         <meta name="format-detection" content="email=no">
         <meta name="format-detection" content="address=no">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <link rel="stylesheet" href="//m.qlchat.com/styles/wtwap/css/wtCommon.css?v=2016020301">
+        <link rel="stylesheet" href="//m.qlchat.com/styles/wtwap/css/forum.css?v=2016020301">
     </head>
 <body class="gra_1">
 <div class="main_box_4">
-	
+	<div class="box_404">
+		<img src="//static.qianliaowang.com/frontend/rs/wechat-react/channel-hide.png">
+        <span class="tips_2 backUrl" attr-isLive="{{isLive}}">您所查看的课程已下架
+            <br><span id="timer">5</span>秒后跳转到首页</span>
+            <input type="hidden" id="url" value="/live/{{liveId}}.htm" attr-weappurl="/pages/live-index/live-index?liveId={{liveId}}">
+        </span>
+	</div>
 </div>
 
 </body>
 <script type="text/javascript" src="/api/js-sdk/wx?actions=hide_all"></script>
 <script>
-	
+	var afterTime =5;
+    var timerObj = document.getElementById('timer');
+    var urlObj = document.getElementById('url');
+
+	if(/(qlchat)/.test(window.location.href)){
+		setInterval(function(){
+			afterTime--;
+			if(afterTime > 0 ){
+				timerObj.textContent = afterTime;
+			}else{
+                if (typeof window != 'undefined' && window.__wxjs_environment === 'miniprogram') {
+                    wx.miniProgram.navigateTo({ url: urlObj.getAttribute('attr-weappurl') });
+                } else {
+                    window.location.href = urlObj.value;
+                }
+			}
+
+		},1000);
+	}
 </script>
 </html>
