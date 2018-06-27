@@ -199,6 +199,11 @@ folderSchema.statics = {
 const fileDB = mongoose.model('file', fileSchema);
 const folderDB = mongoose.model('folder', folderSchema);
 
+const getPath = async function(dir, folderName) {
+    if(dir == '/') return dir+folderName;
+    return dir+'/'+folderName;
+}
+
 /**
  * 检测在特定目录下，该文件名是否存在
  * 
@@ -246,7 +251,7 @@ const createFile = async function(teamId, dir, fileName, ossKey) {
     let exist = false
     folderObj.fileList.map((item) => {
         if(item.name == fileName) {
-            exist = false
+            exist = true
         } 
     })
     if(exist) {
@@ -270,7 +275,7 @@ const createFolder = async function(teamId, dir, folderName) {
     let exist = false
     folderObj.fileList.map((item) => {
         if(item.name == folderName) {
-            exist = false
+            exist = true
         } 
     })
     if(exist) {
@@ -389,17 +394,18 @@ const moveFolder = async function(teamId, dir, folderName, tarDir) {
         throw '目标目录不存在'
     }    
 
+    await folderDB.appendFolder(teamId, tarDir, folderObj)
+
     folderObj.fileList.map((item) => {
         if(item.fileType == 'file') {
-            moveFile(teamId, dir + '/' + folderName, item.fileName, tarDir + '/' + folderName)
+            moveFile(teamId, getPath(dir,folderName), item.name, getPath(tarDir,folderName))
         } 
         if(item.fileType == 'folder') {
-            moveFolder(teamId, dir + '/' + folderName, item.fileName, tarDir + '/' + folderName)
+            moveFolder(teamId, getPath(dir,folderName), item.name, getPath(tarDir,folderName))
         }
     })
 
     await folderDB.modifyDir(teamId, dir, folderName, tarDir)
-    await folderDB.appendFolder(teamId, tarDir, folderObj)
     await folderDB.dropFile(teamId, dir, folderName)
     await folderDB.updateTime(teamId, tarDir, folderName)
 
@@ -421,10 +427,7 @@ const delFolder = async function(teamId, dir, folderName) {
 
     folderObj.fileList.map((item) => {
         if(item.fileType == 'folder') {
-            var path;
-            if(dir == '/') path = dir+folderName;
-            else path = dir+'/'+folderName;
-            delFolder(teamId, path, item.name)
+            delFolder(teamId, getPath(dir,folderName), item.name)
         }
         if(item.fileType == 'file') {
             fileDB.delFileById(item._id)

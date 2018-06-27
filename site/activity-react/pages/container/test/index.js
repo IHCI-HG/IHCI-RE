@@ -137,15 +137,15 @@ export default class Team extends React.Component{
     }
 
     test = async () => {
-       const result = await api('/api/file/updateFolderName',{
+       const result = await api('/api/file/createFile',{
            method: 'POST',
            body: {
-               folderInfo: {
-                   teamId: this.state.teamId,
+               fileInfo: {
+                    teamId: this.state.teamId,
                     dir: this.state.dir, 
-                    folderName: 'aaa',
+                    fileName: 'test.cpp',
+                    ossKey: null,
                },
-               tarName: 'bbb'
            }
         })
 
