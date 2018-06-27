@@ -71,10 +71,53 @@ export default class Team extends React.Component{
 
     initTodoListArr = async() => {
         // 请求todoListArr数据
-        const resp = await mock.httpMock('/team/:id/todolist/get', { id: this.teamId })
-        console.log(resp)
-        if (resp.status === 200) {
-            this.setState({ todoListArr: resp.data.todoList })
+        const resp = await api('/api/team/taskList', { 
+            method:'GET',
+            body:{
+                teamId: this.teamId
+            }})
+        let todoListArr = this.state.todoListArr
+        let unclassified = []
+        let todoList = []
+        if(resp.data.taskList==undefined){
+            resp.data.taskList=[]
+        }
+        resp.data.taskList.map((item)=>{
+            let todoItem = {}
+            console.log(item.id)
+            todoItem.id = item.id
+            todoItem.name = item.title
+            todoItem.hasDone = item.state
+            todoItem.ddl = item.deadline
+            todoItem.assignee = {
+                id: item.headerId
+            }
+            unclassified.push(todoItem)
+        })
+        if(resp.data.tasklistList==undefined){
+            resp.data.tasklistList=[]
+        }
+        resp.data.tasklistList.map((item)=>{
+            let todoListItem = {}
+            todoListItem.id = item._id
+            todoListItem.name = item.name
+            todoListItem.list = []
+            item.taskList.map((mapTodoItem)=>{
+                let todoItem = {}
+                todoItem.id = mapTodoItem.id
+                todoItem.name = mapTodoItem.title
+                todoItem.hasDone = mapTodoItem.state
+                todoItem.ddl = mapTodoItem.deadline
+                todoItem.assignee = {
+                    id: mapTodoItem.headerId
+                }
+                todoListItem.list.push(todoItem)
+            })
+            todoList.push(todoListItem)
+        })
+        todoListArr = [unclassified,...todoList]
+        if (resp.state.code === 0) {
+            this.setState({ todoListArr })
         }
     }
 
@@ -222,7 +265,6 @@ export default class Team extends React.Component{
                 name: result.data.title,
                 assignee: {
                     id: result.data.assigneeId || 'null',
-                    name: '返回name',
                 },
                 ddl: result.data.deadline,
                 checkItemDoneNum: 0,
@@ -239,15 +281,24 @@ export default class Team extends React.Component{
         }
         return result
     }
-
+// 没改完！！！！！！！！！！！！！！！！！！！！！！！
     handleTodoModify = async(lIndex, lId, id, todoInfo) => {
-        const resp = await mock.httpMock('/todo/:id/put', {
-            id: id,
-            name: todoInfo.name,
-            ddl: todoInfo.date,
-            assigneeId: todoInfo.assigneeId,
+        let editTask = {}
+        editTask.name = todoInfo.name
+        editTask.ddl = todoInfo.date
+        editTask.assigneeId = todoInfo.assigneeId
+        console.log(todoInfo)
+        const resp = await api('/api/task/edit',{
+            method:'POST',
+            body:{
+                listId: lId,
+                taskId: todoInfo.id,
+                teamId: this.teamId,
+                editTask: editTask,
+            }
         })
-        if (resp.status ===200) {
+        console.log(resp)
+        if (resp.state.code ===0) {
             const todoListArr = this.state.todoListArr
             const todolist = todoListArr[lIndex]
             const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
@@ -506,7 +557,7 @@ export default class Team extends React.Component{
                         }
                         return (
                             <TodoList
-                                key={todoList.id}
+                                key={todoList._id}
                                 {...todoList}
                                 memberList={this.state.memberList}
                                 handleTodoCreate={this.handleTodoCreate.bind(this, index, todoList.id)}
