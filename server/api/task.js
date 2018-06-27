@@ -247,8 +247,8 @@ const createTask = async (req, res, next) => {
             await teamDB.addTask(teamId, result)
         }
 
-        const user = await userDB.findByUserId(taskHeader)
-        const headername = user.username
+        // const user = await userDB.findByUserId(taskHeader)
+        // const headername = user.username
         const taskObj = {
             id: result._id,
             title: result.title,
@@ -893,6 +893,7 @@ const delDiscuss = async (req, res, next) => {
 module.exports = [
     ['POST', '/api/task/createTasklist', apiAuth, createTasklist],
     ['POST', '/api/task/updateTasklist', apiAuth, updateTasklist],
+    ['POST', '/api/task/delTasklist', apiAuth, delTasklist],
     ['GET', '/api/task/findTasklistById', apiAuth, findTasklistById],
     ['POST', '/api/task/create', apiAuth, createTask],
     ['POST', '/api/task/delTask', apiAuth, delTask],
