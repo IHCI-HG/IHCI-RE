@@ -237,12 +237,6 @@ const createTask = async (req, res, next) => {
         console.log("result:" + result);
 
 
-        if (teamId) {
-            await teamDB.addTask(teamId, result)
-            // const teamObj = await teamDB.findByTeamId(teamId)
-            // await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'CREATE_TASK', result._id, result.title, result)
-        }
-
         if (tasklistId) {
             //如果是有清单的则在清单中添加
             await tasklistDB.addTask(tasklistId, result)
