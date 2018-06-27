@@ -144,6 +144,7 @@ module.exports = [
     ['GET', '/auth', clientParams(), wxAuthCodeHandle , mainPage],
 
     ['GET', '/team', clientParams(), routerAuthJudge, pageHandle() ],
+    ['GET', '/files/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/sign', clientParams(), routerAuthJudge, pageHandle() ],
 
     ['GET', '/test', clientParams(), routerAuthJudge, pageHandle() ],

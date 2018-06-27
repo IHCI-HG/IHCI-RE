@@ -21,6 +21,7 @@ import Topic from './topic'
 import Timeline from './timeline'  
 import Member from './member'  
 import Sign from './sign'
+import Files from './files'
 
 class App extends React.Component{
     state = {
@@ -104,6 +105,7 @@ const routeConfig = [
             { path: 'test', component: Test },
             { path: 'test-editor', component: TestEditor },
             { path: 'team', component: Team },
+            { path: 'files/:id', component: Files },
             { path: 'team-admin/:id', component: TeamAdmin },
             { path: 'team-join/:id', component: TeamJoin },
             { path: 'sign', component: Sign },
@@ -116,7 +118,6 @@ const routeConfig = [
         ]
     }
 ]
-
 
 
 render(<Router routes={routeConfig} history={browserHistory}/>, document.getElementById('app'));
