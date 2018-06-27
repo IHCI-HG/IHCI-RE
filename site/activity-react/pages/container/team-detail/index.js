@@ -381,21 +381,23 @@ export default class Team extends React.Component{
             method: 'POST',
             body: {
                 teamId: this.teamId,
-                name: info.name
+                name: info.name,
             }
         })
+        console.log(info)
+        console.log(result)
         if (result.state.code === 0) {
             let createTodo = {
-                id:result.data._id,
+                id:result.data.id,
                 name:result.data.name,
-                list:result.data.taskList,
+                list:[],
             }
             const todoListArr = this.state.todoListArr
             todoListArr = [...todoListArr, createTodo]
             this.setState({
                 showCreateTodoList: false,
                 todoListArr
-            },console.log(this.state.todoListArr))
+            })
         }
     }
 
@@ -496,6 +498,7 @@ export default class Team extends React.Component{
                         <span className='head-title'>任务</span>
                         <div className="create-btn">
                                 <span onClick={(e) => {
+                                    console.log('添加任务')
                                     this.setState({showCreateTodo: true})
                                     e.stopPropagation()
                                 }}>添加任务</span>
