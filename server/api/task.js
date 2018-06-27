@@ -8,8 +8,7 @@ import apiAuth from '../components/auth/api-auth'
 import {
     createTopicTemplate,
     replyTopicTemplate,
-    createTaskTemplate,
-    delTaskTemplate
+    createTaskTemplate
 } from '../components/wx-utils/wx-utils'
 
 var mongoose = require('mongoose')
@@ -298,10 +297,7 @@ const delTask = async (req, res, next) => {
     }
 
     try {
-        const taskObj = await taskDB.findByTaskId(taskId)
-        console.log("................................")
-        console.log(taskObj)
-        console.log("................................")
+        const taskObj = taskDB.findByTaskId(taskId)
         const result = await taskDB.delTaskById(taskId);
         console.log(result);
         if (result.ok == 1) {
@@ -309,13 +305,6 @@ const delTask = async (req, res, next) => {
                 await tasklistDB.delTask(tasklistId, taskId);
             } else {
                 await teamDB.delTask(teamId, taskId);
-            }
-
-            const headerList = []
-            headerList.push(taskObj.header)
-            console.log(taskObj.header)
-            if(taskObj.header) {
-                delTaskTemplate(headerList,taskObj)
             }
             resProcessor.jsonp(req, res, {
                 state: { code: 0, msg: '请求成功' },

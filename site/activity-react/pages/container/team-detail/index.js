@@ -77,14 +77,14 @@ export default class Team extends React.Component{
                 teamId: this.teamId
             }})
         let todoListArr = this.state.todoListArr
-        let unclassified = []
+        let unclassifiedList = []
+        let unclassified = {}
         let todoList = []
         if(resp.data.taskList==undefined){
             resp.data.taskList=[]
         }
         resp.data.taskList.map((item)=>{
             let todoItem = {}
-            console.log(item.id)
             todoItem.id = item.id
             todoItem.name = item.title
             todoItem.hasDone = item.state
@@ -92,8 +92,9 @@ export default class Team extends React.Component{
             todoItem.assignee = {
                 id: item.headerId
             }
-            unclassified.push(todoItem)
+            unclassifiedList.push(todoItem)
         })
+        unclassified.list = unclassifiedList
         if(resp.data.tasklistList==undefined){
             resp.data.tasklistList=[]
         }
@@ -260,6 +261,7 @@ export default class Team extends React.Component{
             }
         })
         // 返回用户名的显示依赖assigneeId
+        console.log(result)
         if (result.state.code === 0) {
             let todo = {
                 listId: result.data.listId,
@@ -280,6 +282,7 @@ export default class Team extends React.Component{
                 todolist.list = []
             }
             todolist.list = [...todolist.list, todo]
+            console.log("1",todoListArr)
             this.setState({ todoListArr })
         }
         return result
@@ -433,6 +436,8 @@ export default class Team extends React.Component{
     render() {
         let teamInfo = this.state.teamInfo
         const unclassified = this.state.todoListArr[0]
+
+        console.log("unclassified",unclassified)
         // console.log(this.state.memberList)
         return (
             <Page title={"团队名称xx - IHCI"}
