@@ -233,6 +233,8 @@ export default class Discuss extends React.Component{
         
         if(result.state.code === 0) {
             window.toast("Folder created")
+        } else {
+            window.toast(result.state.msg)
         }
     }
 
@@ -264,10 +266,12 @@ export default class Discuss extends React.Component{
         })
         console.log(result);
         if(result.state.code === 0) {
-            window.toast("File appended")
+            window.toast("Folder created")
+        } else {
+            window.toast(result.state.msg)
         }
         fileUploader(this.teamId, '', file)
-
+        
         this.initTeamFile()
     }
 
