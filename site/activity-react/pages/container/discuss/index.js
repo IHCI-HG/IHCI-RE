@@ -308,6 +308,10 @@ export default class Discuss extends React.Component{
         this.initTeamFile()
     }
 
+    downloadHandle = (ossKey) => {
+        window.open(window.location.origin  + '/static/' + ossKey)
+    }
+
 
     render() {
         let teamInfo = this.state.teamInfo
@@ -391,7 +395,7 @@ export default class Discuss extends React.Component{
                                             <div className="size">大小</div>
                                             <div className="last-modify">{formatDate(item.last_modify_time)}</div>
                                             <div className="tools">
-                                                <span>下载</span>
+                                                <span onClick={() => {this.downloadHandle(item.ossKey)}}>下载</span>
                                                 <span>移动</span>
                                                 <span onClick={() => {this.deleteHandle('file', item.name)}}>删除</span>
                                             </div>
