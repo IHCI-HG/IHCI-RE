@@ -17,6 +17,7 @@ var file = require('../models/file');
 import { getTempSTS } from '../components/oss-utils/oss-utils'
 import { mongo } from 'mongoose';
 import { resolve } from 'url';
+import { responsePathAsArray } from 'graphql';
 
 const fileDownloader = async (teamId, dir, fileName) => {
 
@@ -254,6 +255,48 @@ const delFolder = async (req, res, next) => {
     }
 }
 
+const updateFileName = async (req, res, next) => {
+    const fileInfo = req.body.fileInfo
+    const tarName = req.body.tarName
+
+    console.log(fileInfo)
+
+    try {
+        await file.updateFileName(fileInfo.teamId, fileInfo.dir, fileInfo.fileName, tarName)
+
+        resProcessor.jsonp(req, res, {
+            state: {code: 0, msg: "Successfully updated name"},
+            data: {}
+        });
+    } catch (error) {
+        console.log(error) 
+        resProcessor.jsonp(req, res, {
+            state: {code: 1, msg: "Update name failed"},
+            data: {},
+            info: fileInfo
+        })
+    }
+}
+const updateFolderName = async (req, res, next) => {
+    const folderInfo = req.body.folderInfo
+    const tarName = req.body.tarName
+
+    try {
+        await file.updateFolderName(folderInfo.teamId, folderInfo.dir, folderInfo.folderName, tarName)
+
+        resProcessor.jsonp(req, res, {
+            state: {code: 0, msg: "Successfully updated name"},
+            data: {}
+        });
+    } catch (error) {
+        console.log(error) 
+        resProcessor.jsonp(req, res, {
+            state: {code: 1, msg: "Update name failed"},
+            data: {},
+            info: folderInfo
+        })
+    }
+}
 
 
 module.exports = [
@@ -265,5 +308,8 @@ module.exports = [
     ['POST','/api/file/moveFile',apiAuth,moveFile], 
     ['POST','/api/file/moveFolder',apiAuth, moveFolder],
     ['POST','/api/file/delFile',apiAuth, delFile],
-    ['POST','/api/file/delFolder',apiAuth, delFolder] 
+    ['POST','/api/file/delFolder',apiAuth, delFolder],
+    ['POST','/api/file/updateFileName',apiAuth, updateFileName],
+    ['POST','/api/file/updateFolderName',apiAuth,updateFolderName],
+    
 ];

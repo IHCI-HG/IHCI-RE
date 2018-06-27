@@ -16,7 +16,7 @@ export default class Team extends React.Component{
         folderName: '',
         teamId: '5b31f6df26bd470d618e262f',
         dir: '/',
-        tarDir: '',
+        tarDir: 'tarDir',
         ossKey: '',
     }
 
@@ -137,7 +137,20 @@ export default class Team extends React.Component{
     }
 
     test = async () => {
-        
+       const result = await api('/api/file/createFile',{
+           method: 'POST',
+           body: {
+               fileInfo: {
+                    teamId: this.state.teamId,
+                    dir: this.state.dir, 
+                    fileName: 'test.cpp',
+                    ossKey: null,
+               },
+           }
+        })
+
+        console.log(result)
+        this.getDirFileListHandle()
     }
 
     /*
@@ -245,12 +258,14 @@ export default class Team extends React.Component{
 
                 <input type="file" ref={(fileInput) => this.fileInput = fileInput} onChange={this.uploadFileHandle}></input>
 
+                <div className="current_files">Current_files:</div>
                 <div className="files">
                 {
                     this.state.fileList.map((item) => {
                         return (
                             <div className="fileName" key={'fileName-'+item._id}>
                                 <span className="name">{item.name}</span>
+                                <span className="date">{item.last_modify_time}</span>
                                 <span className="del" onClick={this.deleteHandle.bind(this,item)}>   delete</span>
                                 <input type="text" value={this.state.tarDir} className="tarDir_input" onChange={this.tarDirChangeHandle} />
                                 <span className="move" onClick={this.moveHandle.bind(this,item)}>   move</span>
@@ -261,6 +276,7 @@ export default class Team extends React.Component{
                 }
                 </div>
                     
+                <div className="create_folder">Create folder:</div> 
                 <div className="folder_name">文件夹名称</div>
                 <input type="text" value={this.state.folderName} className="folder_input" onChange={this.folderNameChangeHandle} />
                     

@@ -7,7 +7,8 @@ const Schema = mongoose.Schema
     文件对象
 */
 const fileSchema = new Schema({
-    create_time: { type: String, default : Date.now},
+    create_time: { type: String, default : Date.now()},
+    last_modify_time: { type: String, default : Date.now()},
     ossKey: String,
     fileName: String,
     team: {type: Schema.Types.ObjectId, ref: 'team', index: true},
@@ -23,12 +24,14 @@ const fileSchema = new Schema({
     path为/aaa
 */
 const folderSchema = new Schema({
-    create_time: { type: String, default : Date.now},
+    create_time: { type: String, default : Date.now()},
+    last_modify_time: { type: String, default : Date.now()},
     fileList: [{
         fileType: {type: String, enum: ['file', 'folder']},
         _id: {type: Schema.Types.ObjectId}, // 根据fileType字段，可能是file对象也可能是folder对象
         name: String,
         OssKey: String, // 如果是folder该字段就为null
+        last_modify_time: String,
     }],
     team: {type: Schema.Types.ObjectId, ref: 'team', index: true},
     folderName: String,
@@ -65,6 +68,25 @@ fileSchema.statics = {
             fileName: fileName
         },{
             dir: tarDir
+        }).exec()
+    },
+    updateTime: function(teamId, dir, fileName) {
+        return this.update({
+            team: mongoose.Types.ObjectId(teamId),
+            dir: dir,
+            fileName: fileName
+        },{
+            last_modify_time: Date.now()
+        }).exec()
+    },
+    updateName: function(teamId, dir, fileName,tarFileName) {
+        return this.update({
+            team: mongoose.Types.ObjectId(teamId),
+            dir: dir,
+            fileName: fileName,
+        },{
+            fileName: tarFileName,
+            last_modify_time: Date.now(),
         }).exec()
     },
 }
@@ -108,7 +130,8 @@ folderSchema.statics = {
                 fileType: 'file',
                 _id: fileObj._id,
                 name: fileObj.fileName,
-                OssKey: fileObj.OssKey
+                OssKey: fileObj.OssKey,
+                last_modify_time: Date.now(),
             }}}
         ).exec()
     },
@@ -128,7 +151,6 @@ folderSchema.statics = {
      * @returns 
      */
     dropFile: async function(teamId, dir, fileName) {
-        console.log(fileName);
         return this.update(
             {team: mongoose.Types.ObjectId(teamId), path: dir},
             { $pull: { fileList : {
@@ -144,14 +166,43 @@ folderSchema.statics = {
                 fileType: 'folder',
                 _id: folderObj._id,
                 name: folderObj.folderName,
-                OssKey: null
+                OssKey: null,
+                last_modify_time: Date.now(),
             }}}
         ).exec()
-    }
+    },
+    updateTime: async function(teamId, dir, folderName) {
+        return this.update({
+            team: mongoose.Types.ObjectId(teamId),
+            dir: dir,
+            folderName: folderName
+        },{
+            last_modify_time: Date.now(),
+        }).exec()
+    },
+    updateName: async function(teamId, dir, folderName,tarName) {
+        var path;
+        if(dir == '/') path = dir+tarName;
+        else path = dir+'/'+tarName;
+        return this.update({
+            team: mongoose.Types.ObjectId(teamId),
+            dir: dir,
+            folderName: folderName
+        },{
+            path: path,
+            folderName: tarName,
+            last_modify_time: Date.now(),
+        }).exec()
+    },
 }
 
 const fileDB = mongoose.model('file', fileSchema);
 const folderDB = mongoose.model('folder', folderSchema);
+
+const getPath = async function(dir, folderName) {
+    if(dir == '/') return dir+folderName;
+    return dir+'/'+folderName;
+}
 
 /**
  * 检测在特定目录下，该文件名是否存在
@@ -181,7 +232,6 @@ const dirFileExist = async function (teamId, dir, fileName) {
 }
 
 const getDirFileList = async function(teamId, dir) {
-    console.log(dir)
     const folderObj = await folderDB.findOne({
         team: mongoose.Types.ObjectId(teamId),
         path: dir
@@ -190,8 +240,6 @@ const getDirFileList = async function(teamId, dir) {
 }
 
 const createFile = async function(teamId, dir, fileName, ossKey) {
-    console.log(dir);
-    console.log(teamId);
     const folderObj = await folderDB.findOne({
         team: mongoose.Types.ObjectId(teamId),
         path: dir
@@ -203,7 +251,7 @@ const createFile = async function(teamId, dir, fileName, ossKey) {
     let exist = false
     folderObj.fileList.map((item) => {
         if(item.name == fileName) {
-            exist = false
+            exist = true
         } 
     })
     if(exist) {
@@ -227,7 +275,7 @@ const createFolder = async function(teamId, dir, folderName) {
     let exist = false
     folderObj.fileList.map((item) => {
         if(item.name == folderName) {
-            exist = false
+            exist = true
         } 
     })
     if(exist) {
@@ -308,6 +356,7 @@ const moveFile = async function(teamId, dir, fileName, tarDir) {
     await fileDB.modifyDir(teamId, dir, fileName, tarDir)
     await folderDB.appendFile(teamId, tarDir, fileObj)
     await folderDB.dropFile(teamId, dir, fileName)
+    await fileDB.updateTime(teamId, tarDir, fileName)
 
     return true
 }
@@ -345,18 +394,20 @@ const moveFolder = async function(teamId, dir, folderName, tarDir) {
         throw '目标目录不存在'
     }    
 
+    await folderDB.appendFolder(teamId, tarDir, folderObj)
+
     folderObj.fileList.map((item) => {
         if(item.fileType == 'file') {
-            moveFile(teamId, dir + '/' + folderName, item.fileName, tarDir + '/' + folderName)
+            moveFile(teamId, getPath(dir,folderName), item.name, getPath(tarDir,folderName))
         } 
         if(item.fileType == 'folder') {
-            moveFolder(teamId, dir + '/' + folderName, item.fileName, tarDir + '/' + folderName)
+            moveFolder(teamId, getPath(dir,folderName), item.name, getPath(tarDir,folderName))
         }
     })
 
     await folderDB.modifyDir(teamId, dir, folderName, tarDir)
-    await folderDB.appendFolder(teamId, tarDir, folderObj)
     await folderDB.dropFile(teamId, dir, folderName)
+    await folderDB.updateTime(teamId, tarDir, folderName)
 
     return true
 }
@@ -376,7 +427,7 @@ const delFolder = async function(teamId, dir, folderName) {
 
     folderObj.fileList.map((item) => {
         if(item.fileType == 'folder') {
-            delFolder(teamId, dir + '/' + folderName, item.fileName)
+            delFolder(teamId, getPath(dir,folderName), item.name)
         }
         if(item.fileType == 'file') {
             fileDB.delFileById(item._id)
@@ -387,6 +438,83 @@ const delFolder = async function(teamId, dir, folderName) {
     await folderDB.dropFile(teamId, dir, folderName)
 }
 
+/**
+ * Change file name to tarName
+ * 
+ * @param {any} teamId 
+ * @param {any} dir 
+ * @param {any} fileName 
+ * @param {any} tarName
+ */
+const updateFileName = async function(teamId, dir, fileName, tarName) {
+    const tarDirFileNameExist = await dirFileExist(teamId, dir, tarName)
+    if(tarDirFileNameExist) {
+        throw '目标目录存在同名文件'
+    }
+
+    var fileObj = await fileDB.findOne({
+        team: mongoose.Types.ObjectId(teamId),
+        dir: dir,
+        fileName: fileName,
+    })
+    console.log(fileObj)
+    if(!fileObj) {
+        throw '文件不存在'
+    }
+
+    await folderDB.dropFile(teamId, dir, fileName)
+    await fileDB.updateName(teamId, dir, fileName, tarName)
+
+    fileObj = await fileDB.findOne({
+        team: mongoose.Types.ObjectId(teamId),
+        dir: dir,
+        fileName: tarName,
+    })
+    if(!fileObj) {
+        throw '修改后文件不存在'
+    }
+
+    await folderDB.appendFile(teamId, dir, fileObj)
+}
+
+/**
+ * Change folder name to tarName
+ * 
+ * @param {any} teamId 
+ * @param {any} dir 
+ * @param {any} fileName 
+ * @param {any} tarName
+ */
+const updateFolderName = async function(teamId, dir, folderName, tarName) {
+    const tarDirFileNameExist = await dirFileExist(teamId, dir, tarName)
+    if(tarDirFileNameExist) {
+        throw '目标目录存在同名文件'
+    }
+
+    var folderObj = await folderDB.findOne({
+        team: mongoose.Types.ObjectId(teamId),
+        dir: dir,
+        folderName: folderName,
+    })
+    if(!folderObj) {
+        throw '文件夹不存在'
+    }
+
+    await folderDB.dropFile(teamId, dir, folderName)
+    await folderDB.updateName(teamId, dir, folderName, tarName)
+    
+    folderObj = await folderDB.findOne({
+        team: mongoose.Types.ObjectId(teamId),
+        dir: dir,
+        folderName: tarName,
+    })
+    if(!folderObj) {
+        throw '修改后文件夹不存在'
+    }
+
+    await folderDB.appendFolder(teamId, dir, folderObj)
+}
+
 exports.createFile = createFile;
 exports.createFolder = createFolder;
 exports.getDirFileList = getDirFileList;
@@ -394,3 +522,5 @@ exports.moveFile = moveFile;
 exports.moveFolder = moveFolder;
 exports.delFile = delFile;
 exports.delFolder = delFolder;
+exports.updateFileName = updateFileName;
+exports.updateFolderName = updateFolderName;
