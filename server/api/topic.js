@@ -25,6 +25,7 @@ const createTopic = async (req, res, next) => {
     const informList = req.body.informList
     const userId = req.rSession.userId 
 
+
     if(!topicName || !topicContent) {
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: "参数不全" },
@@ -41,8 +42,14 @@ const createTopic = async (req, res, next) => {
         await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'CREATE_TOPIC', result._id, result.title, result)
 
         //如果有需要通知的人，则走微信模板消息下发流程
+        console.log(informList)
         if(informList && informList.length) {
             createTopicTemplate(informList, result)
+
+            // //添加通知
+            // informList.map((item) => {
+            //     item.userDB.addCreateNotice(item, result)
+            // })            
         }
 
         resProcessor.jsonp(req, res, {
@@ -57,6 +64,7 @@ const createTopic = async (req, res, next) => {
         });
     }
 }
+
 
 
 const editTopic = async (req, res, next) => {
@@ -147,6 +155,12 @@ const createDiscuss = async (req, res, next) => {
         //如果有需要通知的人，则走微信模板消息下发流程
         if(informList && informList.length) {
             replyTopicTemplate(informList, result)
+
+            //添加通知
+            informList.map((item) => {
+                item.userDB.addReplyNotice(item, result)
+            })
+
         }
 
         resProcessor.jsonp(req, res, {
@@ -237,6 +251,56 @@ const topicInfo = async (req, res, next) => {
     }
 }
 
+//设置Topic已读
+const readingTopic = async (req, res, next) => {
+    const topicId = req.body.topicId
+    const readerId = req.rSession.userId
+
+    if(!topicId == undefined) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: "参数不全" },
+            data: {}
+        });
+        return
+    }
+
+    try {
+        let topicObj = await topicDB.findByTopicId(topicId)
+        if(!topicObj) {
+            resProcessor.jsonp(req, res, {
+                state: { code: 1, msg: '话题不存在'},
+                data: {}
+            });
+            return
+        }
+        let userObj = await userDB.findByUserId(readerId)
+        if(!userObj) {
+            resProcessor.jsonp(req, res, {
+                state: { code: 1, msg: '用户不存在'},
+                data: {}
+            });
+            return
+        }
+
+        const result = await userDB.readTopic(readerId, topicId)
+
+        resProcessor.jsonp(req, res, {
+            state: { code: 0, msg: '已将消息设置为已读' },
+            data: result
+        });
+
+
+        } catch (error) {
+            console.error(error);
+            resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: '操作失败' },
+            data: {}
+        });
+    }
+
+
+
+}
 
 module.exports = [
     ['GET', '/api/topic/get', apiAuth, topicInfo],
@@ -245,4 +309,6 @@ module.exports = [
     ['POST', '/api/topic/editTopic', apiAuth, editTopic],
     ['POST', '/api/topic/createDiscuss', apiAuth, createDiscuss],
     ['POST', '/api/topic/editDiscuss', apiAuth, editDiscuss],
+
+    ['POST', '/api/topic/readingTopic', apiAuth,readingTopic],
 ];
