@@ -237,15 +237,12 @@ export default class Team extends React.Component{
     }
 
     viewHandle = async (file) => {
-        console.log(file)
         if(file.fileType == 'folder') 
         {
             var path;
             if(this.state.dir == '/') path = this.state.dir+file.name;
             else path = this.state.dir+'/'+file.name;
-            console.log(path);
             this.state.dir = path;
-            console.log(this.state.dir)
         }
         this.getDirFileListHandle()
     }

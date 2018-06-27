@@ -66,8 +66,6 @@ fileSchema.statics = {
         }).exec()
     },
     modifyDir: function(teamId, dir, fileName, tarDir) {
-        console.log(fileName)
-        console.log(tarDir)
         return this.update({
             team: mongoose.Types.ObjectId(teamId),
             dir: dir,
@@ -243,7 +241,12 @@ const getDirFileList = async function(teamId, dir) {
     return folderObj.fileList
 }
 
-const createFile = async function(teamId, dir, fileName, ossKey,size) {
+const createFile = async function(teamId, dir, fileName, ossKey, size) {
+
+    if(parseInt(size) > 20*1024*1024) {
+        throw '上传文件大小不能超过20M'
+    }
+
     const folderObj = await folderDB.findOne({
         team: mongoose.Types.ObjectId(teamId),
         path: dir
@@ -268,6 +271,55 @@ const createFile = async function(teamId, dir, fileName, ossKey,size) {
 }
 
 const createFolder = async function(teamId, dir, folderName) {
+
+    if(folderName.length == 0) {
+        throw '文件夹名不能为空'
+    }
+
+    if(folderName.length > 255) {
+        throw '文件夹名不能超过255个字符'
+    }
+
+    if(folderName.indexOf('\\') != -1) {
+        throw '文件夹名中不能含有\'\\\''
+    }
+
+    if(folderName.indexOf('?') != -1) {
+        throw '文件夹名中不能含有\'?\''
+    }
+
+    if(folderName.indexOf('/') != -1) {
+        throw '文件夹名中不能含有\'/\''
+    }
+    
+    if(folderName.indexOf('<') != -1) {
+        throw '文件夹名中不能含有\'<\''
+    }
+    
+    if(folderName.indexOf('>') != -1) {
+        throw '文件夹名中不能含有\'>\''
+    }
+    
+    if(folderName.indexOf('|') != -1) {
+        throw '文件夹名中不能含有\'|\''
+    }
+
+    if(folderName.indexOf('*') != -1) {
+        throw '文件夹名中不能含有\'*\''
+    }
+
+    if(folderName.indexOf('、') != -1) {
+        throw '文件夹名中不能含有\'、\''
+    }
+
+    if(folderName.indexOf(' ') != -1) {
+        throw '文件夹名中不能含有\' \''
+    }
+
+    if(folderName.indexOf(';') != -1) {
+        throw '文件夹名中不能含有\';\''
+    }
+
     let folderObj = await folderDB.findOne({
         team: mongoose.Types.ObjectId(teamId),
         path: dir
@@ -337,7 +389,7 @@ const moveFile = async function(teamId, dir, fileName, tarDir) {
         path: dir
     }).exec()
     if(!folderObj) {
-        throw '目录不存在2'
+        throw '目录不存在'
     }
 
     const tarFolderObj = await folderDB.findOne({
@@ -387,7 +439,7 @@ const moveFolder = async function(teamId, dir, folderName, tarDir) {
         folderName: folderName, 
     }).exec()
     if(!folderObj) {
-        throw '目录不存在1'
+        throw '目录不存在'
     }
 
     const tarFolderObj = await folderDB.findOne({

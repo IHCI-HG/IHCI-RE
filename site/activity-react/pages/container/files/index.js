@@ -103,6 +103,17 @@ export default class Files extends React.Component {
     openFileInput = () => {
         this.fileInput.click()
     }
+    
+    viewHandle = async (file) => {
+        if(file.fileType == 'folder') 
+        {
+            var path;
+            if(this.state.dir == '/') path = this.state.dir+file.name;
+            else path = this.state.dir+'/'+file.name;
+            this.state.dir = path;
+        }
+        this.getDirFileListHandle()
+    }
 
     uploadFileHandle = async (e) => {
 
@@ -211,9 +222,6 @@ export default class Files extends React.Component {
 
                         {
                             this.state.fileList.map((item, idx) => {
-                                if (idx > 10) {
-                                    return
-                                }
                                 if (item.fileType == 'folder') {
                                     return (
                                         <div className="file-line files" key={item.fileType + '-' + item._id}>
@@ -231,7 +239,7 @@ export default class Files extends React.Component {
                                     return (
                                         <div className="file-line files" key={item.fileType + '-' + item._id}>
                                             <div className="name">{item.name}</div>
-                                            <div className="size">大小</div>
+                                            <div className="size">{item.size}</div>
                                             <div className="last-modify">{formatDate(item.last_modify_time)}</div>
                                             <div className="tools">
                                                 <span onClick={() => { this.downloadHandle(item.ossKey) }}>下载</span>
@@ -243,8 +251,6 @@ export default class Files extends React.Component {
                                 }
                             })
                         }
-                        <div className='show-all-file' onClick={() => { location.href = '/files/' + this.teamId }}> 查看全部文件 </div>
-
 
                     </div>
                 </div>

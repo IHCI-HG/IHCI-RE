@@ -7,6 +7,7 @@ import Page from '../../../components/page'
 import fileUploader from '../../../utils/file-uploader';
 
 import MemberChosenList from '../../../components/member-chose-list'
+import { DEFAULT_DEPRECATION_REASON } from 'graphql';
 
 class TeamChoseItem extends React.PureComponent{
     render() {
@@ -231,7 +232,7 @@ export default class Discuss extends React.Component{
         })
         
         if(result.state.code === 0) {
-            window.toast("Folder created")
+            window.toast("创建文件夹成功")
             this.setState({showCreateFolder: false, createFolderName: '新建文件夹'})
         } else {
             window.toast(result.state.msg)
@@ -248,12 +249,14 @@ export default class Discuss extends React.Component{
     }
 
     uploadFileHandle = async (e) => {
-
         var file = e.target.files[0];
         this.setState({
             chosenFile: file
         })
-        console.log(file)
+        
+        const uploadResult = fileUploader(this.teamId, '', file)
+        console.log(this.uploadResult)
+
         const result = await api('/api/file/createFile', {
             method: 'POST',
             body: {
@@ -268,13 +271,23 @@ export default class Discuss extends React.Component{
         })
         console.log(result);
         if(result.state.code === 0) {
-            window.toast("Folder created")
+            window.toast("上传文件成功")
         } else {
             window.toast(result.state.msg)
         }
-        fileUploader(this.teamId, '', file)
 
         this.initTeamFile()
+    }
+
+    viewHandle = async (file) => {
+        if(file.fileType == 'folder') 
+        {
+            var path;
+            if(this.state.dir == '/') path = this.state.dir+file.name;
+            else path = this.state.dir+'/'+file.name;
+            this.state.dir = path;
+        }
+        this.getDirFileListHandle()
     }
 
     deleteHandle = async (type, name) => {

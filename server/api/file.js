@@ -111,7 +111,6 @@ const createFolder = async (req, res, next) => {
             }
         })
     } catch (error) {
-        console.log(error)
         resProcessor.jsonp(req, res, {
             state: {code: 1,msg: error},
             data: {},
