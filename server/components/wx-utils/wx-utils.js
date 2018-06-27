@@ -289,3 +289,35 @@ export const createTaskTemplate = async function (headerList, taskObj, headernam
     })
 }
 
+export const delTaskTemplate = async function (headerList, taskObj) {
+    const openidList = await userDB.openidList(headerList)
+    console.log(taskObj.header)
+
+    openidList.map((item) => {
+        if (typeof item.openid == 'string') {
+            pub_pushTemplateMsg(
+                item.openid,
+                'p6pZBXX0SaqODRDZgY_3NqyIAK0mYN9HXYq6yMLyA04',
+                'http://www.animita.cn/todo/' + taskObj._id,
+                {
+                    "first": {
+                        "value": taskObj.creator.name + " 删除了任务",
+                    },
+                    "keyword1": {
+                        "value": taskObj.title,
+                    },
+                    "keyword2": {
+                        "value": formatDate(new Date()),
+                    },
+                    "keyword3": {
+                        "value": taskObj.content,
+                    },
+                    "remark": {
+                        "value": "点击查看",
+                    }
+                }
+            )
+        }
+    })
+}
+

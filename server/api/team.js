@@ -469,7 +469,7 @@ const taskList = async (req, res, nect) => {
         }
         const teamObj = team.toObject()
         const taskListTemp = teamObj.taskList
-        console.log(taskListTemp)
+        console.log(taskListTemp.length)
         const taskList = []
         for (var i = 0; i < taskListTemp.length; i++) {
             const obj1 = {
@@ -526,7 +526,7 @@ const taskList = async (req, res, nect) => {
         }
         for (var i = 0; i < tasklistList.length; i++) {
             for (var j = 0; j < tasklistList[i].taskList.length; j++) {
-                taskList.push(tasklistList[i].taskList[j]._id)
+                taskIdList.push(tasklistList[i].taskList[j]._id)
             }
         }
         const task = await taskDB.findByTaskIdList(taskIdList)
