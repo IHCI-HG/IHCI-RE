@@ -137,7 +137,20 @@ export default class Team extends React.Component{
     }
 
     test = async () => {
-        
+       const result = await api('/api/file/updateFolderName',{
+           method: 'POST',
+           body: {
+               folderInfo: {
+                   teamId: this.state.teamId,
+                    dir: this.state.dir, 
+                    folderName: 'aaa',
+               },
+               tarName: 'bbb'
+           }
+        })
+
+        console.log(result)
+        this.getDirFileListHandle()
     }
 
     /*
@@ -252,6 +265,7 @@ export default class Team extends React.Component{
                         return (
                             <div className="fileName" key={'fileName-'+item._id}>
                                 <span className="name">{item.name}</span>
+                                <span className="date">{item.last_modify_time}</span>
                                 <span className="del" onClick={this.deleteHandle.bind(this,item)}>   delete</span>
                                 <input type="text" value={this.state.tarDir} className="tarDir_input" onChange={this.tarDirChangeHandle} />
                                 <span className="move" onClick={this.moveHandle.bind(this,item)}>   move</span>
