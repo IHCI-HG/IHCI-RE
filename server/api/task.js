@@ -172,12 +172,15 @@ const findTasklistById = async (req, res, next) => {
         }
         const taskarr = []
         for (var i = 0; i < result.taskList.length; i++) {
+            const userObj = await userDB.findByUserId(result.taskList[i].header);
             const temp_data = {
                 id: result.taskList[i]._id,
                 title: result.taskList[i].title,
                 content: result.taskList[i].content,
                 deadline: result.taskList[i].deadline,
                 header: result.taskList[i].header,
+                headername: userObj.username,
+                headeravator: userObj.personInfo.headImg,
                 state: result.taskList[i].state,
                 completed_time: result.taskList[i].completed_time
             }
@@ -394,9 +397,46 @@ const taskInfo = async (req, res, next) => {
     try {
         const taskObj = await taskDB.findByTaskId(taskId)
 
+        if(!taskObj) {
+            resProcessor.jsonp(req, res, {
+                state: { code: 1, msg: "任务不存在" },
+                data: {}
+            })
+        }
+
+        const checkitemList = []
+        for(var i = 0;i<taskObj.checkitemList.length;i++) {
+            var checklitemHeaderId = taskObj.checkitemList[i].header;
+            const userObj = userDB.findByUserId(checklitemHeaderId);
+            const headername = userObj.username
+            const checkitemObj = {
+                _id: taskObj.checkitemList[i]._id,
+                state: taskObj.checkitemList[i].state,
+                content: taskObj.checkitemList[i].content,
+                headerId: taskObj.checkitemList[i].header,
+                headername: taskObj.checkitemList[i].headername,
+                deadline: taskObj.checkitemList[i].deadline,
+                completed_time: taskObj.checkitemList[i].completed_time
+            }
+            checkitemList.push(checkitemObj);
+        }
+
+        const result = {
+            _id: taskObj._id,
+            title: taskObj.title,
+            content: taskObj.content,
+            deadline: taskObj.deadline,
+            header: taskObj.header,
+            state: taskObj.state,
+            completed_time: taskObj.completed_time,
+            teamId: taskObj.teamId,
+            listId: taskObj.tasklistId,
+            checkitemList: checkitemList
+        }
+
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
-            data: taskObj
+            data: result
         })
     } catch (error) {
         resProcessor.jsonp(req, res, {
@@ -586,8 +626,6 @@ const editCheckitem = async (req, res, next) => {
             checkitemObj.state = false;
             checkitemObj.completed_time = "";
         }
-
-        console.log('checkitemObj', checkitemObj);
 
         const result1 = taskDB.updateCheckitem(taskId, checkitemId, checkitemObj);
         // await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'EDIT_CHECKITEM', checkitemId, checkitemObj.content, checkitemObj)
