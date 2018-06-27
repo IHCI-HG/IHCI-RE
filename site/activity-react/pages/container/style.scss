@@ -7,8 +7,9 @@
 
     padding: 0 50px;
     .search-bar{
-        float: left;
+        // float: left;
         align-items: center;
+        display: flex;
 
         .searchBox{
             float: left;
@@ -48,12 +49,18 @@
         color: #999;
     }
     .person{
+        float: right;
         display: flex;
         align-items: center;
+        
+        .remind{
+            cursor: pointer;
+        }
+        
+        
     }
     .nav-item{
         margin: 10px;
-        margin-right: 40px;
         font-size: 24px;
         cursor: pointer;
         &:visited {
@@ -64,6 +71,7 @@
             font-weight: bold;
         }
     }
+    
     .head-img {
         border-radius: 100px;
         height: 60px;
