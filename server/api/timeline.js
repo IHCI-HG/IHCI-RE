@@ -30,27 +30,70 @@ const returnAll = async (req, res, next) => {
 }
 
 // 如果传了teamID，就返回该teamID的动态，如果没有传，就返回该用户全部的动态
-const returnByTeamList = async (req, res, next) => {
+const returnTimeline = async (req, res, next) => {
     const teamId = req.body.teamId
+    const personId = req.body.userId
+    const timeStamp = req.body.timeStamp
     const userId = req.rSession.userId 
-
     const teamIdList = []
+    const result = []
+    //console.log("我是teamID:", teamId)
+    //console.log("我是personID:", personId)
     if(teamId) {
         teamIdList.push(teamId)
-    } else {
+        const allTimeline = await timelineDB.findByTeamIdList(teamIdList)
+        allTimeline.map((item)=>{
+            result.push(item)
+        })
+    } else if(personId){
+        const userObj = await userDB.findById(userId)
+        userObj.teamList.map((item) => {
+            teamIdList.push(item.teamId)
+        })
+        const allTimeline = await timelineDB.findByTeamIdList(teamIdList)
+        //console.log("返回的数据",allTimeline)
+        const personTimeline = []
+        allTimeline.map((item)=>{
+            if(item.creator._id==personId){
+                personTimeline.push(item)
+            }
+        })
+        personTimeline.map((item)=>{
+            result.push(item)
+        })
+    }
+      else {
         const userObj = await userDB.findById(userId)
         userObj.teamList.map((item) => {
             teamIdList.push(item.teamId) 
         })
+        const allTimeline = await timelineDB.findByTeamIdList(teamIdList)
+        allTimeline.map((item)=>{
+            result.push(item)
+        })
     }
-    const allTimeline = await timelineDB.findByTeamIdList(teamIdList)
 
+    //console.log("返回的数据",result)
+    const Result = []
+    if(!timeStamp){
+        result.map((item, index)=>{
+            if(index<20){
+                Result.push(item)
+            }
+        })              
+    }else{
+        result.map((item)=>{
+            if(Result.length<10&&item.create_time<timeStamp){
+                Result.push(item)
+            }
+        })
+    }
     resProcessor.jsonp(req, res, {
         state: { code: 0 },
-        data: allTimeline
+        data: Result
     });
 }
 
 module.exports = [
-    ['POST', '/api/timeline/getTimeline', returnByTeamList],
+    ['POST', '/api/timeline/getTimeline', returnTimeline],
 ];

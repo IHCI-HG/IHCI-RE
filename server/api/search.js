@@ -22,6 +22,7 @@ var timelineDB = mongoose.model('timeline')
 const search = async (req, res, next) => {
     const keyWord = req.body.keyWord
     const teamId = req.body.teamId
+    const timeStamp = req.body.timeStamp
     const type = req.body.type
     const userId = req.rSession.userId 
     if(keyWord){
@@ -35,7 +36,8 @@ const search = async (req, res, next) => {
             })
         }
         const allTimeline = await timelineDB.findByTeamIdList(teamIdList)
-        const  str = new RegExp(keyWord)
+        const key = keyWord.replace(/([\^\$\(\)\*\+\?\.\\\|\[\]\{\}])/g, "\\$1");
+        const  str = new RegExp(key)
         const searchResult =[]
         allTimeline.map((item)=> {
              if(str.test(item.title)||str.test(item.content.content)){
@@ -44,17 +46,17 @@ const search = async (req, res, next) => {
          })
         const result = []
         if(type){
-            const flag = type=="CREATE_TOPIC"
-            // console.log("flag", flag)
+            const flag = (type=="TOPIC")
             searchResult.map((item) => {    
                 if(flag){
-                    if(item.type=="CREATE_TOPIC"){
+                    if((item.type=="CREATE_TOPIC")||(item.type=="EDIT_TOPIC")){
                         if(str.test(item.title)||str.test(item.content.content)){                    
                         result.push(item)
                         }
                      }  
+                     
                  }
-                else if(item.type=="REPLY_TOPIC"&&str.test(item.content.content)){
+                else if((item.type=="REPLY_TOPIC")||(item.type=="EDIT_REPLY")&&str.test(item.content.content)){
                        result.push(item)
                      }                 
             })
@@ -63,11 +65,25 @@ const search = async (req, res, next) => {
                 result.push(item)           
             })
         }
-        // console.log("这是搜索结果：", result)
-        if(result.length){
+        const Result = []
+        if(!timeStamp){
+            result.map((item, index)=>{
+                if(index<20){
+                    Result.push(item)
+                }
+            })              
+        }else{
+            result.map((item)=>{
+                if(Result.length<10&&item.create_time<timeStamp){
+                    Result.push(item)
+                }
+            })
+        }
+        //console.log("这是搜索结果：", result)
+        if(Result.length){
             resProcessor.jsonp(req, res, {
                 state: { code: 0, msg:"检索成功"},
-                data: result
+                data: Result
             });
         }else{
             resProcessor.jsonp(req, res, {

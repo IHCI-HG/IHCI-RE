@@ -182,6 +182,7 @@ export default class Topic extends React.Component{
         const result = await api('/api/topic/editDiscuss', {
             method: 'POST',
             body: {
+                teamId: this.teamId,
                 topicId: this.topicId,
                 discussId: _id,
                 content: content,

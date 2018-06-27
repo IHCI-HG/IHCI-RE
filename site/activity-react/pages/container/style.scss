@@ -6,6 +6,37 @@
     height: 80px;
 
     padding: 0 50px;
+    .search-bar{
+        // float: left;
+        align-items: center;
+        display: flex;
+
+        .searchBox{
+            float: left;
+            display: flex;
+            align-items: center;
+        }
+        
+        .searchInput:focus {
+            text-align: left;
+            width: 256px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 5px 8px;
+            color: #333;
+            transition: width 0.4s ease-in-out;
+            margin-left: 5px;
+        }
+        .searchInput{
+            // text-align: center;
+            width: 50px;
+            border: 0px solid #ccc;
+            padding: 5px 8px;
+            color: #333;
+            transition: width 0.4s ease-in-out;
+            margin-left: 5px;
+        }
+    }
 
     .logo {
         margin-right: 100px;
@@ -17,8 +48,19 @@
     .nav-list{
         color: #999;
     }
+    .person{
+        float: right;
+        display: flex;
+        align-items: center;
+        
+        .remind{
+            cursor: pointer;
+        }
+        
+        
+    }
     .nav-item{
-        margin-right: 40px;
+        margin: 10px;
         font-size: 24px;
         cursor: pointer;
         &:visited {
@@ -29,6 +71,7 @@
             font-weight: bold;
         }
     }
+    
     .head-img {
         border-radius: 100px;
         height: 60px;

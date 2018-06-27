@@ -27,7 +27,7 @@ class App extends React.Component{
     state = {
         activeTag : '',
         headImg: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnregyyDrMvhEDpfC4wFetzykulWRVMGF-jp7RXIIqZ5ffEdawIA',
-        infoImg: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1529474819406&di=267791f485fba8aa30e0adc8f0eede6b&imgtype=0&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimgad%2Fpic%2Fitem%2Fb8014a90f603738d6c070f19b81bb051f819ecb8.jpg'
+        infoImg: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1529474819406&di=267791f485fba8aa30e0adc8f0eede6b&imgtype=0&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimgad%2Fpic%2Fitem%2Fb8014a90f603738d6c070f19b81bb051f819ecb8.jpg',
         personInfo: {
             teamList: []
         },
@@ -50,6 +50,22 @@ class App extends React.Component{
                 }
             })
         }
+    }
+
+    handleSearchTextChange = (e) =>{
+        var searchInputText =  e.target.value
+        var length = searchInputText.length
+        if (length > 42)
+            searchInputText = searchInputText.substring(0,42)
+
+        this.setState({
+            searchText : searchInputText
+        })
+    }
+
+    handleSearchRequest = (e) => {
+        location.href = '/search' + (this.state.searchText? '?text=' + this.state.searchText : '') 
+        e.preventDefault();
     }
 
     routerHandle = (toUrl) => {
@@ -85,13 +101,19 @@ class App extends React.Component{
                             <span className={this.state.activeTag == 'member' ? 'nav-item active' : 'nav-item'} onClick={this.routerHandle.bind(this, '/member')}>成员</span>
                         </div>
                     </div>
-                    <div className="right">
+                    <div className="person">
+                        <div className='search-bar'>
+                            <form className="searchBox" onSubmit={this.handleSearchRequest}>
+                                <span className="iconfont icon-search" onClick={()=>{this.searchInputr.focus()}}></span>
+                                <input className='searchInput' ref={(input) => { this.searchInputr = input; }} type="text" onChange={this.handleSearchTextChange} placeholder="搜索"/>
+                            </form>
+                        </div>
                         <Link className='nav-item' activeClassName='nav-item active' to="/person">
                             <img className="head-img" src={this.state.headImg} />
                         </Link>
-                        <Link className='nav-item' activeClassName='nav-item active' to="/inform">
-                            <img className="head-img" src={this.state.infoImg} />
-                        </Link>
+                        <div className='remind'>
+                            <span className='iconfont icon-remind' onClick={this.routerHandle.bind(this, '/inform')}></span>
+                        </div>
                     </div>
 
                 </div>
