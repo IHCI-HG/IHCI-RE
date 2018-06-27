@@ -2,7 +2,7 @@ import * as React from 'react';
 import './style.scss'
 
 import api from '../../../utils/api';
-import { timeBefore, sortByCreateTime } from '../../../utils/util'
+import { timeBefore, sortByCreateTime, formatDate } from '../../../utils/util'
 import Page from '../../../components/page'
 import fileUploader from '../../../utils/file-uploader';
 
@@ -82,7 +82,6 @@ export default class Discuss extends React.Component{
                 }
             }
         })
-
         if(result && result.data && result.data.fileList && result.data.fileList.length) {
             this.setState({
                 fileList: result.data.fileList
@@ -233,9 +232,11 @@ export default class Discuss extends React.Component{
         
         if(result.state.code === 0) {
             window.toast("Folder created")
+            this.setState({showCreateFolder: false, createFolderName: '新建文件夹'})
         } else {
             window.toast(result.state.msg)
         }
+        this.initTeamFile()
     }
 
     createFolderCancelHandle = () => {
@@ -258,6 +259,7 @@ export default class Discuss extends React.Component{
             body: {
                 fileInfo: {
                    teamId: this.teamId,
+                   size: file.size,
                    dir: '/',
                    fileName: file.name,
                    ossKey: `${this.teamId}/${file.name}`
@@ -271,7 +273,7 @@ export default class Discuss extends React.Component{
             window.toast(result.state.msg)
         }
         fileUploader(this.teamId, '', file)
-        
+
         this.initTeamFile()
     }
 
@@ -365,13 +367,16 @@ export default class Discuss extends React.Component{
                         }
 
                         {
-                            this.state.fileList.map((item) => {
+                            this.state.fileList.map((item, idx) => {
+                                if(idx > 10) {
+                                    return
+                                }
                                 if (item.fileType == 'folder') {
                                     return (
                                         <div className="file-line files" key={item.fileType + '-' + item._id}>
                                             <div className="name">{'(文件夹)'}{item.name}</div>
                                             <div className="size">-</div>
-                                            <div className="last-modify">最后修改时间</div>
+                                            <div className="last-modify">{formatDate(item.last_modify_time)}</div>
                                             <div className="tools">
                                                 <span>移动</span>
                                                 <span onClick={() => {this.deleteHandle('folder', item.name)}}>删除</span>
@@ -384,7 +389,7 @@ export default class Discuss extends React.Component{
                                         <div className="file-line files" key={item.fileType + '-' + item._id}>
                                             <div className="name">{item.name}</div>
                                             <div className="size">大小</div>
-                                            <div className="last-modify">最后修改时间</div>
+                                            <div className="last-modify">{formatDate(item.last_modify_time)}</div>
                                             <div className="tools">
                                                 <span>下载</span>
                                                 <span>移动</span>
@@ -395,6 +400,7 @@ export default class Discuss extends React.Component{
                                 }
                             })
                         }
+                        <div className='show-all-file'> 查看全部文件 </div>
 
                         
                     </div>
