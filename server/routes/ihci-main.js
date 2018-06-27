@@ -21,7 +21,7 @@ var UserDB = mongoose.model('user')
 var TeamDB = mongoose.model('team')
 
 // 路由前判定是否已经登录
-const routerAuthJudge = async (req, res, next) => { 
+const routerAuthJudge = async (req, res, next) => {
     if(req.rSession.userId) {
     } else {
         res.redirect('/')
@@ -51,7 +51,7 @@ const test = async (req, res, next) => {
     req.rSession.expires = 10;
     req.rSession.noRobot = true;
     req.rSession.count = req.rSession.count + 1 || 1
-    
+
     htmlProcessor(req, res, next, options)
 }
 
@@ -96,14 +96,14 @@ const teamPage = async (req, res, next) => {
 
 
 
-const wxAuthCodeHandle = async (req, res, next) => { 
+const wxAuthCodeHandle = async (req, res, next) => {
     req.INIT_DATA = {
         query: req.query
     }
     next()
 }
 
-const personSeting = async (req, res, next) => { 
+const personSeting = async (req, res, next) => {
     const userId = req.rSession.userId
     const userObj = await UserDB.findById(userId)
 
@@ -121,7 +121,7 @@ const joinTeam = async (req, res, next) => {
     const userId = req.rSession.userId
     const teamId = req.params.teamId
 
-    const teamObj = await TeamDB.findByTeamId(teamId) 
+    const teamObj = await TeamDB.findByTeamId(teamId)
 
     const initData = {
         login: false,
@@ -160,4 +160,5 @@ module.exports = [
     ['GET', '/timeline', clientParams(),    routerAuthJudge, pageHandle() ],
     ['GET', '/member', clientParams(),   routerAuthJudge, pageHandle() ],
     ['GET', '/search', clientParams(),   routerAuthJudge, pageHandle() ],
+    ['GET', '/inform', clientParams(),   routerAuthJudge, personSeting, pageHandle() ],
 ];
