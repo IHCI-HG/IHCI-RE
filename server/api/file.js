@@ -89,9 +89,8 @@ const createFile = async (req, res, next) => {
             }
         });
     } catch (error) {
-        console.log(error)
         resProcessor.jsonp(req, res, {
-            state: {code: 1,msg: "File create failed"},
+            state: {code: 1,msg: error},
             data: {},
             info: fileInfo,
         });
@@ -114,7 +113,7 @@ const createFolder = async (req, res, next) => {
     } catch (error) {
         console.log(error)
         resProcessor.jsonp(req, res, {
-            state: {code: 1,msg: "Folder create failed"},
+            state: {code: 1,msg: error},
             data: {},
             info: folderInfo,
         })
@@ -136,9 +135,8 @@ const getDirFileList = async (req, res, next) => {
             }
         });
     } catch (error) {
-        console.log(error)
         resProcessor.jsonp(req, res, {
-            state: {code: 1,msg: "Can't get files"},
+            state: {code: 1,msg: error},
             data: {},
             info: dirInfo,
         });
@@ -188,7 +186,7 @@ const moveFile = async (req, res, next) => {
     } catch (error) {
         console.log(error)
         resProcessor.jsonp(req, res, {
-            state: {code: 1,msg: "File move failed"},
+            state: {code: 1,msg: error},
             data: {},
             info: fileInfo,
         });
@@ -208,7 +206,7 @@ const moveFolder = async (req, res, next) => {
     } catch (error) {
         console.log(error) 
         resProcessor.jsonp(req, res, {
-            state: {code: 1, msg: "Folder move failed"},
+            state: {code: 1, msg: error},
             data: {},
             info: folderInfo
         })
@@ -228,7 +226,7 @@ const delFile = async (req, res, next) => {
     } catch (error) {
         console.log(error) 
         resProcessor.jsonp(req, res, {
-            state: {code: 1,msg: "File delete failed"},
+            state: {code: 1,msg: error},
             data: {},
             info: fileInfo
         })
@@ -248,7 +246,7 @@ const delFolder = async (req, res, next) => {
     } catch (error) {
         console.log(error) 
         resProcessor.jsonp(req, res, {
-            state: {code: 1,msg: "Folder delete failed"},
+            state: {code: 1,msg: error},
             data: {},
             info: folderInfo
         })
@@ -271,7 +269,7 @@ const updateFileName = async (req, res, next) => {
     } catch (error) {
         console.log(error) 
         resProcessor.jsonp(req, res, {
-            state: {code: 1, msg: "Update name failed"},
+            state: {code: 1, msg: error},
             data: {},
             info: fileInfo
         })
@@ -291,7 +289,7 @@ const updateFolderName = async (req, res, next) => {
     } catch (error) {
         console.log(error) 
         resProcessor.jsonp(req, res, {
-            state: {code: 1, msg: "Update name failed"},
+            state: {code: 1, msg: error},
             data: {},
             info: folderInfo
         })

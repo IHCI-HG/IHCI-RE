@@ -44,7 +44,7 @@ export default class Team extends React.Component{
                    teamId: this.state.teamId,
                    dir: this.state.dir,
                    fileName: file.name,
-                   ossKey: this.ossKey
+                   ossKey: this.state.ossKey
                 }
             }
         })

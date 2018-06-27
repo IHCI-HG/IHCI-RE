@@ -9,7 +9,7 @@ const Schema = mongoose.Schema
 const fileSchema = new Schema({
     create_time: { type: String, default : Date.now()},
     last_modify_time: { type: String, default : Date.now()},
-    ossKey: String,
+    OssKey:String,
     fileName: String,
     team: {type: Schema.Types.ObjectId, ref: 'team', index: true},
     dir: String, // 文件所在目录,对team唯一, 由dirValidate方法约束
@@ -43,10 +43,11 @@ const folderSchema = new Schema({
 fileSchema.statics = {
     createFile: async function(teamId, dir, fileName, ossKey) {
         return this.create({
-            ossKey: ossKey,
+            OssKey: ossKey,
             fileName: fileName,
             team: mongoose.Types.ObjectId(teamId),
-            dir: dir
+            dir: dir,
+            last_modify_time: Date.now,
         })
     },
     delFileByDir: function(teamId, dir, fileName) {
@@ -67,7 +68,8 @@ fileSchema.statics = {
             dir: dir,
             fileName: fileName
         },{
-            dir: tarDir
+            dir: tarDir,
+            last_modify_time: Date.now(),
         }).exec()
     },
     updateTime: function(teamId, dir, fileName) {
@@ -101,7 +103,8 @@ folderSchema.statics = {
             folderName: folderName
         },{
             dir: tarDir,
-            path: path
+            path: path,
+            last_modify_time: Date.now(),
         }).exec()
     },
     findByDir: function(teamId, dir, folderName) {
@@ -356,7 +359,6 @@ const moveFile = async function(teamId, dir, fileName, tarDir) {
     await fileDB.modifyDir(teamId, dir, fileName, tarDir)
     await folderDB.appendFile(teamId, tarDir, fileObj)
     await folderDB.dropFile(teamId, dir, fileName)
-    await fileDB.updateTime(teamId, tarDir, fileName)
 
     return true
 }
@@ -380,15 +382,19 @@ const moveFolder = async function(teamId, dir, folderName, tarDir) {
 
     const folderObj = await folderDB.findOne({
         team: mongoose.Types.ObjectId(teamId),
-        path: dir
+        dir: dir,
+        folderName: folderName, 
     }).exec()
     if(!folderObj) {
         throw '目录不存在'
     }
 
+    console.log(folderObj)
+
     const tarFolderObj = await folderDB.findOne({
         team: mongoose.Types.ObjectId(teamId),
-        path: tarDir
+        dir: tarDir,
+        folderName: folderName,
     }).exec()
     if(!folderObj) {
         throw '目标目录不存在'
@@ -407,7 +413,6 @@ const moveFolder = async function(teamId, dir, folderName, tarDir) {
 
     await folderDB.modifyDir(teamId, dir, folderName, tarDir)
     await folderDB.dropFile(teamId, dir, folderName)
-    await folderDB.updateTime(teamId, tarDir, folderName)
 
     return true
 }
