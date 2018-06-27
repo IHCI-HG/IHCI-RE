@@ -10,7 +10,8 @@ import {
     replyTopicTemplate,
     createTaskTemplate,
     delTaskTemplate,
-    delHeaderTemplate
+    delHeaderTemplate,
+    compTaskTemplate
 } from '../components/wx-utils/wx-utils'
 
 var mongoose = require('mongoose')
@@ -394,12 +395,22 @@ const editTask = async (req, res, next) => {
                 const headerList = []
                 headerList.push(editTask.assigneeId)
                 createTaskTemplate(headerList, taskObj, headername)
-            } else {
+            } else if(editTask.assigneeId = "" && taskObj.header){
                 const headerObj = userDB.findByUserId(taskObj.header);
                 const headername = headerObj.username;
                 const headerList = []
                 headerList.push(taskObj.header)
                 delHeaderTemplate(headerList, taskObj, headername)
+            }
+        }
+
+        if(editTask.hasDone == "true") {
+            if(task.header) {
+                const headerObj = userDB.findByUserId(task.header);
+                const headername = headerObj.username;
+                const creatorId = []
+                creatorId.push(taskObj.creator._id)
+                compTaskTemplate(creatorId, taskObj, headername)
             }
         }
 
