@@ -460,7 +460,7 @@ const taskList = async (req, res, nect) => {
     }
     try {
         let team = await teamDB.findByTeamId(teamId)
-        if (!teamObj) {
+        if (!team) {
             resProcessor.jsonp(req, res, {
                 state: { code: 1, msg: '团队不存在' },
                 data: {}
@@ -469,9 +469,10 @@ const taskList = async (req, res, nect) => {
         }
         const teamObj = team.toObject()
         const taskListTemp = teamObj.taskList
+        console.log(taskListTemp)
         const taskList = []
         for (var i = 0; i < taskListTemp.length; i++) {
-            const obj = {
+            const obj1 = {
                 id: taskListTemp[i]._id,
                 title: taskListTemp[i].title,
                 content: taskListTemp[i].content,
@@ -482,7 +483,7 @@ const taskList = async (req, res, nect) => {
                     headerId: taskListTemp[i].header
                 }
             }
-            taskList.push(obj)
+            taskList.push(obj1)
         }
         const tasklistListTemp = teamObj.tasklistList
         const tasklistList = []
@@ -495,7 +496,7 @@ const taskList = async (req, res, nect) => {
             console.log(result)
             const task = []
             for (var j = 0; j < result.taskList.length; j++) {
-                const obj = {
+                const obj2 = {
                     taskId: result.taskList[j]._id,
                     title: result.taskList[j].title,
                     content: result.taskList[j].content,
@@ -506,16 +507,16 @@ const taskList = async (req, res, nect) => {
                         headerId: result.taskList[j].header
                     }
                 }
-                task.push(obj)
+                task.push(obj2)
             }
 
-            const obj = {
+            const obj3 = {
                 _id: tasklistListTemp[i]._id,
                 name: tasklistListTemp[i].name,
                 taskList: task
             }
 
-            tasklistList.push(obj)
+            tasklistList.push(obj3)
         }
         var checkitemNum = 0;
         var checkitemDoneNum = 0;
@@ -538,9 +539,6 @@ const taskList = async (req, res, nect) => {
                 }
             }
         }
-        console.log(".......................")
-        console.log(task)
-        console.log(".......................")
         const taskObj = {
             taskList: taskList,
             tasklistList: tasklistList,

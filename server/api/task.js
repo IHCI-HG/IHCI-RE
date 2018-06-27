@@ -7,7 +7,8 @@ import apiAuth from '../components/auth/api-auth'
 
 import {
     createTopicTemplate,
-    replyTopicTemplate
+    replyTopicTemplate,
+    createTaskTemplate
 } from '../components/wx-utils/wx-utils'
 
 var mongoose = require('mongoose')
@@ -234,12 +235,6 @@ const createTask = async (req, res, next) => {
             name: userObj.username
         }
         const result = await taskDB.createTask(taskTitle, taskContent, simpleUser, fileList, teamId, tasklistId, taskDeadline, taskHeader);
-        if (teamId) {
-            await teamDB.addTask(teamId, result)
-            // const teamObj = await teamDB.findByTeamId(teamId)
-            // await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'CREATE_TASK', result._id, result.title, result)
-        }
-
         if (tasklistId) {
             //如果是有清单的则在清单中添加
             await tasklistDB.addTask(tasklistId, result)
@@ -247,6 +242,8 @@ const createTask = async (req, res, next) => {
             await teamDB.addTask(teamId, result)
         }
 
+        const user = await userDB.findByUserId(taskHeader)
+        const headername = user.username
         const taskObj = {
             id: result._id,
             title: result.title,
@@ -257,7 +254,13 @@ const createTask = async (req, res, next) => {
             listId: tasklistId
         }
 
+        const headerList = []
+        headerList.push(taskHeader)
+
         //todo 有负责人，走微信模板下发流程
+        if (taskHeader) {
+            createTaskTemplate(headerList, result, headername)
+        }
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
@@ -289,6 +292,7 @@ const delTask = async (req, res, next) => {
     }
 
     try {
+        const taskObj = taskDB.findByTaskId(taskId)
         const result = await taskDB.delTaskById(taskId);
         if (result.ok == 1) {
             if (tasklistId) {
@@ -341,7 +345,7 @@ const editTask = async (req, res, next) => {
                 data: {}
             })
         }
- 
+
         const task = {}
         task.title = editTask.name || taskObj.title;
         task.content = editTask.desc || taskObj.content;
@@ -397,7 +401,7 @@ const taskInfo = async (req, res, next) => {
     try {
         const taskObj = await taskDB.findByTaskId(taskId)
 
-        if(!taskObj) {
+        if (!taskObj) {
             resProcessor.jsonp(req, res, {
                 state: { code: 1, msg: "任务不存在" },
                 data: {}
@@ -405,7 +409,7 @@ const taskInfo = async (req, res, next) => {
         }
 
         const checkitemList = []
-        for(var i = 0;i<taskObj.checkitemList.length;i++) {
+        for (var i = 0; i < taskObj.checkitemList.length; i++) {
             var checklitemHeaderId = taskObj.checkitemList[i].header;
             const userObj = userDB.findByUserId(checklitemHeaderId);
             const headername = userObj.username
