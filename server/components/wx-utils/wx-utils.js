@@ -386,3 +386,127 @@ export const compTaskTemplate = async function (creatorId, taskObj , headername)
     })
 }
 
+
+export const createCheckitemTemplate = async function (headerList, checkitemObj, headername) {
+    const openidList = await userDB.openidList(headerList)
+
+    openidList.map((item) => {
+        if (typeof item.openid == 'string') {
+            pub_pushTemplateMsg(
+                item.openid,
+                'p6pZBXX0SaqODRDZgY_3NqyIAK0mYN9HXYq6yMLyA04',
+                'http://www.animita.cn/todo/' + checkitemObj._id,
+                {
+                    "first": {
+                        "value": checkitemObj.creator.username + " 将检查项指派给" + headername,
+                    },
+                    "keyword1": {
+                        "value": checkitemObj.content,
+                    },
+                    "keyword2": {
+                        "value": formatDate(new Date()),
+                    },
+                    "keyword3": {
+                        "value": "未完成",
+                    },
+                    "remark": {
+                        "value": "点击查看",
+                    }
+                }
+            )
+        }
+    })
+}
+
+export const delCheckitemTemplate = async function (headerList, checkitemObj) {
+    const openidList = await userDB.openidList(headerList)
+
+    openidList.map((item) => {
+        if (typeof item.openid == 'string') {
+            pub_pushTemplateMsg(
+                item.openid,
+                'p6pZBXX0SaqODRDZgY_3NqyIAK0mYN9HXYq6yMLyA04',
+                'http://www.animita.cn/todo/' + checkitemObj._id,
+                {
+                    "first": {
+                        "value": checkitemObj.creator.username + " 删除了检查项",
+                    },
+                    "keyword1": {
+                        "value": checkitemObj.content,
+                    },
+                    "keyword2": {
+                        "value": formatDate(new Date()),
+                    },
+                    "keyword3": {
+                        "value": "已删除",
+                    },
+                    "remark": {
+                        "value": "点击查看",
+                    }
+                }
+            )
+        }
+    })
+}
+
+export const delCheckHeaderTemplate = async function (headerList, checkitemObj, headername) {
+    const openidList = await userDB.openidList(headerList)
+
+    openidList.map((item) => {
+        if (typeof item.openid == 'string') {
+            pub_pushTemplateMsg(
+                item.openid,
+                'p6pZBXX0SaqODRDZgY_3NqyIAK0mYN9HXYq6yMLyA04',
+                'http://www.animita.cn/todo/' + checkitemObj._id,
+                {
+                    "first": {
+                        "value": checkitemObj.creator.username + " 取消了分配给" + headername + "的检查项",
+                    },
+                    "keyword1": {
+                        "value": checkitemObj.content,
+                    },
+                    "keyword2": {
+                        "value": formatDate(new Date()),
+                    },
+                    "keyword3": {
+                        "value": "已取消",
+                    },
+                    "remark": {
+                        "value": "点击查看",
+                    }
+                }
+            )
+        }
+    })
+}
+
+export const compCheckitemTemplate = async function (creatorId, checkitemObj , headername) {
+    const openidList = await userDB.openidList(creatorId)
+
+    openidList.map((item) => {
+        if (typeof item.openid == 'string') {
+            pub_pushTemplateMsg(
+                item.openid,
+                'p6pZBXX0SaqODRDZgY_3NqyIAK0mYN9HXYq6yMLyA04',
+                'http://www.animita.cn/todo/' + checkitemObj._id,
+                {
+                    "first": {
+                        "value": headername + " 完成了任务",
+                    },
+                    "keyword1": {
+                        "value": checkitemObj.content,
+                    },
+                    "keyword2": {
+                        "value": formatDate(new Date()),
+                    },
+                    "keyword3": {
+                        "value": "已完成",
+                    },
+                    "remark": {
+                        "value": "点击查看",
+                    }
+                }
+            )
+        }
+    })
+}

@@ -469,9 +469,13 @@ const taskList = async (req, res, nect) => {
         }
         const teamObj = team.toObject()
         const taskListTemp = teamObj.taskList
-        console.log(taskListTemp.length)
         const taskList = []
         for (var i = 0; i < taskListTemp.length; i++) {
+            var headername = ""
+            if (taskListTemp[i].header) {
+                const headerObj = await userDB.findByUserId(taskListTemp[i].header)
+                headername = headerObj.username
+            }
             const obj1 = {
                 id: taskListTemp[i]._id,
                 title: taskListTemp[i].title,
@@ -480,7 +484,8 @@ const taskList = async (req, res, nect) => {
                 state: taskListTemp[i].state,
                 completed_time: taskListTemp[i].completed_time,
                 header: {
-                    headerId: taskListTemp[i].header
+                    headerId: taskListTemp[i].header,
+                    headername: headername
                 }
             }
             taskList.push(obj1)
@@ -489,13 +494,18 @@ const taskList = async (req, res, nect) => {
         const tasklistList = []
         for (var i = 0; i < tasklistListTemp.length; i++) {
             const temp = await tasklistDB.findByTasklistId(tasklistListTemp[i]._id)
-            if(!temp) {
+            if (!temp) {
                 continue;
             }
             const result = temp.toObject()
             console.log(result)
             const task = []
             for (var j = 0; j < result.taskList.length; j++) {
+                var headername = ""
+                if (result.taskList[j].header) {
+                    const headerObj = await userDB.findByUserId(result.taskList[j].header)
+                    headername = headerObj.username
+                }
                 const obj2 = {
                     taskId: result.taskList[j]._id,
                     title: result.taskList[j].title,
@@ -504,7 +514,8 @@ const taskList = async (req, res, nect) => {
                     state: result.taskList[j].state,
                     completed_time: result.taskList[j].completed_time,
                     header: {
-                        headerId: result.taskList[j].header
+                        headerId: result.taskList[j].header,
+                        headername: headername
                     }
                 }
                 task.push(obj2)
