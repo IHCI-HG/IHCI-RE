@@ -319,10 +319,10 @@ export default class Task extends React.Component{
         if (resp.state.code === 0) {
             const todo = this.state.todo
             const rAssignee = {}
-            rAssignee.id = resp.data.result1.header
-            todo.name = resp.data.result1.title
-            todo.ddl = resp.data.result1.deadline
-            todo.desc = resp.data.result1.content
+            rAssignee.id = resp.data.header
+            todo.name = resp.data.title
+            todo.ddl = resp.data.deadline
+            todo.desc = resp.data.content
             todo.assignee = rAssignee
             console.log('handleTodoModify', todo)
             this.setState({ todo })
@@ -344,7 +344,7 @@ export default class Task extends React.Component{
         if (resp.state.code === 0) {
             const todo = this.state.todo
             const rAssignee = {}
-            rAssignee.id = resp.data.result1.header
+            rAssignee.id = resp.data.header
             todo.assignee = rAssignee
             this.setState({ todo })
         }
@@ -364,7 +364,7 @@ export default class Task extends React.Component{
         })
         if (resp.state.code === 0) {
             const todo = this.state.todo
-            todo.ddl = resp.data.result1.deadline
+            todo.ddl = resp.data.deadline
             this.setState({ todo })
         }
         return resp
