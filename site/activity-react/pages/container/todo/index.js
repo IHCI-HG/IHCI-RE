@@ -101,6 +101,7 @@ export default class Task extends React.Component{
             }
             memberIDList.push(item.userId)
         })
+        console.log('memberIDList', memberIDList)
         const memberResult = await api('/api/userInfoList', {
             method: 'POST',
             body: { userList: memberIDList }
@@ -113,7 +114,7 @@ export default class Task extends React.Component{
                 chosen: false,
             })
         })
-
+        console.log('memberList', memberList)
         this.setState({
             isCreator: isCreator,
             memberList: memberList,
@@ -140,7 +141,7 @@ export default class Task extends React.Component{
         todo.teamId = resp.data.teamId
         todo.assignee = {}
         todo.assignee.id = resp.data.header
-        console.log('todo', todo)
+        console.log('todo', todo.hasDone)
         // 没有username,根据memberList获取
         resp.data.checkitemList.forEach(function (item) {
             const listItem = {}
@@ -149,7 +150,7 @@ export default class Task extends React.Component{
             listItem.hasDone = item.state || false
             listItem.ddl = item.deadline
             listItem.assignee = {}
-            listItem.assignee.id = item.header
+            listItem.assignee.id = item.headerId
             todo.list.push(listItem)
         })
 
@@ -165,7 +166,7 @@ export default class Task extends React.Component{
         //     body: {id:this.params.id}
         // })
         const resp = await mock.httpMock('/todo/:id/get', { id: this.teamId })
-        console.log(resp)
+        // console.log(resp)
         if (resp.status === 200) {
             this.setState({ topicListArr: resp.data.topicList })
         }
@@ -292,12 +293,27 @@ export default class Task extends React.Component{
 
     // todo
     handleTodoCheck = async(hasDone) => {
-        const resp = await mock.httpMock('/todo/:id/put', { id: this.props.params.id, hasDone: !hasDone })
-        const todo = this.state.todo
-        if (resp.status ===200) {
-            todo.hasDone = resp.data.todo.hasDone
+        const taskId = this.props.params.id;
+        const editTask = {};
+        editTask.hasDone = !hasDone
+        console.log('taskId', taskId)
+        console.log('editTask', editTask)
+        console.log('teamId', this.state.todo.teamId)
+        const resp = await api('/api/task/edit', {
+            method: 'POST',
+            body: {
+                teamId: this.state.todo.teamId,
+                taskId,
+                editTask
+            }
+        })
+        console.log(resp)
+        if (resp.state.code === 0) {
+            const todo = this.state.todo
+            todo.hasDone = resp.data.state
+            this.setState({ todo })
         }
-        this.setState({ todo })
+        return resp
     }
 
     handleTodoModify = async(todoInfo) => {
@@ -392,9 +408,16 @@ export default class Task extends React.Component{
         console.log('assigneeId', todoInfo.assigneeId)
         console.log('resp', resp)
 
-        if (resp.status === 201) {
+        if (resp.state.code === 0) {
             const todo = this.state.todo
-            todo.list = [...todo.list, resp.data.checkItem]
+            const checkItem = {}
+            checkItem.id = resp.data.id
+            checkItem.name = resp.data.content
+            checkItem.assignee = {}
+            checkItem.assignee.id = resp.data.header
+            checkItem.ddl = resp.data.deadline
+            checkItem.hasDone = false
+            todo.list = [...todo.list, checkItem]
             this.setState({ todo })
         }
         return resp
@@ -477,7 +500,7 @@ export default class Task extends React.Component{
         const todoId = this.props.params.id
         const checkitemId = id
         const editCheckitem = {}
-        editCheckitem.state = !hasDone
+        editCheckitem.hasDone = !hasDone
         console.log('editCheckitem', editCheckitem)
         const resp = await api('/api/task/editCheckitem', {
             method: 'POST',

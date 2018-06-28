@@ -13,6 +13,11 @@ class EditTodo extends React.Component {
         detail: ''
     }
 
+    componentWillUnmount() {
+        this.setState({assigneeId: null})
+        this.setState({date: null})
+    }
+
     handleConfirm = async() => {
         const params = {}
         if (this.props.id) {
@@ -27,11 +32,8 @@ class EditTodo extends React.Component {
         const resp = await this.props.handleConfirm(params);
         // console.log('handleConfirm', resp)
         if (resp.state.code === 0) {
-            this.refs.name.value = ''
-            if (this.props.detail === 'detail')
-                this.refs.desc.value = ''
-            this.setState({assigneeId: null})
-            this.setState({date: null})
+            if (this.refs.name)
+                this.refs.name.value = ''
         }
     }
 

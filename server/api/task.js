@@ -411,6 +411,7 @@ const editTask = async (req, res, next) => {
             }
         }
 
+
         if (editTask.hasDone == true) {
             if (task.header) {
                 const headerObj = userDB.findByUserId(task.header);
@@ -987,7 +988,6 @@ const delDiscuss = async (req, res, next) => {
         });
     }
 }
-
 
 module.exports = [
     ['POST', '/api/task/createTasklist', apiAuth, createTasklist],
