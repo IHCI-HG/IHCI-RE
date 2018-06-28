@@ -476,13 +476,18 @@ const taskList = async (req, res, nect) => {
                 const headerObj = await userDB.findByUserId(taskListTemp[i].header)
                 headername = headerObj.username
             }
+            var taskListCom = ""
+            if(taskListTemp[i].completed_time) {
+                const date = taskListTemp[i].completed_time
+                taskListCom = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
+            }
             const obj1 = {
                 id: taskListTemp[i]._id,
                 title: taskListTemp[i].title,
                 content: taskListTemp[i].content,
                 deadline: taskListTemp[i].deadline,
                 state: taskListTemp[i].state,
-                completed_time: taskListTemp[i].completed_time,
+                completed_time: taskListCom,
                 header: {
                     headerId: taskListTemp[i].header,
                     headername: headername
@@ -506,13 +511,18 @@ const taskList = async (req, res, nect) => {
                     const headerObj = await userDB.findByUserId(result.taskList[j].header)
                     headername = headerObj.username
                 }
+                var taskListCom = ""
+                if(result.taskList[j].completed_time) {
+                    const date = result.taskList[j].completed_time
+                    taskListCom = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
+                }
                 const obj2 = {
                     taskId: result.taskList[j]._id,
                     title: result.taskList[j].title,
                     content: result.taskList[j].content,
                     deadline: result.taskList[j].deadline,
                     state: result.taskList[j].state,
-                    completed_time: result.taskList[j].completed_time,
+                    completed_time: taskListCom,
                     header: {
                         headerId: result.taskList[j].header,
                         headername: headername

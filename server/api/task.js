@@ -225,9 +225,9 @@ const createTask = async (req, res, next) => {
     const fileList = req.body.fileList || [];
     const teamId = req.body.teamId || "";
     const tasklistId = req.body.listId || "";
-    const taskDeadline = req.body.ddl || "";
+    const taskDeadline = new Date(req.body.ddl) || "";
     const taskHeader = req.body.assigneeId || "";
-
+    console.log(taskDeadline)
 
     if (!taskTitle) {
         resProcessor.jsonp(req, res, {
@@ -379,7 +379,8 @@ const editTask = async (req, res, next) => {
         console.log(task)
         if (editTask.hasDone == true) {
             task.state = true;
-            task.completed_time = new Date();
+            const date = new Date()
+            task.completed_time = new Date()
         } else {
             task.state = false;
             task.completed_time = "";
@@ -463,28 +464,48 @@ const taskInfo = async (req, res, next) => {
         const checkitemList = []
         for (var i = 0; i < taskObj.checkitemList.length; i++) {
             var checklitemHeaderId = taskObj.checkitemList[i].header;
-            const userObj = userDB.findByUserId(checklitemHeaderId);
-            const headername = userObj.username
+            var headername = ""
+            if (checklitemHeaderId) {
+                const userObj = await userDB.findByUserId(checklitemHeaderId);
+                headername = userObj.username
+            }
+            var completed_time = ""
+            if (taskObj.checkitemList[i].completed_time) {
+                const date = new Date(taskObj.checkitemList[i].completed_time)
+                completed_time = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
+            }
             const checkitemObj = {
                 _id: taskObj.checkitemList[i]._id,
                 state: taskObj.checkitemList[i].state,
                 content: taskObj.checkitemList[i].content,
                 headerId: taskObj.checkitemList[i].header,
-                headername: taskObj.checkitemList[i].headername,
+                headername: headername,
                 deadline: taskObj.checkitemList[i].deadline,
-                completed_time: taskObj.checkitemList[i].completed_time
+                completed_time: completed_time
             }
             checkitemList.push(checkitemObj);
         }
 
+        var taskCompleted_time = ""
+        if (taskObj.completed_time) {
+            const date = new Date(taskObj.completed_time)
+            taskCompleted_time = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
+        }
+
+        var headername = ""
+        if (taskObj.header) {
+            const headerObj = await userDB.findByUserId(taskObj.header)
+            headername = headerObj.username
+        }
         const result = {
             _id: taskObj._id,
             title: taskObj.title,
             content: taskObj.content,
             deadline: taskObj.deadline,
             header: taskObj.header,
+            headername: headername,
             state: taskObj.state,
-            completed_time: taskObj.completed_time,
+            completed_time: taskCompleted_time,
             teamId: taskObj.teamId,
             listId: taskObj.tasklistId,
             checkitemList: checkitemList
@@ -646,8 +667,6 @@ const findCheckitem = async (req, res, next) => {
             }
         }
         // await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'OPEN_CHECKITEM', checkitemId, checkitemObj.content, checkitemObj)
-
-
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
             data: checkitemObj
