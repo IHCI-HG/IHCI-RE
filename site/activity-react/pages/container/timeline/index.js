@@ -74,6 +74,8 @@ export default class News extends React.Component{
     componentDidMount = async() => {
         await this.initTimelineData()
         this.initTeamList()
+        console.log(this)
+        console.log('\n\n')
     }
 
     initTimelineData = async () => {
@@ -90,11 +92,6 @@ export default class News extends React.Component{
         }, () => {
             this.appendToShowList(this.state.newsList)
         })
-        if(queryUserId){
-            this.setState({
-                showFilter: false
-            })
-        }
         if(result.data.length<newTimeLineItemNum){
             this.setState({
                 noMoreResult: true
