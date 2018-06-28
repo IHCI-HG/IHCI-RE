@@ -8,10 +8,14 @@ import apiAuth from '../components/auth/api-auth'
 import {
     createTopicTemplate,
     replyTopicTemplate,
+<<<<<<< HEAD
+    createTaskTemplate
+=======
     createTaskTemplate,
     delTaskTemplate,
     delHeaderTemplate,
     compTaskTemplate
+>>>>>>> 743650044e1cb9972b5d0093a8b1fc5f6993e1ea
 } from '../components/wx-utils/wx-utils'
 
 var mongoose = require('mongoose')
@@ -247,6 +251,11 @@ const createTask = async (req, res, next) => {
             await teamDB.addTask(teamId, result)
         }
 
+<<<<<<< HEAD
+        // const user = await userDB.findByUserId(taskHeader)
+        // const headername = user.username
+=======
+>>>>>>> 743650044e1cb9972b5d0093a8b1fc5f6993e1ea
         const taskObj = {
             id: result._id,
             title: result.title,
@@ -297,10 +306,7 @@ const delTask = async (req, res, next) => {
     }
 
     try {
-        const taskObj = await taskDB.findByTaskId(taskId)
-        console.log("................................")
-        console.log(taskObj)
-        console.log("................................")
+        const taskObj = taskDB.findByTaskId(taskId)
         const result = await taskDB.delTaskById(taskId);
         console.log(result);
         if (result.ok == 1) {
@@ -309,6 +315,8 @@ const delTask = async (req, res, next) => {
             } else {
                 await teamDB.delTask(teamId, taskId);
             }
+<<<<<<< HEAD
+=======
 
             const headerList = []
             headerList.push(taskObj.header)
@@ -316,6 +324,7 @@ const delTask = async (req, res, next) => {
             if (taskObj.header) {
                 delTaskTemplate(headerList, taskObj)
             }
+>>>>>>> 743650044e1cb9972b5d0093a8b1fc5f6993e1ea
             resProcessor.jsonp(req, res, {
                 state: { code: 0, msg: '请求成功' },
                 data: result

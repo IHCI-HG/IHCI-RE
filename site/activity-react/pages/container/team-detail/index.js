@@ -77,14 +77,14 @@ export default class Team extends React.Component{
                 teamId: this.teamId
             }})
         let todoListArr = this.state.todoListArr
-        let unclassified = []
+        let unclassifiedList = []
+        let unclassified = {}
         let todoList = []
         if(resp.data.taskList==undefined){
             resp.data.taskList=[]
         }
         resp.data.taskList.map((item)=>{
             let todoItem = {}
-            console.log(item.id)
             todoItem.id = item.id
             todoItem.name = item.title
             todoItem.hasDone = item.state
@@ -92,8 +92,9 @@ export default class Team extends React.Component{
             todoItem.assignee = {
                 id: item.headerId
             }
-            unclassified.push(todoItem)
+            unclassifiedList.push(todoItem)
         })
+        unclassified.list = unclassifiedList
         if(resp.data.tasklistList==undefined){
             resp.data.tasklistList=[]
         }
@@ -260,6 +261,7 @@ export default class Team extends React.Component{
             }
         })
         // 返回用户名的显示依赖assigneeId
+        console.log(result)
         if (result.state.code === 0) {
             let todo = {
                 listId: result.data.listId,
@@ -280,6 +282,7 @@ export default class Team extends React.Component{
                 todolist.list = []
             }
             todolist.list = [...todolist.list, todo]
+            console.log("1",todoListArr)
             this.setState({ todoListArr })
         }
         return result
@@ -287,10 +290,10 @@ export default class Team extends React.Component{
 // 没改完！！！！！！！！！！！！！！！！！！！！！！！
     handleTodoModify = async(lIndex, lId, id, todoInfo) => {
         let editTask = {}
+        console.log(todoInfo)
         editTask.name = todoInfo.name
         editTask.ddl = todoInfo.date
         editTask.assigneeId = todoInfo.assigneeId
-        console.log(todoInfo)
         const resp = await api('/api/task/edit',{
             method:'POST',
             body:{
@@ -366,8 +369,16 @@ export default class Team extends React.Component{
 
     handleTodoDelete = async(lIndex, lId, id) => {
         console.log(lIndex, lId, id)
-        const resp = await mock.httpMock('/common/delete')
-        if (resp.status ===200) {
+        const resp = await api('/api/task/delTask',{
+            method:"POST",
+            body:{
+                taskId: id,
+                teamId: this.teamId,
+                listId: lId,
+            }
+        })
+        console.log(resp)
+        if (resp.state.code ===0) {
             const todoListArr = this.state.todoListArr
             const todolist = todoListArr[lIndex]
             const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
@@ -406,12 +417,16 @@ export default class Team extends React.Component{
 
     handleTodoListModify = async(index, id, info) => {
         const todoListArr = this.state.todoListArr
-        const resp = await mock.httpMock('/todolist/put', {
-            id,
-            name: info.name
+        const resp = await api('/api/task/updateTasklist', {
+            method:"POST",
+            body:{
+                listId: id,
+                name: info.name,
+                teamId: this.teamId,
+            }
         })
-        if (resp.status === 200) {
-            todoListArr[index].name = resp.data.todoList.name
+        if (resp.state.code === 0) {
+            todoListArr[index].name = resp.data.name
             this.setState({ todoListArr: todoListArr.slice() })
         }
         return resp
@@ -419,11 +434,15 @@ export default class Team extends React.Component{
 
     handleTodoListDelete = async(index, id) => {
         const todoListArr = this.state.todoListArr
-        const resp = await mock.httpMock('/common/delete', {id})
-        // todoListArr.splice(index, 1) // 删除使用index导致错误
+        const resp = await api('/api/task/delTasklist',{
+            method:"POST",
+            body: {
+                listId: id
+            }
+        })
         const [todolist, todolistIndex] = getUpdateItem(todoListArr, id)
         todoListArr.splice(todolistIndex, 1)
-        if (resp.status ===200) {
+        if (resp.state.code === 0) {
             this.setState({ todoListArr: todoListArr.slice() })
         }
         console.log(todoListArr)
@@ -433,6 +452,8 @@ export default class Team extends React.Component{
     render() {
         let teamInfo = this.state.teamInfo
         const unclassified = this.state.todoListArr[0]
+
+        console.log("unclassified",unclassified)
         // console.log(this.state.memberList)
         return (
             <Page title={"团队名称xx - IHCI"}
