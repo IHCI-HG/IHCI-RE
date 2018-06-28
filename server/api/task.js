@@ -603,7 +603,6 @@ const copyTask = async (req, res, text) => {
 }
 
 
-
 module.exports = [
     ['POST', '/api/task/createTasklist', apiAuth, createTasklist],
     ['POST', '/api/task/updateTasklist', apiAuth, updateTasklist],
