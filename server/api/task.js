@@ -244,6 +244,14 @@ const createTask = async (req, res, next) => {
             name: userObj.username
         }
         const result = await taskDB.createTask(taskTitle, taskContent, simpleUser, fileList, teamId, tasklistId, taskDeadline, taskHeader);
+
+        //6.28
+        if (teamId) {
+            const teamObj = await teamDB.findByTeamId(teamId)
+            const baseInfoObj = await userDB.baseInfoById(userId)
+            await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'CREATE_TASK', result._id, result.title, result)
+        }
+
         if (tasklistId) {
             //如果是有清单的则在清单中添加
             await tasklistDB.addTask(tasklistId, result)
@@ -317,6 +325,12 @@ const delTask = async (req, res, next) => {
             if (taskObj.header) {
                 delTaskTemplate(headerList, taskObj)
             }
+            //6.28
+            const baseInfoObj = await userDB.baseInfoById(userId);
+            const teamObj = await teamDB.findByTeamId(teamId);
+            await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'DELETE_TASK', taskObj._id, taskObj.title, taskObj);
+
+
             resProcessor.jsonp(req, res, {
                 state: { code: 0, msg: '请求成功' },
                 data: result
@@ -355,7 +369,6 @@ const editTask = async (req, res, next) => {
 
     try {
         const taskObj = await taskDB.findByTaskId(taskId)
-        console.log(taskObj)
 
         if (!taskObj) {
             resProcessor.jsonp(req, res, {
@@ -369,7 +382,12 @@ const editTask = async (req, res, next) => {
         task.content = editTask.desc || taskObj.content;
         task.fileList = editTask.fileList || taskObj.fileList;
         task.deadline = editTask.ddl || taskObj.deadline;
-        task.header = editTask.assigneeId || taskObj.header;
+        if (editTask.assigneeId === undefined) {
+            task.header = taskObj.header
+        } else {
+            task.header = editTask.assigneeId
+        }
+        console.log(task.header)
         var headername = ""
         if (task.header) {
             const headerObj = await userDB.findByUserId(task.header);
@@ -379,8 +397,14 @@ const editTask = async (req, res, next) => {
         console.log(task)
         if (editTask.hasDone == true) {
             task.state = true;
-            const date = new Date()
             task.completed_time = new Date()
+
+            //6.28
+            const baseInfoObj = await userDB.baseInfoById(userId);
+            const teamObj = await teamDB.findByTeamId(teamId);
+            await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'FINISH_TASK', taskObj._id, taskObj.title, taskObj);
+
+
         } else {
             task.state = false;
             task.completed_time = "";
@@ -396,14 +420,15 @@ const editTask = async (req, res, next) => {
 
         //todo 给负责人发送微信下发模板
         if (editTask.assigneeId != taskObj.header) {
-            if (editTask.assigneeId && !taskObj.header) {
-                const headerObj = userDB.findByUserId(editTask.assigneeId);
+            if (editTask.assigneeId) {
+                const headerObj = await userDB.findByUserId(editTask.assigneeId);
                 const headername = headerObj.username;
                 const headerList = []
                 headerList.push(editTask.assigneeId)
                 createTaskTemplate(headerList, taskObj, headername)
-            } else if (editTask.assigneeId = "" && taskObj.header) {
-                const headerObj = userDB.findByUserId(taskObj.header);
+            }
+            if ((editTask.assigneeId === null && taskObj.header) || (editTask.assigneeId && taskObj.header)) {
+                const headerObj = await userDB.findByUserId(taskObj.header);
                 const headername = headerObj.username;
                 const headerList = []
                 headerList.push(taskObj.header)
@@ -414,8 +439,9 @@ const editTask = async (req, res, next) => {
 
         if (editTask.hasDone == true) {
             if (task.header) {
-                const headerObj = userDB.findByUserId(task.header);
+                const headerObj = await userDB.findByUserId(task.header);
                 const headername = headerObj.username;
+                console.log(headername)
                 const creatorId = []
                 creatorId.push(taskObj.creator._id)
                 compTaskTemplate(creatorId, taskObj, headername)
@@ -426,6 +452,10 @@ const editTask = async (req, res, next) => {
         // await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'EDIT_TASK', result1._id, result1.title, result1)
 
 
+        if (task.completed_time) {
+            const date = new Date(task.completed_time)
+            task.completed_time = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
+        }
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
             data: task
@@ -526,6 +556,7 @@ const taskInfo = async (req, res, next) => {
 }
 
 const addCheckitem = async (req, res, next) => {
+    const teamId = req.body.teamId
     const taskId = req.body.todoId;
     const content = req.body.name;
     const header = req.body.assigneeId || "";
@@ -556,6 +587,10 @@ const addCheckitem = async (req, res, next) => {
 
         const result1 = await taskDB.appendCheckitem(taskId, checkitem);
         // await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'APPEND_CHECKITEM', taskId, checkitem.content, checkitem)
+        //6.28 //我不知道怎么找到checkItem的ID，不过好像也没什么用
+        const teamObj = await teamDB.findByTeamId(taskObj.teamId);
+        const baseInfoObj = await userDB.baseInfoById(userId);
+        await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'CREATE_CHECK_ITEM', result1._id, checkitem.content, checkitem)
 
         const lastCheckitem = result1.checkitemList[result1.checkitemList.length - 1]
         const checkitemObj = {
@@ -609,6 +644,13 @@ const dropCheckitem = async (req, res, next) => {
         const taskObj = await taskDB.findByTaskId(taskId);
         const userObj = await userDB.findByUserId(userId);
 
+         //6.28
+         const teamId = taskObj.teamId;
+
+         //6.28
+         const userObj = await userDB.baseInfoById(userId);
+ 
+
         var checkitemObj = null;
         for (var i = 0; i < taskObj.checkitemList.length; i++) {
             if (checkitemId == taskObj.checkitemList[i]._id) {
@@ -618,6 +660,12 @@ const dropCheckitem = async (req, res, next) => {
         }
         const result1 = await taskDB.dropCheckitem(taskId, checkitemId);
         // await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'DROP_CHECKITEM', checkitemId, checkitemObj.content, checkitemObj)
+
+
+         //6.28
+         const teamObj = await teamDB.findByTeamId(teamId)
+         await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'DELETE_CHECK_ITEM', checkitemId, checkitemObj.content, checkitemObj)
+ 
 
         if (checkitemObj.header) {
             const headerList = []
@@ -709,8 +757,12 @@ const editCheckitem = async (req, res, next) => {
         }
 
         const checkitemObj = {}
-        checkitemObj.content = editCheckitem.name || checkitemObjTemp.content || "";
-        checkitemObj.header = editCheckitem.assigneeId || checkitemObjTemp.header || ""
+        checkitemObj.content = editCheckitem.name || checkitemObjTemp.content || ""
+        if (editCheckitem.assigneeId === undefined) {
+            checkitemObj.header = checkitemObjTemp.header
+        } else {
+            checkitemObj.header = editCheckitem.assigneeId
+        }
         checkitemObj.deadline = editCheckitem.ddl || checkitemObjTemp.deadline || ""
         if (checkitemObj.header) {
             const headerObj = await userDB.findByUserId(checkitemObj.header)
@@ -719,6 +771,13 @@ const editCheckitem = async (req, res, next) => {
         if (editCheckitem.hasDone == true) {
             checkitemObj.state = true;
             checkitemObj.completed_time = new Date();
+
+             //6.28
+             const teamId = taskObj.teamId;
+             const teamObj = teamDB.findByTeamId(teamId);
+             const baseInfoObj = await userDB.baseInfoById(userId);
+             await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'FINISH_CHECITEM_ITEM', checkitemObj._id, checkitemObj.title, checkitemObj);
+ 
         } else {
             checkitemObj.state = false;
             checkitemObj.completed_time = "";
@@ -742,7 +801,7 @@ const editCheckitem = async (req, res, next) => {
                 const headername = headerObj.username
                 createCheckitemTemplate(headerList, checkitemObjTemp, headername)
             }
-            if (editCheckitem.assigneeId && checkitemObjTemp.header) {
+            if ((editCheckitem.assigneeId === null && checkitemObjTemp.header) || (editCheckitem.assigneeId && checkitemObjTemp.header)) {
                 const headerList = []
                 headerList.push(checkitemObjTemp.header)
                 const headerObj = await userDB.findByUserId(checkitemObjTemp.header)
@@ -770,6 +829,7 @@ const taskCopy = async (req, res, next) => {
     const taskId = req.body.taskId;
     const teamId = req.body.teamId;
     const copyCount = req.body.copyCount;
+    const userId = req.rSession.userId;
 
     if (!taskId || copyCount <= 0) {
         resProcessor.jsonp(req, res, {
@@ -781,12 +841,29 @@ const taskCopy = async (req, res, next) => {
 
     try {
         var returnObj = [];
-        var copyObj = await taskDB.findByTaskId(taskId);
+        var copyObj = (await taskDB.findByTaskId(taskId)).toObject();
+        var tasklistId = copyObj.tasklistId;
         delete copyObj._id;
 
+        console.log("......................................................")
+        console.log(copyObj);
+        console.log(".......................................................")
+
         for (var i = 0; i < copyCount; i++) {
-            var taskObj = await taskDB.create(copyObj);
-            teamDB.addTask(teamId, taskObj);
+            const taskObj = await taskDB.create(copyObj);
+
+
+            const baseInfoObj = await userDB.baseInfoById(userId);
+            const teamObj = await teamDB.findByTeamId(teamId);
+            await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'COPY_TASK', taskObj._id, taskObj.title, taskObj);
+
+            if (tasklistId) {
+                //如果是有清单的则在清单中添加
+                await tasklistDB.addTask(tasklistId, taskObj)
+            } else {
+                await teamDB.addTask(teamId, taskObj)
+            }
+
             returnObj.push(taskObj);
         }
         resProcessor.jsonp(req, res, {
@@ -803,12 +880,14 @@ const taskCopy = async (req, res, next) => {
     }
 }
 
+
 const taskMove = async (req, res, next) => {
     const taskId = req.body.taskId;
-    const teamId = req.body.teamIdMoveTo;
+    const teamIdMoveTo = req.body.teamIdMoveTo;
     const tasklistId = req.body.tasklistId;
+    const userId = req.rSession.userId;
 
-    if (!taskId || !teamId) {
+    if (!taskId || !teamIdMoveTo) {
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: "参数不全" },
             data: {}
@@ -818,22 +897,44 @@ const taskMove = async (req, res, next) => {
 
     try {
 
-        var result = await taskDB.findByTaskId(taskId);
+        var result = (await taskDB.findByTaskId(taskId)).toObject();
+        const teamId = result.teamId;
+
+        //6.28
+        if (result.tasklistId) {
+            await tasklistDB.delTask(result.tasklistId,taskId)
+        } else {
+            await teamDB.delTaskById(result.teamId,taskId);
+        }
+
         result.create_time = Date.now;
-        result.teamId = teamId;
-        result.tasklistId = tasklistId || {};
+        result.teamId = teamIdMoveTo;
+        result.tasklistId = tasklistId ||[];
         result.deadline = undefined;
         result.completed_time = undefined;
         result.header = undefined;
         result.state = false;
 
-        for (x in result.checkitemList) {
+        for (var x in result.checkitemList) {
             x.create_time = Date.now;
             x.header = undefined;
             x.deadline = undefined;
             x.completed_time = undefined;
         }
-        result = taskDB.updateTask(taskId, result);
+        result = await taskDB.updateTask(taskId, result);
+
+        //6.28
+        if (tasklistId) {
+            //如果是有清单的则在清单中添加
+            await tasklistDB.addTask(tasklistId, result)
+        } else {
+            await teamDB.addTask(teamIdMoveTo, result)
+        }
+
+        const baseInfoObj = await userDB.baseInfoById(userId);
+        const teamObj = await teamDB.findByTeamId(teamId);
+        await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'MOVE_TASK', result._id, result.title, result);
+
 
 
         resProcessor.jsonp(req, res, {
@@ -848,6 +949,7 @@ const taskMove = async (req, res, next) => {
         console.error(error);
     }
 }
+
 
 const createDiscuss = async (req, res, next) => {
     const taskId = req.body.taskId;
@@ -874,13 +976,20 @@ const createDiscuss = async (req, res, next) => {
 
 
     try {
-        const userObj = await userDB.baseInfoById(userId)
-        const result = await discussDB.createDiscuss(teamId, "", "", content, userObj, fileList);
+        const userObj = await userDB.baseInfoById(userId);
+        
+        //6.28
+        const taskObj = taskDB.findByTaskId(taskId);
+
+        //6.28
+        const result = await discussDB.createDiscuss(teamId, "", taskObj.title, content, userObj, fileList);
+
         taskDB.addDiscuss(taskId, result._id);
 
         const teamObj = await teamDB.findByTeamId(teamId)
 
-        //await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'REPLY_TOPIC', result._id, topicObj.title, result)
+        //6.28
+        await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'REPLY_TASK', result._id, result.title, result);
 
         //如果有需要通知的人，则走微信模板消息下发流程
         if (informList && informList.length) {
@@ -972,13 +1081,21 @@ const delDiscuss = async (req, res, next) => {
 
 
     try {
+
+        //6.28
+        const discussObj = discussDB.findDiscussById(discussId);
+        const baseInfoObj = userDB.baseInfoById(userId);
+        const teamObj = teamDB.findByTeamId(teamId);
+
         const result = await discussDB.delDiscussById(discussId);
-        const result1 = await taskDB.delDiscuss(taskId, discussId);
-        //await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'REPLY_TOPIC', result._id, topicObj.title, result)
+        await taskDB.delDiscuss(taskId, discussId);
+        
+        //6.28
+        await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'DELETE_TASK_REPLY', discussObj._id, discussObj.title, discussObj);
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
-            data: result1
+            data: result
         });
     } catch (error) {
         console.error(error);
@@ -988,6 +1105,56 @@ const delDiscuss = async (req, res, next) => {
         });
     }
 }
+
+
+//6.27
+const findDiscuss = async (req, res, next) => {
+    const taskId = req.body.taskId;
+
+    const userId = req.rSession.userId;
+
+    if (!taskId) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: "参数不全" },
+            data: {}
+        });
+        return
+    }
+
+    try {
+        const taskObj = await taskDB.findByTaskId(taskId);
+        const userObj = await userDB.findByUserId(userId);
+
+        var discussList = [];
+        var discussObj;
+
+
+        var tmpDiscussList = taskObj.discussList
+        var discussNum = tmpDiscussList.length;
+        for (var i = 0; i < discussNum; i++) {
+
+            discussObj = await discussDB.findDiscussById(tmpDiscussList[i]._id);
+            discussList.push(discussObj);
+        }
+
+
+        // await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'OPEN_CHECKITEM', checkitemId, checkitemObj.content, checkitemObj)
+
+
+        resProcessor.jsonp(req, res, {
+            state: { code: 0, msg: '请求成功' },
+            data: discussList
+        })
+    } catch (error) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: '操作失败' },
+            data: {}
+        });
+        console.error(error);
+    }
+}
+
+
 
 module.exports = [
     ['POST', '/api/task/createTasklist', apiAuth, createTasklist],
@@ -1010,4 +1177,7 @@ module.exports = [
     ['POST', '/api/task/createDiscuss', apiAuth, createDiscuss],
     ['POST', '/api/task/editDiscuss', apiAuth, editDiscuss],
     ['POST', '/api/task/delDiscuss', apiAuth, delDiscuss],
+
+    //6.27
+    ['POST', '/api/task/findDiscuss', apiAuth, findDiscuss],
 ]

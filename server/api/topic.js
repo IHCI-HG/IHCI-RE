@@ -271,7 +271,99 @@ const getMoreTopic = async (req,res,next) =>{
 
 
 }
+//6.28
+const delTopic = async (req,res,next) =>{
+    const topicId = req.body.topicId;
 
+
+    if(!topicId) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: "参数不正确" },
+            data: {}
+        });
+        return
+    }
+
+    try {
+        const topicObj = await topicDB.findByTopicId(topicId);
+        const teamId = topicObj.team;
+
+        const discussList = topicObj.discussList;
+
+
+        for(var x in discussList){
+            discussDB.delDiscussById(discussList[x]._id)
+        }
+        
+        await teamDB.delTopic(teamId,topicId)
+        const result = await topicDB.delTopicById(topicId);
+
+        //创建动态6.28
+        const baseInfoObj = await userDB.baseInfoById(userId)
+        const teamObj = await teamDB.findByTeamId(teamId)
+        await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'DELETE_TOPIC', topicObj._id, topicObj.title, topicObj)
+        
+
+
+        resProcessor.jsonp(req, res, {
+            state: { code: 0, msg: '请求成功' },
+            data: result
+        });
+    } catch (error) {
+        console.error(error);
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: '操作失败' },
+            data: {}
+        });
+    }
+
+
+}
+
+    //6.28
+const delDiscuss = async (req,res,next)=>{
+    const discussId = req.body.discussId;
+    const userId = req.rSession.userId;
+
+
+    if(!discussId) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: "参数不正确" },
+            data: {}
+        });
+        return
+    }
+
+    try {
+        const result = await discussDB.findDiscussById(discussId);
+        const teamId = result.teamId;
+        const topicId = result.topicId;
+
+        
+        await topicDB.delDiscuss(topicId,discussId);
+        await discussDB.delDiscussById(discussId);
+
+        //创建动态6.28
+        const baseInfoObj = await userDB.baseInfoById(userId)
+        const teamObj = await teamDB.findByTeamId(teamId)
+        await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'DELETE_TOPIC_REPLY', result._id, result.title, result);
+        
+
+
+        resProcessor.jsonp(req, res, {
+            state: { code: 0, msg: '请求成功' },
+
+            //需要修改
+            data: result
+        });
+    } catch (error) {
+        console.error(error);
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: '操作失败' },
+            data: {}
+        });
+    }
+}
 
 module.exports = [
     ['GET', '/api/topic/get', apiAuth, topicInfo],
@@ -282,4 +374,8 @@ module.exports = [
     ['POST', '/api/topic/editTopic', apiAuth, editTopic],
     ['POST', '/api/topic/createDiscuss', apiAuth, createDiscuss],
     ['POST', '/api/topic/editDiscuss', apiAuth, editDiscuss],
+
+    //6.28
+    ['POST','/api/topic/delTopic',apiAuth,delTopic],
+    ['POST','/api/topic/delDiscuss',apiAuth,delDiscuss],
 ];
