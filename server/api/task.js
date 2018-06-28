@@ -11,7 +11,11 @@ import {
     createTaskTemplate,
     delTaskTemplate,
     delHeaderTemplate,
-    compTaskTemplate
+    compTaskTemplate,
+    createCheckitemTemplate,
+    delCheckitemTemplate,
+    delCheckHeaderTemplate,
+    compCheckitemTemplate
 } from '../components/wx-utils/wx-utils'
 
 var mongoose = require('mongoose')
@@ -338,7 +342,6 @@ const editTask = async (req, res, next) => {
     const taskId = req.body.taskId;
     const tasklistId = req.body.listId;
     const editTask = req.body.editTask;
-    console.log(tasklistId);
 
     const userId = req.rSession.userId;
 
@@ -367,6 +370,13 @@ const editTask = async (req, res, next) => {
         task.fileList = editTask.fileList || taskObj.fileList;
         task.deadline = editTask.ddl || taskObj.deadline;
         task.header = editTask.assigneeId || taskObj.header;
+        var headername = ""
+        if (task.header) {
+            const headerObj = await userDB.findByUserId(task.header);
+            headername = headerObj.username
+        }
+        task.headername = headername
+        console.log(task)
         if (editTask.hasDone == true) {
             task.state = true;
             task.completed_time = new Date();
@@ -375,7 +385,6 @@ const editTask = async (req, res, next) => {
             task.completed_time = "";
         }
 
-        console.log(taskObj);
 
         const result1 = await taskDB.updateTask(taskId, task);
         if (tasklistId) {
@@ -392,7 +401,7 @@ const editTask = async (req, res, next) => {
                 const headerList = []
                 headerList.push(editTask.assigneeId)
                 createTaskTemplate(headerList, taskObj, headername)
-            } else if(editTask.assigneeId = "" && taskObj.header){
+            } else if (editTask.assigneeId = "" && taskObj.header) {
                 const headerObj = userDB.findByUserId(taskObj.header);
                 const headername = headerObj.username;
                 const headerList = []
@@ -401,8 +410,9 @@ const editTask = async (req, res, next) => {
             }
         }
 
-        if(editTask.hasDone == true) {
-            if(task.header) {
+
+        if (editTask.hasDone == true) {
+            if (task.header) {
                 const headerObj = userDB.findByUserId(task.header);
                 const headername = headerObj.username;
                 const creatorId = []
@@ -522,9 +532,6 @@ const addCheckitem = async (req, res, next) => {
             deadline: deadline || ""
         }
 
-        if (checkitem.header != "") {
-            //todo 给负责人下发微信模板
-        }
 
         const result1 = await taskDB.appendCheckitem(taskId, checkitem);
         // await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'APPEND_CHECKITEM', taskId, checkitem.content, checkitem)
@@ -536,6 +543,18 @@ const addCheckitem = async (req, res, next) => {
             header: lastCheckitem.header,
             deadline: lastCheckitem.deadline,
             taskId: taskId,
+        }
+
+        if (checkitem.header) {
+            //todo 给负责人下发微信模板
+            const headerObj = await userDB.findByUserId(checkitem.header)
+            console.log(headerObj)
+            const headername = headerObj.username
+            const headerList = []
+            headerList.push(checkitem.header)
+            console.log(lastCheckitem)
+            console.log(headername)
+            createCheckitemTemplate(headerList, lastCheckitem, headername)
         }
 
         resProcessor.jsonp(req, res, {
@@ -578,6 +597,12 @@ const dropCheckitem = async (req, res, next) => {
         }
         const result1 = await taskDB.dropCheckitem(taskId, checkitemId);
         // await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'DROP_CHECKITEM', checkitemId, checkitemObj.content, checkitemObj)
+
+        if (checkitemObj.header) {
+            const headerList = []
+            headerList.push(checkitemObj.header)
+            delCheckitemTemplate(headerList, checkitemObj)
+        }
 
         if (result1.ok == 1) {
             resProcessor.jsonp(req, res, {
@@ -656,21 +681,22 @@ const editCheckitem = async (req, res, next) => {
         const taskObj = await taskDB.findByTaskId(taskId);
         const userObj = await userDB.findByUserId(userId);
 
-        var checkitemObj = null;
+        var checkitemObjTemp = null;
         for (var i = 0; i < taskObj.checkitemList.length; i++) {
             if (checkitemId == taskObj.checkitemList[i]._id) {
-                checkitemObj = taskObj.checkitemList[i];
+                checkitemObjTemp = taskObj.checkitemList[i];
                 break;
             }
         }
 
-        console.log('editCheckitem.state', editCheckitem.state);
-        console.log('checkitemObj.state', checkitemObj.state);
-
-        checkitemObj.content = editCheckitem.name || checkitemObj.content || "";
-        checkitemObj.header = editCheckitem.assigneeId || checkitemObj.header || "";
-        checkitemObj.deadline = editCheckitem.ddl || checkitemObj.deadline || "";
-
+        const checkitemObj = {}
+        checkitemObj.content = editCheckitem.name || checkitemObjTemp.content || "";
+        checkitemObj.header = editCheckitem.assigneeId || checkitemObjTemp.header || ""
+        checkitemObj.deadline = editCheckitem.ddl || checkitemObjTemp.deadline || ""
+        if (checkitemObj.header) {
+            const headerObj = await userDB.findByUserId(checkitemObj.header)
+            checkitemObj.headername = headerObj.username
+        }
         if (editCheckitem.hasDone == true) {
             checkitemObj.state = true;
             checkitemObj.completed_time = new Date();
@@ -681,6 +707,30 @@ const editCheckitem = async (req, res, next) => {
 
         const result1 = taskDB.updateCheckitem(taskId, checkitemId, checkitemObj);
         // await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'EDIT_CHECKITEM', checkitemId, checkitemObj.content, checkitemObj)
+
+        if (editCheckitem.hasDone == true && checkitemObj.header) {
+            const creatorId = []
+            creatorId.push(checkitemObjTemp.creator._id)
+            const headerObj = await userDB.findByUserId(checkitemObj.header)
+            const headername = headerObj.username
+            compCheckitemTemplate(creatorId, checkitemObjTemp, headername)
+        }
+        if (editCheckitem.assigneeId != checkitemObjTemp.header) {
+            if (editCheckitem.assigneeId) {
+                const headerList = []
+                headerList.push(editCheckitem.assigneeId)
+                const headerObj = await userDB.findByUserId(editCheckitem.assigneeId)
+                const headername = headerObj.username
+                createCheckitemTemplate(headerList, checkitemObjTemp, headername)
+            }
+            if (editCheckitem.assigneeId && checkitemObjTemp.header) {
+                const headerList = []
+                headerList.push(checkitemObjTemp.header)
+                const headerObj = await userDB.findByUserId(checkitemObjTemp.header)
+                const headername = headerObj.username
+                delCheckHeaderTemplate(headerList, checkitemObjTemp, headername)
+            }
+        }
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
