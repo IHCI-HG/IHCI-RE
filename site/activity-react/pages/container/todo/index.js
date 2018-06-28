@@ -101,6 +101,7 @@ export default class Task extends React.Component{
             }
             memberIDList.push(item.userId)
         })
+        console.log('memberIDList', memberIDList)
         const memberResult = await api('/api/userInfoList', {
             method: 'POST',
             body: { userList: memberIDList }
@@ -113,7 +114,7 @@ export default class Task extends React.Component{
                 chosen: false,
             })
         })
-
+        console.log('memberList', memberList)
         this.setState({
             isCreator: isCreator,
             memberList: memberList,
@@ -140,7 +141,7 @@ export default class Task extends React.Component{
         todo.teamId = resp.data.teamId
         todo.assignee = {}
         todo.assignee.id = resp.data.header
-        console.log('todo', todo)
+        console.log('todo', todo.hasDone)
         // 没有username,根据memberList获取
         resp.data.checkitemList.forEach(function (item) {
             const listItem = {}
@@ -165,7 +166,7 @@ export default class Task extends React.Component{
         //     body: {id:this.params.id}
         // })
         const resp = await mock.httpMock('/todo/:id/get', { id: this.teamId })
-        console.log(resp)
+        // console.log(resp)
         if (resp.status === 200) {
             this.setState({ topicListArr: resp.data.topicList })
         }
@@ -319,10 +320,10 @@ export default class Task extends React.Component{
         if (resp.state.code === 0) {
             const todo = this.state.todo
             const rAssignee = {}
-            rAssignee.id = resp.data.result1.header
-            todo.name = resp.data.result1.title
-            todo.ddl = resp.data.result1.deadline
-            todo.desc = resp.data.result1.content
+            rAssignee.id = resp.data.header
+            todo.name = resp.data.title
+            todo.ddl = resp.data.deadline
+            todo.desc = resp.data.content
             todo.assignee = rAssignee
             console.log('handleTodoModify', todo)
             this.setState({ todo })
@@ -344,7 +345,7 @@ export default class Task extends React.Component{
         if (resp.state.code === 0) {
             const todo = this.state.todo
             const rAssignee = {}
-            rAssignee.id = resp.data.result1.header
+            rAssignee.id = resp.data.header
             todo.assignee = rAssignee
             this.setState({ todo })
         }
@@ -364,7 +365,7 @@ export default class Task extends React.Component{
         })
         if (resp.state.code === 0) {
             const todo = this.state.todo
-            todo.ddl = resp.data.result1.deadline
+            todo.ddl = resp.data.deadline
             this.setState({ todo })
         }
         return resp
