@@ -327,13 +327,14 @@ export default class Team extends React.Component{
                 editTask: editTask,
             }
         })
-        console.log(resp)
+        console.log('handleTodoCheck', resp)
         if (resp.state.code === 0) {
             // 更新 todolist
             const todoListArr = this.state.todoListArr
             const todolist = todoListArr[lIndex]
             const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
             todoItem.hasDone = resp.data.state
+            todoItem.completeTime = resp.data.completed_time
             // ...更新完成时间赋值
             todolist.list[itemIndex] = todoItem
             todolist.list = todolist.list.slice()
