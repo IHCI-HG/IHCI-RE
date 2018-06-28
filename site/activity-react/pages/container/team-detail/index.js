@@ -76,6 +76,7 @@ export default class Team extends React.Component{
             body:{
                 teamId: this.teamId
             }})
+        console.log('resp', resp)
         let todoListArr = this.state.todoListArr
         let unclassifiedList = []
         let unclassified = {}
@@ -90,7 +91,7 @@ export default class Team extends React.Component{
             todoItem.hasDone = item.state
             todoItem.ddl = item.deadline
             todoItem.assignee = {
-                id: item.headerId
+                id: item.header.headerId
             }
             unclassifiedList.push(todoItem)
         })
@@ -111,7 +112,7 @@ export default class Team extends React.Component{
                 todoItem.hasDone = mapTodoItem.state
                 todoItem.ddl = mapTodoItem.deadline
                 todoItem.assignee = {
-                    id: mapTodoItem.headerId
+                    id: mapTodoItem.header.headerId
                 }
                 todoListItem.list.push(todoItem)
             })
@@ -171,7 +172,7 @@ export default class Team extends React.Component{
             teamInfo: teamInfo,
             memberList: memberList,
             topicList: sortByCreateTime(result.data.topicList)
-        },console.log("123",memberList))
+        })
     }
 
     locationTo = (url) => {
@@ -260,7 +261,6 @@ export default class Team extends React.Component{
             }
         })
         // 返回用户名的显示依赖assigneeId
-        console.log(result)
         if (result.state.code === 0) {
             let todo = {
                 listId: result.data.listId,
@@ -281,7 +281,6 @@ export default class Team extends React.Component{
                 todolist.list = []
             }
             todolist.list = [...todolist.list, todo]
-            console.log("1",todoListArr)
             this.setState({ todoListArr })
         }
         return result
@@ -328,13 +327,14 @@ export default class Team extends React.Component{
                 editTask: editTask,
             }
         })
-        console.log(resp)
+        console.log('handleTodoCheck', resp)
         if (resp.state.code === 0) {
             // 更新 todolist
             const todoListArr = this.state.todoListArr
             const todolist = todoListArr[lIndex]
             const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
             todoItem.hasDone = resp.data.state
+            todoItem.completeTime = resp.data.completed_time
             // ...更新完成时间赋值
             todolist.list[itemIndex] = todoItem
             todolist.list = todolist.list.slice()
@@ -356,10 +356,13 @@ export default class Team extends React.Component{
         })
         console.log(resp)
         if (resp.state.code === 0) {
-            const todoListArr = this.state.todoListArr
+            let todoListArr = this.state.todoListArr
             const todolist = todoListArr[lIndex]
             const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
+            // fix bug: 这里进行过短路优化
+            todoItem.assignee = {}
             todoItem.assignee.id = resp.data.header
+            todolist.list[itemIndex] = todoItem
             todolist.list = todolist.list.slice()
             this.setState({ todoListArr })
             return resp
@@ -427,7 +430,7 @@ export default class Team extends React.Component{
                 name:result.data.name,
                 list:[],
             }
-            const todoListArr = this.state.todoListArr
+            let todoListArr = this.state.todoListArr
             todoListArr = [...todoListArr, createTodo]
             this.setState({
                 showCreateTodoList: false,
@@ -474,8 +477,6 @@ export default class Team extends React.Component{
         let teamInfo = this.state.teamInfo
         const unclassified = this.state.todoListArr[0]
 
-        console.log("unclassified",unclassified)
-        // console.log(this.state.memberList)
         return (
             <Page title={"团队名称xx - IHCI"}
                 className="discuss-page">

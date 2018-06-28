@@ -10,7 +10,8 @@ class EditTodo extends React.Component {
     }
 
     static defaultProps = {
-        detail: ''
+        detail: '',
+        closeAfterConfirm: true,
     }
 
     componentWillUnmount() {
@@ -30,10 +31,13 @@ class EditTodo extends React.Component {
         params.date = this.state.date
         // 调用父组件方法，把提交参数传出去
         const resp = await this.props.handleConfirm(params);
-        // console.log('handleConfirm', resp)
         if (resp.state.code === 0) {
             if (this.refs.name)
                 this.refs.name.value = ''
+        }
+        if (this.props.closeAfterConfirm === false) {
+            this.setState({assigneeId: null})
+            this.setState({date: null})
         }
     }
 
