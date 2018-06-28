@@ -83,6 +83,7 @@ export const pub_getAccessToken = async function () {
 
     const result = await fetch(`https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${conf.pubAppId}&secret=${conf.pubAppSe}`)
     const data = await result.json()
+    console.log(data)
     if (data.access_token) {
         redisPromiseSet('pub_access_token', data.access_token, (data.expires_in || 200) - 200)
         return data.access_token
@@ -126,8 +127,6 @@ export const pub_pushTemplateMsg = async function (openid, templateId, url, data
 // 点击参与讨论
 // 点击: /discuss/topic/+topicId
 export const createTopicTemplate = async function (userIdList, topicObj) {
-    console.log("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
-    console.log(topicObj._id);
     const openidList = await userDB.openidList(userIdList)
 
     openidList.map((item) => {
@@ -255,3 +254,135 @@ export const admitIntoTeam = async function (userIdList, teamObj) {
         }
     })
 }
+
+
+
+export const createTaskTemplate = async function (headerList, taskObj, headername) {
+    console.log(headername)
+    const openidList = await userDB.openidList(headerList)
+
+    openidList.map((item) => {
+        if (typeof item.openid == 'string') {
+            pub_pushTemplateMsg(
+                item.openid,
+                'p6pZBXX0SaqODRDZgY_3NqyIAK0mYN9HXYq6yMLyA04',
+                'http://www.animita.cn/todo/' + taskObj.id,
+                {
+                    "first": {
+                        "value": taskObj.creator.name + " 将任务指派给" + headername,
+                    },
+                    "keyword1": {
+                        "value": taskObj.title,
+                    },
+                    "keyword2": {
+                        "value": formatDate(new Date()),
+                    },
+                    "keyword3": {
+                        "value": taskObj.content,
+                    },
+                    "remark": {
+                        "value": "点击查看",
+                    }
+                }
+            )
+        }
+    })
+}
+
+export const delTaskTemplate = async function (headerList, taskObj) {
+    const openidList = await userDB.openidList(headerList)
+    console.log(taskObj.header)
+
+    openidList.map((item) => {
+        if (typeof item.openid == 'string') {
+            pub_pushTemplateMsg(
+                item.openid,
+                'p6pZBXX0SaqODRDZgY_3NqyIAK0mYN9HXYq6yMLyA04',
+                'http://www.animita.cn/todo/' + taskObj._id,
+                {
+                    "first": {
+                        "value": taskObj.creator.name + " 删除了任务",
+                    },
+                    "keyword1": {
+                        "value": taskObj.title,
+                    },
+                    "keyword2": {
+                        "value": formatDate(new Date()),
+                    },
+                    "keyword3": {
+                        "value": taskObj.content,
+                    },
+                    "remark": {
+                        "value": "点击查看",
+                    }
+                }
+            )
+        }
+    })
+}
+
+
+export const delHeaderTemplate = async function (headerList, taskObj, headername) {
+    const openidList = await userDB.openidList(headerList)
+    console.log(taskObj.header)
+
+    openidList.map((item) => {
+        if (typeof item.openid == 'string') {
+            pub_pushTemplateMsg(
+                item.openid,
+                'p6pZBXX0SaqODRDZgY_3NqyIAK0mYN9HXYq6yMLyA04',
+                'http://www.animita.cn/todo/' + taskObj._id,
+                {
+                    "first": {
+                        "value": taskObj.creator.name + " 取消了分配给" + headername + "的任务",
+                    },
+                    "keyword1": {
+                        "value": taskObj.title,
+                    },
+                    "keyword2": {
+                        "value": formatDate(new Date()),
+                    },
+                    "keyword3": {
+                        "value": taskObj.content,
+                    },
+                    "remark": {
+                        "value": "点击查看",
+                    }
+                }
+            )
+        }
+    })
+}
+
+export const compTaskTemplate = async function (creatorId, taskObj , headername) {
+    const openidList = await userDB.openidList(creatorId)
+    console.log(taskObj.header)
+
+    openidList.map((item) => {
+        if (typeof item.openid == 'string') {
+            pub_pushTemplateMsg(
+                item.openid,
+                'p6pZBXX0SaqODRDZgY_3NqyIAK0mYN9HXYq6yMLyA04',
+                'http://www.animita.cn/todo/' + taskObj._id,
+                {
+                    "first": {
+                        "value": headername + " 完成了任务",
+                    },
+                    "keyword1": {
+                        "value": taskObj.title,
+                    },
+                    "keyword2": {
+                        "value": formatDate(new Date()),
+                    },
+                    "keyword3": {
+                        "value": "已完成",
+                    },
+                    "remark": {
+                        "value": "点击查看",
+                    }
+                }
+            )
+        }
+    })
+}
+

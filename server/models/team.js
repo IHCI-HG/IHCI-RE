@@ -76,18 +76,16 @@ teamSchema.statics = {
         ).exec()
     },
     updateTopic: async function (teamId, topicId, editTopic) {
-        return this.update(
+        const result = await this.update(
             { _id: teamId, "topicList._id": mongoose.Types.ObjectId(topicId) },
-            { $set: { "topicList.$.title": editTopic.title } }
-        ).update(
-            { _id: teamId, "topicList._id": mongoose.Types.ObjectId(topicId) },
-            { $set: { "topicList.$.content": editTopic.content } }
+            { $set: { "topicList.$.title": editTopic.title, "topicList.$.content": editTopic.content } }
         ).exec()
+        return result;
     },
     delTopic: async function (teamId, topicId) {
         return this.update(
             { _id: teamId },
-            { $pull: { "topicList._id": topicId } }
+            { $pull: { topicList: { _id: mongoose.Types.ObjectId(topicId) } } }
         ).exec()
     },
 
@@ -101,7 +99,15 @@ teamSchema.statics = {
     updateTask: async function (teamId, taskId, editTask) {
         return this.update(
             { _id: teamId, "taskList._id": mongoose.Types.ObjectId(taskId) },
-            { $set: { "taskList.$": editTask } }
+            {
+                $set: {
+                    "taskList.$.header": editTask.header,
+                    "taskList.$.content": editTask.content,
+                    "taskList.$.deadline": editTask.deadline,
+                    "taskList.$.completed_time": editTask.completed_time,
+                    "taskList.$.state": editTask.state
+                }
+            }
         ).exec()
     },
     // updateTask: async function (teamId, taskId, editTask) {
@@ -125,7 +131,13 @@ teamSchema.statics = {
     delTask: async function (teamId, taskId) {
         return this.update(
             { _id: teamId },
-            { $pull: { "taskList._id": taskId } }
+            {
+                $pull: {
+                    taskList: {
+                        _id: mongoose.Types.ObjectId(taskId)
+                    }
+                }
+            }
         ).exec()
     },
 
@@ -145,7 +157,14 @@ teamSchema.statics = {
     delTasklist: async function (teamId, tasklistId) {
         return this.update(
             { _id: teamId },
-            { $pull: { "tasklistList._id": tasklistId } }
+            {
+                $pull: {
+                    tasklistList:
+                        {
+                            _id: mongoose.Types.ObjectId(tasklistId)
+                        }
+                }
+            }
         ).exec()
     },
 

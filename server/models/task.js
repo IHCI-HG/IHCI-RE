@@ -23,7 +23,8 @@ const taskSchema = new Schema({
         deadline: String,
         completed_time: String,
         state: Boolean,
-    }]
+    }],
+    discussList: [mongoose.Schema.Types.Mixed]
 })
 
 taskSchema.statics = {
@@ -38,7 +39,8 @@ taskSchema.statics = {
             deadline: deadline,
             header: header,
             checkitemList: [],
-            state: false
+            state: false,
+            discussList: []
         })
     },
 
@@ -56,8 +58,20 @@ taskSchema.statics = {
         return this.findById(taskId)
     },
 
+    findByTaskIdList: function (taskIdList) {
+        const queryList = []
+        taskIdList.map((item) => {
+            queryList.push({ _id: item })
+        })
+        if (queryList && queryList.length) {
+            return this.find({ $or: queryList }).sort({ create_time: -1 }).exec()
+        } else {
+            return []
+        }
+    },
+
     appendCheckitem: async function (taskId, checkitemObj) {
-        return this.update(
+        const result = await this.findOneAndUpdate(
             { _id: taskId },
             {
                 $push: {
@@ -68,8 +82,12 @@ taskSchema.statics = {
                         deadline: checkitemObj.deadline
                     }
                 }
+            },
+            {
+                'new': true
             }
         ).exec()
+        return result
     },
 
     dropCheckitem: async function (taskId, checkitemId) {
@@ -85,30 +103,31 @@ taskSchema.statics = {
         ).exec()
     },
 
-    // updateCheckitem: async function (taskId, checkitemId, checkitemObj) {
-    //     return this.update(
-    //         { _id: taskId, "checkitemList._id": mongoose.Types.ObjectId(checkitemId) },
-    //         { $set: { "checkitemList.$.content": checkitemObj.content } }
-    //     ).update(
-    //         { _id: taskId, "checkitemList._id": mongoose.Types.ObjectId(checkitemId) },
-    //         { $set: { "checkitemList.$.header": checkitemObj.header } }
-    //     ).update(
-    //         { _id: taskId, "checkitemList._id": mongoose.Types.ObjectId(checkitemId) },
-    //         { $set: { "checkitemList.$.deadline": checkitemObj.deadline } }
-    //     ).update(
-    //         { _id: taskId, "checkitemList._id": mongoose.Types.ObjectId(checkitemId) },
-    //         { $set: { "checkitemList.$.completed_time": checkitemObj.completed_time } }
-    //     ).update(
-    //         { _id: taskId, "checkitemList._id": mongoose.Types.ObjectId(checkitemId) },
-    //         { $set: { "checkitemList.$.state": checkitemObj.state } }
-    //     ).exec()
-    // }
+
 
     updateCheckitem: async function (taskId, checkitemId, checkitemObj) {
         return this.update(
             { _id: taskId, "checkitemList._id": mongoose.Types.ObjectId(checkitemId) },
-            { $set: { "checkitemList.$": checkitemObj } }
+            {
+                $set: {
+                    "checkitemList.$.content": checkitemObj.content,
+                    "checkitemList.$.header": checkitemObj.header,
+                    "checkitemList.$.deadline": checkitemObj.deadline,
+                    "checkitemList.$.completed_time": checkitemObj.completed_time,
+                    "checkitemList.$.state": checkitemObj.state
+                }
+            }
         ).exec()
+    },
+
+    addDiscuss: async function (taskId, discussId) {
+        const result = await this.update({ _id: taskId }, { $push: { discussList: { _id: discussId } } });
+        return result;
+    },
+
+    delDiscuss: async function (taskId, discussId) {
+        const result = await this.update({ _id: taskId }, { $pull: { discussList: { _id: mongoose.Types.ObjectId(discussId) } } });
+        return result;
     }
 
 }

@@ -53,6 +53,16 @@ topicSchema.statics = {
         ).exec()
     },
 
+    //6.22
+    getByPage:async function(teamId,currentPage){
+        var pageSize = 20;
+        var sortFunc = {create_time:-1};
+        var skipNumber = (currentPage - 1) * pageSize;
+
+        const result = this.find({team:teamId}).skip(skipNumber).limit(pageSize).sort(sortFunc).exec();
+        return result;
+    }
+
 }
 
 mongoose.model('topic', topicSchema);

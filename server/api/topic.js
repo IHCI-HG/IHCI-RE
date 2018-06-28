@@ -237,9 +237,46 @@ const topicInfo = async (req, res, next) => {
     }
 }
 
+//6.22
+const getMoreTopic = async (req,res,next) =>{
+    const teamId = req.query.teamId;
+    const currentPage = req.query.currentPage;
+
+    //test
+    console.log("/api/topic/251");
+    console.log(req.query);
+
+    if(!teamId || currentPage <= 0) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: "参数不正确" },
+            data: {}
+        });
+        return
+    }
+
+    try {
+        const topicObj = await topicDB.getByPage(teamId,currentPage);
+
+        resProcessor.jsonp(req, res, {
+            state: { code: 0, msg: '请求成功' },
+            data: topicObj
+        });
+    } catch (error) {
+        console.error(error);
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: '操作失败' },
+            data: {}
+        });
+    }
+
+
+}
+
 
 module.exports = [
     ['GET', '/api/topic/get', apiAuth, topicInfo],
+    //6.22
+    ['GET','/api/topic/getMoreTopic', apiAuth,getMoreTopic],
 
     ['POST', '/api/topic/createTopic', apiAuth, createTopic],
     ['POST', '/api/topic/editTopic', apiAuth, editTopic],

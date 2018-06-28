@@ -6,16 +6,18 @@ const Schema = mongoose.Schema
 const tasklistSchema = new Schema({
     create_time: { type: String, default: Date.now },
     name: String,
+    desc: String,
     creator: { type: mongoose.Schema.Types.Mixed, require: true },
     teamId: String,
     taskList: []
 })
 
 tasklistSchema.statics = {
-    createTasklist: async function (creator,name,teamId) {
+    createTasklist: async function (creator, name, desc, teamId) {
         return this.create({
-            creator: creator,
             name: name,
+            desc: desc,
+            creator: creator,
             teamId: teamId
         })
     },
@@ -32,7 +34,7 @@ tasklistSchema.statics = {
     updateTasklist: async function (tasklistId, editTasklist) {
         return this.update(
             { _id: tasklistId },
-            { $set: { "name": editTasklist.name } }
+            { $set: { name: editTasklist.name, desc: editTasklist.desc } }
         ).exec()
     },
 
@@ -46,14 +48,23 @@ tasklistSchema.statics = {
     delTask: async function (tasklistId, taskId) {
         return this.update(
             { _id: tasklistId },
-            { $pull: { "taskList._id": taskId } }
+            { $pull: { taskList: { _id: mongoose.Types.ObjectId(taskId) } } }
         ).exec()
     },
 
     updateTask: async function (tasklistId, taskId, editTask) {
         return this.update(
             { _id: tasklistId, "taskList._id": mongoose.Types.ObjectId(taskId) },
-            { $set: { "taskList.$": editTask } }
+            {
+                $set: {
+                    "taskList.$.title": editTask.title,
+                    "taskList.$.header": editTask.header,
+                    "taskList.$.content": editTask.content,
+                    "taskList.$.deadline": editTask.deadline,
+                    "taskList.$.completed_time": editTask.completed_time,
+                    "taskList.$.state": editTask.state
+                }
+            }
         ).exec()
     },
 
