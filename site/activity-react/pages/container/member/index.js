@@ -8,10 +8,11 @@ import Page from '../../../components/page'
 
 export default class News extends React.Component{
     componentDidMount = async() => {
-        if (this.props.location.state.teamList)
+        if (this.props.personInfo.teamList.length != 0){
             this.setState({
-                teamList: this.props.location.state.teamList
+                teamList: this.props.personInfo && this.props.personInfo.teamList || [],
             })
+        }
         else this.initTeamList()
         this.initMemberList()
     }

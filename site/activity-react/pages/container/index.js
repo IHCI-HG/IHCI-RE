@@ -28,9 +28,8 @@ class App extends React.Component{
         activeTag : '',
         headImg: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnregyyDrMvhEDpfC4wFetzykulWRVMGF-jp7RXIIqZ5ffEdawIA',
         personInfo: {
-            
+            teamList: []
         },
-        teamList: [],
         searchText : '',
     }
     componentWillMount = async() => { 
@@ -46,10 +45,10 @@ class App extends React.Component{
             this.setState({
                 headImg: result.data.personInfo.headImg,
                 personInfo: {
+                    ...result.data,
                     ...result.data.personInfo,
                     // ...result.data.personInfo,
-                },
-                teamList: result.data.teamList,
+                }
             })
         }
     }
@@ -72,8 +71,8 @@ class App extends React.Component{
 
     routerHandle = (toUrl) => {
         this.activeTagHandle(toUrl)
-        const location = {pathname: toUrl, state: this.state}
-        this.props.router.push(location)
+        // const location = {pathname: toUrl, state: this.state}
+        this.props.router.push(toUrl)
     }
 
     // 处理路由变化的时候高亮的tag
