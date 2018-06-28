@@ -118,7 +118,6 @@ export default class Team extends React.Component{
             todoList.push(todoListItem)
         })
         todoListArr = [unclassified,...todoList]
-        console.log(todoListArr)
         if (resp.state.code === 0) {
             this.setState({ todoListArr })
         }
@@ -172,7 +171,7 @@ export default class Team extends React.Component{
             teamInfo: teamInfo,
             memberList: memberList,
             topicList: sortByCreateTime(result.data.topicList)
-        })
+        },console.log("123",memberList))
     }
 
     locationTo = (url) => {
@@ -287,7 +286,7 @@ export default class Team extends React.Component{
         }
         return result
     }
-// 没改完！！！！！！！！！！！！！！！！！！！！！！！
+
     handleTodoModify = async(lIndex, lId, id, todoInfo) => {
         let editTask = {}
         console.log(todoInfo)
@@ -303,14 +302,13 @@ export default class Team extends React.Component{
                 editTask: editTask,
             }
         })
-        console.log(resp)
         if (resp.state.code ===0) {
             const todoListArr = this.state.todoListArr
             const todolist = todoListArr[lIndex]
             const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
             todoItem.name = resp.data.title
             todoItem.ddl = resp.data.deadline
-            todoItem.assignee.id = resp.data.headerId
+            todoItem.assignee.id = resp.data.header
             todolist.list[itemIndex] = todoItem
             todolist.list = todolist.list.slice()
             this.setState({ todoListArr })
@@ -331,7 +329,7 @@ export default class Team extends React.Component{
             }
         })
         console.log(resp)
-        if (resp.status ===200) {
+        if (resp.state.code === 0) {
             // 更新 todolist
             const todoListArr = this.state.todoListArr
             const todolist = todoListArr[lIndex]
@@ -361,7 +359,7 @@ export default class Team extends React.Component{
             const todoListArr = this.state.todoListArr
             const todolist = todoListArr[lIndex]
             const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
-            todoItem.assignee.id = resp.data.headerId
+            todoItem.assignee.id = resp.data.header
             todolist.list = todolist.list.slice()
             this.setState({ todoListArr })
             return resp
