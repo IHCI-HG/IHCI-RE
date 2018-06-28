@@ -96,15 +96,7 @@ export default class Team extends React.Component{
 
 
     state = {
-        teamList: [
-            // {
-            //     _id: 1,
-            //     name: '青少年编程项目组',
-            //     teamImg: 'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=471192784,4234473862&fm=27&gp=0.jpg',
-            //     managed: true,
-            //     marked: true,
-            // },
-        ],
+        teamList: [],
     }
     render() {
         return (
