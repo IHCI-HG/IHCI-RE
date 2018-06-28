@@ -308,9 +308,9 @@ export default class Team extends React.Component{
             const todoListArr = this.state.todoListArr
             const todolist = todoListArr[lIndex]
             const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
-            todoItem.name = resp.data.todo.name
-            todoItem.ddl = resp.data.todo.ddl
-            todoItem.assignee = resp.data.todo.assignee
+            todoItem.name = resp.data.title
+            todoItem.ddl = resp.data.deadline
+            todoItem.assignee.id = resp.data.headerId
             todolist.list[itemIndex] = todoItem
             todolist.list = todolist.list.slice()
             this.setState({ todoListArr })
@@ -319,13 +319,24 @@ export default class Team extends React.Component{
     }
 
     handleTodoCheck = async(lIndex, lId, id, hasDone) => {
-        const resp = await mock.httpMock('/todo/:id/put', { id: id, hasDone: !hasDone })
+        let editTask = {}
+        editTask.hasDone = !hasDone
+        const resp = await api('/api/task/edit',{
+            method:'POST',
+            body:{
+                listId: lId,
+                taskId: id,
+                teamId: this.teamId,
+                editTask: editTask,
+            }
+        })
+        console.log(resp)
         if (resp.status ===200) {
             // 更新 todolist
             const todoListArr = this.state.todoListArr
             const todolist = todoListArr[lIndex]
             const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
-            todoItem.hasDone = resp.data.todo.hasDone
+            todoItem.hasDone = resp.data.state
             // ...更新完成时间赋值
             todolist.list[itemIndex] = todoItem
             todolist.list = todolist.list.slice()
@@ -334,16 +345,23 @@ export default class Team extends React.Component{
     }
 
     handleAssigneeChange = async(lIndex, lId, id, e) => {
-        console.log(lIndex, lId, id, e.target.value)
-        const resp = await mock.httpMock('/todo/:id/put', {
-            id: id,
-            assigneeId: e.target.value,
+        let editTask = {}
+        editTask.assigneeId = e.target.value
+        const resp = await api('/api/task/edit',{
+            method:'POST',
+            body:{
+                listId: lId,
+                taskId: id,
+                teamId: this.teamId,
+                editTask: editTask,
+            }
         })
-        if (resp.status ===200) {
+        console.log(resp)
+        if (resp.state.code === 0) {
             const todoListArr = this.state.todoListArr
             const todolist = todoListArr[lIndex]
             const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
-            todoItem.assignee = resp.data.todo.assignee
+            todoItem.assignee.id = resp.data.headerId
             todolist.list = todolist.list.slice()
             this.setState({ todoListArr })
             return resp
@@ -351,16 +369,23 @@ export default class Team extends React.Component{
     }
 
     handleDateChange = async(lIndex, lId, id, e) => {
-        console.log(lIndex, lId, id, e.target.value)
-        const resp = await mock.httpMock('/todo/:id/put', {
-            id: id,
-            ddl: e.target.value,
+        let editTask = {}
+        editTask.ddl = e.target.value
+        const resp = await api('/api/task/edit',{
+            method:'POST',
+            body:{
+                listId: lId,
+                taskId: id,
+                teamId: this.teamId,
+                editTask: editTask,
+            }
         })
-        if (resp.status ===200) {
+        console.log(resp)
+        if (resp.state.code === 0) {
             const todoListArr = this.state.todoListArr
             const todolist = todoListArr[lIndex]
             const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
-            todoItem.ddl = resp.data.todo.ddl
+            todoItem.ddl = resp.data.deadline
             todolist.list = todolist.list.slice()
             this.setState({ todoListArr })
             return resp
@@ -398,8 +423,6 @@ export default class Team extends React.Component{
                 name: info.name,
             }
         })
-        console.log(info)
-        console.log(result)
         if (result.state.code === 0) {
             let createTodo = {
                 id:result.data.id,
