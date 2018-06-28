@@ -5,11 +5,9 @@ import api from '../../../utils/api';
 import Page from '../../../components/page'
 import WxLoginDialog from '../../../components/wx-login-dialog'
 
-export default class Team extends React.Component{
+export default class Person extends React.Component{
     componentDidMount = async() => {
         this.personInfo = {}
-        console.log(INIT_DATA);
-
         if(INIT_DATA.userObj) {
             this.setState({
                 userObj: INIT_DATA.userObj,

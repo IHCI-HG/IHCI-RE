@@ -6,7 +6,7 @@ import { timeParse, formatDate } from '../../../utils/util'
 import Page from '../../../components/page'
 
 
-export default class News extends React.Component{
+export default class Members extends React.Component{
     componentDidMount = async() => {
         if (this.props.personInfo.teamList.length != 0){
             this.setState({
@@ -54,8 +54,11 @@ export default class News extends React.Component{
         }
     }
 
-    toTimeLineHandle = (memberName, event) => {
-        this.props.router.push('/timeline')
+    toTimeLineHandle = (memberId , event) => {
+        const query = {userId:memberId,}
+        const location = {pathname:'/timeline', query:query}
+        // console.log(location)
+        this.props.router.push(location)
     }
 
     toTeamHandle = (teamId, teamName) => {
@@ -103,7 +106,7 @@ export default class News extends React.Component{
                         this.showMemberList().map((item) => {
                             return(
                                 <div className="member-item" key={'member-item-' + item._id}>
-                                    <img src={item.personInfo.headImg} onClick={this.toTimeLineHandle.bind(this, item.personInfo.name)}  alt="" className="head-img"/>
+                                    <img src={item.personInfo.headImg} onClick={this.toTimeLineHandle.bind(this, item._id)}  alt="" className="head-img"/>
                                     <span className="name">{item.personInfo.name}</span>
                                     <span className="phone">{item.personInfo.phone}</span>
                                     <span className="mail">{item.personInfo.mail}</span>

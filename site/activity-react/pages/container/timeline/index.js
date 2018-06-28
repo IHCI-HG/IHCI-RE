@@ -74,29 +74,33 @@ export default class News extends React.Component{
     componentDidMount = async() => {
         await this.initTimelineData()
         this.initTeamList()
-        console.log(this)
-        console.log('\n\n')
     }
 
     initTimelineData = async () => {
         const queryTeamId = this.props.location.query.teamId
-
+        const queryPerson = this.props.location.query.userId
         const result = await api('/api/timeline/getTimeline', {
             method: 'POST',
-            body: queryTeamId ? {
-                teamId: queryTeamId
-            } : {}
+            body: {
+                teamId: queryTeamId ? queryTeamId :'',
+                userId: queryPerson ? queryPerson : '',
+            }
         })
         this.setState({
             newsList: result.data
         }, () => {
             this.appendToShowList(this.state.newsList)
         })
-        if(result.data.length<newTimeLineItemNum){
-            this.setState({
-                noMoreResult: true
-            })
-        }
+        // if(result.data.length == 0){
+        //     this.setState({
+        //         noResult: true,
+        //     })
+        // }
+        // if(result.data.length<newTimeLineItemNum){
+        //     this.setState({
+        //         noMoreResult: true
+        //     })
+        // }
     }
 
     initTeamList = () => {
@@ -107,11 +111,13 @@ export default class News extends React.Component{
     
     getMoreTimelineData = async () => {
         const queryTeamId = this.props.location.query.teamId
+        const queryPerson = this.props.location.query.person
         const lastStamp = this.state.lastStamp
         const result = await api('/api/timeline/getTimeline', {
             method: 'POST',
             body: {
                 teamId: queryTeamId ? queryTeamId :'',
+                personId: queryPerson ? queryPerson : '',
                 timeStamp: lastStamp? lastStamp: '',
             }
         })
@@ -263,14 +269,22 @@ export default class News extends React.Component{
                 
 
                 <div className="news-list page-wrap">
-                    <div className='news-filter' onClick={this.teamFilterHandle}>
-                        筛选动态： {
-                            this.props.location.query.teamId ? this.props.personInfo.teamList.map((item) => {
-                                if(item.teamId == this.props.location.query.teamId)
-                                    return item.teamName
-                            }) : "根据团队"
-                        }
+                    <div className='title-bar'>
+                        <div className='filter-title'>
+                            筛选动态:
+                            <span className='team-filter'  onClick={this.teamFilterHandle}>
+                            {
+                                this.props.location.query.teamId ? this.props.personInfo.teamList.map((item) => {
+                                    if(item.teamId == this.props.location.query.teamId)
+                                        return item.teamName
+                                }) : "根据团队"
+                            }
+                            </span>
+                        </div>
+
                     </div>
+
+                    
                     {
                         showList.keyList.map((timeKey) => {
                             return (
