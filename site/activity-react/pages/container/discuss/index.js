@@ -83,7 +83,7 @@ export default class Discuss extends React.Component{
                 }
             }
         })
-        if(result && result.data && result.data.fileList && result.data.fileList.length) {
+        if(result && result.data && result.data.fileList) {
             this.setState({
                 fileList: result.data.fileList
             })
@@ -325,6 +325,9 @@ export default class Discuss extends React.Component{
         window.open(window.location.origin  + '/static/' + ossKey)
     }
 
+    folderClickHandle = (dir) => {
+        location.href = '/files/' + this.teamId + '?dir=/' + dir
+    }
 
     render() {
         let teamInfo = this.state.teamInfo
@@ -391,7 +394,7 @@ export default class Discuss extends React.Component{
                                 if (item.fileType == 'folder') {
                                     return (
                                         <div className="file-line files" key={item.fileType + '-' + item._id}>
-                                            <div className="name">{'(文件夹)'}{item.name}</div>
+                                            <div className="name" onClick={() => {this.folderClickHandle(item.name)}}>{'(文件夹)'}{item.name}</div>
                                             <div className="size">-</div>
                                             <div className="last-modify">{formatDate(item.last_modify_time)}</div>
                                             <div className="tools">
@@ -404,7 +407,7 @@ export default class Discuss extends React.Component{
                                 if (item.fileType == 'file') {
                                     return (
                                         <div className="file-line files" key={item.fileType + '-' + item._id}>
-                                            <div className="name">{item.name}</div>
+                                            <div className="name" onClick={() => {this.downloadHandle(item.ossKey)}}>{item.name}</div>
                                             <div className="size">{item.size}</div>
                                             <div className="last-modify">{formatDate(item.last_modify_time)}</div>
                                             <div className="tools">
@@ -423,37 +426,37 @@ export default class Discuss extends React.Component{
                     </div>
 
 
-                {/*
-                    <div className="head">
-                        <span className='head-title'>讨论</span> 
-                        <div className="create-btn" onClick={() => {this.setState({showCreateTopic: true})}}>发起讨论</div>
-                    </div>
 
-                    {
-                        this.state.showCreateTopic && <div className="create-area">
-                            <input type="text" className="topic-name" onChange={this.topicNameInputHandle} value={this.state.createTopicName} placeholder="话题" />
-                            <textarea className="topic-content" onChange={this.topicContentInputHandle} value={this.state.createTopicContent} placeholder="说点什么"></textarea>
-                            
-                            <div className="infrom">请选择要通知的人：</div>
-                            <MemberChosenList choseHandle={this.memberChoseHandle} memberList={this.state.memberList}/>
+                <div className="head">
+                    <span className='head-title'>讨论</span> 
+                    <div className="create-btn" onClick={() => {this.setState({showCreateTopic: true})}}>发起讨论</div>
+                </div>
 
-                            <div className="btn-con">
-                                <div className="create-btn" onClick={this.createTopicHandle}>发起讨论</div>
-                                <div className="cancle" onClick={() => {this.setState({showCreateTopic: false})}}>取消</div>
-                            </div>
+                {
+                    this.state.showCreateTopic && <div className="create-area">
+                        <input type="text" className="topic-name" onChange={this.topicNameInputHandle} value={this.state.createTopicName} placeholder="话题" />
+                        <textarea className="topic-content" onChange={this.topicContentInputHandle} value={this.state.createTopicContent} placeholder="说点什么"></textarea>
+                        
+                        <div className="infrom">请选择要通知的人：</div>
+                        <MemberChosenList choseHandle={this.memberChoseHandle} memberList={this.state.memberList}/>
+
+                        <div className="btn-con">
+                            <div className="create-btn" onClick={this.createTopicHandle}>发起讨论</div>
+                            <div className="cancle" onClick={() => {this.setState({showCreateTopic: false})}}>取消</div>
                         </div>
-                    }
-
-                    <div className="topic-list">
-                        {
-                            this.state.topicList.map((item) => {
-                                return (
-                                    <TopicItem locationTo={this.locationTo} {...item} />
-                                )
-                            })
-                        }
                     </div>
-                */}
+                }
+
+                <div className="topic-list">
+                    {
+                        this.state.topicList.map((item) => {
+                            return (
+                                <TopicItem locationTo={this.locationTo} {...item} />
+                            )
+                        })
+                    }
+                </div>
+
 
 
 

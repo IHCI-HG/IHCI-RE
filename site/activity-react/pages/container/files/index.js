@@ -9,10 +9,7 @@ import fileUploader from '../../../utils/file-uploader';
 export default class Files extends React.Component {
     componentDidMount = async () => {
         this.teamId = this.props.params.id
-        this.curDir = this.props.location.query.dir || '/'
-
         this.initDirList()
-
         this.initTeamInfo()
         this.initTeamFile()
     }
@@ -27,7 +24,13 @@ export default class Files extends React.Component {
     }
 
     initDirList = () => {
+        if(!this.curDir) {
+            this.curDir = this.props.location.query.dir || '/'
+        }
         if(this.curDir == '/') { 
+            this.setState({
+                dirList: []
+            })
             return
         }
         let splitDir = this.curDir.split('/')
@@ -46,8 +49,6 @@ export default class Files extends React.Component {
             }
         })
         totalDirList[0].dir = '/'
-
-        console.log(totalDirList);
         this.setState({
             dirList: totalDirList
         })
@@ -77,7 +78,7 @@ export default class Files extends React.Component {
                 }
             }
         })
-        if (result && result.data && result.data.fileList && result.data.fileList.length) {
+        if (result && result.data && result.data.fileList) {
             this.setState({
                 fileList: result.data.fileList
             })
@@ -176,8 +177,7 @@ export default class Files extends React.Component {
                     }
                 }
             })
-        }
-        else {
+        } else {
             const result = await api('/api/file/delFolder', {
                 method: 'POST',
                 body: {
@@ -189,7 +189,6 @@ export default class Files extends React.Component {
                 }
             })
         }
-
         this.initTeamFile()
     }
 
@@ -199,14 +198,22 @@ export default class Files extends React.Component {
 
     headDirClickHandle = (dir) => {
         if(dir == '/') {
-            window.location.href = '/files/' + this.teamId
+            this.curDir = '/'
+            this.initDirList()
+            this.initTeamFile()
         } else {
-            window.location.href = '/files/' + this.teamId + '?dir=' + dir
+            this.curDir = dir
+            this.initDirList()
+            this.initTeamFile()
         }
     }
 
     folderClickHandle = (folderName) => {
-        window.location.href = '/files/' + this.teamId + '?dir=' + this.curDir + (this.curDir == '/' ? '' : '/') + folderName
+        const tarDir = this.curDir + (this.curDir == '/' ? '' : '/') + folderName
+        this.curDir = tarDir
+        this.initDirList()
+        this.initTeamFile()
+
     }
 
     render() {
@@ -226,7 +233,7 @@ export default class Files extends React.Component {
                             <div> 
                                 {
                                     this.state.dirList.map((item, idx) => (
-                                        <span onClick={() => {this.headDirClickHandle(item.dir)} }>{item.name} {idx == this.state.dirList.length - 1 ? '' : '>'} </span>
+                                        <span key={"dir-list-" + idx} onClick={() => {this.headDirClickHandle(item.dir)} }>{item.name} {idx == this.state.dirList.length - 1 ? '' : '>'} </span>
                                     ))
                                 }
                             </div> 
@@ -281,7 +288,7 @@ export default class Files extends React.Component {
                                             <div className="size">{item.size}</div>
                                             <div className="last-modify">{formatDate(item.last_modify_time)}</div>
                                             <div className="tools">
-                                                <span onClick={() => { this.downloadHandle(item.OssKey) }}>下载</span>
+                                                <span onClick={() => { this.downloadHandle(item.ossKey) }}>下载</span>
                                                 <span>移动</span>
                                                 <span onClick={() => { this.deleteHandle('file', item.name) }}>删除</span>
                                             </div>
