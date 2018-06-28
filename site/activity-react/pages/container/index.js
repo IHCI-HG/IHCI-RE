@@ -47,6 +47,7 @@ class App extends React.Component{
                 personInfo: {
                     ...result.data,
                     ...result.data.personInfo,
+                    // ...result.data.personInfo,
                 }
             })
         }
@@ -70,6 +71,7 @@ class App extends React.Component{
 
     routerHandle = (toUrl) => {
         this.activeTagHandle(toUrl)
+        // const location = {pathname: toUrl, state: this.state}
         this.props.router.push(toUrl)
     }
 
