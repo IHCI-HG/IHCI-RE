@@ -341,7 +341,6 @@ const editTask = async (req, res, next) => {
     const taskId = req.body.taskId;
     const tasklistId = req.body.listId;
     const editTask = req.body.editTask;
-    console.log(tasklistId);
 
     const userId = req.rSession.userId;
 
@@ -370,7 +369,7 @@ const editTask = async (req, res, next) => {
         task.fileList = editTask.fileList || taskObj.fileList;
         task.deadline = editTask.ddl || taskObj.deadline;
         task.header = editTask.assigneeId || taskObj.header;
-        if (editTask.hasDone == "true") {
+        if (editTask.hasDone == true) {
             task.state = true;
             task.completed_time = new Date();
         } else {
@@ -378,7 +377,6 @@ const editTask = async (req, res, next) => {
             task.completed_time = "";
         }
 
-        console.log(taskObj);
 
         const result1 = await taskDB.updateTask(taskId, task);
         if (tasklistId) {
@@ -926,6 +924,7 @@ const delDiscuss = async (req, res, next) => {
 module.exports = [
     ['POST', '/api/task/createTasklist', apiAuth, createTasklist],
     ['POST', '/api/task/updateTasklist', apiAuth, updateTasklist],
+    ['POST', '/api/task/delTasklist', apiAuth, delTasklist],
     ['GET', '/api/task/findTasklistById', apiAuth, findTasklistById],
     ['POST', '/api/task/create', apiAuth, createTask],
     ['POST', '/api/task/delTask', apiAuth, delTask],
