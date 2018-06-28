@@ -32,8 +32,8 @@ class EditTodo extends React.Component {
         const resp = await this.props.handleConfirm(params);
         // console.log('handleConfirm', resp)
         if (resp.state.code === 0) {
-            // noinspection JSAnnotator
-            this.refs.name && this.refs.name.value = ''
+            if (this.refs.name)
+                this.refs.name.value = ''
         }
     }
 

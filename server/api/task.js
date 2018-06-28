@@ -367,7 +367,7 @@ const editTask = async (req, res, next) => {
         task.fileList = editTask.fileList || taskObj.fileList;
         task.deadline = editTask.ddl || taskObj.deadline;
         task.header = editTask.assigneeId || taskObj.header;
-        if (editTask.hasDone == "true") {
+        if (editTask.hasDone == true) {
             task.state = true;
             task.completed_time = new Date();
         } else {
@@ -401,7 +401,7 @@ const editTask = async (req, res, next) => {
             }
         }
 
-        if(editTask.hasDone == "true") {
+        if(editTask.hasDone == true) {
             if(task.header) {
                 const headerObj = userDB.findByUserId(task.header);
                 const headername = headerObj.username;
@@ -670,7 +670,8 @@ const editCheckitem = async (req, res, next) => {
         checkitemObj.content = editCheckitem.name || checkitemObj.content || "";
         checkitemObj.header = editCheckitem.assigneeId || checkitemObj.header || "";
         checkitemObj.deadline = editCheckitem.ddl || checkitemObj.deadline || "";
-        if (editCheckitem.hasDone == "true") {
+
+        if (editCheckitem.hasDone == true) {
             checkitemObj.state = true;
             checkitemObj.completed_time = new Date();
         } else {
