@@ -689,16 +689,16 @@
         }
     }
     input::-webkit-input-placeholder { /* WebKit browsers */ 
-        font-size:20px;
+        font-size:12px;
     } 
     input:-moz-placeholder { /* Mozilla Firefox 4 to 18 */ 
-        font-size:20px;
+        font-size:12px;
     } 
     input::-moz-placeholder { /* Mozilla Firefox 19+ */ 
-        font-size:20px;
+        font-size:12px;
     } 
     input:-ms-input-placeholder { /* Internet Explorer 10+ */ 
-        font-size:20px;
+        font-size:12px;
     }
     .load-more {
         cursor: pointer;

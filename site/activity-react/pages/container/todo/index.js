@@ -59,6 +59,7 @@ export default class Task extends React.Component{
         topicListArr: [],
         copyNumber:0,
         teamToMove: '请选择小组',
+        teamToCopy: '请选择小组',
         user: {
             headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
         },
@@ -275,20 +276,22 @@ export default class Task extends React.Component{
     }
 
     copyHandle = async () => {
-        const todo = this.state.todo
         if(this.state.copyNumber==0){
             alert("请输入数量[1~50]")
         }
+        if(this.state.teamToCopy=="请选择小组"){
+            alert(this.state.teamToCopy)
+        }
         else{
-            // for(i=0;i<this.state.copyNumber;i++){
-
-            // }
-            const resp = await mock.httpMock('/todo/post', {
-                sourceId: todo.id,
-                name: todo.name,
-                desc: todo.desc,
+            const resp = await api('/api/task/taskCopy', {
+                method:"POST",
+                body:{ 
+                    taskId:this.props.params.id,
+                    teamIdMoveTo: this.state.teamToCopy,
+                    copyCount:this.state.copyNumber
+                }
             })
-            if (resp.status ===200) {
+            if (resp.state.code === 0) {
             alert('复制成功')
             }
         }
@@ -306,9 +309,15 @@ export default class Task extends React.Component{
         })
     }
 
-    selectedHandle = (e) => {
+    moveSelectedHandle = (e) => {
         this.setState({
             teamToMove: e.target.value
+        })
+    }
+
+    copySelectedHandle = (e) => {
+        this.setState({
+            teamToCopy: e.target.value
         })
     }
 
@@ -645,10 +654,10 @@ export default class Task extends React.Component{
                         <div className={"item "+((copyExpanded)?"expanded":"")}>
                             {!copyExpanded&&<a  onClick={() => {this.setState({copyExpanded: true,moveExpanded: false})}}>复制</a>}
                             {copyExpanded&&<div className="confirm">
-                                <form>
                                     <p className="title">复制任务到小组</p>
+                                    <input type="number" placeholder="复制数量[1~50]" min="1" max="50" name="count" id="count" onChange={this.numberInputHandle} />
                                     <div className="simple-select select-choose-projects require-select" >
-                                        <select onChange={this.selectedHandle} value={this.state.teamToMove} className="select-list">
+                                        <select onChange={this.copySelectedHandle} value={this.state.teamToCopy} className="select-list">
                                             <option className="default" value="请选择小组">点击选择小组</option>
                                             {this.state.copyTeamList.map((item) => {
                                                 return (
@@ -662,7 +671,6 @@ export default class Task extends React.Component{
                                     </div>
                                         <button className="act" onClick={this.copyHandle}>复制</button>
                                         <div type="button" className="cancel" onClick={() => {this.setState({copyExpanded: false})}}>取消</div>
-                                </form>
                             </div>}
                         </div>
                         <div className={"item "+((moveExpanded)?"expanded":"")} >
@@ -670,7 +678,7 @@ export default class Task extends React.Component{
                             {moveExpanded&&<div className="confirm">
                                     <p className="title">移动任务到小组</p>
                                     <div className="simple-select select-choose-projects require-select" >
-                                        <select onChange={this.selectedHandle} value={this.state.teamToMove} className="select-list">
+                                        <select onChange={this.moveSelectedHandle} value={this.state.teamToMove} className="select-list">
                                             <option className="default" value="请选择小组">点击选择小组</option>
                                             {this.state.moveTeamList.map((item) => {
                                                 return (
