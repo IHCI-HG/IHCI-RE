@@ -4,9 +4,10 @@ import api from '../../../utils/api';
 import { timeBefore, sortByCreateTime } from '../../../utils/util'
 import Page from '../../../components/page'
 import MemberChosenList from '../../../components/member-chose-list'
+import Editor from '../../../components/editor'
 import EditTodoList from '../todo/todolist/editTodoList'
 import TodoList from '../todo/todolist/todoList'
-import mock from '../../../mock/index';
+import fileUploader from '../../../utils/file-uploader';
 
 class TeamChoseItem extends React.PureComponent{
     render() {
@@ -27,11 +28,18 @@ class TopicItem extends React.PureComponent{
                 <div className="name">{this.props.creator.name}</div>
                 <div className="main">
                     <div className="topic-title">{this.props.title}</div>
-                    <div className="topic-content">{this.props.content}</div>
+
+                        <div dangerouslySetInnerHTML={createMarkup(this.props.content)}></div>
                 </div>
                 <div className="time">{timeBefore(this.props.create_time)}</div>
             </div>
         )
+    }
+}
+
+function createMarkup(html) {
+    return {
+        __html: html,
     }
 }
 
@@ -54,8 +62,10 @@ export default class Team extends React.Component{
         showCreateTodoList: false,
         showMenu: false,
         isCreator: false,
-        createTopicName: '',
-        createTopicContent: '',
+
+        topicName: '',
+        topicContent: '',
+        topicAttachments: [],
 
         teamInfo: {},
         topicList: [],
@@ -179,6 +189,13 @@ export default class Team extends React.Component{
         this.props.router.push(url)
     }
 
+    handleTopicContentChange = (content) => {
+        this.setState({
+            topicContent: content
+        })
+        console.log(this.state.topicContent)
+    }
+
     createTopicHandle = async () => {
         const informList = []
         this.state.memberList.map((item) => {
@@ -187,12 +204,14 @@ export default class Team extends React.Component{
             }
         })
 
+        console.log('topicAttachments', this.state.topicAttachments)
         const result = await api('/api/topic/createTopic', {
             method: 'POST',
             body: {
                 teamId: this.teamId,
-                name: this.state.createTopicName,
-                content: this.state.createTopicContent,
+                name: this.state.topicName,
+                content: this.state.topicContent,
+                attachment: this.state.topicAttachments,
                 informList: informList,
             }
         })
@@ -203,15 +222,15 @@ export default class Team extends React.Component{
             topicList.unshift({
                 _id: result.data._id,
                 creator: this.props.personInfo,
-                title: this.state.createTopicName,
-                content: this.state.createTopicContent,
+                title: this.state.topicName,
+                content: this.state.topicContent,
                 time: time,
             })
             this.setState({
                 topicList: topicList,
                 showCreateTopic: false,
-                createTopicName: '',
-                createTopicContent: '',
+                topicName: '',
+                topicContent: '',
             })
         } else {
             window.toast(result.state.msg)
@@ -220,13 +239,24 @@ export default class Team extends React.Component{
 
     topicNameInputHandle = (e) => {
         this.setState({
-            createTopicName: e.target.value
+            topicName: e.target.value
         })
     }
 
     topicContentInputHandle = (e) => {
         this.setState({
-            createTopicContent: e.target.value
+            topicContent: e.target.value
+        })
+    }
+
+    topicFileUploadHandle = async (e) => {
+        console.log('处理文件上传')
+        const resp = await fileUploader('teamId', '', e.target.files[0])
+        console.log('文件上传', resp)
+        let topicAttachments = this.state.topicAttachments
+        topicAttachments = [...topicAttachments, resp]
+        this.setState({
+            topicAttachments,
         })
     }
 
@@ -512,19 +542,26 @@ export default class Team extends React.Component{
 
                     {
                         this.state.showCreateTopic && <div className="create-area">
-                            <input type="text" className="topic-name" onChange={this.topicNameInputHandle} value={this.state.createTopicName} placeholder="话题" />
-                            <textarea className="topic-content" onChange={this.topicContentInputHandle} value={this.state.createTopicContent} placeholder="说点什么"></textarea>
+                            <input type="text"
+                                   className="topic-name"
+                                   onChange={this.topicNameInputHandle}
+                                   value={this.state.topicName} placeholder="话题" />
+                            <Editor handleContentChange={this.handleTopicContentChange.bind(this)}
+                                    handleFileUpload={this.topicFileUploadHandle.bind(this)}
+                                    attachments={this.state.topicAttachments}></Editor>
 
                             <div className="infrom">请选择要通知的人：</div>
-                            <MemberChosenList choseHandle={this.memberChoseHandle} memberList={this.state.memberList}/>
+                            <MemberChosenList choseHandle={this.memberChoseHandle}
+                                              memberList={this.state.memberList}/>
 
                             <div className="btn-con">
-                                <div className="create-btn" onClick={this.createTopicHandle}>发起讨论</div>
-                                <div className="cancle" onClick={() => {this.setState({showCreateTopic: false})}}>取消</div>
+                                <div className="create-btn"
+                                     onClick={this.createTopicHandle}>发起讨论</div>
+                                <div className="cancle"
+                                     onClick={() => {this.setState({showCreateTopic: false})}}>取消</div>
                             </div>
                         </div>
                     }
-
                     <div className="topic-list">
                         {
                             this.state.topicList.map((item) => {
