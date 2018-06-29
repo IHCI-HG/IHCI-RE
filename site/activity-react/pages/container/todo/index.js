@@ -719,10 +719,9 @@ export default class Task extends React.Component{
                             })
                         }
                     </div>
-
-
-                    <div className="load-more" onClick={this.loadMoreHandle}>点击加载更多</div>
-
+                    {
+                        (this.state.topicListArr.length>=20)&&<div className="load-more" onClick={this.loadMoreHandle}>点击加载更多</div>
+                    }
                     <div className="create-topic">
                         <div className="imgInfo">
                             <img src={this.state.user.headImg} alt="" className="head-img" />
