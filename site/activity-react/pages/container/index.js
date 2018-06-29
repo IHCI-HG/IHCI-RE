@@ -32,6 +32,7 @@ class App extends React.Component{
         },
         searchText : '',
     }
+    
     componentWillMount = async() => { 
         this.setHeadImg()
     }
@@ -112,15 +113,13 @@ class App extends React.Component{
                                 <span className="iconfont icon-search" onClick={()=>{this.searchInputr.focus()}}></span>
                                 <input className='searchInput' ref={(input) => { this.searchInputr = input; }} type="text" onChange={this.handleSearchTextChange} placeholder="搜索"/>
                             </form>
-                            {/* <span className="iconfont icon-search" onClick={this.testHandle.bind(this, '/search', 'test', '5b208f7283ea922626e46793')}></span> */}
-                        
                         </div>
                         <Link className='nav-item' activeClassName='nav-item active' to="/person">
                             <img className="head-img" src={this.state.headImg} />
                         </Link>
                     </div>
                 </div>
-                { this.props.children && React.cloneElement(this.props.children, {personInfo: this.state.personInfo}) }
+                { this.props.children && React.cloneElement(this.props.children, {personInfo: this.state.personInfo, activeTagHandle: this.activeTagHandle.bind(this)}) }
             </div>
         )
     }

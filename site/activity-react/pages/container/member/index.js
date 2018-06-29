@@ -55,12 +55,10 @@ export default class Members extends React.Component{
     }
 
     toTimeLineHandle = (memberId , event) => {
-        // const query = {userId:memberId,}
-        // const location = {pathname:'/timeline', query:query}
-        const path = '/timeline?userId=' + memberId
-        // console.log(location)
-        location.href = path
-        // this.props.router.push(location)
+        const query = {userId:memberId,}
+        const location = {pathname:'/timeline', query:query}
+        this.props.activeTagHandle('/timeline')
+        this.props.router.push(location)
     }
 
     toTeamHandle = (teamId, teamName) => {
@@ -93,7 +91,7 @@ export default class Members extends React.Component{
                         { 
                             this.state.teamList.map((item) => {
                                 return(
-                                    <div className={this.state.activeTag == item.teamName ? "act team-tag-item" : "team-tag-item"} onClick={this.toTeamHandle.bind(this,item.teamId,item.teamName)}>{item.teamName}</div>
+                                    <div className={this.state.activeTag == item.teamName ? "act team-tag-item" : "team-tag-item"} key={'teamId-' + item.teamId} onClick={this.toTeamHandle.bind(this,item.teamId,item.teamName)}>{item.teamName}</div>
                                 )
                             })
                         }
