@@ -157,7 +157,6 @@ export default class Task extends React.Component{
             }
             memberIDList.push(item.userId)
         })
-        console.log('memberIDList', memberIDList)
         const memberResult = await api('/api/userInfoList', {
             method: 'POST',
             body: { userList: memberIDList }
@@ -170,7 +169,6 @@ export default class Task extends React.Component{
                 chosen: false,
             })
         })
-        console.log('memberList', memberList)
         this.setState({
             isCreator: isCreator,
             memberList: memberList,
@@ -403,9 +401,6 @@ export default class Task extends React.Component{
         const taskId = this.props.params.id;
         const editTask = {};
         editTask.hasDone = !hasDone
-        console.log('taskId', taskId)
-        console.log('editTask', editTask)
-        console.log('teamId', this.state.todo.teamId)
         const resp = await api('/api/task/edit', {
             method: 'POST',
             body: {
@@ -414,7 +409,6 @@ export default class Task extends React.Component{
                 editTask
             }
         })
-        console.log(resp)
         if (resp.state.code === 0) {
             const todo = this.state.todo
             todo.hasDone = resp.data.state
@@ -424,13 +418,13 @@ export default class Task extends React.Component{
     }
 
     handleTodoModify = async(todoInfo) => {
+        console.log('content', todoInfo.content)
         const taskId = this.props.params.id;
         const editTask = {};
         editTask.name = todoInfo.name
-        editTask.content = todoInfo.content
-        console.log(editTask.content)
+        // editTask.content = todoInfo.content
         editTask.ddl = todoInfo.date
-        editTask.desc = todoInfo.desc
+        editTask.desc = todoInfo.content
         editTask.assigneeId = todoInfo.assigneeId
         const resp = await api('/api/task/edit', {
             method: 'POST',

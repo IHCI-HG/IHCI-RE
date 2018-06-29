@@ -23,14 +23,13 @@ class EditTodo extends React.Component {
         this.setState({todoAttachments: null})
         this.setState({assigneeId: null})
         this.setState({date: null})
-
     }
 
     handleTodoDescChange = (content) => {
         this.setState({
             todoDesc: content
         })
-        console.log(this.state.topicContent)
+        console.log(this.state.todoDesc)
     }
 
     topicFileUploadHandle = async (e) => {
@@ -52,7 +51,7 @@ class EditTodo extends React.Component {
             console.log('todoDesc', this.state.todoDesc)
             console.log('todoAttachments', this.state.todoAttachments)
             params.content = {
-                desc: this.state.todoDesc,
+                content: this.state.todoDesc,
                 attachments: this.state.todoAttachments
             }
         }
@@ -65,6 +64,7 @@ class EditTodo extends React.Component {
                 this.refs.name.value = ''
         }
 
+        console.log('closeAfterConfirm', this.props.closeAfterConfirm);
         if (this.props.closeAfterConfirm === false) {
             console.log('this.props.closeAfterConfirm', this.props.closeAfterConfirm)
             this.setState({assigneeId: null})
@@ -81,20 +81,14 @@ class EditTodo extends React.Component {
     }
 
     handleAssigneeChange = (e) => {
-        // console.log(e.target.value);
         this.setState({assigneeId: e.target.value});
     }
 
     handleDateChange = (e) => {
-        // console.log('h', e.target.value);
         this.setState({date: e.target.value});
     }
 
-    componentWillUnmount() {
-        // 如果是修改todoItem，请求成功后组件将注销
-        this.setState({assigneeId: null})
-        this.setState({date: null})
-    }
+
 
     render() {
         const _props = this.props
