@@ -3,7 +3,7 @@ import shallowEqualIgnoreFun from '../../../utils/pure-render/shallowEqualIgnore
 import EditTodo from './editTodo'
 import './style.scss'
 import ItemLabel from './itemLabel'
-import { timeBefore } from '../../../utils/util'
+import { timeBefore,createMarkup } from '../../../utils/util'
 
 
 // 通用item: todo&check
@@ -155,7 +155,14 @@ class TodoItem extends React.Component {
                         </ItemLabel>
                     }
                     {   _props.detail === 'detail' &&
-                    <div className="todo-desc">{_props.desc}</div>
+                        <div>
+                            <p dangerouslySetInnerHTML={createMarkup(_props.desc)}></p>
+                            {/*{*/}
+                                {/*_props.filelist.map((item) => {*/}
+                                {/*return( <div key={Math.random()}>{item.name}</div> )*/}
+                                {/*})*/}
+                            {/*}*/}
+                        </div>
                     }
                 </div>
             </div>

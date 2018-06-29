@@ -48,12 +48,14 @@ class EditTodo extends React.Component {
         }
         params.name = this.refs.name.value
         if (this.props.detail === 'detail') {
-            console.log('todoDesc', this.state.todoDesc)
-            console.log('todoAttachments', this.state.todoAttachments)
-            params.content = {
-                content: this.state.todoDesc,
-                attachments: this.state.todoAttachments
-            }
+            // console.log('todoDesc', this.state.todoDesc)
+            // console.log('todoAttachments', this.state.todoAttachments)
+            params.desc =  this.state.todoDesc
+            params.fileList =  this.state.attachments
+            // params.content = {
+            //     content: this.state.todoDesc,
+            //     attachments: this.state.todoAttachments
+            // }
         }
         params.assigneeId = this.state.assigneeId
         params.date = this.state.date

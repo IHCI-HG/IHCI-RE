@@ -191,6 +191,7 @@ export default class Task extends React.Component{
         todo.desc = resp.data.content
         todo.ddl = resp.data.deadline
         todo.name = resp.data.title
+        todo.filelist = resp.data.filelist
         todo.list = []
         todo.teamId = resp.data.teamId
         todo.assignee = {}
@@ -206,7 +207,7 @@ export default class Task extends React.Component{
             listItem.assignee.id = item.headerId
             todo.list.push(listItem)
         })
-
+        console.log('todo',todo)
         if (resp.state.code === 0) {
             this.setState({ todo })
         }
@@ -422,9 +423,9 @@ export default class Task extends React.Component{
         const taskId = this.props.params.id;
         const editTask = {};
         editTask.name = todoInfo.name
-        // editTask.content = todoInfo.content
         editTask.ddl = todoInfo.date
-        editTask.desc = todoInfo.content
+        editTask.desc = todoInfo.desc
+        editTask.fileList = todoInfo.fileList
         editTask.assigneeId = todoInfo.assigneeId
         const resp = await api('/api/task/edit', {
             method: 'POST',
@@ -648,7 +649,7 @@ export default class Task extends React.Component{
         let actionList = this.state.actionList || []
         let moveExpanded = this.state.moveExpanded
         let copyExpanded = this.state.copyExpanded
-
+        console.log('todo', this.state.todo)
 
         return (
             <Page title={"任务详情"} className="discuss-page">

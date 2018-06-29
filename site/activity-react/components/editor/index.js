@@ -17,7 +17,7 @@ export default class Beditor extends React.Component{
         const editorProps = {
             height: 200,
             contentFormat: 'html',
-            initialContent: '',
+            initialContent: _props.content,
             onChange: _props.handleContentChange,
             controls: [
                 'undo', 'redo', 'split', 'font-size', 
