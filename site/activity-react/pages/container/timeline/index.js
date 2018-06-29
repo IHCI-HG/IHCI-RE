@@ -111,13 +111,14 @@ export default class News extends React.Component{
     
     getMoreTimelineData = async () => {
         const queryTeamId = this.props.location.query.teamId
-        const queryPerson = this.props.location.query.person
+        const queryPerson = this.props.location.query.userId
         const lastStamp = this.state.lastStamp
+        
         const result = await api('/api/timeline/getTimeline', {
             method: 'POST',
             body: {
                 teamId: queryTeamId ? queryTeamId :'',
-                personId: queryPerson ? queryPerson : '',
+                userId: queryPerson ? queryPerson : '',
                 timeStamp: lastStamp? lastStamp: '',
             }
         })

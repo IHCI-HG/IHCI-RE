@@ -55,10 +55,12 @@ export default class Members extends React.Component{
     }
 
     toTimeLineHandle = (memberId , event) => {
-        const query = {userId:memberId,}
-        const location = {pathname:'/timeline', query:query}
+        // const query = {userId:memberId,}
+        // const location = {pathname:'/timeline', query:query}
+        const path = '/timeline?userId=' + memberId
         // console.log(location)
-        this.props.router.push(location)
+        location.href = path
+        // this.props.router.push(location)
     }
 
     toTeamHandle = (teamId, teamName) => {
