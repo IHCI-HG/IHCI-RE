@@ -949,7 +949,7 @@ const taskMove = async (req, res, next) => {
         if (result.tasklistId) {
             await tasklistDB.delTask(result.tasklistId,taskId)
         } else {
-            await teamDB.delTaskById(result.teamId,taskId);
+            await teamDB.delTask(result.teamId,taskId);
         }
 
         result.create_time = Date.now;
@@ -1131,7 +1131,7 @@ const delDiscuss = async (req, res, next) => {
     try {
 
         //6.28
-        const discussObj = discussDB.findDiscussById(discussId);
+        const discussObj = discussDB.findTaskDiscuss(discussId);
         const baseInfoObj = userDB.baseInfoById(userId);
         const teamObj = await teamDB.findByTeamId(teamId);
 
@@ -1181,7 +1181,7 @@ const findDiscuss = async (req, res, next) => {
         var discussNum = tmpDiscussList.length;
         for (var i = 0; i < discussNum; i++) {
 
-            discussObj = await discussDB.findDiscussById(tmpDiscussList[i]._id);
+            discussObj = await discussDB.findTaskDiscuss(tmpDiscussList[i]._id);
             discussList.push(discussObj);
         }
 

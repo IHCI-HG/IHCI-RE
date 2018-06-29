@@ -191,11 +191,17 @@ export default class Task extends React.Component{
             body:{ taskId: this.props.params.id }
         })
         console.log(resp)
-        if(!resp.data.discussList){
-            resp.data.discussList = []
-        }
         if (resp.state.code === 0) {
-            this.setState({ topicListArr: resp.data.discussList })
+            let topicList = []
+            resp.data.map((item)=>{
+                let topic = {}
+                topic.id = item._id
+                topic.creator = item.creator
+                topic.time = item.create_time
+                topic.content = item.content
+                topicList.push(topic)
+            })
+            this.setState({ topicListArr: topicList })
         }
     }
 
