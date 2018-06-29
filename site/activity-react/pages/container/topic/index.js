@@ -2,7 +2,7 @@ import * as React from 'react';
 import './style.scss'
 import Page from '../../../components/page'
 import api from '../../../utils/api';
-import { timeBefore } from '../../../utils/util'
+import { timeBefore, createMarkup } from '../../../utils/util'
 
 import MemberChosenList from '../../../components/member-chose-list'
 
@@ -61,11 +61,10 @@ class TopicDiscussItem extends React.Component {
                                         {
                                             allowEdit && <div className="right">
                                                 <span className="edit" onClick={() => { this.setState({ editState: true }) }}>编辑</span>
-                                                {/* <span className="edit">删除</span> */}
                                             </div>
                                         }
                                     </div>
-                                    <div className="content"><pre>{content}</pre></div>
+                                    <p dangerouslySetInnerHTML={createMarkup(content)}></p>
                                 </div>
                             </div>
                         </div>
@@ -111,6 +110,7 @@ export default class Topic extends React.Component{
         })
 
         const topicObj = result.data
+        topicObj.content = topicObj.content.content
         this.teamId = result.data.team
 
         const memberResult = await api('/api/team/memberList', {
@@ -126,7 +126,7 @@ export default class Topic extends React.Component{
                 chosen: false,
             })
         ])
-        
+
 
         this.setState({
             topicObj: {
@@ -270,7 +270,7 @@ export default class Topic extends React.Component{
                                     <div className="save-btn" onClick={this.topicChangeSaveHandle}>保存</div>
                                     <div className="cancel-btn" onClick={() => {this.setState({topicObj: {...this.state.topicObj, editStatus: false}})}}>取消</div>
                                 </div>
-                            </div> 
+                            </div>
                         :
                             <div className="topic-subject-con">
                                 <div className="topic-title">{this.state.topicObj.title}</div>
@@ -291,7 +291,7 @@ export default class Topic extends React.Component{
                                             }
 
                                         </div>
-                                        <div className="content"><pre>{this.state.topicObj.content}</pre></div>
+                                        <p dangerouslySetInnerHTML={createMarkup(this.state.topicObj.content)}></p>
                                     </div>
                                 </div>
                             </div>
@@ -323,11 +323,11 @@ export default class Topic extends React.Component{
                                                 <div className="cancel-btn" onClick={() => { this.setState({ createDiscussContent: '',createDiscussChosen: false }) }}>取消</div>
                                             </div>
                                         </div>
-                                        : 
+                                        :
                                         <div className='topic-subject-edit no-pading'>
                                             <input placeholder={"点击发表评论"} type="text" onClick={() => {this.setState({createDiscussChosen: true})}} className="topic-title"/>
                                         </div>
-                                }   
+                                }
                             </div>
                         </div>
                     </div>

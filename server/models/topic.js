@@ -5,7 +5,7 @@ const conf = require('../conf')
 const topicSchema = new mongoose.Schema({
     create_time: { type: String, default : Date.now},
     title: String,
-    content: String,
+    content: {type: mongoose.Schema.Types.Mixed},
     creator: { type: mongoose.Schema.Types.Mixed , required: true },
     team: String, // team的_id
     discussList: [mongoose.Schema.Types.Mixed],

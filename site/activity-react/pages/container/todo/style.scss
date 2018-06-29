@@ -613,8 +613,8 @@
         // border-bottom: 1px solid #e6e6e6; /*no*/
         border-bottom: 0 !important;
         margin-top:20px;
-        height: 100px !important;
-        // cursor: pointer;
+        height: auto !important;
+        cursor: default !important;
         .imgInfo{
             display: inline-block;
             flex-shrink: 2;
@@ -648,12 +648,25 @@
                     text-align: center;
                     display:inline-block;
                 }
+                .topic-actions-wrap {
+                    width: 80px;
+                    display: inline-flex;
+                    float:right;
+                    margin-right:20px;
+                    .topic-actions {
+                        cursor: pointer;
+                        display: inline-block;
+                        .icon {
+                            margin: 0 6px;
+                        }
+                    }
+                }
             }
 
             .main {
                 flex-grow: 1;
                 max-width: 70%;
-                height:60px;
+                // height:60px;
                 display:block;
                 margin-left:30px;
                 .topic-title {
@@ -672,7 +685,32 @@
                     text-overflow:ellipsis;
                     white-space: nowrap;
                 }
+                .create-area {
+                    .topic-name {
+                        display: block;
+                        border: 1px solid #e6e6e6;
+                        border-radius: 4px;
+                        width: 100%;
+                        height: 50px;
+                        line-height: 50px;
+                        font-size: 22px;
+                        padding: 0 20px;
+                        margin-bottom: 30px;
+                    }
 
+                    .topic-content {
+                        display: block;
+                        width: 100%;
+                        border: 1px solid #e6e6e6; /*no*/
+                        border-radius: 4px;
+                        height: 200px;
+                        resize: none;
+                        font-size: 20px;
+                        padding: 20px;
+                        line-height: 1.4;
+                        margin-bottom: 30px;
+                    }
+                }
             }
             .topic-name {
                 display: block;

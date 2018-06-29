@@ -17,7 +17,7 @@ const taskSchema = new Schema({
     state: Boolean,
     checkitemList: [{
         create_time: { type: String, default: Date.now },
-        content: String,
+        content: {type: mongoose.Schema.Types.Mixed},
         creator: { type: mongoose.Schema.Types.Mixed, required: true },
         header: String,
         deadline: {type: Date},

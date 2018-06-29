@@ -9,6 +9,7 @@
     "activity-react": "export BUILD_MODE=prod && ./node_modules/.bin/webpack --config ./site/activity-react/webpack.config.js --progress --colors --display-error-details"
   },
   "dependencies": {
+    "@types/braft-editor": "^1.9.0",
     "ali-oss": "^5.2.0",
     "apollo-local-query": "^0.3.0",
     "apollo-server-express": "^1.1.2",
@@ -20,6 +21,7 @@
     "bluebird": "^3.3.5",
     "body-parser": "1.13.3",
     "body-parser-xml": "^1.1.0",
+    "braft-editor": "^1.9.7",
     "classnames": "^2.2.5",
     "clipboard": "^1.7.1",
     "commander": "2.6.0",

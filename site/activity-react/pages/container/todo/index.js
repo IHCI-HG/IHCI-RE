@@ -21,10 +21,23 @@ function getUpdateItem(arr, id) {
     return [item, index]
 }
 
-class TopicItem extends React.PureComponent{
+class TopicItem extends React.Component{
+    state = {
+        showEdit: false,
+        showCreateTopic: false,
+        showButton: true,
+        createTopicContent:this.props.content,
+    }
+    deleteTopicHandle = () => {
+        this.props.deleteTopicHandle(this.props.id)
+    }
+
+    editTopicHandle = () => {
+        this.props.editTopicHandle(this.props.id)
+    }
     render() {
         return(
-            <div className="topic-item"  onClick={() => {this.props.locationTo('/discuss/topic/' + this.props._id)}}>
+            <div className="topic-item" onMouseOver={() => this.setState({showEdit:true})} onMouseLeave={() => this.setState({showEdit:false})}>
                 <div className="imgInfo">
                     <img src={this.props.creator.headImg} alt="" className="head-img" />
                 </div>
@@ -32,10 +45,27 @@ class TopicItem extends React.PureComponent{
                     <div className="send">
                         <div className="name">{this.props.creator.name}</div>
                         <div className="time">{timeBefore(this.props.time)}</div>
+                        {
+                            this.state.showEdit&&<div className="topic-actions-wrap">
+                                <div className="topic-actions">
+                                    <i className="icon iconfont" onClick={this.deleteTopicHandle}>&#xe70b;</i>
+                                    <i className="icon iconfont" onClick={() => {this.setState({showCreateTopic: true,showButton:false})}}> &#xe6ec;</i>
+                                </div>
+                            </div>
+                        }
                     </div>
                     <div className="main">
                         <div className="topic-title">{this.props.title}</div>
-                        <div className="topic-content">{this.props.content}</div>
+                        {this.state.showButton&&<div className="topic-content">{this.props.content}</div>}
+                        {this.state.showCreateTopic&&<div className="create-area">
+                            <textarea className="topic-content" onChange={this.topicContentInputHandle} value={this.state.createTopicContent} placeholder="说点什么" autoFocus></textarea>
+                            <div className="infrom">请选择要通知的人：</div>
+                            <MemberChosenList choseHandle={this.props.memberChoseHandle} memberList={this.props.memberList}/>
+                            <div className="btn-con">
+                                <div className="create-btn" onClick={()=>{this.createTopicHandle();this.setState({showCreateTopic: false,showButton:true})}}>发起讨论</div>
+                                <div className="cancle" onClick={() => {this.setState({showCreateTopic: false,showButton:true})}}>取消</div>
+                            </div>
+                        </div>}
                     </div>
                 </div>
             </div>
@@ -167,7 +197,6 @@ export default class Task extends React.Component{
         todo.teamId = resp.data.teamId
         todo.assignee = {}
         todo.assignee.id = resp.data.header
-        console.log('todo', todo.hasDone)
         // 没有username,根据memberList获取
         resp.data.checkitemList.forEach(function (item) {
             const listItem = {}
@@ -190,12 +219,17 @@ export default class Task extends React.Component{
             method:"POST",
             body:{ taskId: this.props.params.id }
         })
-        console.log(resp)
-        if(!resp.data.discussList){
-            resp.data.discussList = []
-        }
         if (resp.state.code === 0) {
-            this.setState({ topicListArr: resp.data.discussList })
+            let topicList = []
+            resp.data.map((item)=>{
+                let topic = {}
+                topic.id = item._id
+                topic.creator = item.creator
+                topic.time = item.create_time
+                topic.content = item.content
+                topicList.push(topic)
+            })
+            this.setState({ topicListArr: topicList })
         }
     }
 
@@ -216,7 +250,6 @@ export default class Task extends React.Component{
                 informList: informList,
             }
         })
-        console.log(resp)
         if (resp.state.code === 0) {
             const topicList = this.state.topicListArr
             let topic = {}
@@ -232,6 +265,32 @@ export default class Task extends React.Component{
              })
         }
         return resp
+    }
+
+    deleteTopicHandle = async (id) =>{
+        const resp = await api('/api/task/delDiscuss',{
+            method:"POST",
+            body:{
+                discussId: id,
+                teamId: this.state.todo.teamId,
+                taskId: this.props.params.id,
+            }
+        })
+        console.log("del",resp)
+        if (resp.state.code ===0) {
+            const topicListArr = this.state.topicListArr
+            topicListArr.map((item,index)=>{
+                if(item.id===id){
+                    topicListArr.splice(index,1)
+                }
+            })
+            this.setState({ topicListArr })
+            return resp
+        }
+    }
+
+    editTopicHandle = () =>{
+
     }
 
     loadMoreHandle = () => {
@@ -268,7 +327,7 @@ export default class Task extends React.Component{
                     teamIdMoveTo: this.state.teamToMove
                 }
             })
-            console.log(resp)
+            console.log("move",resp)
             if (resp.state.code === 0) {
             alert('移动成功')
             }
@@ -279,18 +338,16 @@ export default class Task extends React.Component{
         if(this.state.copyNumber==0){
             alert("请输入数量[1~50]")
         }
-        if(this.state.teamToCopy=="请选择小组"){
-            alert(this.state.teamToCopy)
-        }
         else{
             const resp = await api('/api/task/taskCopy', {
                 method:"POST",
                 body:{ 
                     taskId:this.props.params.id,
-                    teamIdMoveTo: this.state.teamToCopy,
+                    teamId: this.state.todo.teamId,
                     copyCount:this.state.copyNumber
                 }
             })
+            console.log("copy",resp)
             if (resp.state.code === 0) {
             alert('复制成功')
             }
@@ -657,7 +714,7 @@ export default class Task extends React.Component{
                             {copyExpanded&&<div className="confirm">
                                     <p className="title">复制任务到小组</p>
                                     <input type="number" placeholder="复制数量[1~50]" min="1" max="50" name="count" id="count" onChange={this.numberInputHandle} />
-                                    <div className="simple-select select-choose-projects require-select" >
+                                    {/* <div className="simple-select select-choose-projects require-select" >
                                         <select onChange={this.copySelectedHandle} value={this.state.teamToCopy} className="select-list">
                                             <option className="default" value="请选择小组">点击选择小组</option>
                                             {this.state.copyTeamList.map((item) => {
@@ -669,7 +726,7 @@ export default class Task extends React.Component{
                                             })
                                             }
                                         </select>
-                                    </div>
+                                    </div> */}
                                         <button className="act" onClick={this.copyHandle}>复制</button>
                                         <div type="button" className="cancel" onClick={() => {this.setState({copyExpanded: false})}}>取消</div>
                             </div>}
@@ -691,7 +748,7 @@ export default class Task extends React.Component{
                                             }
                                         </select>
                                     </div>
-                                    <button className="act" onClick={() => {this.moveToTeamHandle; this.setState({moveExpanded: false})}}>移动</button>
+                                    <button className="act" onClick={this.moveToTeamHandle}>移动</button>
                                     <div type="button" className="cancel" onClick={() => {this.setState({moveExpanded: false})}}>取消</div>
 
                             </div>}
@@ -713,15 +770,19 @@ export default class Task extends React.Component{
                         {
                             this.state.topicListArr.map((item) => {
                                 return (
-                                    <TopicItem key={"topic-item-" + item.id} locationTo={this.locationTo} {...item} />
+                                    <TopicItem 
+                                    key={"topic-item-" + item.id} 
+                                    locationTo={this.locationTo} 
+                                    {...item} 
+                                    deleteTopicHandle={this.deleteTopicHandle}
+                                    memberList={this.state.memberList}/>
                                 )
                             })
                         }
                     </div>
-
-
-                    <div className="load-more" onClick={this.loadMoreHandle}>点击加载更多</div>
-
+                    {
+                        (this.state.topicListArr.length>=20)&&<div className="load-more" onClick={this.loadMoreHandle}>点击加载更多</div>
+                    }
                     <div className="create-topic">
                         <div className="imgInfo">
                             <img src={this.state.user.headImg} alt="" className="head-img" />
@@ -737,7 +798,7 @@ export default class Task extends React.Component{
                                     <MemberChosenList choseHandle={this.memberChoseHandle} memberList={this.state.memberList}/>
 
                                     <div className="btn-con">
-                                        <div className="create-btn" onClick={this.createTopicHandle}>发起讨论</div>
+                                        <div className="create-btn" onClick={()=>{this.createTopicHandle();this.setState({showCreateTopic: false,showButton:true})}}>发起讨论</div>
                                         <div className="cancle" onClick={() => {this.setState({showCreateTopic: false,showButton:true})}}>取消</div>
                                     </div>
                                 </div>
