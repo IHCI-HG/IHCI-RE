@@ -613,7 +613,7 @@
         // border-bottom: 1px solid #e6e6e6; /*no*/
         border-bottom: 0 !important;
         margin-top:20px;
-        height: 100px !important;
+        height: auto !important;
         cursor: default !important;
         .imgInfo{
             display: inline-block;
@@ -686,7 +686,6 @@
                     white-space: nowrap;
                 }
                 .create-area {
-                    height:300px;
                     .topic-name {
                         display: block;
                         border: 1px solid #e6e6e6; 

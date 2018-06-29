@@ -26,6 +26,7 @@ class TopicItem extends React.Component{
         showEdit: false,
         showCreateTopic: false,
         showButton: true,
+        createTopicContent:this.props.content,
     }
     deleteTopicHandle = () => {
         this.props.deleteTopicHandle(this.props.id)
@@ -57,7 +58,7 @@ class TopicItem extends React.Component{
                         <div className="topic-title">{this.props.title}</div>
                         {this.state.showButton&&<div className="topic-content">{this.props.content}</div>}
                         {this.state.showCreateTopic&&<div className="create-area">
-                            <textarea className="topic-content" onChange={this.topicContentInputHandle} value={this.state.createTopicContent} placeholder="说点什么"></textarea>
+                            <textarea className="topic-content" onChange={this.topicContentInputHandle} value={this.state.createTopicContent} placeholder="说点什么" autoFocus></textarea>
                             <div className="infrom">请选择要通知的人：</div>
                             <MemberChosenList choseHandle={this.props.memberChoseHandle} memberList={this.props.memberList}/>
                             <div className="btn-con">
