@@ -283,15 +283,12 @@ export default class Task extends React.Component{
         if(this.state.copyNumber==0){
             alert("请输入数量[1~50]")
         }
-        if(this.state.teamToCopy=="请选择小组"){
-            alert(this.state.teamToCopy)
-        }
         else{
             const resp = await api('/api/task/taskCopy', {
                 method:"POST",
                 body:{ 
                     taskId:this.props.params.id,
-                    teamId: this.state.teamToCopy,
+                    teamId: this.state.todo.teamId,
                     copyCount:this.state.copyNumber
                 }
             })
@@ -661,7 +658,7 @@ export default class Task extends React.Component{
                             {copyExpanded&&<div className="confirm">
                                     <p className="title">复制任务到小组</p>
                                     <input type="number" placeholder="复制数量[1~50]" min="1" max="50" name="count" id="count" onChange={this.numberInputHandle} />
-                                    <div className="simple-select select-choose-projects require-select" >
+                                    {/* <div className="simple-select select-choose-projects require-select" >
                                         <select onChange={this.copySelectedHandle} value={this.state.teamToCopy} className="select-list">
                                             <option className="default" value="请选择小组">点击选择小组</option>
                                             {this.state.copyTeamList.map((item) => {
@@ -673,7 +670,7 @@ export default class Task extends React.Component{
                                             })
                                             }
                                         </select>
-                                    </div>
+                                    </div> */}
                                         <button className="act" onClick={this.copyHandle}>复制</button>
                                         <div type="button" className="cancel" onClick={() => {this.setState({copyExpanded: false})}}>取消</div>
                             </div>}
@@ -741,7 +738,7 @@ export default class Task extends React.Component{
                                     <MemberChosenList choseHandle={this.memberChoseHandle} memberList={this.state.memberList}/>
 
                                     <div className="btn-con">
-                                        <div className="create-btn" onClick={this.createTopicHandle}>发起讨论</div>
+                                        <div className="create-btn" onClick={()=>{this.createTopicHandle();this.setState({showCreateTopic: false,showButton:true})}}>发起讨论</div>
                                         <div className="cancle" onClick={() => {this.setState({showCreateTopic: false,showButton:true})}}>取消</div>
                                     </div>
                                 </div>
