@@ -186,6 +186,11 @@ export default class Team extends React.Component{
 
         return (
             <Page title={"团队名称xx - IHCI"} className="discuss-page">
+                <div className="sp-nav">
+                    <span className='to-team' onClick={() => { this.props.router.push('/team') }} >团队列表</span>
+                    <span className="iconfont icon-enter"></span>
+                    <span>团队主页</span>
+                </div>
 
                 <div className="discuss-con page-wrap">
                     <div className="team-info">
