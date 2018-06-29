@@ -1,6 +1,7 @@
 import * as React from 'react';
+var conf = require('../../../../../server/conf')
 import './style.scss'
-
+import fetch from 'isomorphic-fetch';
 import api from '../../../utils/api';
 import Page from '../../../components/page'
 import WxLoginDialog from '../../../components/wx-login-dialog'
@@ -36,6 +37,29 @@ export default class Team extends React.Component{
             window.toast("该微信号已经绑定")
             history.pushState({}, {}, '/person')
         }
+         this.testPub()
+    }
+
+    testPub =  ()=> {
+
+        const redirect_uri = encodeURIComponent(location.origin + '/wxLogin') 
+        const state = "pub"
+        const result = await fetch(`https://api.weixin.qq.com/connect/oauth2/authorize?appid=${conf.pubAppId}&redirect_uri=${redirect_uri}&response_type=code&scope=snsapi_base&state=${state}#wechat_redirect`)
+       const data = await result.json()
+        return data
+        // const result = await api('/wxReceiver', {
+        //     method: 'POST',
+        //     body: {
+        //             xml:
+        // { tousername:  'gh_15a5ec8f6116' ,
+        //   fromusername:  'oC9vJwnxrquE5Ss2PEL49TX-3hpI' ,
+        //   createtime:  '1526454558' ,
+        //   msgtype:  'event' ,
+        //   event:  'subscribe' ,
+        //   eventkey:  ''  } } 
+
+            
+        // })
     }
 
     starHandle = async (id) => {
