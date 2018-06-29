@@ -31,7 +31,7 @@ class TopicItem extends React.PureComponent{
                 <div className="info">
                     <div className="send">
                         <div className="name">{this.props.creator.name}</div>
-                        <div className="time">{this.props.time}</div>
+                        <div className="time">{timeBefore(this.props.time)}</div>
                     </div>
                     <div className="main">
                         <div className="topic-title">{this.props.title}</div>
@@ -180,16 +180,26 @@ export default class Task extends React.Component{
             }
         })
         var time = new Date()
-        const resp = await mock.httpMock('/todo/:id/post', {
-                // teamId: this.teamId,
+        const resp = await api('/api/task/createDiscuss', {
+            method:"POST",
+            body:{
+                teamId: this.state.todo.teamId,
+                taskId: this.props.params.id,
                 title: this.state.createTopicName,
                 content: this.state.createTopicContent,
                 informList: informList,
                 time: time.toLocaleString(),
+            }
         })
-        if (resp.status === 201) {
+        console.log(resp)
+        if (resp.state.code === 0) {
             const topicList = this.state.topicListArr
-            topicList.push(resp.data.topic)
+            let topic = {}
+            topic.id = resp.data._id
+            topic.creator = resp.data.creator
+            topic.time = resp.data.create_time
+            topic.content = resp.data.content
+            topicList.push(topic)
             this.setState({
                 topicListArr:topicList,
                 createTopicName:"",
@@ -288,7 +298,7 @@ export default class Task extends React.Component{
     }
 
     toAdminHandle = () => {
-        location.href = '/team-admin/' + this.teamId
+        location.href = '/team-admin/' + this.state.todo.teamId
     }
 
     // todo
