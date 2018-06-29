@@ -309,7 +309,7 @@ const delTask = async (req, res, next) => {
     }
 
     try {
-        const taskObj = taskDB.findByTaskId(taskId)
+        const taskObj = await taskDB.findByTaskId(taskId)
         const result = await taskDB.delTaskById(taskId);
         console.log(result);
         if (result.ok == 1) {
@@ -370,6 +370,10 @@ const editTask = async (req, res, next) => {
     try {
         const taskObj = await taskDB.findByTaskId(taskId)
 
+        
+        const baseInfoObj = await userDB.baseInfoById(userId);
+        const teamObj = await teamDB.findByTeamId(teamId);
+
         if (!taskObj) {
             resProcessor.jsonp(req, res, {
                 state: { code: 1, msg: "任务不存在" },
@@ -400,8 +404,6 @@ const editTask = async (req, res, next) => {
             task.completed_time = new Date()
 
             //6.28
-            const baseInfoObj = await userDB.baseInfoById(userId);
-            const teamObj = await teamDB.findByTeamId(teamId);
             await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'FINISH_TASK', taskObj._id, taskObj.title, taskObj);
 
 
@@ -648,7 +650,7 @@ const dropCheckitem = async (req, res, next) => {
          const teamId = taskObj.teamId;
 
          //6.28
-         const userObj = await userDB.baseInfoById(userId);
+         const baseInfoObj = await userDB.baseInfoById(userId);
  
 
         var checkitemObj = null;
@@ -664,7 +666,7 @@ const dropCheckitem = async (req, res, next) => {
 
          //6.28
          const teamObj = await teamDB.findByTeamId(teamId)
-         await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'DELETE_CHECK_ITEM', checkitemId, checkitemObj.content, checkitemObj)
+         await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'DELETE_CHECK_ITEM', checkitemId, checkitemObj.content, checkitemObj)
  
 
         if (checkitemObj.header) {
@@ -774,7 +776,7 @@ const editCheckitem = async (req, res, next) => {
 
              //6.28
              const teamId = taskObj.teamId;
-             const teamObj = teamDB.findByTeamId(teamId);
+             const teamObj = await teamDB.findByTeamId(teamId);
              const baseInfoObj = await userDB.baseInfoById(userId);
              await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'FINISH_CHECITEM_ITEM', checkitemObj._id, checkitemObj.title, checkitemObj);
  
@@ -783,7 +785,7 @@ const editCheckitem = async (req, res, next) => {
             checkitemObj.completed_time = "";
         }
 
-        const result1 = taskDB.updateCheckitem(taskId, checkitemId, checkitemObj);
+        const result1 = await taskDB.updateCheckitem(taskId, checkitemId, checkitemObj);
         // await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'EDIT_CHECKITEM', checkitemId, checkitemObj.content, checkitemObj)
 
         if (editCheckitem.hasDone == true && checkitemObj.header) {
@@ -991,9 +993,11 @@ const createDiscuss = async (req, res, next) => {
         //6.28
         await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'REPLY_TASK', result._id, result.title, result);
 
+        console.log(result)
+
         //如果有需要通知的人，则走微信模板消息下发流程
         if (informList && informList.length) {
-            replyTopicTemplate(informList, result)
+            createTopicTemplate(informList, result)
         }
 
         resProcessor.jsonp(req, res, {
@@ -1038,6 +1042,7 @@ const editDiscuss = async (req, res, next) => {
         //todo 还要在timeline表中增加项目
 
         //如果有需要通知的人，则走微信模板消息下发流程
+        console.log(result)
         if (informList && informList.length) {
             replyTopicTemplate(informList, result)
         }
@@ -1085,7 +1090,7 @@ const delDiscuss = async (req, res, next) => {
         //6.28
         const discussObj = discussDB.findDiscussById(discussId);
         const baseInfoObj = userDB.baseInfoById(userId);
-        const teamObj = teamDB.findByTeamId(teamId);
+        const teamObj = await teamDB.findByTeamId(teamId);
 
         const result = await discussDB.delDiscussById(discussId);
         await taskDB.delDiscuss(taskId, discussId);
