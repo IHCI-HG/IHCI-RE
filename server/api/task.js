@@ -239,7 +239,6 @@ const createTask = async (req, res, next) => {
 
     try {
         const userObj = await userDB.findByUserId(userId);
-        console.log(userObj)
         const simpleUser = {
             _id: userObj._id,
             name: userObj.username
@@ -260,11 +259,17 @@ const createTask = async (req, res, next) => {
             await teamDB.addTask(teamId, result)
         }
 
+        var deadline = ""
+        if(result.deadline) {
+            const date = result.deadline
+            deadline = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
+        }
+
         const taskObj = {
             id: result._id,
             title: result.title,
             content: result.content,
-            deadline: result.deadline,
+            deadline: deadline,
             header: result.header,
             teamId: teamId,
             listId: tasklistId
@@ -371,7 +376,6 @@ const editTask = async (req, res, next) => {
     try {
         const taskObj = await taskDB.findByTaskId(taskId)
 
-        
         const baseInfoObj = await userDB.baseInfoById(userId);
         const teamObj = await teamDB.findByTeamId(teamId);
 
@@ -459,6 +463,10 @@ const editTask = async (req, res, next) => {
             const date = new Date(task.completed_time)
             task.completed_time = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
         }
+        if (task.deadline) {
+            const date = new Date(task.deadline)
+            task.deadline = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
+        }
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
             data: task
@@ -508,13 +516,18 @@ const taskInfo = async (req, res, next) => {
                 const date = new Date(taskObj.checkitemList[i].completed_time)
                 completed_time = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
             }
+            var deadline = ""
+            if (taskObj.checkitemList[i].deadline) {
+                const date = new Date(taskObj.checkitemList[i].deadline)
+                deadline = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
+            }
             const checkitemObj = {
                 _id: taskObj.checkitemList[i]._id,
                 state: taskObj.checkitemList[i].state,
                 content: taskObj.checkitemList[i].content,
                 headerId: taskObj.checkitemList[i].header,
                 headername: headername,
-                deadline: taskObj.checkitemList[i].deadline,
+                deadline: deadline,
                 completed_time: completed_time
             }
             checkitemList.push(checkitemObj);
@@ -524,6 +537,11 @@ const taskInfo = async (req, res, next) => {
         if (taskObj.completed_time) {
             const date = new Date(taskObj.completed_time)
             taskCompleted_time = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
+        }
+        var taskDeadline = ""
+        if (taskObj.deadline) {
+            const date = new Date(taskObj.deadline)
+            taskDeadline = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
         }
 
         var headername = ""
@@ -535,7 +553,7 @@ const taskInfo = async (req, res, next) => {
             _id: taskObj._id,
             title: taskObj.title,
             content: taskObj.content,
-            deadline: taskObj.deadline,
+            deadline: taskDeadline,
             header: taskObj.header,
             headername: headername,
             state: taskObj.state,
@@ -591,28 +609,31 @@ const addCheckitem = async (req, res, next) => {
         const result1 = await taskDB.appendCheckitem(taskId, checkitem);
         // await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'APPEND_CHECKITEM', taskId, checkitem.content, checkitem)
         //6.28 //我不知道怎么找到checkItem的ID，不过好像也没什么用
-        const teamObj = await teamDB.findByTeamId(taskObj.teamId);
+        const teamObj = await teamDB.findByTeamId(teamId);
         const baseInfoObj = await userDB.baseInfoById(userId);
         await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'CREATE_CHECK_ITEM', result1._id, checkitem.content, checkitem)
 
         const lastCheckitem = result1.checkitemList[result1.checkitemList.length - 1]
+        var checkitemDdl = ""
+        if(lastCheckitem.deadline) {
+            console.log(lastCheckitem.deadline)
+            const date = new Date(lastCheckitem.deadline)
+            checkitemDdl = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
+        }
         const checkitemObj = {
             id: lastCheckitem._id,
             content: lastCheckitem.content,
             header: lastCheckitem.header,
-            deadline: lastCheckitem.deadline,
+            deadline: checkitemDdl,
             taskId: taskId,
         }
 
         if (checkitem.header) {
             //todo 给负责人下发微信模板
             const headerObj = await userDB.findByUserId(checkitem.header)
-            console.log(headerObj)
             const headername = headerObj.username
             const headerList = []
             headerList.push(checkitem.header)
-            console.log(lastCheckitem)
-            console.log(headername)
             createCheckitemTemplate(headerList, lastCheckitem, headername)
         }
 
@@ -714,11 +735,22 @@ const findCheckitem = async (req, res, next) => {
         var checkitemObj = null;
         for (var i = 0; i < taskObj.checkitemList.length; i++) {
             if (checkitemId == taskObj.checkitemList[i]._id) {
-                checkitemObj = taskObj.checkitemList[i];
+                checkitemObj = (taskObj.checkitemList[i]).toObject();
                 break;
             }
         }
         // await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'OPEN_CHECKITEM', checkitemId, checkitemObj.content, checkitemObj)
+
+        if(checkitemObj.deadline) {
+            const date = checkitemObj.deadline
+            checkitemObj.deadline = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
+        }
+
+        if(checkitemObj.completed_time) {
+            const date = checkitemObj.completed_time
+            checkitemObj.completed_time = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
+        }
+
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
             data: checkitemObj
@@ -733,6 +765,7 @@ const findCheckitem = async (req, res, next) => {
 }
 
 const editCheckitem = async (req, res, next) => {
+    const teamId = req.body.teamId
     const taskId = req.body.todoId;
     const checkitemId = req.body.checkitemId;
     const editCheckitem = req.body.editCheckitem;
@@ -776,7 +809,6 @@ const editCheckitem = async (req, res, next) => {
             checkitemObj.completed_time = new Date();
 
              //6.28
-             const teamId = taskObj.teamId;
              const teamObj = await teamDB.findByTeamId(teamId);
              const baseInfoObj = await userDB.baseInfoById(userId);
              await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'FINISH_CHECITEM_ITEM', checkitemObj._id, checkitemObj.title, checkitemObj);
@@ -811,6 +843,16 @@ const editCheckitem = async (req, res, next) => {
                 const headername = headerObj.username
                 delCheckHeaderTemplate(headerList, checkitemObjTemp, headername)
             }
+        }
+
+        if(checkitemObj.deadline) {
+            const date = new Date(checkitemObj.deadline)
+            checkitemObj.deadline = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
+        }
+
+        if(checkitemObj.completed_time) {
+            const date = new Date(checkitemObj.completed_time)
+            checkitemObj.completed_time = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
         }
 
         resProcessor.jsonp(req, res, {

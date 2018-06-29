@@ -481,11 +481,16 @@ const taskList = async (req, res, nect) => {
                 const date = taskListTemp[i].completed_time
                 taskListCom = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
             }
+            var taskListDdl = ""
+            if(taskListTemp[i].deadline) {
+                const date = taskListTemp[i].deadline
+                taskListDdl = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
+            }
             const obj1 = {
                 id: taskListTemp[i]._id,
                 title: taskListTemp[i].title,
                 content: taskListTemp[i].content,
-                deadline: taskListTemp[i].deadline,
+                deadline: taskListDdl,
                 state: taskListTemp[i].state,
                 completed_time: taskListCom,
                 header: {
@@ -516,11 +521,16 @@ const taskList = async (req, res, nect) => {
                     const date = result.taskList[j].completed_time
                     taskListCom = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
                 }
+                var taskListDdl = ""
+                if(result.taskList[j].deadline) {
+                    const date = result.taskList[j].deadline
+                    taskListDdl = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
+                }
                 const obj2 = {
                     taskId: result.taskList[j]._id,
                     title: result.taskList[j].title,
                     content: result.taskList[j].content,
-                    deadline: result.taskList[j].deadline,
+                    deadline: taskListDdl,
                     state: result.taskList[j].state,
                     completed_time: taskListCom,
                     header: {

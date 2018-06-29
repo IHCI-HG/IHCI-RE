@@ -20,8 +20,8 @@ const taskSchema = new Schema({
         content: String,
         creator: { type: mongoose.Schema.Types.Mixed, required: true },
         header: String,
-        deadline: String,
-        completed_time: String,
+        deadline: {type: Date},
+        completed_time: {type: Date},
         state: Boolean,
     }],
     discussList: [mongoose.Schema.Types.Mixed]
