@@ -225,9 +225,9 @@ const createTask = async (req, res, next) => {
     const fileList = req.body.fileList || [];
     const teamId = req.body.teamId || "";
     const tasklistId = req.body.listId || "";
-    const taskDeadline = new Date(req.body.ddl) || "";
+    const taskDeadline = req.body.ddl || "";
     const taskHeader = req.body.assigneeId || "";
-    console.log(taskDeadline)
+    console.log(userId)
 
     if (!taskTitle) {
         resProcessor.jsonp(req, res, {
@@ -239,6 +239,7 @@ const createTask = async (req, res, next) => {
 
     try {
         const userObj = await userDB.findByUserId(userId);
+        console.log(userObj)
         const simpleUser = {
             _id: userObj._id,
             name: userObj.username
