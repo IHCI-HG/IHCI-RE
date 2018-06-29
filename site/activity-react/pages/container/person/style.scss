@@ -49,6 +49,20 @@
             width: 100px;
             color: #666;
         }
+        
+        .after{
+            display: flex;
+            color: #666;
+        }
+
+        .error{
+            color: #f00;
+        }
+
+        .follow-btn{
+            cursor: pointer;
+            color: rgb(255, 197, 73);
+        }
 
         .bind-wx {
             height: 30px;
