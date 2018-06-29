@@ -24,8 +24,9 @@ function getUpdateItem(arr, id) {
 class TopicItem extends React.Component{
     state = {
         showEdit: false,
+        showCreateTopic: false,
+        showButton: true,
     }
-
     deleteTopicHandle = () => {
         this.props.deleteTopicHandle(this.props.id)
     }
@@ -47,14 +48,23 @@ class TopicItem extends React.Component{
                             this.state.showEdit&&<div className="topic-actions-wrap">
                                 <div className="topic-actions">
                                     <i className="icon iconfont" onClick={this.deleteTopicHandle}>&#xe70b;</i>
-                                    <i className="icon iconfont" onClick={this.editTopicHandle}> &#xe6ec;</i>
+                                    <i className="icon iconfont" onClick={() => {this.setState({showCreateTopic: true,showButton:false})}}> &#xe6ec;</i>
                                 </div>
                             </div>
                         }
                     </div>
                     <div className="main">
                         <div className="topic-title">{this.props.title}</div>
-                        <div className="topic-content">{this.props.content}</div>
+                        {this.state.showButton&&<div className="topic-content">{this.props.content}</div>}
+                        {this.state.showCreateTopic&&<div className="create-area">
+                            <textarea className="topic-content" onChange={this.topicContentInputHandle} value={this.state.createTopicContent} placeholder="说点什么"></textarea>
+                            <div className="infrom">请选择要通知的人：</div>
+                            <MemberChosenList choseHandle={this.props.memberChoseHandle} memberList={this.props.memberList}/>
+                            <div className="btn-con">
+                                <div className="create-btn" onClick={()=>{this.createTopicHandle();this.setState({showCreateTopic: false,showButton:true})}}>发起讨论</div>
+                                <div className="cancle" onClick={() => {this.setState({showCreateTopic: false,showButton:true})}}>取消</div>
+                            </div>
+                        </div>}
                     </div>
                 </div>
             </div>
@@ -492,14 +502,6 @@ export default class Task extends React.Component{
 
     // check create 需要返回
     handleCheckCreate = async(todoInfo) => {
-        console.log("123",
-            {
-                todoId: this.props.params.id,
-                name: todoInfo.name,
-                ddl: todoInfo.date,
-                assigneeId: todoInfo.assigneeId,
-            }
-        )
         const resp = await api('/api/task/addCheckitem', {
             method: 'POST',
             body: {
@@ -771,7 +773,8 @@ export default class Task extends React.Component{
                                     key={"topic-item-" + item.id} 
                                     locationTo={this.locationTo} 
                                     {...item} 
-                                    deleteTopicHandle={this.deleteTopicHandle}/>
+                                    deleteTopicHandle={this.deleteTopicHandle}
+                                    memberList={this.state.memberList}/>
                                 )
                             })
                         }
