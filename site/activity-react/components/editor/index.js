@@ -15,7 +15,7 @@ export default class Beditor extends React.Component{
         const _props = this.props
 
         const editorProps = {
-            height: 500,
+            height: 200,
             contentFormat: 'html',
             initialContent: '',
             onChange: _props.handleContentChange,
@@ -46,10 +46,6 @@ export default class Beditor extends React.Component{
                 </input>
 
                 <BraftEditor {...editorProps} />
-
-
-                {/*<div dangerouslySetInnerHTML={this.state.content}></div>*/}
-                {/*<div className="create-btn" onClick={this.handleSave.bind(this)}>保存</div>*/}
 
                 <div className="file-list">
                     {

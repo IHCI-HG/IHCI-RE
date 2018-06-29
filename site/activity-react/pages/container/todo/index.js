@@ -370,7 +370,8 @@ export default class Task extends React.Component{
         const taskId = this.props.params.id;
         const editTask = {};
         editTask.name = todoInfo.name
-        editTask.content = todoInfo.desc
+        editTask.content = todoInfo.content
+        console.log(editTask.content)
         editTask.ddl = todoInfo.date
         editTask.desc = todoInfo.desc
         editTask.assigneeId = todoInfo.assigneeId

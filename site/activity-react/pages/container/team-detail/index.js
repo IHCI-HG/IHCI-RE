@@ -28,8 +28,7 @@ class TopicItem extends React.PureComponent{
                 <div className="name">{this.props.creator.name}</div>
                 <div className="main">
                     <div className="topic-title">{this.props.title}</div>
-
-                        <div dangerouslySetInnerHTML={createMarkup(this.props.content)}></div>
+                    <p className="text-max-line-1" dangerouslySetInnerHTML={createMarkup(this.props.content)}></p>
                 </div>
                 <div className="time">{timeBefore(this.props.create_time)}</div>
             </div>
@@ -81,7 +80,7 @@ export default class Team extends React.Component{
 
     initTodoListArr = async() => {
         // 请求todoListArr数据
-        const resp = await api('/api/team/taskList', { 
+        const resp = await api('/api/team/taskList', {
             method:'GET',
             body:{
                 teamId: this.teamId
@@ -250,9 +249,7 @@ export default class Team extends React.Component{
     }
 
     topicFileUploadHandle = async (e) => {
-        console.log('处理文件上传')
         const resp = await fileUploader('teamId', '', e.target.files[0])
-        console.log('文件上传', resp)
         let topicAttachments = this.state.topicAttachments
         topicAttachments = [...topicAttachments, resp]
         this.setState({

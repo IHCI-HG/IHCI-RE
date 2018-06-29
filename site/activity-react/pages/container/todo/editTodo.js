@@ -1,12 +1,16 @@
-import * as React from 'react';
+import * as React from 'react'
 import './style.scss'
 import ItemLabel from './itemLabel'
+import fileUploader from '../../../utils/file-uploader'
+import Editor from '../../../components/editor'
 
 
 class EditTodo extends React.Component {
     state = {
         assigneeId: this.props.assigneeId || null,
         date: this.props.date || null,
+        todoDesc: this.props.desc || '',
+        todoAttachments: [],
     }
 
     static defaultProps = {
@@ -15,8 +19,27 @@ class EditTodo extends React.Component {
     }
 
     componentWillUnmount() {
+        this.setState({todoDesc: null})
+        this.setState({todoAttachments: null})
         this.setState({assigneeId: null})
         this.setState({date: null})
+
+    }
+
+    handleTodoDescChange = (content) => {
+        this.setState({
+            todoDesc: content
+        })
+        console.log(this.state.topicContent)
+    }
+
+    topicFileUploadHandle = async (e) => {
+        const resp = await fileUploader('teamId', '', e.target.files[0])
+        let todoAttachments = this.state.todoAttachments
+        todoAttachments = [...todoAttachments, resp]
+        this.setState({
+            todoAttachments,
+        })
     }
 
     handleConfirm = async() => {
@@ -25,8 +48,14 @@ class EditTodo extends React.Component {
             params.id = this.props.id
         }
         params.name = this.refs.name.value
-        if (this.props.detail === 'detail')
-            params.desc = this.refs.desc.value
+        if (this.props.detail === 'detail') {
+            console.log('todoDesc', this.state.todoDesc)
+            console.log('todoAttachments', this.state.todoAttachments)
+            params.content = {
+                desc: this.state.todoDesc,
+                attachments: this.state.todoAttachments
+            }
+        }
         params.assigneeId = this.state.assigneeId
         params.date = this.state.date
         // 调用父组件方法，把提交参数传出去
@@ -35,7 +64,9 @@ class EditTodo extends React.Component {
             if (this.refs.name)
                 this.refs.name.value = ''
         }
+
         if (this.props.closeAfterConfirm === false) {
+            console.log('this.props.closeAfterConfirm', this.props.closeAfterConfirm)
             this.setState({assigneeId: null})
             this.setState({date: null})
         }
@@ -84,8 +115,10 @@ class EditTodo extends React.Component {
                                handleAssigneeChange={this.handleAssigneeChange.bind(this)}>
                     </ItemLabel>
                     {   _props.detail === 'detail' &&
-                        <input className="todo-desc" ref="desc" defaultValue={_props.desc?_props.desc:''}>
-                        </input>
+                        <Editor handleContentChange={this.handleTodoDescChange.bind(this)}
+                                handleFileUpload={this.topicFileUploadHandle.bind(this)}
+                                content={this.state.todoDesc}
+                                attachments={this.state.todoAttachments}></Editor>
                     }
                     <div className="buttons">
                         <button className="confirm"
