@@ -20,8 +20,12 @@
     .content-box{
         align-items: center;
         width: 415px;
+        padding-top: 14px;
+        padding-bottom: 14px;
 
         .title{
+            padding-top: 5px;
+            padding-bottom: 30px; 
             text-align: center;
             font-weight: lighter;
             font-size: 170%;
@@ -32,12 +36,12 @@
             margin-right: 12px;
             margin-bottom: 20px;
 
-            border:1px solid #ddd;
+            border:1px solid rgb(234, 234, 234);
             text-align: center;
 
             .qr-img{
-                max-width: 380px;
-                padding: 5px;
+                max-width: 388px;
+                // padding: 2px;
             }
 
 
