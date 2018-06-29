@@ -190,7 +190,6 @@ export default class Task extends React.Component{
             method:"POST",
             body:{ taskId: this.props.params.id }
         })
-        console.log(resp)
         if (resp.state.code === 0) {
             let topicList = []
             resp.data.map((item)=>{
@@ -222,7 +221,6 @@ export default class Task extends React.Component{
                 informList: informList,
             }
         })
-        console.log(resp)
         if (resp.state.code === 0) {
             const topicList = this.state.topicListArr
             let topic = {}
@@ -274,7 +272,7 @@ export default class Task extends React.Component{
                     teamIdMoveTo: this.state.teamToMove
                 }
             })
-            console.log(resp)
+            console.log("move",resp)
             if (resp.state.code === 0) {
             alert('移动成功')
             }
@@ -293,10 +291,11 @@ export default class Task extends React.Component{
                 method:"POST",
                 body:{ 
                     taskId:this.props.params.id,
-                    teamIdMoveTo: this.state.teamToCopy,
+                    teamId: this.state.teamToCopy,
                     copyCount:this.state.copyNumber
                 }
             })
+            console.log("copy",resp)
             if (resp.state.code === 0) {
             alert('复制成功')
             }
@@ -696,7 +695,7 @@ export default class Task extends React.Component{
                                             }
                                         </select>
                                     </div>
-                                    <button className="act" onClick={() => {this.moveToTeamHandle; this.setState({moveExpanded: false})}}>移动</button>
+                                    <button className="act" onClick={this.moveToTeamHandle}>移动</button>
                                     <div type="button" className="cancel" onClick={() => {this.setState({moveExpanded: false})}}>取消</div>
 
                             </div>}
