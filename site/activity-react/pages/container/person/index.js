@@ -4,7 +4,7 @@ import './style.scss'
 import api from '../../../utils/api';
 import Page from '../../../components/page'
 import WxLoginDialog from '../../../components/wx-login-dialog'
-import FollowDialog from '../../../components/wx-login-dialog'
+import FollowDialog from '../../../components/follow-dialog'
 
 export default class Person extends React.Component{
     componentDidMount = async() => {

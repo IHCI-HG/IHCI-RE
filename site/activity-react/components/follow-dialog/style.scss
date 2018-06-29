@@ -17,4 +17,37 @@
         right: 20px;
         font-size: 30px;
     }
+    .content-box{
+        align-items: center;
+        width: 415px;
+
+        .title{
+            text-align: center;
+            font-weight: lighter;
+            font-size: 170%;
+        }
+
+        .img-box{
+            margin-left: 12px;
+            margin-right: 12px;
+            margin-bottom: 20px;
+
+            border:1px solid #ddd;
+            text-align: center;
+
+            .qr-img{
+                max-width: 380px;
+                padding: 5px;
+            }
+
+
+
+            
+        }
+        .msg{
+            text-align: center;
+            font-size: 105%;
+            margin: 10px;
+        }
+    }
 }
