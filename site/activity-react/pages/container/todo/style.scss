@@ -648,6 +648,18 @@
                     text-align: center;
                     display:inline-block;
                 }
+                .topic-actions-wrap {
+                    width: 80px;
+                    display: inline-flex;
+                    float:right;
+                    margin-right:20px;
+                    .topic-actions {
+                        display: inline-block;
+                        .icon {
+                            margin: 0 6px;
+                        }
+                    }
+                }
             }
             
             .main {

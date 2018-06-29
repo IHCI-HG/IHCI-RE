@@ -21,10 +21,21 @@ function getUpdateItem(arr, id) {
     return [item, index]
 }
 
-class TopicItem extends React.PureComponent{
+class TopicItem extends React.Component{
+    state = {
+        showEdit: false,
+    }
+
+    deleteTopicHandle = () => {
+        this.props.deleteTopicHandle(this.props.id)
+    }
+
+    editTopicHandle = () => {
+        this.props.editTopicHandle(this.props.id)
+    }
     render() {
         return(
-            <div className="topic-item"  onClick={() => {this.props.locationTo('/discuss/topic/' + this.props._id)}}>
+            <div className="topic-item" onMouseOver={() => this.setState({showEdit:true})} onMouseLeave={() => this.setState({showEdit:false})}>
                 <div className="imgInfo">
                     <img src={this.props.creator.headImg} alt="" className="head-img" />
                 </div>
@@ -32,6 +43,14 @@ class TopicItem extends React.PureComponent{
                     <div className="send">
                         <div className="name">{this.props.creator.name}</div>
                         <div className="time">{timeBefore(this.props.time)}</div>
+                        {
+                            this.state.showEdit&&<div className="topic-actions-wrap">
+                                <div className="topic-actions">
+                                    <i className="icon iconfont" onClick={this.deleteTopicHandle}>&#xe70b;</i>
+                                    <i className="icon iconfont" onClick={this.editTopicHandle}> &#xe6ec;</i>
+                                </div>
+                            </div>
+                        }
                     </div>
                     <div className="main">
                         <div className="topic-title">{this.props.title}</div>
@@ -236,6 +255,32 @@ export default class Task extends React.Component{
              })
         }
         return resp
+    }
+
+    deleteTopicHandle = async (id) =>{
+        const resp = await api('/api/task/delDiscuss',{
+            method:"POST",
+            body:{
+                discussId: id,
+                teamId: this.state.todo.teamId,
+                taskId: this.props.params.id,
+            }
+        })
+        console.log("del",resp)
+        if (resp.state.code ===0) {
+            const topicListArr = this.state.topicListArr
+            topicListArr.map((item,index)=>{
+                if(item.id===id){
+                    topicListArr.splice(index,1)
+                }
+            })
+            this.setState({ topicListArr })
+            return resp
+        }
+    }
+
+    editTopicHandle = () =>{
+
     }
 
     loadMoreHandle = () => {
@@ -447,6 +492,14 @@ export default class Task extends React.Component{
 
     // check create 需要返回
     handleCheckCreate = async(todoInfo) => {
+        console.log("123",
+            {
+                todoId: this.props.params.id,
+                name: todoInfo.name,
+                ddl: todoInfo.date,
+                assigneeId: todoInfo.assigneeId,
+            }
+        )
         const resp = await api('/api/task/addCheckitem', {
             method: 'POST',
             body: {
@@ -714,7 +767,11 @@ export default class Task extends React.Component{
                         {
                             this.state.topicListArr.map((item) => {
                                 return (
-                                    <TopicItem key={"topic-item-" + item.id} locationTo={this.locationTo} {...item} />
+                                    <TopicItem 
+                                    key={"topic-item-" + item.id} 
+                                    locationTo={this.locationTo} 
+                                    {...item} 
+                                    deleteTopicHandle={this.deleteTopicHandle}/>
                                 )
                             })
                         }
