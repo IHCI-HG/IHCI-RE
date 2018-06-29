@@ -900,6 +900,8 @@ const taskCopy = async (req, res, next) => {
 
             const baseInfoObj = await userDB.baseInfoById(userId);
             const teamObj = await teamDB.findByTeamId(teamId);
+            console.log(teamObj)
+            console.log("id",teamId)
             await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'COPY_TASK', taskObj._id, taskObj.title, taskObj);
 
             if (tasklistId) {

@@ -59,22 +59,48 @@ export default class Task extends React.Component{
         topicListArr: [],
         copyNumber:0,
         teamToMove: '请选择小组',
+        teamToCopy: '请选择小组',
         user: {
             headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
         },
         memberList: [],
         todo: {},
-        teamList:[],
+        copyTeamList:[],
+        moveTeamList:[],
     }
 
     componentDidMount = async() => {
         await this.initTodoInfo()
         this.initMemberList()
         this.initTopicListArr()
+        this.initTeamList()
     }
 
     locationTo = (url) => {
         this.props.router.push(url)
+    }
+
+    initTeamList = async () => {
+        const result = await api('/api/getMyInfo', {
+            method: 'GET',
+            body: {}
+        })
+        const teamList = result.data.teamList
+        teamList.map((item, index)=>{
+            if(item.teamId === this.state.todo.teamId){
+                teamList.splice(index, 1)
+            }
+        })
+        this.setState({
+            moveTeamList: teamList,
+        })
+        const result1 = await api('/api/getMyInfo', {
+            method: 'GET',
+            body: {}
+        })
+        this.setState({
+            copyTeamList: result1.data.teamList,
+        })
     }
 
     initMemberList = async () => {
@@ -160,15 +186,21 @@ export default class Task extends React.Component{
     }
 
     initTopicListArr = async() => {
-        // 请求topicListArr数据
-        // const result = await api('/api/', {
-        //     method: 'GET',
-        //     body: {id:this.params.id}
-        // })
-        const resp = await mock.httpMock('/todo/:id/get', { id: this.teamId })
-        // console.log(resp)
-        if (resp.status === 200) {
-            this.setState({ topicListArr: resp.data.topicList })
+        const resp = await api('/api/task/findDiscuss', {
+            method:"POST",
+            body:{ taskId: this.props.params.id }
+        })
+        if (resp.state.code === 0) {
+            let topicList = []
+            resp.data.map((item)=>{
+                let topic = {}
+                topic.id = item._id
+                topic.creator = item.creator
+                topic.time = item.create_time
+                topic.content = item.content
+                topicList.push(topic)
+            })
+            this.setState({ topicListArr: topicList })
         }
     }
 
@@ -179,7 +211,6 @@ export default class Task extends React.Component{
                 informList.push(item._id)
             }
         })
-        var time = new Date()
         const resp = await api('/api/task/createDiscuss', {
             method:"POST",
             body:{
@@ -188,10 +219,8 @@ export default class Task extends React.Component{
                 title: this.state.createTopicName,
                 content: this.state.createTopicContent,
                 informList: informList,
-                time: time.toLocaleString(),
             }
         })
-        console.log(resp)
         if (resp.state.code === 0) {
             const topicList = this.state.topicListArr
             let topic = {}
@@ -236,28 +265,35 @@ export default class Task extends React.Component{
             alert(this.state.teamToMove)
         }
         else{
-            const resp = await mock.httpMock('/todo/:id/put', { teamId: this.state.teamToMove})
-            if (resp.status ===200) {
+            const resp = await api('/api/task/taskMove', {
+                method:"POST",
+                body:{ 
+                    taskId:this.props.params.id,
+                    teamIdMoveTo: this.state.teamToMove
+                }
+            })
+            console.log("move",resp)
+            if (resp.state.code === 0) {
             alert('移动成功')
             }
         }
     }
 
     copyHandle = async () => {
-        const todo = this.state.todo
         if(this.state.copyNumber==0){
             alert("请输入数量[1~50]")
         }
         else{
-            // for(i=0;i<this.state.copyNumber;i++){
-
-            // }
-            const resp = await mock.httpMock('/todo/post', {
-                sourceId: todo.id,
-                name: todo.name,
-                desc: todo.desc,
+            const resp = await api('/api/task/taskCopy', {
+                method:"POST",
+                body:{ 
+                    taskId:this.props.params.id,
+                    teamId: this.state.todo.teamId,
+                    copyCount:this.state.copyNumber
+                }
             })
-            if (resp.status ===200) {
+            console.log("copy",resp)
+            if (resp.state.code === 0) {
             alert('复制成功')
             }
         }
@@ -275,9 +311,15 @@ export default class Task extends React.Component{
         })
     }
 
-    selectedHandle = (e) => {
+    moveSelectedHandle = (e) => {
         this.setState({
             teamToMove: e.target.value
+        })
+    }
+
+    copySelectedHandle = (e) => {
+        this.setState({
+            teamToCopy: e.target.value
         })
     }
 
@@ -614,28 +656,36 @@ export default class Task extends React.Component{
                         <div className={"item "+((copyExpanded)?"expanded":"")}>
                             {!copyExpanded&&<a  onClick={() => {this.setState({copyExpanded: true,moveExpanded: false})}}>复制</a>}
                             {copyExpanded&&<div className="confirm">
-                                <form>
-                                    <p className="title">复制任务到当前小组</p>
-                                    <p>
-                                        <input type="number" placeholder="复制数量[1~50]" min="1" max="50" name="count" id="count" onChange={this.numberInputHandle} />
-                                    </p>
+                                    <p className="title">复制任务到小组</p>
+                                    <input type="number" placeholder="复制数量[1~50]" min="1" max="50" name="count" id="count" onChange={this.numberInputHandle} />
+                                    {/* <div className="simple-select select-choose-projects require-select" >
+                                        <select onChange={this.copySelectedHandle} value={this.state.teamToCopy} className="select-list">
+                                            <option className="default" value="请选择小组">点击选择小组</option>
+                                            {this.state.copyTeamList.map((item) => {
+                                                return (
+                                                    <option className="select-item" key={'team name'+ item.teamId} value={item.teamId}>
+                                                        {item.teamName}
+                                                    </option>
+                                                )
+                                            })
+                                            }
+                                        </select>
+                                    </div> */}
                                         <button className="act" onClick={this.copyHandle}>复制</button>
                                         <div type="button" className="cancel" onClick={() => {this.setState({copyExpanded: false})}}>取消</div>
-                                </form>
                             </div>}
                         </div>
                         <div className={"item "+((moveExpanded)?"expanded":"")} >
                             {!moveExpanded&&<a onClick={() => {this.setState({moveExpanded: true,copyExpanded: false})}}>移动</a>}
                             {moveExpanded&&<div className="confirm">
-                                <form>
                                     <p className="title">移动任务到小组</p>
                                     <div className="simple-select select-choose-projects require-select" >
-                                        <select onChange={this.selectedHandle} value={this.state.teamToMove} className="select-list">
+                                        <select onChange={this.moveSelectedHandle} value={this.state.teamToMove} className="select-list">
                                             <option className="default" value="请选择小组">点击选择小组</option>
-                                            {this.state.teamList.map((item) => {
+                                            {this.state.moveTeamList.map((item) => {
                                                 return (
-                                                    <option className="select-item" key={'team name'+ item._id} value={item.teamId}>
-                                                        {item.name}
+                                                    <option className="select-item" key={'team name'+ item.teamId} value={item.teamId}>
+                                                        {item.teamName}
                                                     </option>
                                                 )
                                             })
@@ -644,7 +694,7 @@ export default class Task extends React.Component{
                                     </div>
                                     <button className="act" onClick={this.moveToTeamHandle}>移动</button>
                                     <div type="button" className="cancel" onClick={() => {this.setState({moveExpanded: false})}}>取消</div>
-                                </form>
+
                             </div>}
                         </div>
                     </div>
@@ -669,10 +719,9 @@ export default class Task extends React.Component{
                             })
                         }
                     </div>
-
-
-                    <div className="load-more" onClick={this.loadMoreHandle}>点击加载更多</div>
-
+                    {
+                        (this.state.topicListArr.length>=20)&&<div className="load-more" onClick={this.loadMoreHandle}>点击加载更多</div>
+                    }
                     <div className="create-topic">
                         <div className="imgInfo">
                             <img src={this.state.user.headImg} alt="" className="head-img" />
@@ -688,7 +737,7 @@ export default class Task extends React.Component{
                                     <MemberChosenList choseHandle={this.memberChoseHandle} memberList={this.state.memberList}/>
 
                                     <div className="btn-con">
-                                        <div className="create-btn" onClick={this.createTopicHandle}>发起讨论</div>
+                                        <div className="create-btn" onClick={()=>{this.createTopicHandle();this.setState({showCreateTopic: false,showButton:true})}}>发起讨论</div>
                                         <div className="cancle" onClick={() => {this.setState({showCreateTopic: false,showButton:true})}}>取消</div>
                                     </div>
                                 </div>
