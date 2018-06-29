@@ -11,13 +11,13 @@ props: {
 
 class FollowDialog extends React.Component{
     componentDidMount = async() => {
-        // var obj = new WxLogin({
-        //     id:"login_container", 
-        //     appid: "wx50a231aefaff3222", 
-        //     scope: "snsapi_login", 
-        //     redirect_uri: this.props.url ||  encodeURIComponent(location.origin + '/wxLogin'),
-        //     state: this.props.state || "auth",
-        // });
+        var obj = new WxLogin({
+            id:"login_container", 
+            appid: "wx50a231aefaff3222", 
+            scope: "snsapi_login", 
+            redirect_uri: this.props.url ||  encodeURIComponent(location.origin + '/wxLogin'),
+            state: this.props.state || "auth",
+        });
     }
     render() {
         return(
