@@ -313,7 +313,7 @@ const createFolder = async function(teamId, dir, folderName) {
     }
 
     if(folderName.indexOf(' ') != -1) {
-        throw '文件夹名中不能含有\' \''
+        throw '文件夹名中不能含有空格'
     }
 
     if(folderName.indexOf(';') != -1) {

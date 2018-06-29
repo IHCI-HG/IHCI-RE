@@ -254,8 +254,20 @@ export default class Discuss extends React.Component{
             chosenFile: file
         })
         
+        var succeeded;
         const uploadResult = fileUploader(this.teamId, '', file)
-        console.log(this.uploadResult)
+        await uploadResult.then(function(val) {
+            console.log(val)
+            succeeded = 1
+        }).catch(function(reason){
+            console.log(reason)
+            succeeded = 0
+        })
+
+        if(succeeded === 0) {
+            window.toast("上传文件失败")
+            return
+        } 
 
         const result = await api('/api/file/createFile', {
             method: 'POST',

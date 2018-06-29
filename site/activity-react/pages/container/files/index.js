@@ -135,31 +135,43 @@ export default class Files extends React.Component {
     }
 
     uploadFileHandle = async (e) => {
-
         var file = e.target.files[0];
         this.setState({
             chosenFile: file
         })
-        console.log(file)
+        
+        var succeeded;
+        const uploadResult = fileUploader(this.teamId, '', file)
+        await uploadResult.then(function(val) {
+            console.log(val)
+            succeeded = 1
+        }).catch(function(reason){
+            console.log(reason)
+            succeeded = 0
+        })
+
+        if(succeeded === 0) {
+            window.toast("上传文件失败")
+            return
+        } 
+
         const result = await api('/api/file/createFile', {
             method: 'POST',
             body: {
                 fileInfo: {
-                    teamId: this.teamId,
-                    size: file.size,
-                    dir: this.curDir,
-                    fileName: file.name,
-                    ossKey: `${this.teamId}/${file.name}`
+                   teamId: this.teamId,
+                   size: file.size,
+                   dir: '/',
+                   fileName: file.name,
+                   ossKey: `${this.teamId}/${file.name}`
                 }
             }
         })
-        console.log(result);
-        if (result.state.code === 0) {
-            window.toast("Folder created")
+        if(result.state.code === 0) {
+            window.toast("上传文件成功")
         } else {
             window.toast(result.state.msg)
         }
-        fileUploader(this.teamId, '', file)
 
         this.initTeamFile()
     }
