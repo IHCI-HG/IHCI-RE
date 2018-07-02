@@ -1,6 +1,5 @@
 import * as React from 'react';
 import './style.scss'
-
 import api from '../../../utils/api';
 import Page from '../../../components/page'
 import WxLoginDialog from '../../../components/wx-login-dialog'
@@ -268,7 +267,6 @@ export default class Person extends React.Component{
         })
     }
     
-    
     render() {
         // let personInfo = this.state.personInfo
         return (
@@ -358,7 +356,6 @@ export default class Person extends React.Component{
                 <div className="sava-btn" onClick={this.saveHandle}>保存</div>
 
                 <div className="sava-btn" onClick={this.logOutHandle}>登出</div>
-                
                 {
                     this.state.showWxLogin && <WxLoginDialog state="bind" closeHandle={this.closeWxLoginHandle}/>
                 }

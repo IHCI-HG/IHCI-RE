@@ -29,6 +29,8 @@ var sysTime = function(req, res, next) {
     });
 };
 
+
+
 const signUp = async (req, res, next) => {
     const userInfo = req.body.userInfo
     if(!userInfo.username || !userInfo.password) {
@@ -41,7 +43,8 @@ const signUp = async (req, res, next) => {
     const result = await UserDB.createUser(
         userInfo.username,
         userInfo.password,
-        userInfo
+        userInfo,
+        
     )
     if(!result) {
         resProcessor.jsonp(req, res, {

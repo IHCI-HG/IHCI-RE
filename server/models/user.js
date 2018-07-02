@@ -35,7 +35,10 @@ const userSchema = new mongoose.Schema({
     openid: String,
     unionid: { type: String, index: true },
     subState: Boolean,
-    wxUserInfo: mongoose.Schema.Types.Mixed
+    wxUserInfo: mongoose.Schema.Types.Mixed,
+    mailCode :String,
+    mailLimitTime :String,
+    isLive : { type: Boolean, default: false} 
 })
 
 userSchema.statics = {
@@ -50,7 +53,7 @@ userSchema.statics = {
                 password: crypto.createHmac('sha1', conf.salt).update(password).digest('hex'),
                 personInfo: {
 
-                }
+                },         
             })
         }
     },
