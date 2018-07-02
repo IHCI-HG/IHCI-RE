@@ -84,7 +84,6 @@ export default class Task extends React.Component{
         moveExpanded: false,
         showActionList: false,
         copyExpanded: false,
-        createTopicName: '',
         createTopicContent: '',
         updateTopicContent:'',
         memberNum: 0,
@@ -250,7 +249,6 @@ export default class Task extends React.Component{
             body:{
                 teamId: this.state.todo.teamId,
                 taskId: this.props.params.id,
-                title: this.state.createTopicName,
                 content: this.state.createTopicContent,
                 informList: informList,
             }
@@ -384,12 +382,6 @@ export default class Task extends React.Component{
             alert('复制成功')
             }
         }
-    }
-
-    topicNameInputHandle = (e) => {
-        this.setState({
-            createTopicName: e.target.value
-        })
     }
 
     topicContentInputHandle = (e) => {
@@ -853,11 +845,9 @@ export default class Task extends React.Component{
                         this.state.showButton && <input type="text" onClick={() => {this.setState({showCreateTopic: true,showButton:false})}} className="topic-name" placeholder="点击发表评论" /> }
                             {
                                 this.state.showCreateTopic && <div className="create-area">
-                                    <input type="text" className="topic-name" onChange={this.topicNameInputHandle} value={this.state.createTopicName} placeholder="话题" />
                                     <textarea className="topic-content" onChange={this.topicContentInputHandle} value={this.state.createTopicContent} placeholder="说点什么"></textarea>
                                     <div className="infrom">请选择要通知的人：</div>
                                     <MemberChosenList choseHandle={this.memberChoseHandle} memberList={this.state.memberList}/>
-
                                     <div className="btn-con">
                                         <div className="create-btn" onClick={()=>{this.createTopicHandle();this.setState({showCreateTopic: false,showButton:true})}}>发起讨论</div>
                                         <div className="cancle" onClick={() => {this.setState({showCreateTopic: false,showButton:true})}}>取消</div>
