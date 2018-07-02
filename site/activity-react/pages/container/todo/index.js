@@ -569,6 +569,7 @@ export default class Task extends React.Component{
                 name: todoInfo.name,
                 ddl: todoInfo.date,
                 assigneeId: todoInfo.assigneeId,
+                teamId:this.state.todo.teamId,
             }
         })
 
@@ -674,7 +675,8 @@ export default class Task extends React.Component{
             body: {
                 todoId,
                 checkitemId,
-                editCheckitem
+                editCheckitem,
+                teamId: this.state.todo.teamId,
             }
         })
         console.log('resp', resp);
