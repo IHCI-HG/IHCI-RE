@@ -155,6 +155,14 @@ export default class Topic extends React.Component{
         })
     }
 
+    deleteFile = async (e, index) => {
+        let topicAttachments = this.state.topicAttachments
+        topicAttachments.splice(index,1);
+        this.setState({
+            topicAttachments,
+        })
+    }
+
     topicNameInput = (e) => {
         this.setState({
             topicNameInput: e.target.value
@@ -282,6 +290,7 @@ export default class Topic extends React.Component{
                                 <Editor handleContentChange={this.topicContentHandle.bind(this)}
                                         handleFileUpload={this.topicFileUploadHandle.bind(this)}
                                         content={this.state.topicContentInput}
+                                        deleteFile={this.deleteFile.bind(this)}
                                         attachments={this.state.topicAttachments}></Editor>
 
                                 <div className="button-warp">

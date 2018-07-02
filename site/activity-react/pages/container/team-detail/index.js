@@ -220,7 +220,7 @@ export default class Team extends React.Component{
                 _id: result.data._id,
                 creator: this.props.personInfo,
                 title: this.state.topicName,
-                content,
+                content: this.state.topicContent,
                 fileList: this.state.topicAttachments,
                 time: time,
             })
@@ -233,6 +233,15 @@ export default class Team extends React.Component{
         } else {
             window.toast(result.state.msg)
         }
+    }
+
+
+    deleteFile = async (e, index) => {
+        let topicAttachments = this.state.topicAttachments
+        topicAttachments.splice(index,1);
+        this.setState({
+            topicAttachments,
+        })
     }
 
     topicNameInputHandle = (e) => {
@@ -544,6 +553,7 @@ export default class Team extends React.Component{
                                    value={this.state.topicName} placeholder="话题" />
                             <Editor handleContentChange={this.handleTopicContentChange.bind(this)}
                                     handleFileUpload={this.topicFileUploadHandle.bind(this)}
+                                    deleteFile={this.deleteFile.bind(this)}
                                     attachments={this.state.topicAttachments}></Editor>
 
                             <div className="infrom">请选择要通知的人：</div>

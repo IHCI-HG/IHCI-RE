@@ -32,7 +32,7 @@ class EditTodo extends React.Component {
         console.log(this.state.todoDesc)
     }
 
-    topicFileUploadHandle = async (e) => {
+    fileUploadHandle = async (e) => {
         const resp = await fileUploader('teamId', '', e.target.files[0])
         let todoAttachments = this.state.todoAttachments
         todoAttachments = [...todoAttachments, resp]
@@ -41,6 +41,15 @@ class EditTodo extends React.Component {
         })
     }
 
+    deleteFile = async (e, index) => {
+        let todoAttachments = this.state.todoAttachments
+        todoAttachments.splice(index,1);
+        this.setState({
+            todoAttachments,
+        })
+    }
+
+
     handleConfirm = async() => {
         const params = {}
         if (this.props.id) {
@@ -48,14 +57,8 @@ class EditTodo extends React.Component {
         }
         params.name = this.refs.name.value
         if (this.props.detail === 'detail') {
-            // console.log('todoDesc', this.state.todoDesc)
-            // console.log('todoAttachments', this.state.todoAttachments)
             params.desc =  this.state.todoDesc
             params.fileList =  this.state.todoAttachments
-            // params.content = {
-            //     content: this.state.todoDesc,
-            //     attachments: this.state.todoAttachments
-            // }
         }
         params.assigneeId = this.state.assigneeId
         params.date = this.state.date
@@ -112,8 +115,9 @@ class EditTodo extends React.Component {
                     </ItemLabel>
                     {   _props.detail === 'detail' &&
                         <Editor handleContentChange={this.handleTodoDescChange.bind(this)}
-                                handleFileUpload={this.topicFileUploadHandle.bind(this)}
+                                handleFileUpload={this.fileUploadHandle.bind(this)}
                                 content={this.state.todoDesc}
+                                deleteFile={this.deleteFile.bind(this)}
                                 attachments={this.state.todoAttachments}></Editor>
                     }
                     <div className="buttons">
