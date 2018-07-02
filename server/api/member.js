@@ -36,7 +36,7 @@ const member = async (req, res, next) => {
     const memberList = []
     await Promise.all ( memberId.map(async item => {
         const memberObj = await userDB.findByUserId(item)  
-        memberList.push(memberObj)       //修改      
+        memberList.push(memberObj)          
         }))        
     resProcessor.jsonp(req, res, {
         state: { code: 0 },

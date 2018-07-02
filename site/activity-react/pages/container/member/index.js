@@ -5,85 +5,82 @@ import api from '../../../utils/api';
 import { timeParse, formatDate } from '../../../utils/util'
 import Page from '../../../components/page'
 
-// class TeamItem extends React.PureComponent{
-//     render(){
-       
-//     }
-// }
-export default class News extends React.Component{
+
+export default class Members extends React.Component{
     componentDidMount = async() => {
-        await this.initTeamList()
-        await this.initMemberData()          //cccccccccccccccccgit
-
+        if (this.props.personInfo.teamList.length != 0){
+            this.setState({
+                teamList: this.props.personInfo && this.props.personInfo.teamList || [],
+            })
+        }
+        else this.initTeamList()
+        this.initMemberList()
     }
-    initTeamList = async () => {
-        const result = await api('/api/getMyInfo', {
-            method: 'GET',
-            body: {}
-        })
-        const teamList = result.data.teamList
-        const teamIdList = []
-        teamList.map((item) => {
-            teamIdList.push(item.teamId)
-        })
 
-        const listResult = await api('/api/team/infoList', {
+    initMemberList = async (id) => {
+        const result = await api('/api/member', {
             method: 'POST',
-            body: {
-                teamIdList: teamIdList
-            }
-        })
-        const teamInfoList = listResult.data
-
-        teamList.map((item, idx) => {
-            teamList[idx] = {
-                ...item,
-                ...teamInfoList[idx],
-                managed: (item.role == 'creator' || item.role == 'admin')
-            }
-        })
-
-        this.setState({
-            teamList: teamList
-        })
-    }
-    initMemberData = async()=>{
-        const queryTeamId = this.props.location.query.teamId
-        const result = await api('/api/member',{
-            method: 'POST',
-            body: queryTeamId ? {
-                 teamId: queryTeamId
-            } : {}
-        })
-        this.setState({
+            body: id ? {
+                teamId : id
+            }:{}
+        })                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+        this.setState({ 
             memberList: result.data
         })
-        console.log("我是:",this.state.memberList)
     }
-    
-    locationTo = (url) => {
-        location.href = url
-    }
-    state = {
-        // teamList: [
-        //     {
-        //         teamName: 'xx团队1',
-        //         memberList: [],
-        //     }
-        // ],
-        
-        teamList: [],
-        memberList: []
-        //     {
-        //         id: 1,
-        //         name: '阿鲁巴大将军',
-        //         headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-        //         role: 'creator',
-        //         phone: '17728282828',
-        //         mail: 'ada@qq.com',
-        //         showAdmin: false,
-        //     },
 
+    loadMoreHandle = () => { 
+        this.setState({ 
+            index: this.state.index + 10
+        })
+    }
+
+    showMemberList = () => {
+        if (this.state.index == 0){
+            return this.state.memberList.slice(0,this.state.memberList.length >= 10 ? 10 : this.state.memberList.length)
+        }
+        else if (this.state.memberList.length - this.state.index > 10 ){
+            return this.state.memberList.slice(0,this.state.index)
+        }
+        else return this.state.memberList
+    }
+
+    initTeamList = async () => {
+        const result = await api('/api/getMyInfo')
+        if(result.data) {
+            this.setState({
+                teamList: result.data.teamList,
+            })
+        }
+    }
+
+    toTimeLineHandle = (memberId , event) => {
+        // const query = {userId:memberId,}
+        // const location = {pathname:'/timeline', query:query}
+        const path = '/timeline?userId=' + memberId
+        // console.log(location)
+        location.href = path
+        // this.props.router.push(location)
+    }
+
+    toTeamHandle = (teamId, teamName) => {
+        if (teamId)
+            this.initMemberList(teamId)
+        else this.initMemberList()
+        this.setState({
+            activeTag: teamName == null ? 'all' : teamName,
+            index: 0
+        })
+    }
+
+    state = {
+        activeTag: 'all',
+
+        teamList: [],
+
+        index: 0,
+
+        memberList: [],
 
     }
 
@@ -92,24 +89,26 @@ export default class News extends React.Component{
             <Page title={"成员 - IHCI"} className="member-page">
                 <div className="page-wrap">
                     <div className="teamList">
-                        <div className="act team-tag-item" onClick={()=>{this.locationTo('/member')}}>全部</div>
-                        {
-                            this.state.teamList.map((item)=> {
+                        <div className={this.state.activeTag == "all" ? "act team-tag-item" : "team-tag-item"} onClick={this.toTeamHandle.bind(this, null,null)}>全部</div>
+                        { 
+                            this.state.teamList.map((item) => {
                                 return(
-                                    <div className="act team-tag-item" onClick={()=>{this.locationTo('/member?teamId='+ item._id)}}> 
-                                    <div className="name">{item.name}</div>
-                                    </div>       
+                                    <div className={this.state.activeTag == item.teamName ? "act team-tag-item" : "team-tag-item"} onClick={this.toTeamHandle.bind(this,item.teamId,item.teamName)}>{item.teamName}</div>
                                 )
                             })
                         }
                     </div>
 
+                    <div className="team-name">
+                    <h1>{this.state.activeTag == "all" ? "所有成员" : this.state.activeTag}</h1><h2>{"( " + this.state.memberList.length + "人 )"}</h2>
+                    </div>
+
                     <div className="member-list">
                     {
-                        this.state.memberList.map((item) => {
+                        this.showMemberList().map((item) => {
                             return(
-                                <div className="member-item" key={"member-list-" + item._id} onClick={()=>this.locationTo('/timeline?userId='+ item._id)} >
-                                    <img src={item.personInfo.headImg} alt="" className="head-img"/>
+                                <div className="member-item" key={'member-item-' + item._id}>
+                                    <img src={item.personInfo.headImg} onClick={this.toTimeLineHandle.bind(this, item._id)}  alt="" className="head-img"/>
                                     <span className="name">{item.personInfo.name}</span>
                                     <span className="phone">{item.personInfo.phone}</span>
                                     <span className="mail">{item.personInfo.mail}</span>
@@ -118,6 +117,9 @@ export default class News extends React.Component{
                         })
                     }
                     </div>
+
+                    <div className="load-more" style={{display: this.state.memberList.length > (this.state.index + 10) ? 'block' : 'none'}} onClick={this.loadMoreHandle}>加载更多</div>
+                    <div className="no-more" style={{display: this.state.memberList.length > (this.state.index + 10) ? 'none' : 'block'}}>无更多成员</div>
 
 
                 </div>

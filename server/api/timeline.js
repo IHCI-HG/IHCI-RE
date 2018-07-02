@@ -20,7 +20,6 @@ var teamDB = mongoose.model('team')
 var userDB = mongoose.model('user')
 var timelineDB = mongoose.model('timeline')
 
-
 const returnAll = async (req, res, next) => {
     const allTimeline = await timelineDB.returnAll()
     resProcessor.jsonp(req, res, {
@@ -37,8 +36,6 @@ const returnTimeline = async (req, res, next) => {
     const userId = req.rSession.userId 
     const teamIdList = []
     const result = []
-    //console.log("我是teamID:", teamId)
-    //console.log("我是personID:", personId)
     if(teamId) {
         teamIdList.push(teamId)
         const allTimeline = await timelineDB.findByTeamIdList(teamIdList)
@@ -51,7 +48,6 @@ const returnTimeline = async (req, res, next) => {
             teamIdList.push(item.teamId)
         })
         const allTimeline = await timelineDB.findByTeamIdList(teamIdList)
-        //console.log("返回的数据",allTimeline)
         const personTimeline = []
         allTimeline.map((item)=>{
             if(item.creator._id==personId){
@@ -72,8 +68,6 @@ const returnTimeline = async (req, res, next) => {
             result.push(item)
         })
     }
-
-    //console.log("返回的数据",result)
     const Result = []
     if(!timeStamp){
         result.map((item, index)=>{

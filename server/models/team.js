@@ -36,23 +36,10 @@ teamSchema.statics = {
         const result = await this.findByIdAndUpdate(teamId, teamInfo, () => {})
         return result
     },
-    findByTeamId:  function(teamId) {
+    findByTeamId: function(teamId) {
         return this.findById(teamId)
     },
-    // findByTeamIdList: async function(teamIdList){                    //添加成员管理
-    //     const queryList = []
-    //     teamIdList.map((item) => {
-    //         queryList.push({_id:item})
-    //     })
-    //     console.log("这是所有teamID:",queryList)
-    //     if(queryList && queryList.length) {
-    //         const result = await this.find({$or: queryList}).sort({create_time: -1}).exec()
-    //         console.log("这是所有项目组：", result)
-    //         return result
-    //     } else {
-    //         return []
-    //     }
-    // },
+
     // member 操作
     addMember: function(teamId, userId, role) {
         return this.update(

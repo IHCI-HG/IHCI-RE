@@ -3,12 +3,11 @@ import './style.scss'
 import api from '../../../utils/api';
 import Page from '../../../components/page'
 import WxLoginDialog from '../../../components/wx-login-dialog'
+import FollowDialog from '../../../components/follow-dialog'
 
-export default class Team extends React.Component{
+export default class Person extends React.Component{
     componentDidMount = async() => {
         this.personInfo = {}
-        console.log(INIT_DATA);
-
         if(INIT_DATA.userObj) {
             this.setState({
                 userObj: INIT_DATA.userObj,
@@ -57,13 +56,19 @@ export default class Team extends React.Component{
 
     state = {
         showWxLogin: false,
+        showFollow: false,
         userObj: {},
         personInfo: {
-            // name: '阿鲁巴大将军',
-            // headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-            // phone: '17728282828',
-            // mail: 'ada@qq.com',
-        }
+            name: '',
+            headImg: '',
+            phone: '',
+            mail: '',
+        },
+        infoCheck:{
+            illegalEmailAddress: false,
+            illegalPhoneNumber:false,
+        },
+        submittable: false,
     }
 
     headImgInputHandle = (e) => {
@@ -82,22 +87,65 @@ export default class Team extends React.Component{
             }
         })
     }
+
+    isPhoneNumber = (phoneNumber) => {
+        const reg = /^0?(1[0-9][0-9]|15[012356789]|17[013678]|18[0-9]|14[57])[0-9]{8}$/;
+        return reg.test(phoneNumber);
+    }
+
     phoneInputHandle = (e) => {
+        const phonNumber = e.target.value
+        var illegalPhoneNumber = false
+        if (!this.isPhoneNumber(phonNumber)){
+            illegalPhoneNumber = true
+        }
         this.setState({
             personInfo: {
                 ...this.state.personInfo,
-                phone: e.target.value
-            }
+                phone: phonNumber,
+            },
+            infoCheck: {
+                ...this.state.infoCheck,
+                illegalPhoneNumber: illegalPhoneNumber,
+            },
         })
     }
+
+    isEmailAddress = (emailAddress) => {
+        const reg = /^[A-Za-z0-9._%-]+@([A-Za-z0-9-]+\.)+[A-Za-z]{2,4}$/;
+        return reg.test(emailAddress);
+    }
+
     mailInputHandle = (e) => {
+        const email = e.target.value
+        var illegalEmailAddress = false
+        if (!this.isEmailAddress(email)){
+            illegalEmailAddress = true
+        }
+
         this.setState({
             personInfo: {
                 ...this.state.personInfo,
-                mail: e.target.value
-            }
+                mail: email,
+            },
+            infoCheck: {
+                ...this.state.infoCheck,
+                illegalEmailAddress: illegalEmailAddress,
+            },
         })
     }
+    openFollowDialogHandle = () => {
+        this.setState({
+            showFollow: true
+        })
+    }
+
+    closeFollowDialogHandle = () => {
+        this.setState({
+            showFollow: false
+        })
+    }
+
 
     openWxLoginHandle = () => {
         this.setState({
@@ -111,8 +159,40 @@ export default class Team extends React.Component{
         })
     }
 
+    infoCheckIllegal = () =>{
+        var infoCheck = {
+            illegalEmailAddress: false,
+            illegalPhoneNumber:false,
+        }
+
+        if (!this.isEmailAddress(this.state.personInfo.mail)){
+            infoCheck.illegalEmailAddress = true
+        }
+
+        if (!this.isPhoneNumber(this.state.personInfo.phone)){
+            infoCheck.illegalPhoneNumber = true
+        }
+
+        this.setState({
+            infoCheck: infoCheck,
+        })
+
+        for(var key in infoCheck)
+        {
+            // console.log(infoCheck[key])
+            if (infoCheck[key])
+                return true
+        }
+        return false
+    }
 
     saveHandle = async () => {
+        var infoCheckIllegal = this.infoCheckIllegal()
+
+        if (this.infoCheckIllegal()){
+            window.toast("设置失败，请检查格式")
+            return
+        }
         const result = await api('/api/setUserInfo', {
             method: 'POST',
             body: {
@@ -155,27 +235,19 @@ export default class Team extends React.Component{
             window.toast("解绑失败")
         }
     }
-    activeMail = async() => {
-        const result = await api('/activation', {
-            method: 'POST',
-            body:{
-                mailAccount: this.state.personInfo.mail}
-
-        })
-    }
     
     render() {
-        let personInfo = this.state.personInfo
+        // let personInfo = this.state.personInfo
         return (
             <Page title={"个人设置"} className="person-edit-page page-wrap">
                 <div className="title">个人设置</div>
 
                 <div className="head-edit">
                     <div className="left">
-                        <img src={personInfo.headImg} className='head-img' />
+                        <img src={this.state.personInfo.headImg} className='head-img' />
                     </div>
                     <div className="right">
-                        <input type="text" className="head-img-url" value={personInfo.headImg || ''} onChange={this.headImgInputHandle}/>
+                        <input type="text" className="head-img-url" value={this.state.personInfo.headImg || ''} onChange={this.headImgInputHandle}/>
                         <div className="head-des">请输入头像图片URL地址</div>
                     </div>
                 </div>
@@ -201,26 +273,27 @@ export default class Team extends React.Component{
                     <div className="before">服务号</div>
 
                     { !!this.state.userObj.subState ? <div className="bind-wx act">已关注</div> : <div className="bind-wx">未关注</div> }
-                    
-
-                    <div>需要关注服务号才能接受讨论消息提醒</div>
+                
+                    { !!!this.state.userObj.subState && <div className='after'>需要<div className='follow-btn' onClick={this.openFollowDialogHandle}>关注服务号</div>才能接受讨论消息提醒</div>}
 
 
                 </div>
 
                 <div className="edit-con">
                     <div className="before">名字</div>
-                    <input type="text" onChange={this.nameInputHandle} className="input-edit"  value={personInfo.name}/>
+                    <input type="text" onChange={this.nameInputHandle} className="input-edit"  value={this.state.personInfo.name}/>
                 </div>
 
                 <div className="edit-con">
                     <div className="before">邮箱</div>
-                    <input type="text" onChange={this.mailInputHandle} className="input-edit" value={personInfo.mail}/>
+                    <input type="text" onChange={this.mailInputHandle} className="input-edit" value={this.state.personInfo.mail}/>
+                    {this.state.infoCheck.illegalEmailAddress && <div className='after error'>格式错误,请填写正确格式的邮件地址</div>}
                 </div>
 
                 <div className="edit-con">
                     <div className="before">手机</div>
-                    <input type="text" onChange={this.phoneInputHandle} className="input-edit" value={personInfo.phone}/>
+                    <input type="text" onChange={this.phoneInputHandle} className="input-edit" value={this.state.personInfo.phone}/>
+                    {this.state.infoCheck.illegalPhoneNumber && <div className='after error'>格式错误,请填写正确格式的电话号码</div>}
                 </div>
 
                 {/*
@@ -239,10 +312,14 @@ export default class Team extends React.Component{
                 <div className="sava-btn" onClick={this.saveHandle}>保存</div>
 
                 <div className="sava-btn" onClick={this.logOutHandle}>登出</div>
-                <div className="save-btn" onClick={this.activeMail}>激活邮箱</div>
                 {
                     this.state.showWxLogin && <WxLoginDialog state="bind" closeHandle={this.closeWxLoginHandle}/>
                 }
+
+                {
+                    this.state.showFollow && <FollowDialog closeHandle={this.closeFollowDialogHandle}/>
+                }
+
             </Page>
         )
     }

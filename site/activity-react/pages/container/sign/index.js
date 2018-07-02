@@ -7,7 +7,6 @@ import WxLoginDialog from '../../../components/wx-login-dialog'
 
 export default class Sign extends React.Component{
     componentDidMount = async() => {
-        console.log(INIT_DATA);
     }
 
     starHandle = async (id) => {

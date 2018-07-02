@@ -47,14 +47,20 @@ class App extends React.Component{
                 personInfo: {
                     ...result.data,
                     ...result.data.personInfo,
+                    // ...result.data.personInfo,
                 }
             })
         }
     }
 
     handleSearchTextChange = (e) =>{
+        var searchInputText =  e.target.value
+        var length = searchInputText.length
+        if (length > 42)
+            searchInputText = searchInputText.substring(0,42)
+
         this.setState({
-            searchText : e.target.value
+            searchText : searchInputText
         })
     }
 
@@ -65,6 +71,7 @@ class App extends React.Component{
 
     routerHandle = (toUrl) => {
         this.activeTagHandle(toUrl)
+        // const location = {pathname: toUrl, state: this.state}
         this.props.router.push(toUrl)
     }
 

@@ -108,49 +108,9 @@ export default class Team extends React.Component{
         createTopicContent: '',
         memberNum: 0,
 
-        teamInfo: {
-            _id: 1,
-            name: 'IHCI平台搭建项目组',
-            teamImg: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1522401625&di=bcc173556f4ce40a5b92ff96402a053b&imgtype=jpg&er=1&src=http%3A%2F%2Fwx3.sinaimg.cn%2Forj360%2F7fa53ff0gy1fc1phl41r6j20hs0hsmxn.jpg',
-            desc: '完成IHCI平台搭建',
-            managed: true,
-        },
-
-        topicList: [
-            {
-                topicId: 1,
-                creator: {
-                    id: 1,
-                    name: '阿鲁巴大将军',
-                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                    phone: '17728282828',
-                    mail: 'ada@qq.com',
-                },
-                name: '这是一条讨论的name1',
-                content: 'ssssssssssssssss',
-                time: 1515384000000,
-            },{
-                topicId: 2,
-                creator: {
-                    id: 1,
-                    name: '阿鲁巴大将军',
-                    headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                    phone: '17728282828',
-                    mail: 'ada@qq.com',
-                },
-                name: '这是一条讨论的name2',
-                content: 'ssssssssssssssssddddddd',
-                time: 1515384000000,
-            }
-        ],
-
-        memberList: [
-            {
-                _id: 11,
-                name: '萨乌丁',
-                chosen: false,
-            },
-        ],
+        teamInfo: {},
+        topicList: [],
+        memberList: [],
 
     }
 
@@ -169,6 +129,7 @@ export default class Team extends React.Component{
                 name: this.state.createTopicName,
                 content: this.state.createTopicContent,
                 informList: informList,
+                chosenList: this.state.memberList
             }
         })
 
@@ -212,6 +173,7 @@ export default class Team extends React.Component{
                 item.chosen = !item.chosen
             }
         })
+        console.log(memberList)
         this.setState({memberList})
     }
 
@@ -224,6 +186,11 @@ export default class Team extends React.Component{
 
         return (
             <Page title={"团队名称xx - IHCI"} className="discuss-page">
+                <div className="sp-nav">
+                    <span className='to-team' onClick={() => { this.props.router.push('/team') }} >团队列表</span>
+                    <span className="iconfont icon-enter"></span>
+                    <span>团队主页</span>
+                </div>
 
                 <div className="discuss-con page-wrap">
                     <div className="team-info">

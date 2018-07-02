@@ -33,14 +33,16 @@ class SearchResultItem extends React.PureComponent{
         'REPLY_TOPIC': '回复：',
         'UPLOAD_FILE': '文件：',
         'RELEASE_TASK': '任务：',
-        'EDIT_REPLAY': '修改：',
-        'EDIT_TOPIC': '修改：'
+        'EDIT_REPLY': '编辑回复：',
+        'EDIT_TOPIC': '编辑讨论：'
     }
 
     render() {
         switch (this.props.type) {
             case 'CREATE_TOPIC':
             case 'REPLY_TOPIC':
+            case 'EDIT_REPLY':
+            case 'EDIT_TOPIC':
                 return(
                     <div className='search-result-item-wrap'>
                         <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
@@ -232,6 +234,7 @@ export default class SearchResult extends React.Component{
         path += (!(typeof(teamId) == 'undefined')) ? (teamId == '' ? '': ('&teamId=' + teamId)) : (queryTeamId ? ('&teamId=' + queryTeamId) :'')
         path += (!(typeof(type) == 'undefined')) ? (type == '' ? '': ('&type=' + type)) : (queryType ? ('&type=' + queryType) :'')
         location.href = path
+
     }
 
     typeMap = {
@@ -239,6 +242,8 @@ export default class SearchResult extends React.Component{
         'REPLY_TOPIC': '回复',
         'UPLOAD_FILE': '文件',
         'RELEASE_TASK': '任务',
+        'TOPIC': '讨论',
+        'REPLY': '回复',
     }
 
     state = {
@@ -332,10 +337,10 @@ export default class SearchResult extends React.Component{
                             <div className="type-name"> 全部类型</div>
                         </div>
                         <div className="head">类型</div>
-                        <div className="admin-type-item" onClick={this.filterHandle.bind(this, {type:'CREATE_TOPIC'})}>
+                        <div className="admin-type-item" onClick={this.filterHandle.bind(this, {type:'TOPIC'})}>
                             <div className='type-name'>{this.typeMap.CREATE_TOPIC}</div>
                         </div>
-                        <div className="admin-type-item" onClick={this.filterHandle.bind(this, {type:'REPLY_TOPIC'})}>
+                        <div className="admin-type-item" onClick={this.filterHandle.bind(this, {type:'REPLY'})}>
                             <div className='type-name'>{this.typeMap.REPLY_TOPIC}</div>
                         </div>
                     </div>
