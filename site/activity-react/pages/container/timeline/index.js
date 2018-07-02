@@ -69,17 +69,18 @@ export default class News extends React.Component{
 
     loadTimelineData = async () => {
         const queryTeamId = this.props.location.query.teamId
-
         const result = await api('/api/timeline/getTimeline', {
             method: 'POST',
             body: queryTeamId ? {
-                teamId: queryTeamId
+                teamId: queryTeamId,
+                currentPage:this.state.loadMoreCount
             } : {}
         })
         this.setState({
             newsList: result.data
         }, () => {
-            this.appendToShowList(this.state.newsList)
+            console.log(this.state.newsList)
+             this.appendToShowList(this.state.newsList)
         })
 
     }
@@ -111,7 +112,7 @@ export default class News extends React.Component{
 
         this.setState({
             showList: showList
-        },console.log(this.state.showList))
+        })
     }
 
     typeMap = {
@@ -273,7 +274,7 @@ export default class News extends React.Component{
                     } 
 
                     {
-                        (this.state.showList.length>=20*this.state.loadMoreCount)&&<div className="load-more" onClick={this.loadMoreHandle}>点击加载更多</div>
+                        (this.state.newsList.length>=20*this.state.loadMoreCount)&&<div className="load-more" onClick={this.loadMoreHandle}>点击加载更多</div>
                     }
                 </div>
 

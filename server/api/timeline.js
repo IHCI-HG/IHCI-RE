@@ -32,8 +32,8 @@ const returnAll = async (req, res, next) => {
 // 如果传了teamID，就返回该teamID的动态，如果没有传，就返回该用户全部的动态
 const returnByTeamList = async (req, res, next) => {
     const teamId = req.body.teamId
+    const currentPage = req.body.currentPage;
     const userId = req.rSession.userId 
-
     const teamIdList = []
     if(teamId) {
         teamIdList.push(teamId)
@@ -43,7 +43,7 @@ const returnByTeamList = async (req, res, next) => {
             teamIdList.push(item.teamId) 
         })
     }
-    const allTimeline = await timelineDB.findByTeamIdList(teamIdList)
+    const allTimeline = await timelineDB.findByTeamIdList(teamIdList,currentPage)
 
     resProcessor.jsonp(req, res, {
         state: { code: 0 },

@@ -1029,12 +1029,12 @@ const createDiscuss = async (req, res, next) => {
         const userObj = await userDB.baseInfoById(userId);
 
         //6.28
-        const taskObj = taskDB.findByTaskId(taskId);
+        const taskObj = await taskDB.findByTaskId(taskId);
 
         //6.28
         const result = await discussDB.createDiscuss(teamId, "", taskObj.title, content, userObj, fileList);
 
-        taskDB.addDiscuss(taskId, result._id);
+        await taskDB.addDiscuss(taskId, result._id);
 
         const teamObj = await teamDB.findByTeamId(teamId)
 
@@ -1136,8 +1136,8 @@ const delDiscuss = async (req, res, next) => {
     try {
 
         //6.28
-        const discussObj = discussDB.findTaskDiscuss(discussId);
-        const baseInfoObj = userDB.baseInfoById(userId);
+        const discussObj = await discussDB.findTaskDiscuss(discussId);
+        const baseInfoObj = await userDB.baseInfoById(userId);
         const teamObj = await teamDB.findByTeamId(teamId);
 
         const result = await discussDB.delDiscussById(discussId);
