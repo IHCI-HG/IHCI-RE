@@ -174,7 +174,7 @@ export default class Person extends React.Component{
             illegalPhoneNumber:false,
         }
 
-        if (!this.isEmailAddress(this.state.personInfo.mail)){
+        if (this.state.hasMail && !this.isEmailAddress(this.state.personInfo.mail)){
             infoCheck.illegalEmailAddress = true
         }
 
@@ -261,9 +261,6 @@ export default class Person extends React.Component{
 
         if(result.state.code === 0) {
             window.toast("已发送激活邮件，请检查邮箱")
-            setTimeout(() => {
-                location.href = location.href
-            }, 300);
         } else {
             window.toast("激活邮件发送失败，请稍后再试")
         }
