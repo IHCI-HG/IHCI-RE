@@ -6,15 +6,17 @@ const topicSchema = new mongoose.Schema({
     create_time: { type: String, default : Date.now},
     title: String,
     content: {type: mongoose.Schema.Types.Mixed},
+    fileList: [mongoose.Schema.Types.Mixed],
     creator: { type: mongoose.Schema.Types.Mixed , required: true },
     team: String, // team的_id
     discussList: [mongoose.Schema.Types.Mixed],
 })
 
 topicSchema.statics = {
-    createTopic: async function(title, content, creatorObj, teamId) {
+    createTopic: async function(title, fileList, content, creatorObj, teamId) {
         return this.create({
             title: title, 
+            fileList: fileList,
             content: content,
             creator: creatorObj,
             team: teamId,

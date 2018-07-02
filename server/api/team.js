@@ -496,7 +496,8 @@ const taskList = async (req, res, nect) => {
                 header: {
                     headerId: taskListTemp[i].header,
                     headername: headername
-                }
+                },
+                fileList: taskListTemp[i].fileList
             }
             taskList.push(obj1)
         }
@@ -536,7 +537,8 @@ const taskList = async (req, res, nect) => {
                     header: {
                         headerId: result.taskList[j].header,
                         headername: headername
-                    }
+                    },
+                    fileList: result.taskList[i].fileList
                 }
                 task.push(obj2)
             }

@@ -272,7 +272,8 @@ const createTask = async (req, res, next) => {
             deadline: deadline,
             header: result.header,
             teamId: teamId,
-            listId: tasklistId
+            listId: tasklistId,
+            fileList: result.fileList
         }
 
         const headerList = []
@@ -560,6 +561,7 @@ const taskInfo = async (req, res, next) => {
             completed_time: taskCompleted_time,
             teamId: taskObj.teamId,
             listId: taskObj.tasklistId,
+            fileList: taskObj.fileList,
             checkitemList: checkitemList
         }
 
