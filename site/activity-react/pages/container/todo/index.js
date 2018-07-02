@@ -224,16 +224,16 @@ export default class Task extends React.Component{
             body:{ taskId: this.props.params.id }
         })
         if (resp.state.code === 0) {
-            let topicList = []
+            const topicListArr = this.state.topicListArr 
             resp.data.map((item)=>{
-                let topic = {}
+                const topic = {}
                 topic.id = item._id
                 topic.creator = item.creator
                 topic.time = item.create_time
                 topic.content = item.content
-                topicList.push(topic)
+                topicListArr.push(topic)
             })
-            this.setState({ topicListArr: topicList })
+            this.setState({ topicListArr })
         }
     }
 
@@ -845,7 +845,7 @@ export default class Task extends React.Component{
                         this.state.showButton && <input type="text" onClick={() => {this.setState({showCreateTopic: true,showButton:false})}} className="topic-name" placeholder="点击发表评论" /> }
                             {
                                 this.state.showCreateTopic && <div className="create-area">
-                                    <textarea className="topic-content" onChange={this.topicContentInputHandle} value={this.state.createTopicContent} placeholder="说点什么"></textarea>
+                                    <textarea className="topic-content" onChange={this.topicContentInputHandle} value={this.state.createTopicContent} placeholder="说点什么" autoFocus></textarea>
                                     <div className="infrom">请选择要通知的人：</div>
                                     <MemberChosenList choseHandle={this.memberChoseHandle} memberList={this.state.memberList}/>
                                     <div className="btn-con">
