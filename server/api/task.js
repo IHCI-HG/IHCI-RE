@@ -28,8 +28,6 @@ var timelineDB = mongoose.model('timeline')
 var taskDB = mongoose.model('task')
 var tasklistDB = mongoose.model('tasklist')
 
-var newAddDiscussNum = 0;
-
 const createTasklist = async (req, res, next) => {
     const userId = req.rSession.userId;
     const listname = req.body.name;
@@ -274,7 +272,8 @@ const createTask = async (req, res, next) => {
             deadline: deadline,
             header: result.header,
             teamId: teamId,
-            listId: tasklistId
+            listId: tasklistId,
+            fileList: result.fileList
         }
 
         const headerList = []
@@ -562,6 +561,7 @@ const taskInfo = async (req, res, next) => {
             completed_time: taskCompleted_time,
             teamId: taskObj.teamId,
             listId: taskObj.tasklistId,
+            fileList: taskObj.fileList,
             checkitemList: checkitemList
         }
 
@@ -1035,13 +1035,6 @@ const createDiscuss = async (req, res, next) => {
 
         taskDB.addDiscuss(taskId, result._id);
 
-        //7.2
-        newAddDiscussNum++;
-
-        //test
-        console.log("...........................")
-        console.log(newAddDiscussNum);
-
         const teamObj = await teamDB.findByTeamId(teamId)
 
         //6.28
@@ -1148,9 +1141,6 @@ const delDiscuss = async (req, res, next) => {
 
         const result = await discussDB.delDiscussById(discussId);
         await taskDB.delDiscuss(taskId, discussId);
-
-        //7.2
-        newAddDiscussNum--;
         
         //6.28
         await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'DELETE_TASK_REPLY', discussObj._id, discussObj.title, discussObj);
@@ -1192,13 +1182,7 @@ const findDiscuss = async (req, res, next) => {
 
 
         var discussIdList = taskObj.discussList;
-        discussList = await discussDB.getDiscussByPage(discussIdList,currentPage,newAddDiscussNum);
-
-        //test\
-        console.log("...........................")
-        console.log(newAddDiscussNum);
-
-        newAddDiscussNum = 0;
+        discussList = await discussDB.getDiscussByPage(discussIdList,currentPage);
 
 
 
