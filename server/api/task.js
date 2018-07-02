@@ -1028,12 +1028,12 @@ const createDiscuss = async (req, res, next) => {
         const userObj = await userDB.baseInfoById(userId);
         
         //6.28
-        const taskObj = taskDB.findByTaskId(taskId);
+        const taskObj = await taskDB.findByTaskId(taskId);
 
         //6.28
         const result = await discussDB.createDiscuss(teamId, "", taskObj.title, content, userObj, fileList);
 
-        taskDB.addDiscuss(taskId, result._id);
+        await taskDB.addDiscuss(taskId, result._id);
 
         //7.2
         newAddDiscussNum++;
