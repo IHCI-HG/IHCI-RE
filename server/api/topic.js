@@ -22,6 +22,7 @@ const createTopic = async (req, res, next) => {
     const teamId = req.body.teamId
     const topicName = req.body.name
     const topicContent = req.body.content
+    const topicFileList = req.body.fileList
     const informList = req.body.informList
     const userId = req.rSession.userId 
 
@@ -35,7 +36,7 @@ const createTopic = async (req, res, next) => {
 
     try {
         const userObj = await userDB.baseInfoById(userId)
-        const result = await topicDB.createTopic(topicName, topicContent, userObj, teamId)
+        const result = await topicDB.createTopic(topicName, topicFileList, topicContent, userObj, teamId)
         await teamDB.addTopic(teamId, result)
         const teamObj = await teamDB.findByTeamId(teamId)
         await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'CREATE_TOPIC', result._id, result.title, result)
