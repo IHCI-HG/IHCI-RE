@@ -215,6 +215,7 @@ export default class Team extends React.Component{
                 informList: informList,
             }
         })
+        console.log('createTopicHandle', result.data)
 
         if(result.state.code == 0) {
             const topicList = this.state.topicList
