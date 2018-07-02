@@ -100,7 +100,8 @@ export default class Task extends React.Component{
         todo: {},
         copyTeamList:[],
         moveTeamList:[],
-        loadMoreCount:1
+        loadMoreCount:1,
+        replyCount:0
     }
 
     componentDidMount = async() => {
@@ -242,6 +243,9 @@ export default class Task extends React.Component{
     }
 
     createTopicHandle = async () => {
+        this.setState({
+            replyCount:this.state.replyCount+1
+        })
         const informList = []
         this.state.memberList.map((item) => {
             if(item.chosen) {
@@ -264,13 +268,14 @@ export default class Task extends React.Component{
             topic.creator = resp.data.creator
             topic.time = resp.data.create_time
             topic.content = resp.data.content
-            topicList.push(topic)
+            topicList.unshift(topic)
             this.setState({
                 topicListArr:topicList,
                 createTopicName:"",
                 createTopicContent:"",
              })
         }
+        console.log(this.state.replyCount)
         return resp
     }
 
