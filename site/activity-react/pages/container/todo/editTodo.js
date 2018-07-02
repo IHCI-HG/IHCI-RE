@@ -10,7 +10,7 @@ class EditTodo extends React.Component {
         assigneeId: this.props.assigneeId || null,
         date: this.props.date || null,
         todoDesc: this.props.desc || '',
-        todoAttachments: [],
+        todoAttachments: this.props.attachments,
     }
 
     static defaultProps = {

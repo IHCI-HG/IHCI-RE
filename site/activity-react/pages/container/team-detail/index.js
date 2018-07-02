@@ -28,9 +28,9 @@ class TopicItem extends React.PureComponent{
                 <div className="name">{this.props.creator.name}</div>
                 <div className="main">
                     <div className="topic-title">{this.props.title}</div>
-                    <p className="text-max-line-1" dangerouslySetInnerHTML={createMarkup(this.props.content.content)}></p>
+                    <p className="text-max-line-1" dangerouslySetInnerHTML={createMarkup(this.props.content)}></p>
                 </div>
-                {this.props.content.attachment.length>0 &&
+                {this.props.fileList.length>0 &&
                     <i className="icon iconfont time">&#xe6dd;</i>
                 }
                 <div className="time">{timeBefore(this.props.create_time)}</div>
@@ -201,17 +201,13 @@ export default class Team extends React.Component{
             }
         })
 
-        console.log('topicAttachments', this.state.topicAttachments)
-        const content = {
-            content: this.state.topicContent,
-            attachment: this.state.topicAttachments,
-        }
         const result = await api('/api/topic/createTopic', {
             method: 'POST',
             body: {
                 teamId: this.teamId,
                 name: this.state.topicName,
-                content,
+                content: this.state.topicContent,
+                fileList: this.state.topicAttachments,
                 informList: informList,
             }
         })
@@ -225,6 +221,7 @@ export default class Team extends React.Component{
                 creator: this.props.personInfo,
                 title: this.state.topicName,
                 content,
+                fileList: this.state.topicAttachments,
                 time: time,
             })
             this.setState({

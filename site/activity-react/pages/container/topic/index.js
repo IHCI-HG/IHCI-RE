@@ -4,9 +4,8 @@ import Page from '../../../components/page'
 import api from '../../../utils/api';
 import { timeBefore, createMarkup } from '../../../utils/util'
 import Editor from '../../../components/editor'
-
+import fileUploader from '../../../utils/file-uploader'
 import MemberChosenList from '../../../components/member-chose-list'
-
 class TopicDiscussItem extends React.Component {
     componentDidMount = () => {
         this.setState({
@@ -31,8 +30,6 @@ class TopicDiscussItem extends React.Component {
             creator,
             content,
             create_time,
-
-            delHandle,
             saveEditHandle,
             allowEdit,
 
@@ -49,26 +46,26 @@ class TopicDiscussItem extends React.Component {
                             <div className="cancel-btn" onClick={() => { this.setState({ editState: false }) }}>取消</div>
                         </div>
                     </div>
-                        :
-                        <div className="topic-subject-con discuss-con">
-                            <div className="flex">
-                                <img className="head-img" src={creator.headImg}></img>
-                                <div className="topic-main">
-                                    <div className="head-wrap">
-                                        <div className="left">
-                                            <span className="name">{creator.name}</span>
-                                            <span className="time">{timeBefore(create_time)}</span>
-                                        </div>
-                                        {
-                                            allowEdit && <div className="right">
-                                                <span className="edit" onClick={() => { this.setState({ editState: true }) }}>编辑</span>
-                                            </div>
-                                        }
+                    :
+                    <div className="topic-subject-con discuss-con">
+                        <div className="flex">
+                            <img className="head-img" src={creator.headImg}></img>
+                            <div className="topic-main">
+                                <div className="head-wrap">
+                                    <div className="left">
+                                        <span className="name">{creator.name}</span>
+                                        <span className="time">{timeBefore(create_time)}</span>
                                     </div>
-                                    <p dangerouslySetInnerHTML={createMarkup(content)}></p>
+                                    {
+                                        allowEdit && <div className="right">
+                                            <span className="edit" onClick={() => { this.setState({ editState: true }) }}>编辑</span>
+                                        </div>
+                                    }
                                 </div>
+                                <p dangerouslySetInnerHTML={createMarkup(content)}></p>
                             </div>
                         </div>
+                    </div>
                 }
             </div>
         )
@@ -86,11 +83,11 @@ export default class Topic extends React.Component{
             content: '',
             create_time: '',
             todoDesc: '',
-            todoAttachments: [],
         },
 
         topicNameInput: '',
         topicContentInput: '',
+        topicAttachments: [],
 
         discussList: [],
         memberList: [],
@@ -114,7 +111,6 @@ export default class Topic extends React.Component{
 
         console.log('topicInfo:', result.data);
         const topicObj = result.data
-        topicObj.content = topicObj.content.content
         this.teamId = result.data.team
 
         const memberResult = await api('/api/team/memberList', {
@@ -131,7 +127,7 @@ export default class Topic extends React.Component{
             })
         ])
 
-
+        this.state.topicAttachments = topicObj.fileList;
         this.setState({
             topicObj: {
                 ...topicObj,
@@ -139,25 +135,23 @@ export default class Topic extends React.Component{
             },
             topicNameInput: topicObj.title,
             topicContentInput: topicObj.content,
-
             discussList: result.data.discussList,
             memberList: memberList
         })
     }
 
-    handleTodoDescChange = (content) => {
+    topicContentHandle = (content) => {
         this.setState({
-            todoDesc: content
+            topicContentInput: content
         })
-        console.log(this.state.todoDesc)
     }
 
     topicFileUploadHandle = async (e) => {
         const resp = await fileUploader('teamId', '', e.target.files[0])
-        let todoAttachments = this.state.todoAttachments
-        todoAttachments = [...todoAttachments, resp]
+        let topicAttachments = this.state.topicAttachments;
+        topicAttachments = [...topicAttachments, resp]
         this.setState({
-            todoAttachments,
+            topicAttachments,
         })
     }
 
@@ -166,33 +160,36 @@ export default class Topic extends React.Component{
             topicNameInput: e.target.value
         })
     }
-    topicContentHandle = (e) => {
-        this.setState({
-            topicContentInput: e.target.value
-        })
-    }
 
     topicChangeSaveHandle = async () => {
+        let editTopic = {
+            title: this.state.topicNameInput,
+                content: this.state.topicContentInput,
+                fileList: this.state.topicAttachments,
+        }
         const result = await api('/api/topic/editTopic', {
             method: 'POST',
             body: {
                 teamId: this.teamId,
                 topicId: this.topicId,
-                editTopic: {
-                    title: this.state.topicNameInput,
-                    content: this.state.topicContentInput,
-                },
+                editTopic,
                 informList: []
             }
         })
-        this.setState({
-            topicObj: {
-                ...this.state.topicObj,
-                name: this.state.topicNameInput,
-                content: this.state.topicContentInput,
-                editStatus: false,
-            }
-        })
+        console.log(editTopic)
+        console.log('result', result);
+
+        if (result) {
+            this.setState({
+                topicObj: {
+                    ...this.state.topicObj,
+                    name: this.state.topicNameInput,
+                    content: this.state.topicContentInput,
+                    fileList: this.state.topicAttachments,
+                    editStatus: false,
+                }
+            })
+        }
     }
 
     saveDiscussEditHandle = async (_id, content) => {
@@ -282,10 +279,10 @@ export default class Topic extends React.Component{
                         this.state.topicObj.editStatus ? <div className="topic-subject-edit">
                                 <input type="text" onChange={this.topicNameInput} value={this.state.topicNameInput} className="topic-title"/>
                                 {/*<textarea className='topic-content' onChange={this.topicContentHandle}  value={this.state.topicContentInput}></textarea>*/}
-                                <Editor handleContentChange={this.handleTodoDescChange.bind(this)}
+                                <Editor handleContentChange={this.topicContentHandle.bind(this)}
                                         handleFileUpload={this.topicFileUploadHandle.bind(this)}
                                         content={this.state.topicContentInput}
-                                        attachments={this.state.todoAttachments}></Editor>
+                                        attachments={this.state.topicAttachments}></Editor>
 
                                 <div className="button-warp">
                                     <div className="save-btn" onClick={this.topicChangeSaveHandle}>保存</div>
@@ -310,12 +307,20 @@ export default class Topic extends React.Component{
                                                      {/* <span className="edit">删除</span> */}
                                                 </div>
                                             }
-
                                         </div>
                                         <p dangerouslySetInnerHTML={createMarkup(this.state.topicObj.content)}></p>
                                     </div>
                                 </div>
                             </div>
+                    }
+                    { this.state.topicObj.editStatus== false &&
+                        <div className="file-list">
+                            {
+                                this.state.topicObj.fileList && this.state.topicObj.fileList.map((item) => {
+                                    return ( <div className="file-item" key={Math.random()}>{item.name}</div> )
+                                })
+                            }
+                        </div>
                     }
 
                     <div className="div-line"></div>
@@ -352,12 +357,8 @@ export default class Topic extends React.Component{
                             </div>
                         </div>
                     </div>
-
                     </div>
-
-
                 </div>
-
             </Page>
         )
     }

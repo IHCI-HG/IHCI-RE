@@ -709,13 +709,7 @@ export default class Task extends React.Component{
                          handleTodoModify={this.handleTodoModify}
                          handleTodoCheck={this.handleTodoCheck}
                          handleTodoDelete={this.handleTodoDelete}/>
-                     <div className="file-list">
-                         {
-                             this.state.todo.fileList && this.state.todo.fileList.map((item) => {
-                                 return( <div key={Math.random()}>{item.name}</div> )
-                             })
-                         }
-                     </div>
+
                      <div className="checkitem-list">
                          {
                              this.state.todo.list &&

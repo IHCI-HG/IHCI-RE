@@ -158,12 +158,20 @@ class TodoItem extends React.Component {
                     {   _props.detail === 'detail' &&
                         <div>
                             <p dangerouslySetInnerHTML={createMarkup(_props.desc)}></p>
-                            {/*{*/}
-                                {/*_props.filelist.map((item) => {*/}
-                                {/*return( <div key={Math.random()}>{item.name}</div> )*/}
-                                {/*})*/}
-                            {/*}*/}
                         </div>
+                    }
+                    {   _props.detail === 'detail' &&
+                    <div>
+                        {
+                            <div className="file-list">
+                                {
+                                    _props.fileList && _props.fileList.map((item) => {
+                                        return( <div className="file-item" key={Math.random()}>{item.name}</div> )
+                                    })
+                                }
+                            </div>
+                        }
+                    </div>
                     }
                 </div>
             </div>
