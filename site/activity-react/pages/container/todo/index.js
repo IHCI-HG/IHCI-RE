@@ -100,13 +100,14 @@ export default class Task extends React.Component{
         todo: {},
         copyTeamList:[],
         moveTeamList:[],
-        loadMoreCount:1
+        loadMoreCount:1,
+        replyCount:0
     }
 
     componentDidMount = async() => {
         await this.initTodoInfo()
         this.initMemberList()
-        this.initTopicListArr()
+        this.loadTopicListArr()
         this.initTeamList()
     }
 
@@ -219,10 +220,13 @@ export default class Task extends React.Component{
         }
     }
 
-    initTopicListArr = async() => {
+    loadTopicListArr = async() => {
         const resp = await api('/api/task/findDiscuss', {
             method:"POST",
-            body:{ taskId: this.props.params.id }
+            body:{ 
+                taskId: this.props.params.id,
+                currentPage: this.state.loadMoreCount
+            }
         })
         if (resp.state.code === 0) {
             const topicListArr = this.state.topicListArr 
@@ -239,6 +243,9 @@ export default class Task extends React.Component{
     }
 
     createTopicHandle = async () => {
+        this.setState({
+            replyCount:this.state.replyCount+1
+        })
         const informList = []
         this.state.memberList.map((item) => {
             if(item.chosen) {
@@ -261,13 +268,14 @@ export default class Task extends React.Component{
             topic.creator = resp.data.creator
             topic.time = resp.data.create_time
             topic.content = resp.data.content
-            topicList.push(topic)
+            topicList.unshift(topic)
             this.setState({
                 topicListArr:topicList,
                 createTopicName:"",
                 createTopicContent:"",
              })
         }
+        console.log(this.state.replyCount)
         return resp
     }
 
@@ -327,7 +335,7 @@ export default class Task extends React.Component{
     loadMoreHandle = () => {
         this.setState({
             loadMoreCount:this.state.loadMoreCount+1
-        },this.initTopicListArr
+        },this.loadTopicListArr
         // async () => {
         //     let showTopicList = this.state.topicListArr
         //     let moreList = []
@@ -561,6 +569,7 @@ export default class Task extends React.Component{
                 name: todoInfo.name,
                 ddl: todoInfo.date,
                 assigneeId: todoInfo.assigneeId,
+                teamId:this.state.todo.teamId,
             }
         })
 
@@ -666,7 +675,8 @@ export default class Task extends React.Component{
             body: {
                 todoId,
                 checkitemId,
-                editCheckitem
+                editCheckitem,
+                teamId: this.state.todo.teamId,
             }
         })
         console.log('resp', resp);
@@ -837,7 +847,7 @@ export default class Task extends React.Component{
                         }
                     </div>
                     {
-                        (this.state.topicListArr.length>=20)&&<div className="load-more" onClick={this.loadMoreHandle}>点击加载更多</div>
+                        (this.state.topicListArr.length>=20*this.state.loadMoreCount)&&<div className="load-more" onClick={this.loadMoreHandle}>点击加载更多</div>
                     }
                     <div className="create-topic">
                         <div className="imgInfo">
