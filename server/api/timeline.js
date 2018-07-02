@@ -34,7 +34,6 @@ const returnByTeamList = async (req, res, next) => {
     const teamId = req.body.teamId
     const currentPage = req.body.currentPage;
     const userId = req.rSession.userId 
-
     const teamIdList = []
     if(teamId) {
         teamIdList.push(teamId)

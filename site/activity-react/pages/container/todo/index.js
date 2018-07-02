@@ -120,7 +120,14 @@ export default class Task extends React.Component{
             method: 'GET',
             body: {}
         })
+        const user={}
+        user.headImg = result.data.personInfo.headImg
+        user.name = result.data.personInfo.name
+        this.setState({
+            user:user
+        })
         const teamList = result.data.teamList
+        console.log(result)
         teamList.map((item, index)=>{
             if(item.teamId === this.state.todo.teamId){
                 teamList.splice(index, 1)

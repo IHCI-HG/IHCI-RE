@@ -78,7 +78,7 @@ timelineSchema.statics = {
             queryList.push({teamId: item})
         })
         if(queryList && queryList.length) {
-            result = await this.find({$or: queryList}).skip(skipNumber).limit(pageSize).sort(sortFunc).exec();
+            var result = await this.find({$or: queryList}).skip(skipNumber).limit(pageSize).sort(sortFunc).exec();
             return result;
         } else {
             return []
