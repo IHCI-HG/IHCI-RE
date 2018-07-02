@@ -183,7 +183,7 @@ export default class TeamAdmin extends React.Component{
 
         window.toast("上传图片成功")
         this.setState({
-            teamImg: this.teamId+file.name
+            teamImg: window.location.origin+'/img/'+this.teamId+file.name
         })
     }
 
@@ -210,7 +210,7 @@ export default class TeamAdmin extends React.Component{
 
                     <div className="admin-title-sm">团队图片</div>
                     <div className="create-btn" onClick={this.openFileInput}> 上传图片 </div>
-                    <img className="img-preview" src={window.location.origin+'/img/'+this.state.teamImg}></img>
+                    <img className="img-preview" src={this.state.teamImg}></img>
 
                     <div className="admin-title-sm">团队说明</div>
                     <textarea type="text" value={this.state.desc} className="admin-tra" onChange={this.teamDescChangeHandle} />

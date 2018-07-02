@@ -4,6 +4,7 @@ import './style.scss'
 import api from '../../../utils/api';
 import Page from '../../../components/page'
 import WxLoginDialog from '../../../components/wx-login-dialog'
+import fileUploader from '../../../utils/file-uploader';
 
 export default class Team extends React.Component{
     componentDidMount = async() => {
@@ -157,16 +158,50 @@ export default class Team extends React.Component{
         }
     }
     
+    openFileInput = () => {
+        this.fileInput.click()
+    }
+    
+    uploadFileHandle = async (e) => {
+
+        var file = e.target.files[0];
+        var newFile = new File([file],this.state.userObj._id+file.name)
+
+        var succeeded;
+        const uploadResult = fileUploader('', '', newFile)
+        await uploadResult.then(function(val) {
+            succeeded = 1
+        }).catch(function(reason){
+            console.log(reason)
+            succeeded = 0
+        })
+
+        if(succeeded === 0) {
+            window.toast("上传图片失败")
+            return
+        } 
+
+        window.toast("上传图片成功")
+        this.setState({
+            personInfo: {
+                ...this.state.personInfo,
+                headImg: window.location.origin+'/head/'+newFile.name
+            }
+        })
+        console.log(this.state.personInfo.headImg)
+    }
+
     
     render() {
         let personInfo = this.state.personInfo
         return (
             <Page title={"个人设置"} className="person-edit-page page-wrap">
+                <input className='file-input-hidden' type="file" ref={(fileInput) => this.fileInput = fileInput} onChange={this.uploadFileHandle}></input>
                 <div className="title">个人设置</div>
 
                 <div className="head-edit">
                     <div className="left">
-                        <img src={window.location.origin+'/head/'+this.state.personInfo.headImg} className='head-img' />
+                        <img src={this.state.personInfo.headImg} className='head-img' />
                     </div>
                     <div className="right">
                         <div className="create-btn" onClick={this.openFileInput}> 上传图片 </div>

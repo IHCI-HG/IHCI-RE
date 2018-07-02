@@ -49,10 +49,7 @@ var ossImgProcessor = async (req, res, next) => {
         var width = tms*16
         var height = tms*9
 
-        var topMargin = parseInt((oriHeight-height)/2)
-        var leftMargin = parseInt((oriWidth-width)/2)
-        
-        var result = await client.get(ossKey, {process: `image/crop,w_${width},h_${height},x_${leftMargin},y_${topMargin},g_center`});
+        var result = await client.get(ossKey, {process: `image/crop,w_${width},h_${height},g_center`});
         res.send(result.res.data)
     } catch (error) {
         res.send(404)
@@ -63,7 +60,7 @@ var ossHeadProcessor = async (req, res, next) => {
     try {
         var originalUrl = req.originalUrl
         var ossKey = decodeURIComponent(originalUrl.slice(6))
-        //console.log(ossKey)
+        console.log(ossKey)
         const client = new OSSW({
             accessKeyId: conf.ossConf.ossAdminAccessKeyId,
             accessKeySecret: conf.ossConf.ossAdminAccessKeySecret,
@@ -76,7 +73,7 @@ var ossHeadProcessor = async (req, res, next) => {
         var oriHeight = parseInt(jsobj.ImageHeight.value)
         var oriWidth = parseInt(jsobj.ImageWidth.value)
 
-        var redis = parseInt(Math.min(parseInt(oriWidth),parseInt(oriHeight)))
+        var redis = parseInt(Math.min(parseInt(oriWidth),parseInt(oriHeight))/2)
 
         var result = await client.get(ossKey, {process: `image/circle,r_${redis}`});
         res.send(result.res.data)

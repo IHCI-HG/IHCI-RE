@@ -142,7 +142,7 @@ export default class Files extends React.Component {
         })
         
         var succeeded;
-        const uploadResult = fileUploader(this.teamId, '', file)
+        const uploadResult = fileUploader(this.teamId, this.curDir, file)
         await uploadResult.then(function(val) {
             console.log(val)
             succeeded = 1
@@ -162,9 +162,9 @@ export default class Files extends React.Component {
                 fileInfo: {
                    teamId: this.teamId,
                    size: file.size,
-                   dir: '/',
+                   dir: this.curDir,
                    fileName: file.name,
-                   ossKey: `${this.teamId}/${file.name}`
+                   ossKey: `${this.teamId}${this.curDir}/${file.name}`
                 }
             }
         })
@@ -184,7 +184,7 @@ export default class Files extends React.Component {
                 body: {
                     fileInfo: {
                         teamId: this.teamId,
-                        dir: '/',
+                        dir: this.curDir,
                         fileName: name
                     }
                 }
@@ -195,7 +195,7 @@ export default class Files extends React.Component {
                 body: {
                     folderInfo: {
                         teamId: this.teamId,
-                        dir: '/',
+                        dir: this.curDir,
                         folderName: name
                     }
                 }
