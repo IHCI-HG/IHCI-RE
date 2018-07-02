@@ -324,7 +324,7 @@ export default class Person extends React.Component{
                                 {this.state.personInfo.mail}
                             </div>
                             <div className='edit-btn' onClick={this.editConfirmHangle}>修改邮箱</div>
-                            {this.state.userObj.islive ?
+                            {this.state.userObj.isLive ?
                                 <div className='active-info'><div className='iconfont icon-mail green'></div><div className='active-info'>邮箱已激活</div></div>
                                 : <div className='active-info'><div className='iconfont icon-mail yellow'></div><div className='active-info'>邮箱未<div className='activate-btn' onClick={this.activateMailHandle}>激活</div></div></div>
                             }

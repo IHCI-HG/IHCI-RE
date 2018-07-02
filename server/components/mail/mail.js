@@ -14,11 +14,11 @@ var config = {
 var transporter = nodemailer.createTransport(config);
 
 // 发送邮件
-module.exports = function (mail){
-    transporter.sendMail(mail, function(error, info){
-        if(error) {
-            return console.log(error);
-        }
-        console.log('mail sent:', info.response);
-    });
+module.exports = async function (mail){
+    try{
+        const result = await transporter.sendMail(mail)
+    }catch(error){
+        return false
+    }
+    return true      
 };
