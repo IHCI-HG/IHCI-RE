@@ -64,7 +64,7 @@ timelineSchema.statics = {
         return this.find({teamId: teamId}).sort({create_time: -1}).exec()
     },
 
-    findByTeamIdList: function(teamIdList,currentPage) {
+    findByTeamIdList: async function(teamIdList,currentPage) {
 
         var pageSize = 20;
         var sortFunc = {create_time:-1};
@@ -75,7 +75,8 @@ timelineSchema.statics = {
             queryList.push({teamId: item})
         })
         if(queryList && queryList.length) {
-            return this.find({$or: queryList}).skip(skipNumber).limit(pageSize).sort(sortFunc).exec();
+            var result = await this.find({$or: queryList}).skip(skipNumber).limit(pageSize).sort(sortFunc).exec();
+            return result;
         } else {
             return []
         }
