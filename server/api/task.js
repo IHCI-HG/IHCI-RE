@@ -1136,8 +1136,8 @@ const delDiscuss = async (req, res, next) => {
     try {
 
         //6.28
-        const discussObj = discussDB.findTaskDiscuss(discussId);
-        const baseInfoObj = userDB.baseInfoById(userId);
+        const discussObj = await discussDB.findTaskDiscuss(discussId);
+        const baseInfoObj = await userDB.baseInfoById(userId);
         const teamObj = await teamDB.findByTeamId(teamId);
 
         const result = await discussDB.delDiscussById(discussId);
