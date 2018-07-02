@@ -100,6 +100,7 @@ export default class Task extends React.Component{
         todo: {},
         copyTeamList:[],
         moveTeamList:[],
+        loadMoreCount:1
     }
 
     componentDidMount = async() => {
@@ -326,23 +327,25 @@ export default class Task extends React.Component{
     loadMoreHandle = () => {
         this.setState({
             loadMoreCount:this.state.loadMoreCount+1
-        },async () => {
-            let showTopicList = this.state.topicListArr
-            let moreList = []
-            const resp = await mock.httpMock('/todo/:id/get', {
-                id: this.teamId,
-                loadMoreCount: this.state.loadMoreCount
-            })
-            if (resp.status === 200) {
-                moreList = resp.data.topicList
-            }
-            moreList.map((item)=>{
-                showTopicList.push(item)
-            })
-            this.setState({
-                topicListArr:showTopicList
-            })
-        })
+        },this.initTopicListArr
+        // async () => {
+        //     let showTopicList = this.state.topicListArr
+        //     let moreList = []
+        //     const resp = await mock.httpMock('/todo/:id/get', {
+        //         id: this.teamId,
+        //         loadMoreCount: this.state.loadMoreCount
+        //     })
+        //     if (resp.status === 200) {
+        //         moreList = resp.data.topicList
+        //     }
+        //     moreList.map((item)=>{
+        //         showTopicList.push(item)
+        //     })
+        //     this.setState({
+        //         topicListArr:showTopicList
+        //     })
+        // }
+    )
     }
 
     moveToTeamHandle = async () => {
