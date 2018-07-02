@@ -26,6 +26,7 @@ class TopicItem extends React.Component{
         showEdit: false,
         showCreateTopic: false,
         showButton: true,
+        createTopicContent:this.props.content,
     }
     deleteTopicHandle = () => {
         this.props.deleteTopicHandle(this.props.id)
@@ -37,7 +38,6 @@ class TopicItem extends React.Component{
     sendContent = () => {
         this.props.sendContent(this.props.content)
     }
-
     render() {
         return(
             <div className="topic-item" onMouseOver={() => this.setState({showEdit:true})} onMouseLeave={() => this.setState({showEdit:false})}>
@@ -100,13 +100,14 @@ export default class Task extends React.Component{
         todo: {},
         copyTeamList:[],
         moveTeamList:[],
-        loadMoreCount:1
+        loadMoreCount:1,
+        replyCount:0
     }
 
     componentDidMount = async() => {
         await this.initTodoInfo()
         this.initMemberList()
-        this.initTopicListArr()
+        this.loadTopicListArr()
         this.initTeamList()
     }
 
@@ -161,7 +162,6 @@ export default class Task extends React.Component{
             }
             memberIDList.push(item.userId)
         })
-        console.log('memberIDList', memberIDList)
         const memberResult = await api('/api/userInfoList', {
             method: 'POST',
             body: { userList: memberIDList }
@@ -174,7 +174,6 @@ export default class Task extends React.Component{
                 chosen: false,
             })
         })
-        console.log('memberList', memberList)
         this.setState({
             isCreator: isCreator,
             memberList: memberList,
@@ -197,11 +196,11 @@ export default class Task extends React.Component{
         todo.desc = resp.data.content
         todo.ddl = resp.data.deadline
         todo.name = resp.data.title
+        todo.fileList = resp.data.fileList
         todo.list = []
         todo.teamId = resp.data.teamId
         todo.assignee = {}
         todo.assignee.id = resp.data.header
-        console.log('todo', todo.hasDone)
         // 没有username,根据memberList获取
         resp.data.checkitemList.forEach(function (item) {
             const listItem = {}
@@ -213,16 +212,19 @@ export default class Task extends React.Component{
             listItem.assignee.id = item.headerId
             todo.list.push(listItem)
         })
-
+        console.log('todo',todo)
         if (resp.state.code === 0) {
             this.setState({ todo })
         }
     }
 
-    initTopicListArr = async() => {
+    loadTopicListArr = async() => {
         const resp = await api('/api/task/findDiscuss', {
             method:"POST",
-            body:{ taskId: this.props.params.id }
+            body:{ 
+                taskId: this.props.params.id,
+                currentPage: this.state.loadMoreCount
+            }
         })
         if (resp.state.code === 0) {
             const topicListArr = this.state.topicListArr 
@@ -239,6 +241,9 @@ export default class Task extends React.Component{
     }
 
     createTopicHandle = async () => {
+        this.setState({
+            replyCount:this.state.replyCount+1
+        })
         const informList = []
         this.state.memberList.map((item) => {
             if(item.chosen) {
@@ -261,13 +266,14 @@ export default class Task extends React.Component{
             topic.creator = resp.data.creator
             topic.time = resp.data.create_time
             topic.content = resp.data.content
-            topicList.push(topic)
+            topicList.unshift(topic)
             this.setState({
                 topicListArr:topicList,
                 createTopicName:"",
                 createTopicContent:"",
              })
         }
+        console.log(this.state.replyCount)
         return resp
     }
 
@@ -327,26 +333,7 @@ export default class Task extends React.Component{
     loadMoreHandle = () => {
         this.setState({
             loadMoreCount:this.state.loadMoreCount+1
-        },this.initTopicListArr
-        // async () => {
-        //     let showTopicList = this.state.topicListArr
-        //     let moreList = []
-        //     const resp = await mock.httpMock('/todo/:id/get', {
-        //         id: this.teamId,
-        //         loadMoreCount: this.state.loadMoreCount
-        //     })
-        //     if (resp.status === 200) {
-        //         moreList = resp.data.topicList
-        //     }
-        //     moreList.map((item)=>{
-        //         showTopicList.push(item)
-        //     })
-        //     this.setState({
-        //         topicListArr:showTopicList
-        //     })
-        // }
-    )
-    }
+        },this.loadTopicListArr)}
 
     moveToTeamHandle = async () => {
         if(this.state.teamToMove=="请选择小组"){
@@ -355,7 +342,7 @@ export default class Task extends React.Component{
         else{
             const resp = await api('/api/task/taskMove', {
                 method:"POST",
-                body:{ 
+                body:{
                     taskId:this.props.params.id,
                     teamIdMoveTo: this.state.teamToMove
                 }
@@ -374,7 +361,7 @@ export default class Task extends React.Component{
         else{
             const resp = await api('/api/task/taskCopy', {
                 method:"POST",
-                body:{ 
+                body:{
                     taskId:this.props.params.id,
                     teamId: this.state.todo.teamId,
                     copyCount:this.state.copyNumber
@@ -442,9 +429,6 @@ export default class Task extends React.Component{
         const taskId = this.props.params.id;
         const editTask = {};
         editTask.hasDone = !hasDone
-        console.log('taskId', taskId)
-        console.log('editTask', editTask)
-        console.log('teamId', this.state.todo.teamId)
         const resp = await api('/api/task/edit', {
             method: 'POST',
             body: {
@@ -453,7 +437,6 @@ export default class Task extends React.Component{
                 editTask
             }
         })
-        console.log(resp)
         if (resp.state.code === 0) {
             const todo = this.state.todo
             todo.hasDone = resp.data.state
@@ -463,13 +446,15 @@ export default class Task extends React.Component{
     }
 
     handleTodoModify = async(todoInfo) => {
+        console.log('content', todoInfo.content)
         const taskId = this.props.params.id;
         const editTask = {};
         editTask.name = todoInfo.name
-        editTask.content = todoInfo.desc
         editTask.ddl = todoInfo.date
         editTask.desc = todoInfo.desc
+        editTask.fileList = todoInfo.fileList
         editTask.assigneeId = todoInfo.assigneeId
+        console.log('editTask', editTask);
         const resp = await api('/api/task/edit', {
             method: 'POST',
             body: {
@@ -486,6 +471,7 @@ export default class Task extends React.Component{
             todo.ddl = resp.data.deadline
             todo.desc = resp.data.content
             todo.assignee = rAssignee
+            todo.fileList = resp.data.fileList
             console.log('handleTodoModify', todo)
             this.setState({ todo })
         }
@@ -561,6 +547,7 @@ export default class Task extends React.Component{
                 name: todoInfo.name,
                 ddl: todoInfo.date,
                 assigneeId: todoInfo.assigneeId,
+                teamId:this.state.todo.teamId,
             }
         })
 
@@ -666,7 +653,8 @@ export default class Task extends React.Component{
             body: {
                 todoId,
                 checkitemId,
-                editCheckitem
+                editCheckitem,
+                teamId: this.state.todo.teamId,
             }
         })
         console.log('resp', resp);
@@ -705,7 +693,7 @@ export default class Task extends React.Component{
         let actionList = this.state.actionList || []
         let moveExpanded = this.state.moveExpanded
         let copyExpanded = this.state.copyExpanded
-
+        console.log('todo', this.state.todo)
 
         return (
             <Page title={"任务详情"} className="discuss-page">
@@ -721,6 +709,13 @@ export default class Task extends React.Component{
                          handleTodoModify={this.handleTodoModify}
                          handleTodoCheck={this.handleTodoCheck}
                          handleTodoDelete={this.handleTodoDelete}/>
+                     <div className="file-list">
+                         {
+                             this.state.todo.fileList && this.state.todo.fileList.map((item) => {
+                                 return( <div key={Math.random()}>{item.name}</div> )
+                             })
+                         }
+                     </div>
                      <div className="checkitem-list">
                          {
                              this.state.todo.list &&
@@ -837,7 +832,7 @@ export default class Task extends React.Component{
                         }
                     </div>
                     {
-                        (this.state.topicListArr.length>=20)&&<div className="load-more" onClick={this.loadMoreHandle}>点击加载更多</div>
+                        (this.state.topicListArr.length>=20*this.state.loadMoreCount)&&<div className="load-more" onClick={this.loadMoreHandle}>点击加载更多</div>
                     }
                     <div className="create-topic">
                         <div className="imgInfo">

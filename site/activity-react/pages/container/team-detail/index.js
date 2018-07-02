@@ -1,7 +1,7 @@
 import * as React from 'react';
 import './style.scss'
 import api from '../../../utils/api';
-import { timeBefore, sortByCreateTime } from '../../../utils/util'
+import { timeBefore, sortByCreateTime, createMarkup } from '../../../utils/util'
 import Page from '../../../components/page'
 import MemberChosenList from '../../../components/member-chose-list'
 import Editor from '../../../components/editor'
@@ -28,20 +28,17 @@ class TopicItem extends React.PureComponent{
                 <div className="name">{this.props.creator.name}</div>
                 <div className="main">
                     <div className="topic-title">{this.props.title}</div>
-
-                        <div dangerouslySetInnerHTML={createMarkup(this.props.content)}></div>
+                    <p className="text-max-line-1" dangerouslySetInnerHTML={createMarkup(this.props.content.content)}></p>
                 </div>
+                {this.props.content.attachment.length>0 &&
+                    <i className="icon iconfont time">&#xe6dd;</i>
+                }
                 <div className="time">{timeBefore(this.props.create_time)}</div>
             </div>
         )
     }
 }
 
-function createMarkup(html) {
-    return {
-        __html: html,
-    }
-}
 
 function getUpdateItem(arr, id) {
     let item = null
@@ -81,7 +78,7 @@ export default class Team extends React.Component{
 
     initTodoListArr = async() => {
         // 请求todoListArr数据
-        const resp = await api('/api/team/taskList', { 
+        const resp = await api('/api/team/taskList', {
             method:'GET',
             body:{
                 teamId: this.teamId
@@ -169,7 +166,7 @@ export default class Team extends React.Component{
             method: 'POST',
             body: { userList: memberIDList }
         })
-
+        console.log('result.data.topicList', result.data.topicList)
         memberResult.data.map((item, idx) => {
             memberList.push({
                 ...item,
@@ -205,16 +202,20 @@ export default class Team extends React.Component{
         })
 
         console.log('topicAttachments', this.state.topicAttachments)
+        const content = {
+            content: this.state.topicContent,
+            attachment: this.state.topicAttachments,
+        }
         const result = await api('/api/topic/createTopic', {
             method: 'POST',
             body: {
                 teamId: this.teamId,
                 name: this.state.topicName,
-                content: this.state.topicContent,
-                attachment: this.state.topicAttachments,
+                content,
                 informList: informList,
             }
         })
+        console.log('createTopicHandle', result.data)
 
         if(result.state.code == 0) {
             const topicList = this.state.topicList
@@ -223,7 +224,7 @@ export default class Team extends React.Component{
                 _id: result.data._id,
                 creator: this.props.personInfo,
                 title: this.state.topicName,
-                content: this.state.topicContent,
+                content,
                 time: time,
             })
             this.setState({
@@ -250,9 +251,7 @@ export default class Team extends React.Component{
     }
 
     topicFileUploadHandle = async (e) => {
-        console.log('处理文件上传')
         const resp = await fileUploader('teamId', '', e.target.files[0])
-        console.log('文件上传', resp)
         let topicAttachments = this.state.topicAttachments
         topicAttachments = [...topicAttachments, resp]
         this.setState({

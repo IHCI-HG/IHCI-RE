@@ -48,7 +48,6 @@
             color: rgb(42, 42, 50);
         }
     }
-
     .discuss-con {
         margin-top: 40px;
         padding: 20px 30px 40px 30px;
@@ -74,7 +73,7 @@
                     height: 70px;
                     width: 100px;
 
-                    font-size: 26px; 
+                    font-size: 26px;
                 }
             }
 
@@ -94,7 +93,7 @@
     .create-area {
         .topic-name {
             display: block;
-            border: 1px solid #e6e6e6; 
+            border: 1px solid #e6e6e6;
             border-radius: 4px;
             width: 100%;
             height: 50px;
@@ -103,7 +102,7 @@
             padding: 0 20px;
             margin-bottom: 30px;
         }
-    
+
         .topic-content {
             display: block;
             width: 100%;
@@ -142,7 +141,7 @@
             color: #333;
             cursor: pointer;
         }
-        
+
     }
 
     .topic-list {
@@ -158,7 +157,7 @@
 
         height: 120px;
         cursor: pointer;
-        
+
         .head-img {
             height: 80px;
             width: 80px;
@@ -167,7 +166,7 @@
             flex-shrink: 0;
         }
         .name {
-            margin-right: 20px;
+            margin-right: 1.266667rem;
             flex-shrink: 0;
         }
         .main {

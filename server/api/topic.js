@@ -18,12 +18,11 @@ var topicDB = mongoose.model('topic')
 var discussDB = mongoose.model('discuss')
 var timelineDB = mongoose.model('timeline')
 
-var newAddTopicNum = 0;
-
 const createTopic = async (req, res, next) => {
     const teamId = req.body.teamId
     const topicName = req.body.name
     const topicContent = req.body.content
+    const topicFileList = req.body.fileList
     const informList = req.body.informList
     const userId = req.rSession.userId 
 
@@ -37,12 +36,10 @@ const createTopic = async (req, res, next) => {
 
     try {
         const userObj = await userDB.baseInfoById(userId)
-        const result = await topicDB.createTopic(topicName, topicContent, userObj, teamId)
+        const result = await topicDB.createTopic(topicName, topicFileList, topicContent, userObj, teamId)
         await teamDB.addTopic(teamId, result)
         const teamObj = await teamDB.findByTeamId(teamId)
         await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'CREATE_TOPIC', result._id, result.title, result)
-
-        newAddTopicNum++;
 
         //如果有需要通知的人，则走微信模板消息下发流程
         if(informList && informList.length) {
@@ -259,9 +256,7 @@ const getMoreTopic = async (req,res,next) =>{
     }
 
     try {
-        const topicObj = await topicDB.getByPage(teamId,currentPage,newAddTopicNum);
-
-        newAddTopicNum = 0;
+        const topicObj = await topicDB.getByPage(teamId,currentPage);
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
@@ -309,7 +304,7 @@ const delTopic = async (req,res,next) =>{
         const teamObj = await teamDB.findByTeamId(teamId)
         await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'DELETE_TOPIC', topicObj._id, topicObj.title, topicObj)
         
-        newAddTopicNum--;
+
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },

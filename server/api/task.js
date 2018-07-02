@@ -28,8 +28,6 @@ var timelineDB = mongoose.model('timeline')
 var taskDB = mongoose.model('task')
 var tasklistDB = mongoose.model('tasklist')
 
-var newAddDiscussNum = 0;
-
 const createTasklist = async (req, res, next) => {
     const userId = req.rSession.userId;
     const listname = req.body.name;
@@ -274,7 +272,8 @@ const createTask = async (req, res, next) => {
             deadline: deadline,
             header: result.header,
             teamId: teamId,
-            listId: tasklistId
+            listId: tasklistId,
+            fileList: result.fileList
         }
 
         const headerList = []
@@ -392,6 +391,7 @@ const editTask = async (req, res, next) => {
         task.title = editTask.name || taskObj.title;
         task.content = editTask.desc || taskObj.content;
         task.fileList = editTask.fileList || taskObj.fileList;
+        console.log('task.fileList', task.fileList);
         task.deadline = editTask.ddl || taskObj.deadline;
         if (editTask.assigneeId === undefined) {
             task.header = taskObj.header
@@ -562,6 +562,7 @@ const taskInfo = async (req, res, next) => {
             completed_time: taskCompleted_time,
             teamId: taskObj.teamId,
             listId: taskObj.tasklistId,
+            fileList: taskObj.fileList,
             checkitemList: checkitemList
         }
 
@@ -675,7 +676,7 @@ const dropCheckitem = async (req, res, next) => {
 
          //6.28
          const baseInfoObj = await userDB.baseInfoById(userId);
- 
+
 
         var checkitemObj = null;
         for (var i = 0; i < taskObj.checkitemList.length; i++) {
@@ -691,7 +692,7 @@ const dropCheckitem = async (req, res, next) => {
          //6.28
          const teamObj = await teamDB.findByTeamId(teamId)
          await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'DELETE_CHECK_ITEM', checkitemId, checkitemObj.content, checkitemObj)
- 
+
 
         if (checkitemObj.header) {
             const headerList = []
@@ -814,7 +815,7 @@ const editCheckitem = async (req, res, next) => {
              const teamObj = await teamDB.findByTeamId(teamId);
              const baseInfoObj = await userDB.baseInfoById(userId);
              await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'FINISH_CHECITEM_ITEM', checkitemObj._id, checkitemObj.title, checkitemObj);
- 
+
         } else {
             checkitemObj.state = false;
             checkitemObj.completed_time = "";
@@ -1026,7 +1027,7 @@ const createDiscuss = async (req, res, next) => {
 
     try {
         const userObj = await userDB.baseInfoById(userId);
-        
+
         //6.28
         const taskObj = await taskDB.findByTaskId(taskId);
 
@@ -1034,13 +1035,6 @@ const createDiscuss = async (req, res, next) => {
         const result = await discussDB.createDiscuss(teamId, "", taskObj.title, content, userObj, fileList);
 
         await taskDB.addDiscuss(taskId, result._id);
-
-        //7.2
-        newAddDiscussNum++;
-
-        //test
-        console.log("...........................")
-        console.log(newAddDiscussNum);
 
         const teamObj = await teamDB.findByTeamId(teamId)
 
@@ -1149,9 +1143,6 @@ const delDiscuss = async (req, res, next) => {
         const result = await discussDB.delDiscussById(discussId);
         await taskDB.delDiscuss(taskId, discussId);
 
-        //7.2
-        newAddDiscussNum--;
-        
         //6.28
         await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'DELETE_TASK_REPLY', discussObj._id, discussObj.title, discussObj);
 
@@ -1192,15 +1183,7 @@ const findDiscuss = async (req, res, next) => {
 
 
         var discussIdList = taskObj.discussList;
-        discussList = await discussDB.getDiscussByPage(discussIdList,currentPage,newAddDiscussNum);
-
-        //test\
-        console.log("...........................")
-        console.log(newAddDiscussNum);
-
-        newAddDiscussNum = 0;
-
-
+        discussList = await discussDB.getDiscussByPage(discussIdList,currentPage);
 
         // await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'OPEN_CHECKITEM', checkitemId, checkitemObj.content, checkitemObj)
 
