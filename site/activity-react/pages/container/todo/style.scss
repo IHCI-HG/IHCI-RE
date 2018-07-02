@@ -239,7 +239,10 @@
 }
 
 .discuss-page {
- 
+    .file-list {
+        margin: 20px 10px;
+        padding-left: 0.4rem;
+    }
     .sp-nav {
         padding: 10px 0 30px 0;
         font-size: 20px;
@@ -765,3 +768,5 @@
         -webkit-line-clamp: 1;
     }
 }
+
+

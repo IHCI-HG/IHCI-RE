@@ -51,7 +51,7 @@ class EditTodo extends React.Component {
             // console.log('todoDesc', this.state.todoDesc)
             // console.log('todoAttachments', this.state.todoAttachments)
             params.desc =  this.state.todoDesc
-            params.fileList =  this.state.attachments
+            params.fileList =  this.state.todoAttachments
             // params.content = {
             //     content: this.state.todoDesc,
             //     attachments: this.state.todoAttachments

@@ -390,6 +390,7 @@ const editTask = async (req, res, next) => {
         task.title = editTask.name || taskObj.title;
         task.content = editTask.desc || taskObj.content;
         task.fileList = editTask.fileList || taskObj.fileList;
+        console.log('task.fileList', task.fileList);
         task.deadline = editTask.ddl || taskObj.deadline;
         if (editTask.assigneeId === undefined) {
             task.header = taskObj.header
@@ -673,7 +674,7 @@ const dropCheckitem = async (req, res, next) => {
 
          //6.28
          const baseInfoObj = await userDB.baseInfoById(userId);
- 
+
 
         var checkitemObj = null;
         for (var i = 0; i < taskObj.checkitemList.length; i++) {
@@ -689,7 +690,7 @@ const dropCheckitem = async (req, res, next) => {
          //6.28
          const teamObj = await teamDB.findByTeamId(teamId)
          await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'DELETE_CHECK_ITEM', checkitemId, checkitemObj.content, checkitemObj)
- 
+
 
         if (checkitemObj.header) {
             const headerList = []
@@ -812,7 +813,7 @@ const editCheckitem = async (req, res, next) => {
              const teamObj = await teamDB.findByTeamId(teamId);
              const baseInfoObj = await userDB.baseInfoById(userId);
              await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'FINISH_CHECITEM_ITEM', checkitemObj._id, checkitemObj.title, checkitemObj);
- 
+
         } else {
             checkitemObj.state = false;
             checkitemObj.completed_time = "";
@@ -1024,7 +1025,7 @@ const createDiscuss = async (req, res, next) => {
 
     try {
         const userObj = await userDB.baseInfoById(userId);
-        
+
         //6.28
         const taskObj = taskDB.findByTaskId(taskId);
 
@@ -1139,7 +1140,7 @@ const delDiscuss = async (req, res, next) => {
 
         const result = await discussDB.delDiscussById(discussId);
         await taskDB.delDiscuss(taskId, discussId);
-        
+
         //6.28
         await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'DELETE_TASK_REPLY', discussObj._id, discussObj.title, discussObj);
 

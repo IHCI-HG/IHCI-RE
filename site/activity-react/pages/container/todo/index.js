@@ -191,7 +191,7 @@ export default class Task extends React.Component{
         todo.desc = resp.data.content
         todo.ddl = resp.data.deadline
         todo.name = resp.data.title
-        todo.filelist = resp.data.filelist
+        todo.fileList = resp.data.fileList
         todo.list = []
         todo.teamId = resp.data.teamId
         todo.assignee = {}
@@ -321,7 +321,7 @@ export default class Task extends React.Component{
         else{
             const resp = await api('/api/task/taskMove', {
                 method:"POST",
-                body:{ 
+                body:{
                     taskId:this.props.params.id,
                     teamIdMoveTo: this.state.teamToMove
                 }
@@ -340,7 +340,7 @@ export default class Task extends React.Component{
         else{
             const resp = await api('/api/task/taskCopy', {
                 method:"POST",
-                body:{ 
+                body:{
                     taskId:this.props.params.id,
                     teamId: this.state.todo.teamId,
                     copyCount:this.state.copyNumber
@@ -427,6 +427,7 @@ export default class Task extends React.Component{
         editTask.desc = todoInfo.desc
         editTask.fileList = todoInfo.fileList
         editTask.assigneeId = todoInfo.assigneeId
+        console.log('editTask', editTask);
         const resp = await api('/api/task/edit', {
             method: 'POST',
             body: {
@@ -443,6 +444,7 @@ export default class Task extends React.Component{
             todo.ddl = resp.data.deadline
             todo.desc = resp.data.content
             todo.assignee = rAssignee
+            todo.fileList = resp.data.fileList
             console.log('handleTodoModify', todo)
             this.setState({ todo })
         }
@@ -665,6 +667,13 @@ export default class Task extends React.Component{
                          handleTodoModify={this.handleTodoModify}
                          handleTodoCheck={this.handleTodoCheck}
                          handleTodoDelete={this.handleTodoDelete}/>
+                     <div className="file-list">
+                         {
+                             this.state.todo.fileList && this.state.todo.fileList.map((item) => {
+                                 return( <div key={Math.random()}>{item.name}</div> )
+                             })
+                         }
+                     </div>
                      <div className="checkitem-list">
                          {
                              this.state.todo.list &&
@@ -765,10 +774,10 @@ export default class Task extends React.Component{
                         {
                             this.state.topicListArr.map((item) => {
                                 return (
-                                    <TopicItem 
-                                    key={"topic-item-" + item.id} 
-                                    locationTo={this.locationTo} 
-                                    {...item} 
+                                    <TopicItem
+                                    key={"topic-item-" + item.id}
+                                    locationTo={this.locationTo}
+                                    {...item}
                                     deleteTopicHandle={this.deleteTopicHandle}
                                     memberList={this.state.memberList}/>
                                 )
