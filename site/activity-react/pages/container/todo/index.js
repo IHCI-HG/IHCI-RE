@@ -537,11 +537,24 @@ export default class Task extends React.Component{
         return resp
     }
 
-    handleTodoDelete = async() => {
-        const resp = await mock.httpMock('/common/delete', { id: this.props.params.id })
-        if (resp.status ===200) {
-            this.props.router.push(`/team/${this.state.todo.teamId}`)
+    handleTodoDelete = async(index,id) => {
+        const resp = await api('/api/task/dropCheckitem', {
+            method: 'POST',
+            body: {
+                todoId: this.props.params.id,
+                checkitemId: id
+            }
+        })
+        if (resp.state.code === 0) {
+            const todo = this.state.todo
+            todo.list.map((cItem, index) => {
+                if(cItem.id===id){
+                    checkList.splice(index,1)
+                }
+            })
+            this.setState({ todo })
         }
+        return resp
     }
 
     // check create 需要返回
