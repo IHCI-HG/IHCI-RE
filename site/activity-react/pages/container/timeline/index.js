@@ -63,11 +63,11 @@ class TimelineItem extends React.PureComponent{
 
 export default class News extends React.Component{
     componentDidMount = async() => {
-        await this.initTimelineData()
+        await this.loadTimelineData()
         this.initTeamList()
     }
 
-    initTimelineData = async () => {
+    loadTimelineData = async () => {
         const queryTeamId = this.props.location.query.teamId
 
         const result = await api('/api/timeline/getTimeline', {
@@ -79,7 +79,6 @@ export default class News extends React.Component{
         this.setState({
             newsList: result.data
         }, () => {
-            console.log(this.state.newsList)
             this.appendToShowList(this.state.newsList)
         })
 
@@ -110,10 +109,9 @@ export default class News extends React.Component{
             showList[timeKey][item.teamId].newsList.push(item)
         })
 
-        console.log(showList);
         this.setState({
             showList: showList
-        })
+        },console.log(this.state.showList))
     }
 
     typeMap = {
@@ -141,7 +139,7 @@ export default class News extends React.Component{
     state = {
         // type: create, reply
         newsList: [],
-
+        loadMoreCount:1,
         // showList的数据结构长这样
         // showList: {
         //     timeKeyList: ['20170101', '20170102'],
@@ -165,6 +163,10 @@ export default class News extends React.Component{
         teamList: [],
     }
 
+    loadMoreHandle = () => {
+        this.setState({
+            loadMoreCount:this.state.loadMoreCount+1
+        },this.loadTimelineData)}
 
     teamFilterHandle = () => {
         this.setState({
@@ -270,7 +272,9 @@ export default class News extends React.Component{
                         })
                     } 
 
-                    <div className="load-more" onClick={() => {}}>点击加载更多</div>
+                    {
+                        (this.state.showList.length>=20*this.state.loadMoreCount)&&<div className="load-more" onClick={this.loadMoreHandle}>点击加载更多</div>
+                    }
                 </div>
 
                 
