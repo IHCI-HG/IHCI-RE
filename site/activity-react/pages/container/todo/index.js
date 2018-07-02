@@ -106,7 +106,7 @@ export default class Task extends React.Component{
     componentDidMount = async() => {
         await this.initTodoInfo()
         this.initMemberList()
-        this.initTopicListArr()
+        this.loadTopicListArr()
         this.initTeamList()
     }
 
@@ -219,10 +219,13 @@ export default class Task extends React.Component{
         }
     }
 
-    initTopicListArr = async() => {
+    loadTopicListArr = async() => {
         const resp = await api('/api/task/findDiscuss', {
             method:"POST",
-            body:{ taskId: this.props.params.id }
+            body:{ 
+                taskId: this.props.params.id,
+                currentPage: this.state.loadMoreCount
+            }
         })
         if (resp.state.code === 0) {
             const topicListArr = this.state.topicListArr 
@@ -327,7 +330,7 @@ export default class Task extends React.Component{
     loadMoreHandle = () => {
         this.setState({
             loadMoreCount:this.state.loadMoreCount+1
-        },this.initTopicListArr
+        },this.loadTopicListArr
         // async () => {
         //     let showTopicList = this.state.topicListArr
         //     let moreList = []
@@ -837,7 +840,7 @@ export default class Task extends React.Component{
                         }
                     </div>
                     {
-                        (this.state.topicListArr.length>=20)&&<div className="load-more" onClick={this.loadMoreHandle}>点击加载更多</div>
+                        (this.state.topicListArr.length>=20*this.state.loadMoreCount)&&<div className="load-more" onClick={this.loadMoreHandle}>点击加载更多</div>
                     }
                     <div className="create-topic">
                         <div className="imgInfo">
