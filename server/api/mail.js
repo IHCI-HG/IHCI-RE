@@ -22,7 +22,7 @@ const activation = async (req, res, next) => {
     const userId = req.rSession.userId
     const mailAccount = req.body.mailAccount
     const mailCode = randomChar()
-    const result = await UserDB.findByIdAndUpdate({_id: userId}, {mailCode: mailCode, mailLimitTime: Date.now()+10*1000 }, {new: true})
+    const result = await UserDB.findByIdAndUpdate({_id: userId}, {mailCode: mailCode, mailLimitTime: Date.now()+600*1000 }, {new: true})
     var mail = {
         // 发件人
         from: 'ICHI <13416363790@163.com>',
@@ -32,9 +32,7 @@ const activation = async (req, res, next) => {
         to: mailAccount, //发送给注册时填写的邮箱
         text: '点击激活：<a href="http://localhost:5000/checkCode?userId='+ userId +'&mailCode='+ mailCode + '"></a>'
     };
-
        const sendFlag = await sendMail(mail)
-       console.log("dsfdf:",sendFlag)
        if(sendFlag){
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg:"成功"},
@@ -54,10 +52,7 @@ const checkCode = async (req, res, next) => {
     console.log(userId)
     console.log(mailCode)
     const user = await UserDB.findByUserId(userId)
-    console.log("woshi用户：", user)
     if (user.mailCode === mailCode && (user.mailLimitTime - Date.now()) > 0){
-        console.log("时间戳：",user.mailLimitTime) 
-        console.log("时间戳：",user.mailLimitTime+1000*10)
         const result = await UserDB.findByIdAndUpdate({_id: userId}, {isLive: true}, {new: true})
         if(result){
             resProcessor.jsonp(req, res, {
