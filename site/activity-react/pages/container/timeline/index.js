@@ -22,42 +22,48 @@ class TimelineItem extends React.PureComponent{
     typeMap = {
         'CREATE_TOPIC': '创建了讨论：',
         'REPLY_TOPIC': '回复了讨论：',
-        'DELETE_TOPIC': '删除了讨论',
-
-        'DELETE_TOPIC_REPLY': '删除了讨论回复',
-
-        'CREATE_TASK': '创建了任务',
-        'DELETE_TASK': '删除了任务',
-        'FINISH_TASK': '完成了任务',
-
-        'REPLY_TASK': '回复了任务',
-        'DELETE_TASK_REPLY': '删除了任务回复',
-
-        'CREATE_CHECK_ITEM': '创建了检查项',
-        'DELETE_CHECK_ITEM': '删除了检查项',
-        'FINISH_CHECITEM_ITEM': '完成了检查项',
-
-        'COPY_TASK': '复制了任务',
-        'MOVE_TASK': '移动了任务',
     }
 
     render() {
-        return(
-            <div className='news-item-wrap'>
-                <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
-                <img src={this.props.creator.headImg} alt="" className="head-img" />
+        switch (this.props.type) {
+            case 'CREATE_TOPIC':
+                return(
+                    <div className='news-item-wrap'>
+                        <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
+                        <img src={this.props.creator.headImg} alt="" className="head-img" />
 
-                <div className="news-con">
-                    <div className="des-line">
-                        <span className="name">{this.props.creator.name}</span>
-                        <span className="type">{this.typeMap[this.props.type]}</span>
-                        <span className="topic">{this.props.content.title}</span>
+                        <div className="news-con">
+                            <div className="des-line">
+                                <span className="name">{this.props.creator.name}</span>
+                                <span className="type">{this.typeMap[this.props.type]}</span>
+                                <span className="topic">{this.props.content.title}</span>
+                            </div>
+
+                            <div className="content">{this.props.content.content}</div>
+                        </div>
                     </div>
+                )
+            case 'REPLY_TOPIC':
+                return (
+                    <div className='news-item-wrap'>
+                        <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
+                        <img src={this.props.creator.headImg} alt="" className="head-img" />
 
-                    <div className="content">{this.props.content.content}</div>
-                </div>
-            </div>
-        )
+                        <div className="news-con">
+                            <div className="des-line">
+                                <span className="name">{this.props.creator.name}</span>
+                                <span className="type">{this.typeMap[this.props.type]}</span>
+                                <span className="topic">{this.props.content.title}</span>
+                            </div>
+
+                            <div className="content">{this.props.content.content}</div>
+                        </div>
+                    </div>
+                )
+                break;
+            default:
+                return ''
+        }
     }
 }
 
@@ -79,7 +85,6 @@ export default class News extends React.Component{
         this.setState({
             newsList: result.data
         }, () => {
-            console.log(this.state.newsList)
             this.appendToShowList(this.state.newsList)
         })
 
@@ -119,23 +124,6 @@ export default class News extends React.Component{
     typeMap = {
         'CREATE_TOPIC': '创建了讨论：',
         'REPLY_TOPIC': '回复了讨论：',
-        'DELETE_TOPIC': '删除了讨论',
-
-        'DELETE_TOPIC_REPLY': '删除了讨论回复',
-
-        'CREATE_TASK': '创建了任务',
-        'DELETE_TASK': '删除了任务',
-        'FINISH_TASK': '完成了任务',
-
-        'REPLY_TASK': '回复了任务',
-        'DELETE_TASK_REPLY': '删除了任务回复',
-
-        'CREATE_CHECK_ITEM': '创建了检查项',
-        'DELETE_CHECK_ITEM': '删除了检查项',
-        'FINISH_CHECITEM_ITEM': '完成了检查项',
-
-        'COPY_TASK': '复制了任务',
-        'MOVE_TASK': '移动了任务',
     }
 
     state = {

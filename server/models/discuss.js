@@ -49,14 +49,17 @@ discussSchema.statics = {
     },
 
     //7.2
-    getDiscussByPage:async function(queryList,currentPage){
+    getDiscussByPage:async function(queryList,currentPage,newAddDiscussNum){
         var pageSize = 20;
         var sortFunc = {create_time:-1};
-        var skipNumber = (currentPage - 1) * pageSize;
+        var skipNumber = (currentPage - 1) * pageSize + newAddDiscussNum;
+
+        console.log('............................')
+        console.log(skipNumber);
 
         var result;
         if (queryList && queryList.length) {
-            result = await this.find({ $or: queryList }).skip(skipNumber).limit(pageSize).sort(sortFunc).exec();
+            result = await this.find({ $or: queryList }).skip(skipNumber).limit(pageSize - newAddDiscussNum).sort(sortFunc).exec();
             return result;
         } else {
             return [];
