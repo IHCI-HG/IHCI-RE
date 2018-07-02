@@ -34,6 +34,13 @@ export default class Person extends React.Component{
             window.toast("该微信号已经绑定")
             history.pushState({}, {}, '/person')
         }
+
+        if(INIT_DATA.userObj.personInfo.mail.length>0)
+        {
+            this.setState({
+                hasMail: true,
+            })
+        }
     }
 
     starHandle = async (id) => {
@@ -70,6 +77,7 @@ export default class Person extends React.Component{
         },
         confirmEditMail: false,
         submittable: false,
+        hasMail: false,
     }
 
     headImgInputHandle = (e) => {
@@ -323,10 +331,24 @@ export default class Person extends React.Component{
                             <div className='after default-color'>
                                 {this.state.personInfo.mail}
                             </div>
+<<<<<<< HEAD
                             <div className='edit-btn' onClick={this.editConfirmHangle}>修改邮箱</div>
                             {this.state.userObj.isLive ?
                                 <div className='active-info'><div className='iconfont icon-mail green'></div><div className='active-info'>邮箱已激活</div></div>
                                 : <div className='active-info'><div className='iconfont icon-mail yellow'></div><div className='active-info'>邮箱未<div className='activate-btn' onClick={this.activateMailHandle}>激活</div></div></div>
+=======
+                            {!this.state.hasMail ?
+                            <div className='edit-btn' onClick={this.editConfirmHangle}>设置邮箱</div>
+                            : <div className='edit-btn' onClick={this.editConfirmHangle}>修改邮箱</div>
+                            }
+                            {this.state.hasMail &&
+                                <div className='active-info'>
+                                    {this.state.userObj.isLive ?
+                                        <div className='active-info'><div className='iconfont icon-mail green'></div><div className='active-info'>邮箱已激活</div></div>
+                                        : <div className='active-info'><div className='iconfont icon-mail yellow'></div><div className='active-info'>邮箱未<div className='activate-btn' onClick={this.activateMailHandle}>激活</div></div></div>
+                                    }
+                                </div>
+>>>>>>> ed5a8d30a7a846cc8f9b0dba4bab2d218e90f784
                             }
                         </div>
                     }
