@@ -87,7 +87,8 @@ export default class News extends React.Component{
             }
         })
         this.setState({
-            newsList: result.data
+            newsList: result.data,
+            memberJumped: !!queryPerson ? !!queryPerson : false,
         }, () => {
             this.appendToShowList(this.state.newsList)
         })
@@ -113,7 +114,7 @@ export default class News extends React.Component{
         const queryTeamId = this.props.location.query.teamId
         const queryPerson = this.props.location.query.userId
         const lastStamp = this.state.lastStamp
-        
+
         const result = await api('/api/timeline/getTimeline', {
             method: 'POST',
             body: {
@@ -129,7 +130,8 @@ export default class News extends React.Component{
         })
         if(result.data.length<moreTimeLineItemNum){
             this.setState({
-                noMoreResult: true
+                noMoreResult: true,
+                memberJumped: !!queryPerson ? !!queryPerson : false,
             })
         }
     }
@@ -203,6 +205,7 @@ export default class News extends React.Component{
         teamList: [],
         noResult: false,
         noMoreResult: false,
+        memberJumped: false,
     }
 
 
@@ -270,20 +273,22 @@ export default class News extends React.Component{
                 
 
                 <div className="news-list page-wrap">
-                    <div className='title-bar'>
-                        <div className='filter-title'>
-                            筛选动态:
-                            <span className='team-filter'  onClick={this.teamFilterHandle}>
-                            {
-                                this.props.location.query.teamId ? this.props.personInfo.teamList.map((item) => {
-                                    if(item.teamId == this.props.location.query.teamId)
-                                        return item.teamName
-                                }) : "根据团队"
-                            }
-                            </span>
-                        </div>
+                    {
+                        !this.state.memberJumped && <div className='title-bar'>
+                            <div className='filter-title'>
+                                筛选动态:
+                                <span className='team-filter'  onClick={this.teamFilterHandle}>
+                                {
+                                    this.props.location.query.teamId ? this.props.personInfo.teamList.map((item) => {
+                                        if(item.teamId == this.props.location.query.teamId)
+                                            return item.teamName
+                                    }) : "根据团队"
+                                }
+                                </span>
+                            </div>
 
-                    </div>
+                        </div>
+                    }
 
                     
                     {

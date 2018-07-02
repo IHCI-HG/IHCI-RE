@@ -235,6 +235,17 @@ export default class SearchResult extends React.Component{
         path += (!(typeof(type) == 'undefined')) ? (type == '' ? '': ('&type=' + type)) : (queryType ? ('&type=' + queryType) :'')
         location.href = path
 
+        // const query = {
+        //     text: queryText,
+        //     teamId: (!(typeof(teamId) == 'undefined')) ? (teamId == '' ? '': (teamId)) : (queryTeamId ? (queryTeamId) :''),
+        //     type: (!(typeof(type) == 'undefined')) ? (type == '' ? '': (type)) : (queryType ? (queryType) :''),
+        // }
+        // const location = {pathname: '/search', query: query}
+        // console.log(this.props);
+        // this.props.router.push('/')
+        // this.props.router.push(location)
+        // this.props.router.forceUpdate()
+    
     }
 
     typeMap = {
