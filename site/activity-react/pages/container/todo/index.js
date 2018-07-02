@@ -32,8 +32,11 @@ class TopicItem extends React.Component{
         this.props.deleteTopicHandle(this.props.id)
     }
 
-    editTopicHandle = () => {
-        this.props.editTopicHandle(this.props.id)
+    updateTopicHandle = () => {
+        this.props.updateTopicHandle(this.props.id)
+    }
+    sendContent = () => {
+        this.props.sendContent(this.props.content)
     }
     render() {
         return(
@@ -49,7 +52,7 @@ class TopicItem extends React.Component{
                             this.state.showEdit&&<div className="topic-actions-wrap">
                                 <div className="topic-actions">
                                     <i className="icon iconfont" onClick={this.deleteTopicHandle}>&#xe70b;</i>
-                                    <i className="icon iconfont" onClick={() => {this.setState({showCreateTopic: true,showButton:false})}}> &#xe6ec;</i>
+                                    <i className="icon iconfont" onClick={() => {this.sendContent();this.setState({showCreateTopic: true,showButton:false})}}> &#xe6ec;</i>
                                 </div>
                             </div>
                         }
@@ -58,11 +61,11 @@ class TopicItem extends React.Component{
                         <div className="topic-title">{this.props.title}</div>
                         {this.state.showButton&&<div className="topic-content">{this.props.content}</div>}
                         {this.state.showCreateTopic&&<div className="create-area">
-                            <textarea className="topic-content" onChange={this.topicContentInputHandle} value={this.state.createTopicContent} placeholder="说点什么" autoFocus></textarea>
+                            <textarea className="topic-content" onChange={this.props.updateTopicInputHandle} value={this.props.updateTopicContent} placeholder="说点什么" autoFocus></textarea>
                             <div className="infrom">请选择要通知的人：</div>
                             <MemberChosenList choseHandle={this.props.memberChoseHandle} memberList={this.props.memberList}/>
                             <div className="btn-con">
-                                <div className="create-btn" onClick={()=>{this.createTopicHandle();this.setState({showCreateTopic: false,showButton:true})}}>发起讨论</div>
+                                <div className="create-btn" onClick={()=>{this.updateTopicHandle();this.setState({showCreateTopic: false,showButton:true})}}>发起讨论</div>
                                 <div className="cancle" onClick={() => {this.setState({showCreateTopic: false,showButton:true})}}>取消</div>
                             </div>
                         </div>}
@@ -81,8 +84,8 @@ export default class Task extends React.Component{
         moveExpanded: false,
         showActionList: false,
         copyExpanded: false,
-        createTopicName: '',
         createTopicContent: '',
+        updateTopicContent:'',
         memberNum: 0,
         showCreateCheck: false,
         actionList:[],
@@ -97,12 +100,14 @@ export default class Task extends React.Component{
         todo: {},
         copyTeamList:[],
         moveTeamList:[],
+        loadMoreCount:1,
+        replyCount:0
     }
 
     componentDidMount = async() => {
         await this.initTodoInfo()
         this.initMemberList()
-        this.initTopicListArr()
+        this.loadTopicListArr()
         this.initTeamList()
     }
 
@@ -213,26 +218,32 @@ export default class Task extends React.Component{
         }
     }
 
-    initTopicListArr = async() => {
+    loadTopicListArr = async() => {
         const resp = await api('/api/task/findDiscuss', {
             method:"POST",
-            body:{ taskId: this.props.params.id }
+            body:{ 
+                taskId: this.props.params.id,
+                currentPage: this.state.loadMoreCount
+            }
         })
         if (resp.state.code === 0) {
-            let topicList = []
+            const topicListArr = this.state.topicListArr 
             resp.data.map((item)=>{
-                let topic = {}
+                const topic = {}
                 topic.id = item._id
                 topic.creator = item.creator
                 topic.time = item.create_time
                 topic.content = item.content
-                topicList.push(topic)
+                topicListArr.push(topic)
             })
-            this.setState({ topicListArr: topicList })
+            this.setState({ topicListArr })
         }
     }
 
     createTopicHandle = async () => {
+        this.setState({
+            replyCount:this.state.replyCount+1
+        })
         const informList = []
         this.state.memberList.map((item) => {
             if(item.chosen) {
@@ -244,7 +255,6 @@ export default class Task extends React.Component{
             body:{
                 teamId: this.state.todo.teamId,
                 taskId: this.props.params.id,
-                title: this.state.createTopicName,
                 content: this.state.createTopicContent,
                 informList: informList,
             }
@@ -256,14 +266,47 @@ export default class Task extends React.Component{
             topic.creator = resp.data.creator
             topic.time = resp.data.create_time
             topic.content = resp.data.content
-            topicList.push(topic)
+            topicList.unshift(topic)
             this.setState({
                 topicListArr:topicList,
                 createTopicName:"",
                 createTopicContent:"",
              })
         }
+        console.log(this.state.replyCount)
         return resp
+    }
+
+    updateTopicHandle= async (id) =>{
+        const informList = []
+        this.state.memberList.map((item) => {
+            if(item.chosen) {
+                informList.push(item._id)
+            }
+        })
+        const resp = await api('/api/task/editDiscuss', {
+            method:"POST",
+            body:{
+                teamId: this.state.todo.teamId,
+                taskId: this.props.params.id,
+                content: this.state.updateTopicContent,
+                informList: informList,
+                discussId:id,
+            }
+        })
+        console.log(id)
+        console.log(resp)
+        if (resp.state.code ===0) {
+            const topicListArr = this.state.topicListArr
+            topicListArr.map((item,index)=>{
+                if(item.id===id){
+                    item.content = resp.data.content
+                    item.time = resp.data.create_time
+                }
+            })
+            this.setState({ topicListArr })
+            return resp
+        }
     }
 
     deleteTopicHandle = async (id) =>{
@@ -275,7 +318,6 @@ export default class Task extends React.Component{
                 taskId: this.props.params.id,
             }
         })
-        console.log("del",resp)
         if (resp.state.code ===0) {
             const topicListArr = this.state.topicListArr
             topicListArr.map((item,index)=>{
@@ -288,30 +330,28 @@ export default class Task extends React.Component{
         }
     }
 
-    editTopicHandle = () =>{
-
-    }
-
     loadMoreHandle = () => {
         this.setState({
             loadMoreCount:this.state.loadMoreCount+1
-        },async () => {
-            let showTopicList = this.state.topicListArr
-            let moreList = []
-            const resp = await mock.httpMock('/todo/:id/get', {
-                id: this.teamId,
-                loadMoreCount: this.state.loadMoreCount
-            })
-            if (resp.status === 200) {
-                moreList = resp.data.topicList
-            }
-            moreList.map((item)=>{
-                showTopicList.push(item)
-            })
-            this.setState({
-                topicListArr:showTopicList
-            })
-        })
+        },this.loadTopicListArr
+        // async () => {
+        //     let showTopicList = this.state.topicListArr
+        //     let moreList = []
+        //     const resp = await mock.httpMock('/todo/:id/get', {
+        //         id: this.teamId,
+        //         loadMoreCount: this.state.loadMoreCount
+        //     })
+        //     if (resp.status === 200) {
+        //         moreList = resp.data.topicList
+        //     }
+        //     moreList.map((item)=>{
+        //         showTopicList.push(item)
+        //     })
+        //     this.setState({
+        //         topicListArr:showTopicList
+        //     })
+        // }
+    )
     }
 
     moveToTeamHandle = async () => {
@@ -353,15 +393,21 @@ export default class Task extends React.Component{
         }
     }
 
-    topicNameInputHandle = (e) => {
-        this.setState({
-            createTopicName: e.target.value
-        })
-    }
-
     topicContentInputHandle = (e) => {
         this.setState({
             createTopicContent: e.target.value
+        })
+    }
+
+    updateTopicInputHandle = (e) => {
+        this.setState({
+            updateTopicContent: e.target.value
+        })
+    }
+
+    sendContent = (e) => {
+        this.setState({
+            updateTopicContent: e
         })
     }
 
@@ -491,11 +537,24 @@ export default class Task extends React.Component{
         return resp
     }
 
-    handleTodoDelete = async() => {
-        const resp = await mock.httpMock('/common/delete', { id: this.props.params.id })
-        if (resp.status ===200) {
-            this.props.router.push(`/team/${this.state.todo.teamId}`)
+    handleTodoDelete = async(index,id) => {
+        const resp = await api('/api/task/dropCheckitem', {
+            method: 'POST',
+            body: {
+                todoId: this.props.params.id,
+                checkitemId: id
+            }
+        })
+        if (resp.state.code === 0) {
+            const todo = this.state.todo
+            todo.list.map((cItem, index) => {
+                if(cItem.id===id){
+                    checkList.splice(index,1)
+                }
+            })
+            this.setState({ todo })
         }
+        return resp
     }
 
     // check create 需要返回
@@ -507,6 +566,7 @@ export default class Task extends React.Component{
                 name: todoInfo.name,
                 ddl: todoInfo.date,
                 assigneeId: todoInfo.assigneeId,
+                teamId:this.state.todo.teamId,
             }
         })
 
@@ -612,7 +672,8 @@ export default class Task extends React.Component{
             body: {
                 todoId,
                 checkitemId,
-                editCheckitem
+                editCheckitem,
+                teamId: this.state.todo.teamId,
             }
         })
         console.log('resp', resp);
@@ -774,18 +835,23 @@ export default class Task extends React.Component{
                         {
                             this.state.topicListArr.map((item) => {
                                 return (
-                                    <TopicItem
-                                    key={"topic-item-" + item.id}
-                                    locationTo={this.locationTo}
-                                    {...item}
+                                    <TopicItem 
+                                    key={"topic-item-" + item.id} 
+                                    locationTo={this.locationTo} 
+                                    {...item} 
                                     deleteTopicHandle={this.deleteTopicHandle}
-                                    memberList={this.state.memberList}/>
+                                    memberList={this.state.memberList}
+                                    memberChoseHandle={this.memberChoseHandle}
+                                    updateTopicInputHandle={this.updateTopicInputHandle}
+                                    updateTopicContent={this.state.updateTopicContent}
+                                    updateTopicHandle={this.updateTopicHandle}
+                                    sendContent={this.sendContent}/>
                                 )
                             })
                         }
                     </div>
                     {
-                        (this.state.topicListArr.length>=20)&&<div className="load-more" onClick={this.loadMoreHandle}>点击加载更多</div>
+                        (this.state.topicListArr.length>=20*this.state.loadMoreCount)&&<div className="load-more" onClick={this.loadMoreHandle}>点击加载更多</div>
                     }
                     <div className="create-topic">
                         <div className="imgInfo">
@@ -796,11 +862,9 @@ export default class Task extends React.Component{
                         this.state.showButton && <input type="text" onClick={() => {this.setState({showCreateTopic: true,showButton:false})}} className="topic-name" placeholder="点击发表评论" /> }
                             {
                                 this.state.showCreateTopic && <div className="create-area">
-                                    <input type="text" className="topic-name" onChange={this.topicNameInputHandle} value={this.state.createTopicName} placeholder="话题" />
-                                    <textarea className="topic-content" onChange={this.topicContentInputHandle} value={this.state.createTopicContent} placeholder="说点什么"></textarea>
+                                    <textarea className="topic-content" onChange={this.topicContentInputHandle} value={this.state.createTopicContent} placeholder="说点什么" autoFocus></textarea>
                                     <div className="infrom">请选择要通知的人：</div>
                                     <MemberChosenList choseHandle={this.memberChoseHandle} memberList={this.state.memberList}/>
-
                                     <div className="btn-con">
                                         <div className="create-btn" onClick={()=>{this.createTopicHandle();this.setState({showCreateTopic: false,showButton:true})}}>发起讨论</div>
                                         <div className="cancle" onClick={() => {this.setState({showCreateTopic: false,showButton:true})}}>取消</div>

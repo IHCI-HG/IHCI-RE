@@ -1158,13 +1158,14 @@ const delDiscuss = async (req, res, next) => {
 }
 
 
-//6.27
+//7.2
 const findDiscuss = async (req, res, next) => {
     const taskId = req.body.taskId;
+    const currentPage = req.body.currentPage;
 
     const userId = req.rSession.userId;
 
-    if (!taskId) {
+    if (!taskId || !currentPage) {
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: "参数不全" },
             data: {}
@@ -1174,20 +1175,13 @@ const findDiscuss = async (req, res, next) => {
 
     try {
         const taskObj = await taskDB.findByTaskId(taskId);
-        const userObj = await userDB.findByUserId(userId);
+        //const userObj = await userDB.findByUserId(userId);
 
         var discussList = [];
-        var discussObj;
 
 
-        var tmpDiscussList = taskObj.discussList
-        var discussNum = tmpDiscussList.length;
-        for (var i = 0; i < discussNum; i++) {
-
-            discussObj = await discussDB.findTaskDiscuss(tmpDiscussList[i]._id);
-            discussList.push(discussObj);
-        }
-
+        var discussIdList = taskObj.discussList;
+        discussList = await discussDB.getDiscussByPage(discussIdList,currentPage);
 
         // await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'OPEN_CHECKITEM', checkitemId, checkitemObj.content, checkitemObj)
 
