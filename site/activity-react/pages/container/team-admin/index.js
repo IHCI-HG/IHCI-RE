@@ -165,11 +165,11 @@ export default class TeamAdmin extends React.Component{
     
     uploadFileHandle = async (e) => {
         var file = e.target.files[0];
+        var newFile = new File([file],this.teamId+file.name)
 
         var succeeded;
-        const uploadResult = fileUploader(this.teamId, '', file)
+        const uploadResult = fileUploader('', '', newFile)
         await uploadResult.then(function(val) {
-            console.log(val)
             succeeded = 1
         }).catch(function(reason){
             console.log(reason)
@@ -181,12 +181,10 @@ export default class TeamAdmin extends React.Component{
             return
         } 
 
-        console.log(file.name)
         window.toast("上传图片成功")
         this.setState({
-            teamImg: file.name
+            teamImg: this.teamId+file.name
         })
-        console.log(this.state.teamImg)
     }
 
 
@@ -211,8 +209,8 @@ export default class TeamAdmin extends React.Component{
                     <input type="text" value={this.state.name} className="admin-input" onChange={this.teamNameInputHandle} />
 
                     <div className="admin-title-sm">团队图片</div>
-                    <div className="create_btn" onClick={this.openFileInput}> 上传图片 </div>
-                    <img className="img-preview" src={window.location.origin+'/img/'+this.teamId+'/'+this.state.teamImg}></img>
+                    <div className="create-btn" onClick={this.openFileInput}> 上传图片 </div>
+                    <img className="img-preview" src={window.location.origin+'/img/'+this.state.teamImg}></img>
 
                     <div className="admin-title-sm">团队说明</div>
                     <textarea type="text" value={this.state.desc} className="admin-tra" onChange={this.teamDescChangeHandle} />

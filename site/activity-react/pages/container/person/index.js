@@ -166,11 +166,10 @@ export default class Team extends React.Component{
 
                 <div className="head-edit">
                     <div className="left">
-                        <img src={personInfo.headImg} className='head-img' />
+                        <img src={window.location.origin+'/head/'+this.state.personInfo.headImg} className='head-img' />
                     </div>
                     <div className="right">
-                        <input type="text" className="head-img-url" value={personInfo.headImg || ''} onChange={this.headImgInputHandle}/>
-                        <div className="head-des">请输入头像图片URL地址</div>
+                        <div className="create-btn" onClick={this.openFileInput}> 上传图片 </div>
                     </div>
                 </div>
 
