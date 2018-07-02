@@ -3,6 +3,7 @@ import './style.scss'
 import Page from '../../../components/page'
 import api from '../../../utils/api';
 import { timeBefore, createMarkup } from '../../../utils/util'
+import Editor from '../../../components/editor'
 
 import MemberChosenList from '../../../components/member-chose-list'
 
@@ -84,6 +85,8 @@ export default class Topic extends React.Component{
             title: '',
             content: '',
             create_time: '',
+            todoDesc: '',
+            todoAttachments: [],
         },
 
         topicNameInput: '',
@@ -109,6 +112,7 @@ export default class Topic extends React.Component{
             }
         })
 
+        console.log('topicInfo:', result.data);
         const topicObj = result.data
         topicObj.content = topicObj.content.content
         this.teamId = result.data.team
@@ -141,8 +145,21 @@ export default class Topic extends React.Component{
         })
     }
 
+    handleTodoDescChange = (content) => {
+        this.setState({
+            todoDesc: content
+        })
+        console.log(this.state.todoDesc)
+    }
 
-
+    topicFileUploadHandle = async (e) => {
+        const resp = await fileUploader('teamId', '', e.target.files[0])
+        let todoAttachments = this.state.todoAttachments
+        todoAttachments = [...todoAttachments, resp]
+        this.setState({
+            todoAttachments,
+        })
+    }
 
     topicNameInput = (e) => {
         this.setState({
@@ -264,7 +281,11 @@ export default class Topic extends React.Component{
                     {
                         this.state.topicObj.editStatus ? <div className="topic-subject-edit">
                                 <input type="text" onChange={this.topicNameInput} value={this.state.topicNameInput} className="topic-title"/>
-                                <textarea className='topic-content' onChange={this.topicContentHandle}  value={this.state.topicContentInput}></textarea>
+                                {/*<textarea className='topic-content' onChange={this.topicContentHandle}  value={this.state.topicContentInput}></textarea>*/}
+                                <Editor handleContentChange={this.handleTodoDescChange.bind(this)}
+                                        handleFileUpload={this.topicFileUploadHandle.bind(this)}
+                                        content={this.state.topicContentInput}
+                                        attachments={this.state.todoAttachments}></Editor>
 
                                 <div className="button-warp">
                                     <div className="save-btn" onClick={this.topicChangeSaveHandle}>保存</div>
