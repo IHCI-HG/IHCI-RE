@@ -69,6 +69,7 @@ export default class Person extends React.Component{
             illegalEmailAddress: false,
             illegalPhoneNumber:false,
         },
+        confirmEditMail: false,
         submittable: false,
     }
 
@@ -236,6 +237,36 @@ export default class Person extends React.Component{
             window.toast("解绑失败")
         }
     }
+
+    activateMailHandle = async() => {
+        if (this.state.personInfo.mail.length <= 0)
+        {
+            window.toast("邮箱未设置，请先修改邮箱")
+            return
+        }
+
+        const result = await api('/api/activation', {
+            method: 'POST',
+            body: {
+                mailAccount: this.state.personInfo.mail,
+            }
+        })
+
+        if(result.state.code === 0) {
+            window.toast("已发送激活邮件，请检查邮箱")
+            setTimeout(() => {
+                location.href = location.href
+            }, 300);
+        } else {
+            window.toast("激活邮件发送失败，请稍后再试")
+        }
+    }
+
+    editConfirmHangle = () => {
+        this.setState({
+            confirmEditMail: true,
+        })
+    }
     
     
     render() {
@@ -287,8 +318,21 @@ export default class Person extends React.Component{
                 </div>
 
                 <div className="edit-con">
+                    
                     <div className="before">邮箱</div>
-                    <input type="text" onChange={this.mailInputHandle} className="input-edit" value={this.state.personInfo.mail}/>
+                    {!this.state.confirmEditMail && 
+                        <div className='mail-present-bar'>
+                            <div className='after default-color'>
+                                {this.state.personInfo.mail}
+                            </div>
+                            <div className='edit-btn' onClick={this.editConfirmHangle}>修改邮箱</div>
+                            {this.state.userObj.islive ?
+                                <div className='active-info'><div className='iconfont icon-mail green'></div><div className='active-info'>邮箱已激活</div></div>
+                                : <div className='active-info'><div className='iconfont icon-mail yellow'></div><div className='active-info'>邮箱未<div className='activate-btn' onClick={this.activateMailHandle}>激活</div></div></div>
+                            }
+                        </div>
+                    }
+                    {this.state.confirmEditMail && <input type="text" onChange={this.mailInputHandle} className="input-edit" value={this.state.personInfo.mail}/>}
                     {this.state.infoCheck.illegalEmailAddress && <div className='after error'>格式错误,请填写正确格式的邮件地址</div>}
                 </div>
 

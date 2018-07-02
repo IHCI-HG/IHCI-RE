@@ -54,10 +54,49 @@
             display: flex;
             color: #666;
             margin: 10px;
+            align-items: center;
+
         }
 
+        .mail-present-bar{
+            display: flex;
+            align-items: center;
+
+            .active-info{
+                display: flex;
+                color: #666;
+                margin: 10px;
+                align-items: center;
+
+                .activate-btn{
+                    cursor: pointer;
+                    color: rgb(255, 197, 73);
+                }
+            }
+
+            .edit-btn{
+                cursor: pointer;
+                color: grey;
+                margin: 10px;
+            }
+        }
+
+        
+        
         .error{
             color: #f00;
+        }
+
+        .default-color{
+            color: #000;
+        }
+
+        .green{
+            color: green;
+        }
+
+        .yellow{
+            color: rgb(255, 197, 73);
         }
 
         .follow-btn{
