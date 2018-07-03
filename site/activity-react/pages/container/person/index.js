@@ -78,7 +78,7 @@ export default class Person extends React.Component{
         confirmEditMail: false,
         submittable: false,
         hasMail: false,
-        sendMailEnabled: false,
+        sendMailEnabled: true,
     }
 
     headImgInputHandle = (e) => {
@@ -247,6 +247,11 @@ export default class Person extends React.Component{
     }
 
     activateMailHandle = async() => {
+        if(!this.state.sendMailEnabled){
+            window.toast("请不要重复提交激活请求，请等待60s后再尝试发送")
+            return
+        }
+
         if (this.state.personInfo.mail.length <= 0)
         {
             window.toast("邮箱未设置，请先修改邮箱")
@@ -265,6 +270,17 @@ export default class Person extends React.Component{
         } else {
             window.toast("激活邮件发送失败，请稍后再试")
         }
+
+        this.setState({
+            sendMailEnabled: false,
+        })
+
+        setTimeout(() => {
+            this.setState({
+                sendMailEnabled: true,
+            })
+        }, 60000);
+
     }
 
     editConfirmHangle = () => {
@@ -334,7 +350,7 @@ export default class Person extends React.Component{
                             <div className='active-info'>
                                 {this.state.userObj.isLive ?
                                     <div className='active-info'><div className='iconfont icon-mail green'></div><div className='active-info'>邮箱已激活</div></div>
-                                    : <div className='active-info'><div className='iconfont icon-mail yellow'></div><div className='active-info'>邮箱未<div className='activate-btn' onClick={this.activateMailHandle}>激活</div></div></div>
+                                    : <div className='active-info'><div className='iconfont icon-mail yellow'></div><div className='active-info'>邮箱未<div className={this.state.sendMailEnabled ? 'activate-btn-active' : 'activate-btn'} onClick={this.activateMailHandle}>激活</div></div></div>
                                 }
                             </div>
                         </div>}

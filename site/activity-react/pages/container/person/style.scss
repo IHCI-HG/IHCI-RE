@@ -68,9 +68,13 @@
                 margin: 10px;
                 align-items: center;
 
-                .activate-btn{
+                .activate-btn-active{
                     cursor: pointer;
                     color: rgb(255, 197, 73);
+                }
+                .activate-btn{
+                    cursor: pointer;
+                    color: #ddd;
                 }
             }
 
