@@ -7,7 +7,6 @@ function formatDate(date, formatStr) {
     if (!date) {
         return '';
     }
-
     var format = formatStr || 'yyyy-MM-dd';
 
     if ('number' === typeof date || 'string' === typeof date) {
@@ -42,18 +41,16 @@ function formatDate(date, formatStr) {
 
 export const notificationMail = async function(userIdList, topicObj, type) {
     const personInfoList = await userDB.personInfoList(userIdList)
-    console.log("我是信息列表：,", personInfoList)
-
+    console.log(personInfoList)
     personInfoList.map(async (item) => {
-        if(item.personInfo.mail) {
-            console.log("我是邮箱地址：",item.personInfo.mail)
+        if(item.personInfo.mail&&item.isLive) {
             var mail = {
                 // 发件人
                 from: 'ICHI <13416363790@163.com>',
                 // 主题
                 subject: '消息提醒',
                 // 收件人
-                to: item.personInfo.mail, //发送给注册时填写的邮箱
+                to: item.personInfo.mail, 
                 // text: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> \
                 //     <html xmlns="http://www.w3.org/1999/xhtml"><body> \
                 //        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">\
@@ -61,8 +58,7 @@ export const notificationMail = async function(userIdList, topicObj, type) {
                 //        <table border="1" cellpadding="0" cellspacing="0" width="100%">\
                 //        <tbody><tr><td><font color="#333300" style="font-weight: bold;">'+topicObj.creator.name+'</font>'+type+':&nbsp; '+topicObj.title+'</td> </tr>\
                 //        <tr><td><b>时间</b>：'+formatDate(new Date())+'</td></tr>\
-                //        <tr><td><b>内容</b>：'+topicObj.content+'</td></tr></tbody></table></body></html>'  
-                                  
+                //        <tr><td><b>内容</b>：'+topicObj.content+'</td></tr></tbody></table></body></html>'                                    
                  text:  topicObj.creator.name+' '+type+':  '+topicObj.title+'        时间：'+formatDate(new Date())+'         内容：'+topicObj.content
             };
             try{ 
@@ -70,12 +66,7 @@ export const notificationMail = async function(userIdList, topicObj, type) {
                 console.log("邮件发送状态：",sendFlag)
             }catch(error){
                 console.log("错误")
-
-            };
-            
-           
-            
-                
+            };                                     
         }        
     })
 }
