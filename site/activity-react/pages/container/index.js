@@ -22,6 +22,7 @@ import Timeline from './timeline'  
 import Member from './member'  
 import Sign from './sign'
 import SearchResult from './search'
+import ActivateMail from './activate-mail'
 
 class App extends React.Component{
     state = {
@@ -48,10 +49,25 @@ class App extends React.Component{
                 personInfo: {
                     ...result.data,
                     ...result.data.personInfo,
-                    // ...result.data.personInfo,
                 }
             })
         }
+        if (!this.infoAllFilled()){
+            this.props.router.push('/person')
+        }
+    }
+
+    infoAllFilled = () => {
+        if (!this.state.personInfo.name){
+            return false
+        }
+        if (!this.state.personInfo.mail){
+            return false
+        }
+        if (!this.state.personInfo.phone){
+            return false
+        }
+        return true
     }
 
     handleSearchTextChange = (e) =>{
@@ -71,9 +87,16 @@ class App extends React.Component{
     }
 
     routerHandle = (toUrl) => {
-        this.activeTagHandle(toUrl)
+        if (this.infoAllFilled())
+        {
+            this.activeTagHandle(toUrl)
+            this.props.router.push(toUrl)
+        }
+        else{
+            this.props.router.push('/person')
+        }
         // const location = {pathname: toUrl, state: this.state}
-        this.props.router.push(toUrl)
+        
     }
 
     // 处理路由变化的时候高亮的tag
@@ -145,6 +168,10 @@ const routeConfig = [
             { path: 'member', component: Member },
             { path: 'search', component: SearchResult },
         ]
+    },
+    {
+        path: '/activate',
+        component: ActivateMail,
     }
 ]
 

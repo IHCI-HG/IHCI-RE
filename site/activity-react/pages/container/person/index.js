@@ -74,10 +74,12 @@ export default class Person extends React.Component{
         infoCheck:{
             illegalEmailAddress: false,
             illegalPhoneNumber:false,
+            illegalName: false,
         },
         confirmEditMail: false,
         submittable: false,
         hasMail: false,
+        sendMailEnabled: true,
     }
 
     headImgInputHandle = (e) => {
@@ -88,12 +90,27 @@ export default class Person extends React.Component{
             }
         })
     }
+
+    isName = (name) => {
+        const reg = /^[\u4E00-\u9FA5A-Za-z]{1}[\u4E00-\u9FA5A-Za-z0-9_\-]{0,11}$/;
+        return reg.test(name);
+    }
+
     nameInputHandle = (e) => {
+        const name = e.target.value
+        var illegalName = false
+        if (!this.isName(name)){
+            illegalName = true
+        }
         this.setState({
             personInfo: {
                 ...this.state.personInfo,
-                name: e.target.value
-            }
+                name: name,
+            },
+            infoCheck: {
+                ...this.state.infoCheck,
+                illegalName: illegalName,
+            },
         })
     }
 
@@ -171,15 +188,20 @@ export default class Person extends React.Component{
     infoCheckIllegal = () =>{
         var infoCheck = {
             illegalEmailAddress: false,
-            illegalPhoneNumber:false,
+            illegalPhoneNumber: false,
+            illegalName: false,
         }
 
-        if (this.state.hasMail && !this.isEmailAddress(this.state.personInfo.mail)){
+        if (!this.isEmailAddress(this.state.personInfo.mail)){
             infoCheck.illegalEmailAddress = true
         }
 
         if (!this.isPhoneNumber(this.state.personInfo.phone)){
             infoCheck.illegalPhoneNumber = true
+        }
+
+        if (!this.isName(this.state.personInfo.name)){
+            infoCheck.illegalName = true
         }
 
         this.setState({
@@ -246,6 +268,11 @@ export default class Person extends React.Component{
     }
 
     activateMailHandle = async() => {
+        if(!this.state.sendMailEnabled){
+            window.toast("请不要重复提交激活请求，请等待60s后再尝试发送")
+            return
+        }
+
         if (this.state.personInfo.mail.length <= 0)
         {
             window.toast("邮箱未设置，请先修改邮箱")
@@ -264,6 +291,17 @@ export default class Person extends React.Component{
         } else {
             window.toast("激活邮件发送失败，请稍后再试")
         }
+
+        this.setState({
+            sendMailEnabled: false,
+        })
+
+        setTimeout(() => {
+            this.setState({
+                sendMailEnabled: true,
+            })
+        }, 60000);
+
     }
 
     editConfirmHangle = () => {
@@ -318,32 +356,29 @@ export default class Person extends React.Component{
                 <div className="edit-con">
                     <div className="before">名字</div>
                     <input type="text" onChange={this.nameInputHandle} className="input-edit"  value={this.state.personInfo.name}/>
+                    {this.state.infoCheck.illegalName && <div className='after error'>名字以不超过12个的英文、汉字、数字、下划线与短横构成，并以中文或英文开头</div>}
                 </div>
 
                 <div className="edit-con">
                     
                     <div className="before">邮箱</div>
-                    {!this.state.confirmEditMail && 
+                    {(!this.state.confirmEditMail && this.state.hasMail) && 
                         <div className='mail-present-bar'>
                             <div className='after default-color'>
                                 {this.state.personInfo.mail}
                             </div>
-                            {!this.state.hasMail ?
-                            <div className='edit-btn' onClick={this.editConfirmHangle}>设置邮箱</div>
-                            : <div className='edit-btn' onClick={this.editConfirmHangle}>修改邮箱</div>
-                            }
-                            {this.state.hasMail &&
-                                <div className='active-info'>
-                                    {this.state.userObj.isLive ?
-                                        <div className='active-info'><div className='iconfont icon-mail green'></div><div className='active-info'>邮箱已激活</div></div>
-                                        : <div className='active-info'><div className='iconfont icon-mail yellow'></div><div className='active-info'>邮箱未<div className='activate-btn' onClick={this.activateMailHandle}>激活</div></div></div>
-                                    }
-                                </div>
-                            }
-                        </div>
-                    }
-                    {this.state.confirmEditMail && <input type="text" onChange={this.mailInputHandle} className="input-edit" value={this.state.personInfo.mail}/>}
+                            <div className='edit-btn' onClick={this.editConfirmHangle}>修改邮箱</div>
+ 
+                            <div className='active-info'>
+                                {this.state.userObj.isLive ?
+                                    <div className='active-info'><div className='iconfont icon-mail green'></div><div className='active-info'>邮箱已激活</div></div>
+                                    : <div className='active-info'><div className='iconfont icon-mail yellow'></div><div className='active-info'>邮箱未<div className={this.state.sendMailEnabled ? 'activate-btn-active' : 'activate-btn'} onClick={this.activateMailHandle}>激活</div></div></div>
+                                }
+                            </div>
+                        </div>}
+                    {(!this.state.hasMail || this.state.confirmEditMail) && <input type="text" onChange={this.mailInputHandle} className="input-edit" value={this.state.personInfo.mail}/>}
                     {this.state.infoCheck.illegalEmailAddress && <div className='after error'>格式错误,请填写正确格式的邮件地址</div>}
+                        
                 </div>
 
                 <div className="edit-con">

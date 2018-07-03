@@ -129,7 +129,6 @@ export default class Team extends React.Component{
                 name: this.state.createTopicName,
                 content: this.state.createTopicContent,
                 informList: informList,
-                chosenList: this.state.memberList
             }
         })
 
