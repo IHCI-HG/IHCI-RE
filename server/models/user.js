@@ -106,7 +106,7 @@ userSchema.statics = {
             queryList.push({_id: item})
         })
         if(queryList && queryList.length) {
-            return this.find({$or: queryList}, {personInfo: 1}).exec()
+            return this.find({$or: queryList}, {personInfo: 1, isLive: 1}).exec()
         } else {
             return []
         }
