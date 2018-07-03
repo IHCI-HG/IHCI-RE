@@ -134,7 +134,7 @@ const setUserInfo = async (req, res, next) => {
     }
     if(req.body.mail) {
         personInfoObj.mail = req.body.mail
-        if(!(req.body.mail==user.personInfo.mail)){
+        if(user.personInfo!=null && !(req.body.mail==user.personInfo.mail)){
             const result = await UserDB.findByIdAndUpdate({_id: userId}, {isLive: false}, {new: true})
         }
     }
