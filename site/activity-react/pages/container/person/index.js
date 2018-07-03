@@ -165,10 +165,18 @@ export default class Team extends React.Component{
     uploadFileHandle = async (e) => {
 
         var file = e.target.files[0];
+
+        var arr = file.name.split('.')
+
+        var type = arr.pop()
+        if(type != 'jpg' && type != 'jpeg' && type != 'png') {
+            window.toast("文件格式必须是JPG，JPEG或PNG")
+            return 
+        }
         var newFile = new File([file],this.state.userObj._id+file.name)
 
         var succeeded;
-        const uploadResult = fileUploader('', '', newFile)
+        const uploadResult = fileUploader('', '/usrHeadImg', newFile)
         await uploadResult.then(function(val) {
             succeeded = 1
         }).catch(function(reason){
@@ -185,7 +193,7 @@ export default class Team extends React.Component{
         this.setState({
             personInfo: {
                 ...this.state.personInfo,
-                headImg: window.location.origin+'/head/'+newFile.name
+                headImg: window.location.origin+'/head/usrHeadImg/'+newFile.name
             }
         })
         console.log(this.state.personInfo.headImg)

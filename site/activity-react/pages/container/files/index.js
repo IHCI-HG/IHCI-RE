@@ -108,7 +108,7 @@ export default class Files extends React.Component {
         })
 
         if (result.state.code === 0) {
-            window.toast("Folder created")
+            window.toast("文件夹创建成功")
             this.setState({ showCreateFolder: false, createFolderName: '新建文件夹' })
         } else {
             window.toast(result.state.msg)

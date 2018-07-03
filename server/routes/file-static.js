@@ -39,7 +39,7 @@ var ossImgProcessor = async (req, res, next) => {
             region: conf.ossConf.region
         });
         var infoResult = await client.get(ossKey, {process: 'image/info'})
-        var jsobj = JSON.parse(infoResult.content.toString())//将json转化为array数组
+        var jsobj = JSON.parse(infoResult.content.toString())
 
         var oriHeight = parseInt(jsobj.ImageHeight.value)
         var oriWidth = parseInt(jsobj.ImageWidth.value)
@@ -60,7 +60,7 @@ var ossHeadProcessor = async (req, res, next) => {
     try {
         var originalUrl = req.originalUrl
         var ossKey = decodeURIComponent(originalUrl.slice(6))
-        console.log(ossKey)
+        //console.log(ossKey)
         const client = new OSSW({
             accessKeyId: conf.ossConf.ossAdminAccessKeyId,
             accessKeySecret: conf.ossConf.ossAdminAccessKeySecret,
@@ -68,7 +68,7 @@ var ossHeadProcessor = async (req, res, next) => {
             region: conf.ossConf.region
         });
         var infoResult = await client.get(ossKey, {process: 'image/info'})
-        var jsobj = JSON.parse(infoResult.content.toString())//将json转化为array数组
+        var jsobj = JSON.parse(infoResult.content.toString())
 
         var oriHeight = parseInt(jsobj.ImageHeight.value)
         var oriWidth = parseInt(jsobj.ImageWidth.value)

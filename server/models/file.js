@@ -243,8 +243,19 @@ const getDirFileList = async function(teamId, dir) {
 
 const createFile = async function(teamId, dir, fileName, ossKey, size) {
 
-    if(parseInt(size) > 20*1024*1024) {
+    size = parseInt(size)
+
+    if(size > 20*1024*1024) {
         throw '上传文件大小不能超过20M'
+    }
+
+    var sizeStr
+    if(size < 1024) {
+        sizeStr = size+'B'
+    } else if (size < 1024*1024) {
+        sizeStr = (size/1024).toFixed(1) + 'KB'
+    } else {
+        sizeStr = (size/1024/1024).toFixed(1) + 'MB'
     }
 
     const folderObj = await folderDB.findOne({
@@ -265,7 +276,7 @@ const createFile = async function(teamId, dir, fileName, ossKey, size) {
         throw '文件名已存在'
     }
 
-    const fileObj = await fileDB.createFile(teamId, dir, fileName, ossKey,size)
+    const fileObj = await fileDB.createFile(teamId, dir, fileName, ossKey,sizeStr)
     await folderDB.appendFile(teamId, dir, fileObj)
     return fileObj
 }

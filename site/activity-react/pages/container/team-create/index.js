@@ -57,6 +57,14 @@ export default class TeamAdmin extends React.Component{
 
     uploadFileHandle = async (e) => {
         var file = e.target.files[0];
+        
+        var arr = file.name.split('.')
+        var type = arr.pop()
+        if(type != 'jpg' && type != 'jpeg' && type != 'png') {
+            window.toast("文件格式必须是JPG，JPEG或PNG")
+            return 
+        }
+ 
         var newFile = new File([file],this.teamId+file.name)
 
         var succeeded;
