@@ -38,13 +38,7 @@ class App extends React.Component{
         this.setHeadImg()
     }
     componentDidMount = async() => {
-        if (this.infoAllFilled())
-        {
-            this.activeTagHandle(this.props.location.pathname)
-        }
-        else{
-            this.props.router.push('/person')
-        }
+        this.activeTagHandle(this.props.location.pathname)
     }
 
     setHeadImg = async () => {
@@ -57,6 +51,9 @@ class App extends React.Component{
                     ...result.data.personInfo,
                 }
             })
+        }
+        if (!this.infoAllFilled()){
+            this.props.router.push('/person')
         }
     }
 
