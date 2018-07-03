@@ -121,6 +121,7 @@ const logout = async (req, res, next) => {
 
 const setUserInfo = async (req, res, next) => {
     const userId = req.rSession.userId
+    const user = await UserDB.findByUserId(userId)
     const personInfoObj = {}
     if(req.body.headImg) {
         personInfoObj.headImg = req.body.headImg
@@ -133,6 +134,9 @@ const setUserInfo = async (req, res, next) => {
     }
     if(req.body.mail) {
         personInfoObj.mail = req.body.mail
+        if(!(req.body.mail==user.personInfo.mail)){
+            const result = await UserDB.findByIdAndUpdate({_id: userId}, {isLive: false}, {new: true})
+        }
     }
     const result = await UserDB.updateUser(userId, {
         personInfo: personInfoObj

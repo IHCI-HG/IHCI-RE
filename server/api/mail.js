@@ -4,7 +4,7 @@ var _ = require('underscore'),
     conf = require('../conf');
 
 import apiAuth from '../components/auth/api-auth'
-var sendMail = require('../components/mail/mail');
+var sendMail = require('../components/mail/mail')
 var mongoose = require('mongoose')
 var UserDB = mongoose.model('user')
 
@@ -30,7 +30,7 @@ const activation = async (req, res, next) => {
         subject: '激活账号',
         // 收件人
         to: mailAccount, //发送给注册时填写的邮箱
-        text: '点击激活：<a href="http://localhost:5000/checkCode?userId='+ userId +'&mailCode='+ mailCode + '"></a>'
+        text: '点击激活：<a href="'+conf.mail +'/checkCode?userId='+ userId +'&mailCode='+ mailCode + '"></a>'
     };
        const sendFlag = await sendMail(mail)
        if(sendFlag){
@@ -75,5 +75,5 @@ const checkCode = async (req, res, next) => {
 
 module.exports = [
     ['POST', '/api/activation', apiAuth, activation],
-    ['GET', '/checkCode', apiAuth, checkCode],
+    ['GET', '/checkCode', checkCode],
 ];

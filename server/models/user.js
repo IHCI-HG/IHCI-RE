@@ -100,7 +100,17 @@ userSchema.statics = {
         const result = await this.findOneAndUpdate({unionid: unionid}, userObj, () => {})
         return result
     },
-
+    personInfoList: async function(userIdList){
+        const queryList = []
+        userIdList.length && userIdList.map((item) => {
+            queryList.push({_id: item})
+        })
+        if(queryList && queryList.length) {
+            return this.find({$or: queryList}, {personInfo: 1}).exec()
+        } else {
+            return []
+        }
+    },
     openidList: async function(userIdList) {
         const queryList = []
         userIdList.length && userIdList.map((item) => {
