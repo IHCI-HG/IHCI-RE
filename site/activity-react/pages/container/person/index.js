@@ -78,6 +78,7 @@ export default class Person extends React.Component{
         confirmEditMail: false,
         submittable: false,
         hasMail: false,
+        sendMailEnabled: false,
     }
 
     headImgInputHandle = (e) => {
@@ -174,7 +175,7 @@ export default class Person extends React.Component{
             illegalPhoneNumber:false,
         }
 
-        if (this.state.hasMail && !this.isEmailAddress(this.state.personInfo.mail)){
+        if (!this.isEmailAddress(this.state.personInfo.mail)){
             infoCheck.illegalEmailAddress = true
         }
 
@@ -323,27 +324,23 @@ export default class Person extends React.Component{
                 <div className="edit-con">
                     
                     <div className="before">邮箱</div>
-                    {!this.state.confirmEditMail && 
+                    {(!this.state.confirmEditMail && this.state.hasMail) && 
                         <div className='mail-present-bar'>
                             <div className='after default-color'>
                                 {this.state.personInfo.mail}
                             </div>
-                            {!this.state.hasMail ?
-                            <div className='edit-btn' onClick={this.editConfirmHangle}>设置邮箱</div>
-                            : <div className='edit-btn' onClick={this.editConfirmHangle}>修改邮箱</div>
-                            }
-                            {this.state.hasMail &&
-                                <div className='active-info'>
-                                    {this.state.userObj.isLive ?
-                                        <div className='active-info'><div className='iconfont icon-mail green'></div><div className='active-info'>邮箱已激活</div></div>
-                                        : <div className='active-info'><div className='iconfont icon-mail yellow'></div><div className='active-info'>邮箱未<div className='activate-btn' onClick={this.activateMailHandle}>激活</div></div></div>
-                                    }
-                                </div>
-                            }
-                        </div>
-                    }
-                    {this.state.confirmEditMail && <input type="text" onChange={this.mailInputHandle} className="input-edit" value={this.state.personInfo.mail}/>}
+                            <div className='edit-btn' onClick={this.editConfirmHangle}>修改邮箱</div>
+ 
+                            <div className='active-info'>
+                                {this.state.userObj.isLive ?
+                                    <div className='active-info'><div className='iconfont icon-mail green'></div><div className='active-info'>邮箱已激活</div></div>
+                                    : <div className='active-info'><div className='iconfont icon-mail yellow'></div><div className='active-info'>邮箱未<div className='activate-btn' onClick={this.activateMailHandle}>激活</div></div></div>
+                                }
+                            </div>
+                        </div>}
+                    {(!this.state.hasMail || this.state.confirmEditMail) && <input type="text" onChange={this.mailInputHandle} className="input-edit" value={this.state.personInfo.mail}/>}
                     {this.state.infoCheck.illegalEmailAddress && <div className='after error'>格式错误,请填写正确格式的邮件地址</div>}
+                        
                 </div>
 
                 <div className="edit-con">

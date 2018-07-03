@@ -141,6 +141,8 @@ module.exports = [
     // 主页
     ['GET', '/', clientParams(), mainPage],
 
+    ['GET', '/activate', clientParams(), pageHandle()],
+
     ['GET', '/auth', clientParams(), wxAuthCodeHandle , mainPage],
 
     ['GET', '/team', clientParams(), routerAuthJudge, pageHandle() ],

@@ -22,6 +22,7 @@ import Timeline from './timeline'  
 import Member from './member'  
 import Sign from './sign'
 import SearchResult from './search'
+import ActivateMail from './activate-mail'
 
 class App extends React.Component{
     state = {
@@ -145,6 +146,10 @@ const routeConfig = [
             { path: 'member', component: Member },
             { path: 'search', component: SearchResult },
         ]
+    },
+    {
+        path: '/activate',
+        component: ActivateMail,
     }
 ]
 
