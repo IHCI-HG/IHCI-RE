@@ -38,7 +38,13 @@ class App extends React.Component{
         this.setHeadImg()
     }
     componentDidMount = async() => {
-        this.activeTagHandle(this.props.location.pathname)
+        if (this.infoAllFilled())
+        {
+            this.activeTagHandle(this.props.location.pathname)
+        }
+        else{
+            this.props.router.push('/person')
+        }
     }
 
     setHeadImg = async () => {
@@ -49,10 +55,22 @@ class App extends React.Component{
                 personInfo: {
                     ...result.data,
                     ...result.data.personInfo,
-                    // ...result.data.personInfo,
                 }
             })
         }
+    }
+
+    infoAllFilled = () => {
+        if (!this.state.personInfo.name){
+            return false
+        }
+        if (!this.state.personInfo.mail){
+            return false
+        }
+        if (!this.state.personInfo.phone){
+            return false
+        }
+        return true
     }
 
     handleSearchTextChange = (e) =>{
@@ -72,9 +90,16 @@ class App extends React.Component{
     }
 
     routerHandle = (toUrl) => {
-        this.activeTagHandle(toUrl)
+        if (this.infoAllFilled())
+        {
+            this.activeTagHandle(toUrl)
+            this.props.router.push(toUrl)
+        }
+        else{
+            this.props.router.push('/person')
+        }
         // const location = {pathname: toUrl, state: this.state}
-        this.props.router.push(toUrl)
+        
     }
 
     // 处理路由变化的时候高亮的tag

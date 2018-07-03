@@ -74,6 +74,7 @@ export default class Person extends React.Component{
         infoCheck:{
             illegalEmailAddress: false,
             illegalPhoneNumber:false,
+            illegalName: false,
         },
         confirmEditMail: false,
         submittable: false,
@@ -89,12 +90,27 @@ export default class Person extends React.Component{
             }
         })
     }
+
+    isName = (name) => {
+        const reg = /^[\u4E00-\u9FA5A-Za-z]{1}[\u4E00-\u9FA5A-Za-z0-9_\-]{0,11}$/;
+        return reg.test(name);
+    }
+
     nameInputHandle = (e) => {
+        const name = e.target.value
+        var illegalName = false
+        if (!this.isName(name)){
+            illegalName = true
+        }
         this.setState({
             personInfo: {
                 ...this.state.personInfo,
-                name: e.target.value
-            }
+                name: name,
+            },
+            infoCheck: {
+                ...this.state.infoCheck,
+                illegalName: illegalName,
+            },
         })
     }
 
@@ -172,7 +188,8 @@ export default class Person extends React.Component{
     infoCheckIllegal = () =>{
         var infoCheck = {
             illegalEmailAddress: false,
-            illegalPhoneNumber:false,
+            illegalPhoneNumber: false,
+            illegalName: false,
         }
 
         if (!this.isEmailAddress(this.state.personInfo.mail)){
@@ -181,6 +198,10 @@ export default class Person extends React.Component{
 
         if (!this.isPhoneNumber(this.state.personInfo.phone)){
             infoCheck.illegalPhoneNumber = true
+        }
+
+        if (!this.isName(this.state.personInfo.name)){
+            infoCheck.illegalName = true
         }
 
         this.setState({
@@ -335,6 +356,7 @@ export default class Person extends React.Component{
                 <div className="edit-con">
                     <div className="before">名字</div>
                     <input type="text" onChange={this.nameInputHandle} className="input-edit"  value={this.state.personInfo.name}/>
+                    {this.state.infoCheck.illegalName && <div className='after error'>名字以不超过12个的英文、汉字、数字、下划线与短横构成，并以中文或英文开头</div>}
                 </div>
 
                 <div className="edit-con">
