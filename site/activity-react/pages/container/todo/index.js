@@ -109,6 +109,7 @@ export default class Task extends React.Component{
         this.initMemberList()
         this.loadTopicListArr()
         this.initTeamList()
+        console.log('todo',this.state.todo)
     }
 
     locationTo = (url) => {
@@ -708,7 +709,7 @@ export default class Task extends React.Component{
 
         return (
             <Page title={"任务详情"} className="discuss-page">
-
+                <div></div>
                  <div className="discuss-con page-wrap">
 
                      <TodoItem
@@ -768,6 +769,7 @@ export default class Task extends React.Component{
                                  this.setState({ showCreateCheck: false})
                              }}
                          />: */}
+                         {(this.state.todo.desc==="")&&
                          <div className="new-check"
                              onClick={() => {
                                  this.setEdit()
@@ -775,6 +777,7 @@ export default class Task extends React.Component{
                              <i className="icon iconfont">&#xe6e0;</i>
                              添加任务描述
                          </div>
+                         }
                      {/* } */}
 
                     <div className="detail-actions">
