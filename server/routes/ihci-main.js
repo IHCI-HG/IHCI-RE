@@ -145,10 +145,10 @@ module.exports = [
 
     ['GET', '/team', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/sign', clientParams(), routerAuthJudge, pageHandle() ],
-
+    ['GET', '/backup', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/test', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/test-editor', clientParams(), routerAuthJudge, pageHandle() ],
-
+    ['GET', '/team-join/:teamId', clientParams(), joinTeam, pageHandle() ],
     ['GET', '/team-edit/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/team-admin/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/team-join/:teamId', clientParams(), joinTeam, pageHandle() ],

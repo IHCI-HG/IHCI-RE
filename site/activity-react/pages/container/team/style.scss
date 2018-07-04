@@ -2,7 +2,7 @@
     
     .carete {
         cursor: pointer;
-        right: 30px;
+        right: 150px;
         top: 36px;
         position: absolute;
         display: flex;
@@ -11,6 +11,18 @@
         font-size: 22px;
         color: #666;
         font-weight: bold;
+    }
+    .backup{
+        cursor: pointer;
+        right: 30px;
+        top: 36px;
+        align-items: center;
+        position: absolute;
+        display: flex;
+        justify-content: flex-end;
+        font-size: 22px;
+        color: #666;
+        font-weight: bold;  
     }
     .act {
         color: red;

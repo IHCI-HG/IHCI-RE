@@ -1,0 +1,25 @@
+.project-chosen-list {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    .project-chosen-item {
+        margin-right: 20px;
+        cursor: pointer;
+        margin-bottom: 20px;
+    }
+    .hidden {
+        opacity: 0;
+    }
+    .check-box {
+       display: inline-flex;
+       align-items: center;
+       justify-content: center;
+       height: 24px;
+       width: 24px;
+       flex-shrink: 0;
+       
+
+       border: 1px solid #e6e6e6; /*no*/
+       margin-right: 10px;
+    }
+}

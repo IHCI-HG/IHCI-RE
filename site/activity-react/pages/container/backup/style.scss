@@ -1,0 +1,85 @@
+.backup{
+    
+    .title{
+        margin-top: 50px;
+        font-weight: bold;
+        font-size: 40px;
+        padding: 40px 0;
+    }
+    .discrible{
+        margin-left: 10px;
+        align-items: left;
+        font-size: 24px;
+        color: #666;
+        font-weight: bold;
+        
+    }
+}
+.title-backup{
+    margin-top:65px;
+    right: 150px;
+    top: 1000px;
+    line-height:25px;
+    align-items: center;
+    justify-content: space-around;
+    font-size: 25px;
+    color: black;
+    font-weight: bold;
+
+    .choose{
+        margin-top: 20;
+        right: 150px;
+        top: 30px;
+        display: flex;
+        align-items: left;
+        justify-content: flex-start;
+        font-size: 24px;
+        color:black;
+        font-weight: bold;
+    }
+    .check-box {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 24px;
+        width: 24px;
+        flex-shrink: 0;
+        
+ 
+        border: 1px solid #e6e6e6; /*no*/
+        margin-right: 10px;
+     }
+}
+.title-backupdate{
+    margin-top:65px;
+    right: 150px;
+    top: 36px;  
+    font-size: 25px;
+    color: black;
+    font-weight: bold;
+
+    .choose{
+        margin-top: 20;
+        right: 150px;
+        top: 30px;
+        display: flex;
+        align-items: left;
+        justify-content: flex-start;
+        font-size: 24px;
+        color:black;
+        font-weight: bold;
+    }
+}
+.button2{
+    margin-top: 40px;
+    margin-bottom: 40px;
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 18px 42px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 21px;
+    border-radius:12px;
+}
