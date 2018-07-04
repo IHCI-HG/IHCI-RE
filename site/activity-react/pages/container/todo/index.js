@@ -109,7 +109,6 @@ export default class Task extends React.Component{
         this.initMemberList()
         this.loadTopicListArr()
         this.initTeamList()
-        console.log('todo',this.state.todo)
     }
 
     locationTo = (url) => {
@@ -206,6 +205,7 @@ export default class Task extends React.Component{
         todo.name = resp.data.title
         todo.fileList = resp.data.fileList
         todo.list = []
+        todo.listId = resp.data.listId
         todo.teamId = resp.data.teamId
         todo.assignee = {}
         todo.assignee.id = resp.data.header
@@ -527,21 +527,16 @@ export default class Task extends React.Component{
     }
 
     handleTodoDelete = async(index,id) => {
-        const resp = await api('/api/task/dropCheckitem', {
+        const resp = await api('/api/task/delTask', {
             method: 'POST',
             body: {
-                todoId: this.props.params.id,
-                checkitemId: id
+                taskId: this.props.params.id,
+                teamId:this.state.todo.teamId,
+                listId:this.state.todo.listId
             }
         })
         if (resp.state.code === 0) {
-            const todo = this.state.todo
-            todo.list.map((cItem, index) => {
-                if(cItem.id===id){
-                    checkList.splice(index,1)
-                }
-            })
-            this.setState({ todo })
+            this.locationTo('/team/' + this.state.todo.teamId)
         }
         return resp
     }
@@ -705,13 +700,13 @@ export default class Task extends React.Component{
         let actionList = this.state.actionList || []
         let moveExpanded = this.state.moveExpanded
         let copyExpanded = this.state.copyExpanded
-        console.log('todo', this.state.todo)
 
         return (
             <Page title={"任务详情"} className="discuss-page">
-                <div></div>
                  <div className="discuss-con page-wrap">
-
+                    {/* <div className="return">
+                        
+                    </div> */}
                      <TodoItem
                          {...this.state.todo}
                          detail='detail'

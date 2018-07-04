@@ -239,6 +239,16 @@
 }
 
 .discuss-page {
+    .return{
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        width: 17.066667rem;
+        background-color: #fff;
+        border: 1px solid #e6e6e6;
+        -webkit-border-radius: 0.026667rem;
+        border-radius: 0.026667rem;
+    }
     .file-list {
         margin: 20px 10px;
         padding-left: 0.4rem;
