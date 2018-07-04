@@ -53,7 +53,7 @@ class App extends React.Component{
             })
         }
         if (!this.infoAllFilled()){
-            this.props.router.push('/person')
+            window.toast("请先完成资料填写")
         }
     }
 
@@ -94,8 +94,8 @@ class App extends React.Component{
         }
         else{
             this.props.router.push('/person')
+            window.toast("请先完成资料填写")
         }
-        // const location = {pathname: toUrl, state: this.state}
         
     }
 
