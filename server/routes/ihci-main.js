@@ -24,8 +24,9 @@ var TeamDB = mongoose.model('team')
 const routerAuthJudge = async (req, res, next) => { 
     const userId = req.rSession.userId
     if(userId) {
-        const user = await UserDB.baseInfoById(userId)
-        if (req.url != '/person' && (user.mail == '未设置姓名用户' || user.phone == '未设置' || user.name  == '未设置'  || ! user.mail || !user.phone || !user.name))
+        const user = await UserDB.findByUserId(userId)
+
+        if (req.url != '/person' &&  user.personInfo==null)
         {
             res.redirect('/person')
             return
