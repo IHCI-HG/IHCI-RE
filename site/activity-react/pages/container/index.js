@@ -65,7 +65,7 @@ class App extends React.Component{
     }
 
     handleSearchRequest = (e) => {
-        location.href = '/search' + (this.state.searchText? '?text=' + this.state.searchText : '') 
+        location.href = '/search' + (this.state.searchText? '?text=' + this.state.searchText : '')
         e.preventDefault();
     }
 
@@ -144,7 +144,6 @@ const routeConfig = [
             { path: 'member', component: Member },
             { path: 'search', component: SearchResult },
             { path: 'inform', component: Inform },
-            
         ]
     }
 ]

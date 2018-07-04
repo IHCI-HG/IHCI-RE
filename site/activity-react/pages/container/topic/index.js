@@ -111,6 +111,9 @@ export default class Topic extends React.Component{
         })
 
         const topicObj = result.data
+
+        console.log(result)
+
         this.teamId = result.data.team
 
         const memberResult = await api('/api/team/memberList', {
@@ -126,7 +129,6 @@ export default class Topic extends React.Component{
                 chosen: false,
             })
         ])
-        
 
         this.setState({
             topicObj: {
@@ -271,7 +273,7 @@ export default class Topic extends React.Component{
                                     <div className="save-btn" onClick={this.topicChangeSaveHandle}>保存</div>
                                     <div className="cancel-btn" onClick={() => {this.setState({topicObj: {...this.state.topicObj, editStatus: false}})}}>取消</div>
                                 </div>
-                            </div> 
+                            </div>
                         :
                             <div className="topic-subject-con">
                                 <div className="topic-title">{this.state.topicObj.title}</div>
@@ -324,11 +326,11 @@ export default class Topic extends React.Component{
                                                 <div className="cancel-btn" onClick={() => { this.setState({ createDiscussContent: '',createDiscussChosen: false }) }}>取消</div>
                                             </div>
                                         </div>
-                                        : 
+                                        :
                                         <div className='topic-subject-edit no-pading'>
                                             <input placeholder={"点击发表评论"} type="text" onClick={() => {this.setState({createDiscussChosen: true})}} className="topic-title"/>
                                         </div>
-                                }   
+                                }
                             </div>
                         </div>
                     </div>
@@ -342,5 +344,3 @@ export default class Topic extends React.Component{
         )
     }
 }
-
-
