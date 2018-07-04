@@ -253,9 +253,11 @@ export default class Discuss extends React.Component{
         this.setState({
             chosenFile: file
         })
+
+        var ossKey = this.teamId+'/'+Date.now()+'/'+file.name
         
         var succeeded;
-        const uploadResult = fileUploader(this.teamId, '', file)
+        const uploadResult = fileUploader(file, ossKey)
         await uploadResult.then(function(val) {
             console.log(val)
             succeeded = 1
@@ -277,7 +279,7 @@ export default class Discuss extends React.Component{
                    size: file.size,
                    dir: '/',
                    fileName: file.name,
-                   ossKey: `${this.teamId}/${file.name}`
+                   ossKey: ossKey,
                 }
             }
         })

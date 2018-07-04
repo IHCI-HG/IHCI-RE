@@ -20,6 +20,9 @@ export default class Files extends React.Component {
         showCreateFolder: false,
         createFolderName: '新建文件夹',
 
+        renameId: '',
+        renameName: '',
+
         dirList: [],
     }
 
@@ -140,9 +143,11 @@ export default class Files extends React.Component {
         this.setState({
             chosenFile: file
         })
+
+        var ossKey = this.teamId+'/'+Date.now()+'/'+file.name
         
         var succeeded;
-        const uploadResult = fileUploader(this.teamId, this.curDir, file)
+        const uploadResult = fileUploader(file, ossKey)
         await uploadResult.then(function(val) {
             console.log(val)
             succeeded = 1
@@ -164,7 +169,7 @@ export default class Files extends React.Component {
                    size: file.size,
                    dir: this.curDir,
                    fileName: file.name,
-                   ossKey: `${this.teamId}${this.curDir}/${file.name}`
+                   ossKey: ossKey
                 }
             }
         })
@@ -280,32 +285,46 @@ export default class Files extends React.Component {
 
                         {
                             this.state.fileList.map((item, idx) => {
-                                if (item.fileType == 'folder') {
-                                    return (
-                                        <div className="file-line files" key={item.fileType + '-' + item._id}>
-                                            <div className="name" onClick={() => {this.folderClickHandle(item.name)}}>{'(文件夹)'}{item.name}</div>
-                                            <div className="size">-</div>
-                                            <div className="last-modify">{formatDate(item.last_modify_time)}</div>
-                                            <div className="tools">
-                                                <span>移动</span>
-                                                <span onClick={() => { this.deleteHandle('folder', item.name) }}>删除</span>
-                                            </div>
+                                if (item._id == this.state.renameId) {
+                                    <div className="file-line files">
+                                        <div className="name">
+                                            <input autoFocus="autofocus" type="text" className="folder-name" onChange={this.renameNameInputHandle} value={this.state.renameName} />
                                         </div>
-                                    )
-                                }
-                                if (item.fileType == 'file') {
-                                    return (
-                                        <div className="file-line files" key={item.fileType + '-' + item._id}>
-                                            <div className="name">{item.name}</div>
-                                            <div className="size">{item.size}</div>
-                                            <div className="last-modify">{formatDate(item.last_modify_time)}</div>
-                                            <div className="tools">
-                                                <span onClick={() => { this.downloadHandle(item.ossKey) }}>下载</span>
-                                                <span>移动</span>
-                                                <span onClick={() => { this.deleteHandle('file', item.name) }}>删除</span>
-                                            </div>
+                                        <div className="tools">
+                                            <span onClick={this.renameComfirmHandle}>确定</span>
+                                            <span onClick={this.renameCancelHandle}>取消</span>
                                         </div>
-                                    )
+                                    </div>
+
+                                } else {
+                                    if (item.fileType == 'folder') {
+                                        return (
+                                            <div className="file-line files" key={item.fileType + '-' + item._id}>
+                                                <div className="name" onClick={() => { this.folderClickHandle(item.name) }}>{'(文件夹)'}{item.name}</div>
+                                                <div className="size">-</div>
+                                                <div className="last-modify">{formatDate(item.last_modify_time)}</div>
+                                                <div className="tools">
+                                                    <span>移动</span>
+                                                    <span onClick={() => { this.renameHandle(item)}}> 重命名 </span> 
+                                                    <span onClick={() => { this.deleteHandle('folder', item.name) }}>删除</span>
+                                                </div>
+                                            </div>
+                                        )
+                                    }
+                                    if (item.fileType == 'file') {
+                                        return (
+                                            <div className="file-line files" key={item.fileType + '-' + item._id}>
+                                                <div className="name">{item.name}</div>
+                                                <div className="size">{item.size}</div>
+                                                <div className="last-modify">{formatDate(item.last_modify_time)}</div>
+                                                <div className="tools">
+                                                    <span onClick={() => { this.downloadHandle(item.ossKey) }}>下载</span>
+                                                    <span>移动</span>
+                                                    <span onClick={() => { this.deleteHandle('file', item.name) }}>删除</span>
+                                                </div>
+                                            </div>
+                                        )
+                                    }
                                 }
                             })
                         }

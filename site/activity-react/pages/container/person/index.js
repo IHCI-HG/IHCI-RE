@@ -174,9 +174,10 @@ export default class Team extends React.Component{
             return 
         }
         var newFile = new File([file],this.state.userObj._id+file.name)
+        var ossKey = 'usrHeadImg'+'/'+Date.now()+'/'+newFile.name
 
         var succeeded;
-        const uploadResult = fileUploader('', '/usrHeadImg', newFile)
+        const uploadResult = fileUploader(newFile,ossKey)
         await uploadResult.then(function(val) {
             succeeded = 1
         }).catch(function(reason){
@@ -193,7 +194,7 @@ export default class Team extends React.Component{
         this.setState({
             personInfo: {
                 ...this.state.personInfo,
-                headImg: window.location.origin+'/head/usrHeadImg/'+newFile.name
+                headImg: window.location.origin+'/head/'+ossKey
             }
         })
         console.log(this.state.personInfo.headImg)

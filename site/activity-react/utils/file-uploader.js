@@ -72,22 +72,9 @@ const getOssClient = async () => {
 }
 
 // dir 必须以 '/' 开头 或者为 ''（空字符串,表示根目录）
-const fileUploader = async (teamId, dir, file) => {
-    if(typeof teamId != 'string' || typeof dir != 'string' || typeof file.name != 'string') {
-        throw '参数错误'
-
-        return '参数错误'
-    }
-
-    if (!(dir === '' || (dir[0] === '/' && dir !== '/')))  {
-        throw '目录参数错误'
-
-        return '目录参数错误'
-    }
+const fileUploader = async (file, ossKey) => {
 
     const client = await getOssClient()
-
-    const ossKey = `${teamId}${dir}/${file.name}`
 
     var result = await client.put(ossKey, file);
 

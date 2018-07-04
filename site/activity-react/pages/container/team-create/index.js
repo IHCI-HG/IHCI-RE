@@ -67,8 +67,9 @@ export default class TeamAdmin extends React.Component{
  
         var newFile = new File([file],this.teamId+file.name)
 
+        var ossKey = Date.now()+'/'+newFile.name
         var succeeded;
-        const uploadResult = fileUploader('', '', newFile)
+        const uploadResult = fileUploader(newFile,ossKey)
         await uploadResult.then(function(val) {
             succeeded = 1
         }).catch(function(reason){
@@ -83,7 +84,7 @@ export default class TeamAdmin extends React.Component{
 
         window.toast("上传图片成功")
         this.setState({
-            teamImg: window.location.origin+'/img/'+this.teamId+file.name
+            teamImg: window.location.origin+'/img/'+ossKey
         })
     }
 
