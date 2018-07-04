@@ -22,7 +22,14 @@ var TeamDB = mongoose.model('team')
 
 // 路由前判定是否已经登录或信息填写完全
 const routerAuthJudge = async (req, res, next) => { 
-    if(req.rSession.userId) {
+    const userId = req.rSession.userId
+    if(userId) {
+        const user = await UserDB.baseInfoById(userId)
+        if (req.url != '/person' && (user.mail == '未设置姓名用户' || user.phone == '未设置' || user.name  == '未设置'  || ! user.mail || !user.phone || !user.name))
+        {
+            res.redirect('/person')
+            return
+        }
     } else {
         res.redirect('/')
         return

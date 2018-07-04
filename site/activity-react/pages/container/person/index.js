@@ -220,7 +220,7 @@ export default class Person extends React.Component{
     saveHandle = async () => {
         var infoCheckIllegal = this.infoCheckIllegal()
 
-        if (this.infoCheckIllegal()){
+        if (infoCheckIllegal){
             window.toast("设置失败，请检查格式")
             return
         }

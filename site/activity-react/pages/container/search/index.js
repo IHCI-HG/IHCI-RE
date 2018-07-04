@@ -128,7 +128,13 @@ class SearchResultItem extends React.PureComponent{
 export default class SearchResult extends React.Component{
     componentDidMount = async() => {
         var queryText = this.props.location.query.text
+        if (queryText.length > 42)
+            this.props.location.query.text = queryText.substring(0,42)
+
         if (queryText){
+            this.setState({
+                title: '搜索 - ' + this.props.location.query.text + ' - IHCI'
+            })
             await this.initSearchResultData()
         }
         else {
@@ -258,6 +264,7 @@ export default class SearchResult extends React.Component{
     }
 
     state = {
+        title: '搜索 - IHCI',
         resultList: [],
         showList: {
             keyList : [],
@@ -313,7 +320,7 @@ export default class SearchResult extends React.Component{
     render() {
         var showList = this.state.showList
         return (
-            <Page title='搜索 - IHCI'  className="result-page">
+            <Page title={this.state.title}  className="result-page">
                 
                 {
                     this.state.showTeamFilter && <div className="team-list" onMouseLeave={this.teamFilterHandle}>
