@@ -46,15 +46,26 @@ const createTopic = async (req, res, next) => {
         if(informList && informList.length) {
             createTopicTemplate(informList, result)
 
-            // //添加通知
+            //添加通知\
+            await Promise.all(informList.map(async (item) => {
+                await userDB.addCreateNotice(item, result)
+              }));
+
             // informList.map((item) => {
-            //     item.userDB.addCreateNotice(item, result)
-            // })            
+            //     const reader = userDB.findByUserId(item)
+            //     userDB.addCreateNotice(reader, result)
+
+            // }) 
+            console.log('\n\n')
+            console.log(userObj.teamList)
+            console.log('\n\n')
+            console.log(userObj.noticeList)
+            console.log('\n\n')           
         }
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
-            data: result
+            data: result,
         });
     } catch (error) {
         console.error(error);
@@ -161,7 +172,7 @@ const createDiscuss = async (req, res, next) => {
 
             //添加通知
             informList.map((item) => {
-                item.userDB.addReplyNotice(item, result)
+                userDB.addReplyNotice(item, result)
             })
 
         }
@@ -260,11 +271,11 @@ const topicInfo = async (req, res, next) => {
 }
 
 //设置Topic已读
-const readingTopic = async (req, res, next) => {
-    const topicId = req.body.topicId
+const readingNotice = async (req, res, next) => {
+    const noticeId = req.body.noticeId
     const readerId = req.rSession.userId
 
-    if(!topicId == undefined) {
+    if(!noticeId == undefined) {
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: "参数不全" },
             data: {}
@@ -273,7 +284,7 @@ const readingTopic = async (req, res, next) => {
     }
 
     try {
-        let topicObj = await topicDB.findByTopicId(topicId)
+        let topicObj = await topicDB.findByTopicId(noticeId)
         if(!topicObj) {
             resProcessor.jsonp(req, res, {
                 state: { code: 1, msg: '话题不存在'},
@@ -290,7 +301,7 @@ const readingTopic = async (req, res, next) => {
             return
         }
 
-        const result = await userDB.readTopic(readerId, topicId)
+        const result = await userDB.readNotice(readerId, noticeId)
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '已将消息设置为已读' },
@@ -318,5 +329,5 @@ module.exports = [
     ['POST', '/api/topic/createDiscuss', apiAuth, createDiscuss],
     ['POST', '/api/topic/editDiscuss', apiAuth, editDiscuss],
 
-    ['POST', '/api/topic/readingTopic', apiAuth,readingTopic],
+    ['POST', '/api/topic/readingNotice', apiAuth,readingNotice],
 ];

@@ -278,7 +278,7 @@ const userInfoList = async (req, res, next) => {
 //     try {
 //         const promiseList = []
 //         topicIdList.map((item) => {
-//             if(ite)
+//             if(item)
 //             promiseList.push(topicDB.findByTopicId(item))
 //         })
 //         const result = await Promise.all(promiseList)
@@ -297,17 +297,76 @@ const userInfoList = async (req, res, next) => {
 //}
 
 
-const showNoticeList = async (req, res, next) => {
-    const userId = req.rSession.userId 
-    
+const showReadList = async (req, res, next) => {
+    const userId = req.rSession.userId
+    const timeStamp = req.body.timeStamp 
+    const result = []
+
     const allNotice = await userDB.findNotice(userId)
 
+    allNotice.map((item)=>{
+        if(item.readState){
+            result.push(item)
+        }
+    })
+
+    const Result = []
+
+    if(!timeStamp){
+        result.map((item, index)=>{
+            if(index<20){
+                Result.push(item)
+            }
+        })              
+    }else{
+        result.map((item)=>{
+            if(Result.length<10&&item.create_time<timeStamp){
+                Result.push(item)
+            }
+        })
+    }
     resProcessor.jsonp(req, res, {
         state: { code: 0 },
-        data: allNotice
+        data: Result
     });
+
 }
 
+
+const showUnreadList = async (req, res, next) => {
+    const userId = req.rSession.userId
+    const timeStamp = req.body.timeStamp 
+    const result = []
+
+    const allNotice = await userDB.findNotice(userId)
+
+    allNotice.map((item)=>{
+        if(!item.readState){
+            result.push(item)
+        }
+    })
+
+    const Result = []
+
+    if(!timeStamp){
+        result.map((item, index)=>{
+            if(index<20){
+                Result.push(item)
+            }
+        })              
+    }else{
+        result.map((item)=>{
+            if(Result.length<10&&item.create_time<timeStamp){
+                Result.push(item)
+            }
+        })
+    }
+    resProcessor.jsonp(req, res, {
+        state: { code: 0 },
+        data: Result
+    });
+
+}
 
 module.exports = [
     ['GET', '/api/base/sys-time', sysTime],
@@ -326,6 +385,6 @@ module.exports = [
     ['POST', '/api/setUserInfo', apiAuth, setUserInfo],
 
 
-    ['POST', '/api/showNoticeList', showNoticeList],
-
+    ['POST', '/api/user/showReadList', apiAuth, showReadList],
+    ['POST', '/api/user/showUnreadList', apiAuth, showUnreadList],
 ];

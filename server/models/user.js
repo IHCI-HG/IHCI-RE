@@ -175,9 +175,9 @@ userSchema.statics = {
                 $addToSet: {
                     noticeList: {
                         create_time: topicObj.create_time,
-                        noticeId: topicObj._id.toString(),
-                        teamId: topicObj.teamId.toString(),
-                        creator: topicObj.creator.username.toString(),
+                        noticeId: topicObj._id,
+                        teamId: topicObj.teamId,
+                        creator: topicObj.creator.username,
                         noticeTitle: topicObj.title,
                         noticeContent: topicObj.content,
                         //kind: { type:String, create},
@@ -195,8 +195,8 @@ userSchema.statics = {
                 $addToSet: {
                     noticeList: {
                         create_time: discussObj.create_time,
-                        noticeId: discussObj._id.toString(),
-                        teamId: discussObj.teamId.toString(),
+                        noticeId: discussObj._id,
+                        teamId: discussObj.teamId,
                         creator: discussObj.creator.username,
                         noticeTitle: discussObj.title,
                         noticeContent: discussObj.content,
@@ -208,10 +208,10 @@ userSchema.statics = {
         ).exec()
     },
 
-    readTopic: async function(userId, topicId) {
-        topicId = topicId.toString()
+    readNotice: async function(userId, noticeId) {
+        noticeId = noticeId.toString()
         return this.update(
-            {_id: userId, "noticeList.noticeId": topicId},
+            {_id: userId, "noticeList.noticeId": noticeId},
             {$set: {"noticeList.$.readState": true}},
         ).exec()
     },

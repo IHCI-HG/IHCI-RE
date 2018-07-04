@@ -9,7 +9,6 @@ const topicSchema = new mongoose.Schema({
     creator: { type: mongoose.Schema.Types.Mixed , required: true },
     team: String, // team的_id
     discussList: [mongoose.Schema.Types.Mixed],
-    readerList: [mongoose.Schema.Types.Mixed],
 })
 
 topicSchema.statics = {
@@ -20,7 +19,6 @@ topicSchema.statics = {
             creator: creatorObj,
             team: teamId,
             discussList: [],
-            readerList: [],
         })
     },
     delTopicById: async function(topicId) {

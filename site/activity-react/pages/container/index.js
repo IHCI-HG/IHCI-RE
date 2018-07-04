@@ -22,6 +22,7 @@ import Timeline from './timeline'  
 import Member from './member'  
 import Sign from './sign'
 import Inform from './inform'
+import SearchResult from './search'
 
 class App extends React.Component{
     state = {
@@ -141,6 +142,7 @@ const routeConfig = [
             { path: 'discuss/topic/:id', component: Topic },
             { path: 'timeline', component: Timeline },
             { path: 'member', component: Member },
+            { path: 'search', component: SearchResult },
             { path: 'inform', component: Inform },
         ]
     }
