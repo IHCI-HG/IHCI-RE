@@ -452,25 +452,34 @@ export default class Team extends React.Component{
 
     // todoList
     handleTodoListCreate = async(info) => {
-        const result = await api('/api/task/createTaskList', {
-            method: 'POST',
-            body: {
-                teamId: this.teamId,
-                name: info.name,
+        const listExist = false
+        this.state.todoListArr.map((item)=>{
+            if(item.name===info.name){
+                alert("清单已存在")
+                listExist = true
             }
         })
-        if (result.state.code === 0) {
-            let createTodo = {
-                id:result.data.id,
-                name:result.data.name,
-                list:[],
-            }
-            let todoListArr = this.state.todoListArr
-            todoListArr = [...todoListArr, createTodo]
-            this.setState({
-                showCreateTodoList: false,
-                todoListArr
+        if(!listExist){
+            const result = await api('/api/task/createTaskList', {
+                method: 'POST',
+                body: {
+                    teamId: this.teamId,
+                    name: info.name,
+                }
             })
+            if (result.state.code === 0) {
+                let createTodo = {
+                    id:result.data.id,
+                    name:result.data.name,
+                    list:[],
+                }
+                let todoListArr = this.state.todoListArr
+                todoListArr = [...todoListArr, createTodo]
+                this.setState({
+                    showCreateTodoList: false,
+                    todoListArr
+                })
+            }
         }
     }
 
