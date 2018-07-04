@@ -23,6 +23,7 @@ import Member from './member'  
 import Sign from './sign'
 import SearchResult from './search'
 import Inform from './inform'
+import SearchResult from './search'
 
 class App extends React.Component{
     state = {
