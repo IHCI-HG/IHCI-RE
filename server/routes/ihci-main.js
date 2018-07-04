@@ -20,7 +20,7 @@ var TestDB = mongoose.model('test')
 var UserDB = mongoose.model('user')
 var TeamDB = mongoose.model('team')
 
-// 路由前判定是否已经登录
+// 路由前判定是否已经登录或信息填写完全
 const routerAuthJudge = async (req, res, next) => { 
     if(req.rSession.userId) {
     } else {
