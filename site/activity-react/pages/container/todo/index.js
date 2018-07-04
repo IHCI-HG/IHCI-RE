@@ -549,7 +549,6 @@ export default class Task extends React.Component{
     handleCheckCreate = async(todoInfo) => {
         if(!todoInfo.name){
             alert("请输入检查项名")
-            break
         }
         else{
             const resp = await api('/api/task/addCheckitem', {
@@ -765,6 +764,15 @@ export default class Task extends React.Component{
                              添加检查项
                          </div>
                      }
+                    {/* {this.state.showCreateDetail?
+                         <NewCheck
+                             memberList={this.state.memberList}
+                             confirmLabel="保存"
+                             handleConfirm={this.handleCheckCreate}
+                             handleClose={() => {
+                                 this.setState({ showCreateCheck: false})
+                             }}
+                         />: */}
                          {(this.state.todo.desc==="")&&
                          <div className="new-check"
                              onClick={() => {
