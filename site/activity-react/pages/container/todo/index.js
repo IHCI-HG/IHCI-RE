@@ -101,7 +101,7 @@ export default class Task extends React.Component{
         copyTeamList:[],
         moveTeamList:[],
         loadMoreCount:1,
-        replyCount:0
+        // replyCount:0
     }
 
     componentDidMount = async() => {
@@ -248,9 +248,9 @@ export default class Task extends React.Component{
     }
 
     createTopicHandle = async () => {
-        this.setState({
-            replyCount:this.state.replyCount+1
-        })
+        // this.setState({
+        //     replyCount:this.state.replyCount+1
+        // })
         const informList = []
         this.state.memberList.map((item) => {
             if(item.chosen) {
@@ -696,6 +696,10 @@ export default class Task extends React.Component{
         return resp
     }
 
+    setEdit = () => {
+        this.refs['todoItem'].setMode('edit')
+    } 
+
     render() {
         let actionList = this.state.actionList || []
         let moveExpanded = this.state.moveExpanded
@@ -710,6 +714,7 @@ export default class Task extends React.Component{
                      <TodoItem
                          {...this.state.todo}
                          detail='detail'
+                         ref='todoItem'
                          memberList={this.state.memberList}
                          handleAssigneeChange={this.handleAssigneeChange}
                          handleDateChange={this.handleDateChange}
@@ -754,6 +759,23 @@ export default class Task extends React.Component{
                              添加检查项
                          </div>
                      }
+                    {/* {this.state.showCreateDetail?
+                         <NewCheck
+                             memberList={this.state.memberList}
+                             confirmLabel="保存"
+                             handleConfirm={this.handleCheckCreate}
+                             handleClose={() => {
+                                 this.setState({ showCreateCheck: false})
+                             }}
+                         />: */}
+                         <div className="new-check"
+                             onClick={() => {
+                                 this.setEdit()
+                            }}>
+                             <i className="icon iconfont">&#xe6e0;</i>
+                             添加任务描述
+                         </div>
+                     {/* } */}
 
                     <div className="detail-actions">
                         <div className={"item "+((copyExpanded)?"expanded":"")}>
