@@ -547,33 +547,39 @@ export default class Task extends React.Component{
 
     // check create 需要返回
     handleCheckCreate = async(todoInfo) => {
-        const resp = await api('/api/task/addCheckitem', {
-            method: 'POST',
-            body: {
-                todoId: this.props.params.id,
-                name: todoInfo.name,
-                ddl: todoInfo.date,
-                assigneeId: todoInfo.assigneeId,
-                teamId:this.state.todo.teamId,
-            }
-        })
-
-        console.log('assigneeId', todoInfo.assigneeId)
-        console.log('resp', resp)
-
-        if (resp.state.code === 0) {
-            const todo = this.state.todo
-            const checkItem = {}
-            checkItem.id = resp.data.id
-            checkItem.name = resp.data.content
-            checkItem.assignee = {}
-            checkItem.assignee.id = resp.data.header
-            checkItem.ddl = resp.data.deadline
-            checkItem.hasDone = false
-            todo.list = [...todo.list, checkItem]
-            this.setState({ todo })
+        if(!todoInfo.name){
+            alert("请输入检查项名")
+            break
         }
-        return resp
+        else{
+            const resp = await api('/api/task/addCheckitem', {
+                method: 'POST',
+                body: {
+                    todoId: this.props.params.id,
+                    name: todoInfo.name,
+                    ddl: todoInfo.date,
+                    assigneeId: todoInfo.assigneeId,
+                    teamId:this.state.todo.teamId,
+                }
+            })
+    
+            console.log('assigneeId', todoInfo.assigneeId)
+            console.log('resp', resp)
+    
+            if (resp.state.code === 0) {
+                const todo = this.state.todo
+                const checkItem = {}
+                checkItem.id = resp.data.id
+                checkItem.name = resp.data.content
+                checkItem.assignee = {}
+                checkItem.assignee.id = resp.data.header
+                checkItem.ddl = resp.data.deadline
+                checkItem.hasDone = false
+                todo.list = [...todo.list, checkItem]
+                this.setState({ todo })
+            }
+            return resp
+        }
     }
 
     handleCheckModify = async(index, id, checkItemInfo) => {
@@ -759,15 +765,6 @@ export default class Task extends React.Component{
                              添加检查项
                          </div>
                      }
-                    {/* {this.state.showCreateDetail?
-                         <NewCheck
-                             memberList={this.state.memberList}
-                             confirmLabel="保存"
-                             handleConfirm={this.handleCheckCreate}
-                             handleClose={() => {
-                                 this.setState({ showCreateCheck: false})
-                             }}
-                         />: */}
                          {(this.state.todo.desc==="")&&
                          <div className="new-check"
                              onClick={() => {
