@@ -102,6 +102,7 @@ export default class Task extends React.Component{
         moveTeamList:[],
         loadMoreCount:1,
         // replyCount:0
+        teamName:""
     }
 
     componentDidMount = async() => {
@@ -155,9 +156,12 @@ export default class Task extends React.Component{
                 teamId: this.state.todo.teamId
             }
         })
-
         if(!result.data) {
             window.toast('团队内容加载出错')
+        }
+        else{
+            const teamName = result.data.name
+            this.setState({teamName})
         }
 
         const curUserId = this.props.personInfo._id
@@ -703,10 +707,10 @@ export default class Task extends React.Component{
 
         return (
             <Page title={"任务详情"} className="discuss-page">
+                 <div className="return" onClick={()=>{this.locationTo('/team/'+this.state.todo.teamId)}}>
+                        <div className="teamName">{this.state.teamName}</div>
+                </div>
                  <div className="discuss-con page-wrap">
-                    {/* <div className="return">
-                        
-                    </div> */}
                      <TodoItem
                          {...this.state.todo}
                          detail='detail'
