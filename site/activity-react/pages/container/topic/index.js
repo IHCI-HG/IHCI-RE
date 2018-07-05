@@ -38,7 +38,7 @@ class TopicDiscussItem extends React.Component {
         } = this.props
 
         return (
-            <div>
+            <div id={this.props.id}>
                 {
                     this.state.editState ? <div className="topic-subject-edit">
                         <textarea className='discuss-content' value={this.state.content} onChange={this.editInputHandle}></textarea>
@@ -100,6 +100,13 @@ export default class Topic extends React.Component{
     componentDidMount = async() => {
         this.topicId = this.props.params.id
         this.initPageInfo()
+        if (this.props.location.state.type == 'REPLY' && this.props.location.state.id)
+        {
+            setTimeout(() => {
+                const itemKey = "topic-discuss-item-" + this.props.location.state.id
+                this.scrollToAnchor(itemKey)
+            }, 500);
+        }
     }
 
     initPageInfo = async () => {
@@ -250,6 +257,14 @@ export default class Topic extends React.Component{
         }
     }
 
+
+    scrollToAnchor = (anchorName) => {
+        if (anchorName) {
+            let anchorElement = document.getElementById(anchorName);
+            if(anchorElement) { anchorElement.scrollIntoView(); }
+        }
+    }
+
     render() {
         return (
             <Page className="topic-page">
@@ -304,7 +319,7 @@ export default class Topic extends React.Component{
                     {
                         this.state.discussList.map((item) => {
                             return (
-                                <TopicDiscussItem key={"topic-discuss-item-" + item._id} allowEdit={this.props.personInfo._id == item.creator._id} {...item} saveEditHandle = {this.saveDiscussEditHandle}/>
+                                <TopicDiscussItem id={"topic-discuss-item-" + item._id} key={"topic-discuss-item-" + item._id} allowEdit={this.props.personInfo._id == item.creator._id} {...item} saveEditHandle = {this.saveDiscussEditHandle}/>
                             )
                         })
                     }

@@ -37,6 +37,27 @@ class SearchResultItem extends React.PureComponent{
         'EDIT_TOPIC': '编辑讨论：'
     }
 
+    toOriginHandle = () => {
+        console.log(this)
+        const pathname = ''
+        const type = 'TOPIC'
+        if (this.props.type == 'REPLY_TOPIC' || this.props.type == 'EDIT_REPLY')
+        {
+            pathname = '/discuss/topic/' + this.props.content.topicId
+            type = 'REPLY'
+        }
+        if (this.props.type == 'CREATE_TOPIC' || this.props.type == 'EDIT_TOPIC')
+            pathname = '/discuss/topic/' + this.props.content._id
+        const location = {
+            pathname: pathname,
+            state:{
+                type: type,
+                id: this.props.tarId
+            }
+        }
+        this.props.router.push(location)
+    }
+
     render() {
         switch (this.props.type) {
             case 'CREATE_TOPIC':
@@ -48,7 +69,7 @@ class SearchResultItem extends React.PureComponent{
                         <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
                         <img src={this.props.creator.headImg} alt="" className="head-img" />
 
-                        <div className="result-con">
+                        <div className="result-con" onClick={this.toOriginHandle}>
                             <div className="des-line">
                                 <span className="type">{this.typeMap[this.props.type]}</span>
                                 <span className="topic">{this.props.content.title}</span>
@@ -411,7 +432,7 @@ export default class SearchResult extends React.Component{
                                                     <div className="group-line">{showList[timeKey][teamKey].teamName}</div>
                                                     {
                                                         showList[timeKey][teamKey].resultList.map((item) => {
-                                                            return <SearchResultItem key={'search-' + item._id} {...item}/>
+                                                            return <SearchResultItem key={'search-' + item._id} router={this.props.router} {...item}/>
                                                         })
                                                     }
                                                 </div>
