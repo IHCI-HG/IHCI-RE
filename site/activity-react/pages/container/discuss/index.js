@@ -342,6 +342,75 @@ export default class Discuss extends React.Component{
     folderClickHandle = (dir) => {
         location.href = '/files/' + this.teamId + '?dir=/' + dir
     }
+    
+    renameHandle = (item) => {
+        this.state.renameId = item._id
+        this.state.renameName = item.name
+        this.initTeamFile()
+    }
+
+    renameNameInputHandle = async (e) => {
+        this.setState({
+            renameName: e.target.value
+        })
+    }
+
+    renameCancelHandle = () => {
+        this.state.renameId = ''
+        this.state.renameName = ''
+        this.initTeamFile()
+    }
+
+    renameComfirmHandle = async (item) => {
+        if (item.fileType == 'file') {
+
+            const result = await api('/api/file/updateFileName', {
+                method: 'POST',
+                body: {
+                    fileInfo: {
+                        teamId: this.teamId,
+                        dir: this.curDir,
+                        fileName: item.name, 
+                    },
+                    tarName: this.state.renameName,
+                }
+            })
+
+            if(result.state.code == 0) {
+                window.toast("修改文件名称成功")
+                this.setState({
+                    renameName: '',
+                    renameId: '',
+                })
+                this.initTeamFile()
+            } else {
+                window.toast(result.state.msg)
+            }
+        } else {
+            const result = await api('/api/file/updateFolderName', {
+                method: 'POST',
+                body: {
+                    folderInfo: {
+                        teamId: this.teamId,
+                        dir: this.curDir,
+                        folderName: item.name,
+                    },
+                    tarName: this.state.renameName,
+                }
+            })
+
+            if(result.state.code == 0) {
+                window.toast("修改文件夹名称成功")
+                this.setState({
+                    renameName: '',
+                    renameId: '',
+                })
+                this.initTeamFile()
+            } else {
+                window.toast(result.state.msg)
+            }
+        }
+    }
 
     render() {
         let teamInfo = this.state.teamInfo
@@ -405,34 +474,52 @@ export default class Discuss extends React.Component{
                                 if(idx > 10) {
                                     return
                                 }
-                                if (item.fileType == 'folder') {
+                                if (item._id == this.state.renameId) {
                                     return (
-                                        <div className="file-line files" key={item.fileType + '-' + item._id}>
-                                            <div className="name" onClick={() => {this.folderClickHandle(item.name)}}>{'(文件夹)'}{item.name}</div>
-                                            <div className="size">-</div>
-                                            <div className="last-modify">{formatDate(item.last_modify_time)}</div>
+                                        <div className="file-line files">
+                                            <div className="name">
+                                                <input autoFocus="autofocus" type="text" className="folder-name" onChange={this.renameNameInputHandle} value={this.state.renameName} />
+                                            </div>
                                             <div className="tools">
-                                                <span>移动</span>
-                                                <span onClick={() => {this.deleteHandle('folder', item.name)}}>删除</span>
+                                                <span onClick={() => { this.renameComfirmHandle(item) }}>确定</span>
+                                                <span onClick={this.renameCancelHandle}>取消</span>
                                             </div>
                                         </div>
                                     )
-                                }
-                                if (item.fileType == 'file') {
-                                    return (
-                                        <div className="file-line files" key={item.fileType + '-' + item._id}>
-                                            <div className="name" onClick={() => {this.downloadHandle(item.ossKey)}}>{item.name}</div>
-                                            <div className="size">{item.size}</div>
-                                            <div className="last-modify">{formatDate(item.last_modify_time)}</div>
-                                            <div className="tools">
-                                                <span onClick={() => {this.downloadHandle(item.ossKey)}}>下载</span>
-                                                <span>移动</span>
-                                                <span onClick={() => {this.deleteHandle('file', item.name)}}>删除</span>
+
+                                } else {
+                                    if (item.fileType == 'folder') {
+                                        return (
+                                            <div className="file-line files" key={item.fileType + '-' + item._id}>
+                                                <div className="name" onClick={() => { this.folderClickHandle(item.name) }}>{'(文件夹)'}{item.name}</div>
+                                                <div className="size">-</div>
+                                                <div className="last-modify">{formatDate(item.last_modify_time)}</div>
+                                                <div className="tools">
+                                                    <span>移动</span>
+                                                    <span onClick={() => { this.renameHandle(item)}}> 重命名 </span> 
+                                                    <span onClick={() => { this.deleteHandle('folder', item.name) }}>删除</span>
+                                                </div>
                                             </div>
-                                        </div>
-                                    )
+                                        )
+                                    }
+                                    if (item.fileType == 'file') {
+                                        return (
+                                            <div className="file-line files" key={item.fileType + '-' + item._id}>
+                                                <div className="name">{item.name}</div>
+                                                <div className="size">{item.size}</div>
+                                                <div className="last-modify">{formatDate(item.last_modify_time)}</div>
+                                                <div className="tools">
+                                                    <span onClick={() => { this.downloadHandle(item.ossKey) }}>下载</span>
+                                                    <span>移动</span>
+                                                    <span onClick={() => { this.renameHandle(item)}}> 重命名 </span> 
+                                                    <span onClick={() => { this.deleteHandle('file', item.name) }}>删除</span>
+                                                </div>
+                                            </div>
+                                        )
+                                    }
                                 }
                             })
+  
                         }
                         <div className='show-all-file' onClick={() => {location.href = '/files/' + this.teamId}}> 查看全部文件 </div>
 
