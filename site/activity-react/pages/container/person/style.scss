@@ -8,6 +8,19 @@
         font-weight: bold;
     }
 
+    .create-btn {
+        display: inline-block;
+        font-size: 16px;
+        padding: 10px;
+        width: 100px;
+        border: 1px solid #e6e6e6; /*no*/
+        border-radius: 4px;
+        margin-right: 30px;
+        cursor: pointer;
+        &:hover {
+            background-color: #e6e6e646;
+        }
+    }
 
 
     .head-edit {

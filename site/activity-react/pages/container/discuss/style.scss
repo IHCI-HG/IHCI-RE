@@ -79,6 +79,58 @@
         }
     }
 
+    .file-list {
+        .file-line {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #e6e6e6; /*no*/
+
+            &.files {
+                font-size: 14px;
+                line-height: 50px; 
+            }
+            &.header {
+                font-size: 12px;
+                line-height: 50px;
+                color: #999;
+            }
+        }
+        .folder-name {
+            display: block;
+            border: none;
+            flex-grow: 1;
+            height: 50px;
+            font-size: 14px;
+            line-height: 50px;
+        }
+
+        div {
+            flex-grow: 0;
+            flex-shrink: 0;
+            overflow: hidden;
+            text-overflow:ellipsis;
+            white-space: nowrap;
+        }
+        .name {
+            width: 50%;
+        }
+        .size {
+            width: 15%;
+        }
+        .last-modify {
+            width: 15%;
+        }
+        .tools {
+            width: 20%;
+            span {
+                margin-right: 10px;
+            }
+        } 
+        .show-all-file {
+            margin-top: 16px;
+        }
+    }
+
     .create-area {
         .topic-name {
             display: block;

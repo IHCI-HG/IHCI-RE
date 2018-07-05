@@ -3,6 +3,7 @@ import './style.scss'
 import api from '../../../utils/api';
 import Page from '../../../components/page'
 import WxLoginDialog from '../../../components/wx-login-dialog'
+import fileUploader from '../../../utils/file-uploader';
 import FollowDialog from '../../../components/follow-dialog'
 
 export default class Person extends React.Component{
@@ -266,6 +267,49 @@ export default class Person extends React.Component{
             window.toast("解绑失败")
         }
     }
+    
+    openFileInput = () => {
+        this.fileInput.click()
+    }
+    
+    uploadFileHandle = async (e) => {
+
+        var file = e.target.files[0];
+
+        var arr = file.name.split('.')
+
+        var type = arr.pop()
+        if(type != 'jpg' && type != 'jpeg' && type != 'png') {
+            window.toast("文件格式必须是JPG，JPEG或PNG")
+            return 
+        }
+        var newFile = new File([file],this.state.userObj._id+file.name)
+        var ossKey = 'usrHeadImg'+'/'+Date.now()+'/'+newFile.name
+
+        var succeeded;
+        const uploadResult = fileUploader(newFile,ossKey)
+        await uploadResult.then(function(val) {
+            succeeded = 1
+        }).catch(function(reason){
+            console.log(reason)
+            succeeded = 0
+        })
+
+        if(succeeded === 0) {
+            window.toast("上传图片失败")
+            return
+        } 
+
+        window.toast("上传图片成功")
+        this.setState({
+            personInfo: {
+                ...this.state.personInfo,
+                headImg: window.location.origin+'/head/'+ossKey
+            }
+        })
+        console.log(this.state.personInfo.headImg)
+    }
+
 
     activateMailHandle = async() => {
         if(!this.state.sendMailEnabled){
@@ -314,6 +358,7 @@ export default class Person extends React.Component{
         // let personInfo = this.state.personInfo
         return (
             <Page title={"个人设置"} className="person-edit-page page-wrap">
+                <input className='file-input-hidden' type="file" ref={(fileInput) => this.fileInput = fileInput} onChange={this.uploadFileHandle}></input>
                 <div className="title">个人设置</div>
 
                 <div className="head-edit">
@@ -321,8 +366,7 @@ export default class Person extends React.Component{
                         <img src={this.state.personInfo.headImg} className='head-img' />
                     </div>
                     <div className="right">
-                        <input type="text" className="head-img-url" value={this.state.personInfo.headImg || ''} onChange={this.headImgInputHandle}/>
-                        <div className="head-des">请输入头像图片URL地址</div>
+                        <div className="create-btn" onClick={this.openFileInput}> 上传图片 </div>
                     </div>
                 </div>
 

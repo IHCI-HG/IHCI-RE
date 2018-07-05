@@ -13,13 +13,16 @@ import {
     web_accessTokenToUserInfo,
     web_codeToUserInfo,
 } from '../components/wx-utils/wx-utils'
+import { MongooseDocument } from 'mongoose';
 
 var mongoose = require('mongoose')
 
 var teamDB = mongoose.model('team')
 var userDB = mongoose.model('user')
 var topicDB = mongoose.model('topic')
+var folderDB = mongoose.model('folder')
 
+var file = require('../models/file')
 
 const creatTeam = async (req, res, next) => {
     const teamInfo = req.body.teamInfo || {}
@@ -38,6 +41,7 @@ const creatTeam = async (req, res, next) => {
         await teamDB.addMember(teamObj._id, userId, 'creator')
         await userDB.addTeam(userId, teamObj, 'creator')
         teamObj = await teamDB.findByTeamId(teamObj._id)
+        await folderDB.createFolder(teamObj._id,'','')
          
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '创建成功' },
