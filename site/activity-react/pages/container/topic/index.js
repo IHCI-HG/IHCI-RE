@@ -16,14 +16,38 @@ class TopicDiscussItem extends React.Component {
     state = {
         content: '',
         editState: false,
+        discussAttachments:[],
     }
 
     editInputHandle = (e) => {
         this.setState({
             content: e.target.value
         })
+        console.log(this.state.fileList)
+        console.log(this.state.content)
     }
 
+    discussContentHandle = (contents) => {
+        this.setState({
+            content: contents
+        })
+        console.log(this.state.discussAttachments)
+    }
+    discussFileUploadHandle = async (e) => {
+        const resp = await fileUploader('teamId', '', e.target.files[0])
+        let discussAttachments = this.state.discussAttachments;
+        discussAttachments = [...discussAttachments, resp]
+        this.setState({
+            discussAttachments,
+        })
+    }
+    deleteDiscussFile = async (e, index) => {
+        let discussAttachments = this.state.discussAttachments
+        discussAttachments.splice(index,1);
+        this.setState({
+            discussAttachments,
+        })
+    }
     render() {
         const {
             _id,
@@ -32,15 +56,19 @@ class TopicDiscussItem extends React.Component {
             create_time,
             saveEditHandle,
             allowEdit,
-
+            fileList,
         } = this.props
 
         return (
             <div>
                 {
                     this.state.editState ? <div className="topic-subject-edit">
-                        <textarea className='discuss-content' value={this.state.content} onChange={this.editInputHandle}></textarea>
-
+                        <Editor handleContentChange={this.discussContentHandle.bind(this)}
+                            handleFileUpload={this.discussFileUploadHandle.bind(this)}
+                            content={this.state.content}
+                            deleteFile={this.deleteDiscussFile.bind(this)}
+                            attachments={this.state.discussAttachments}>
+                        </Editor>
                         <div className="button-warp">
                             <div className="save-btn" onClick={() => { saveEditHandle(_id, this.state.content); this.setState({ editState: false }) }}>保存</div>
                             <div className="cancel-btn" onClick={() => { this.setState({ editState: false }) }}>取消</div>
@@ -67,6 +95,13 @@ class TopicDiscussItem extends React.Component {
                         </div>
                     </div>
                 }
+                <div className="file-list">
+                    {
+                        this.state.discussAttachments && this.state.discussAttachments.map((item) => {
+                            return ( <div className="file-item" key={Math.random()}>{item.name}</div> )
+                        })
+                    }
+                </div>
             </div>
         )
     }
@@ -84,10 +119,22 @@ export default class Topic extends React.Component{
             create_time: '',
             todoDesc: '',
         },
-
+        discussObj: {
+            editStatus: false,
+            topicId: 1,
+            creator: {},
+            title: '',
+            content: '',
+            create_time: '',
+            todoDesc: '',
+        },
         topicNameInput: '',
         topicContentInput: '',
         topicAttachments: [],
+
+        discussNameInput: '',
+        discussContentInput: '',
+        discussAttachments: [],
 
         discussList: [],
         memberList: [],
@@ -145,6 +192,11 @@ export default class Topic extends React.Component{
             topicContentInput: content
         })
     }
+    discussContentHandle = (content) => {
+        this.setState({
+            createDiscussContent: content
+        })
+    }
 
     topicFileUploadHandle = async (e) => {
         const resp = await fileUploader('teamId', '', e.target.files[0])
@@ -154,12 +206,26 @@ export default class Topic extends React.Component{
             topicAttachments,
         })
     }
-
+    discussFileUploadHandle = async (e) => {
+        const resp = await fileUploader('teamId', '', e.target.files[0])
+        let discussAttachments = this.state.discussAttachments;
+        discussAttachments = [...discussAttachments, resp]
+        this.setState({
+            discussAttachments,
+        })
+    }
     deleteFile = async (e, index) => {
         let topicAttachments = this.state.topicAttachments
         topicAttachments.splice(index,1);
         this.setState({
             topicAttachments,
+        })
+    }
+    deleteDiscussFile = async (e, index) => {
+        let discussAttachments = this.state.discussAttachments
+        discussAttachments.splice(index,1);
+        this.setState({
+            discussAttachments,
         })
     }
 
@@ -216,6 +282,7 @@ export default class Topic extends React.Component{
             discussList.map((item, idx) => {
                 if(item._id == _id) {
                     discussList[idx].content = content
+                    discussList[idx].discussAttachments=this.state.discussAttachments
                 }
             })
             this.setState({
@@ -234,19 +301,22 @@ export default class Topic extends React.Component{
         this.setState({memberList})
     }
 
+    
+    
     createDiscussInputHandle = (e) => {
         this.setState({
             createDiscussContent: e.target.value
         })
+        console.log('here:',this.state.createDiscussContent)
     }
 
     createDiscussHandle = async () => {
         const informList = []
-        this.state.memberList.map((item) => {
-            if(item.chosen) {
-                informList.push(item._id)
-            }
-        })
+        // this.state.memberList.map((item) => {
+        //     if(item.chosen) {
+        //         informList.push(item._id)
+        //     }
+        // })
 
         const result = await api('/api/topic/createDiscuss', {
             method: 'POST',
@@ -254,7 +324,7 @@ export default class Topic extends React.Component{
                 teamId: this.teamId,
                 topicId: this.topicId,
                 content: this.state.createDiscussContent,
-                informList: informList
+                // informList: informList
             }
         })
 
@@ -266,6 +336,9 @@ export default class Topic extends React.Component{
                 createDiscussContent: '',
                 createDiscussChosen: false,
             })
+                        // this.deleteDiscussFile()
+            console.log(this.state.discussAttachments)
+            
         } else {
             window.toast(result.state.msg)
         }
@@ -350,9 +423,15 @@ export default class Topic extends React.Component{
                                 {
                                     this.state.createDiscussChosen ?
                                         <div className='topic-subject-edit no-pading'>
-                                            <textarea autoFocus className='discuss-content' value={this.state.createDiscussContent} onChange={this.createDiscussInputHandle}></textarea>
-                                            <div className="infrom">请选择要通知的人：</div>
-                                            <MemberChosenList choseHandle={this.memberChoseHandle} memberList={this.state.memberList}/>
+                                            <Editor handleContentChange={this.discussContentHandle.bind(this)}
+                                                handleFileUpload={this.discussFileUploadHandle.bind(this)}
+                                                content={this.state.discussContentInput}
+                                                deleteFile={this.deleteDiscussFile.bind(this)}
+                                                attachments={this.state.discussAttachments}>
+                                            </Editor>
+                                            {/* <textarea autoFocus className='discuss-content' value={this.state.createDiscussContent} onChange={this.createDiscussInputHandle}></textarea> */}
+                                            {/* <div className="infrom">请选择要通知的人：</div>
+                                            <MemberChosenList choseHandle={this.memberChoseHandle} memberList={this.state.memberList}/> */}
                                             <div className="button-warp" >
                                                 <div className="save-btn" onClick={this.createDiscussHandle}>发表</div>
                                                 <div className="cancel-btn" onClick={() => { this.setState({ createDiscussContent: '',createDiscussChosen: false }) }}>取消</div>
