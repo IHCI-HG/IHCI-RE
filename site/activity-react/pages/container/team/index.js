@@ -7,7 +7,8 @@ import Page from '../../../components/page'
 class TeamItem extends React.PureComponent{
     render() {
         return <div className="team-item">
-            <div className="left" onClick={() => {this.props.locationTo('/discuss/' + this.props._id)}}>
+
+            <div className="left" onClick={() => {this.props.locationTo('/team/' + this.props._id)}}>
                 <img className="bg-img" src={this.props.teamImg}></img>
                 <div className="img-con"></div>
                 <div className="name">{this.props.name}</div>
@@ -95,15 +96,7 @@ export default class Team extends React.Component{
 
 
     state = {
-        teamList: [
-            // {
-            //     _id: 1,
-            //     name: '青少年编程项目组',
-            //     teamImg: 'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=471192784,4234473862&fm=27&gp=0.jpg',
-            //     managed: true,
-            //     marked: true,
-            // },
-        ],
+        teamList: [],
     }
     render() {
         return (

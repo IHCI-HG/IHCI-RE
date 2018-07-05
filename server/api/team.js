@@ -3,15 +3,17 @@ var _ = require('underscore'),
     proxy = require('../components/proxy/proxy'),
     conf = require('../conf');
 
-    
+
 import fetch from 'isomorphic-fetch';
 import lo from 'lodash';
 import apiAuth from '../components/auth/api-auth'
 
-import { 
-    web_codeToAccessToken, 
+import {
+    web_codeToAccessToken,
     web_accessTokenToUserInfo,
     web_codeToUserInfo,
+    applyIntoTeam,
+    admitIntoTeam
 } from '../components/wx-utils/wx-utils'
 import { MongooseDocument } from 'mongoose';
 
@@ -20,6 +22,8 @@ var mongoose = require('mongoose')
 var teamDB = mongoose.model('team')
 var userDB = mongoose.model('user')
 var topicDB = mongoose.model('topic')
+var tasklistDB = mongoose.model('tasklist')
+var taskDB = mongoose.model('task')
 var folderDB = mongoose.model('folder')
 
 var file = require('../models/file')
@@ -28,12 +32,12 @@ const creatTeam = async (req, res, next) => {
     const teamInfo = req.body.teamInfo || {}
     const userId = req.rSession.userId
 
-    if(!teamInfo.name || !teamInfo.teamImg || !teamInfo.teamDes) {
+    if (!teamInfo.name || !teamInfo.teamImg || !teamInfo.teamDes) {
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: "参数不全" },
             data: {}
         });
-        return 
+        return
     }
 
     try {
@@ -41,6 +45,7 @@ const creatTeam = async (req, res, next) => {
         await teamDB.addMember(teamObj._id, userId, 'creator')
         await userDB.addTeam(userId, teamObj, 'creator')
         teamObj = await teamDB.findByTeamId(teamObj._id)
+
         await folderDB.createFolder(teamObj._id,'','')
          
         resProcessor.jsonp(req, res, {
@@ -62,7 +67,7 @@ const joinTeam = async (req, res, next) => {
     const teamId = req.body.teamId
     const userId = req.rSession.userId
 
-    if(!teamId) {
+    if (!teamId) {
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: "参数不全" },
             data: {}
@@ -72,9 +77,9 @@ const joinTeam = async (req, res, next) => {
 
     try {
         let teamObj = await teamDB.findByTeamId(teamId)
-        if(!teamObj) {
+        if (!teamObj) {
             resProcessor.jsonp(req, res, {
-                state: { code: 1, msg: '团队不存在'},
+                state: { code: 1, msg: '团队不存在' },
                 data: {}
             });
             return
@@ -83,17 +88,22 @@ const joinTeam = async (req, res, next) => {
         // 检验是否已经加入该团队
         let isJoined = false
         teamObj.memberList.map((item) => {
-            if(item.userId === userId) {
+            if (item.userId === userId) {
                 isJoined = true
             }
         })
-        if(isJoined) {
+        if (isJoined) {
             resProcessor.jsonp(req, res, {
                 state: { code: 1, msg: '您已在团队中' },
                 data: {}
             });
             return
         }
+
+        //提交申请
+        // let userObj = userDB.baseInfoById(userId);
+        // applyIntoTeam(teamObj.memberList,userObj);
+
 
         await teamDB.addMember(teamId, userId, 'member')
         await userDB.addTeam(userId, teamObj, 'member')
@@ -117,9 +127,9 @@ const joinTeam = async (req, res, next) => {
 const modifyMemberRole = async (req, res, next) => {
     const body = req.body
     const userId = req.rSession.userId
-    const teamId = body.teamId 
+    const teamId = body.teamId
 
-    if(!body.teamId || !body.userId || !body.role) {
+    if (!body.teamId || !body.userId || !body.role) {
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: "参数不全" },
             data: {}
@@ -128,9 +138,9 @@ const modifyMemberRole = async (req, res, next) => {
     }
     try {
         let teamObj = await teamDB.findByTeamId(teamId)
-        if(!teamObj || !teamObj.memberList) {
+        if (!teamObj || !teamObj.memberList) {
             resProcessor.jsonp(req, res, {
-                state: { code: 1, msg: '团队不存在'},
+                state: { code: 1, msg: '团队不存在' },
                 data: {}
             });
             return
@@ -138,30 +148,30 @@ const modifyMemberRole = async (req, res, next) => {
 
         let myRole = null
         teamObj.memberList.map((item) => {
-            if(item.userId == userId) {
+            if (item.userId == userId) {
                 myRole = item.role
             }
         })
 
-        if(!myRole) {
+        if (!myRole) {
             resProcessor.jsonp(req, res, {
-                state: { code: 1, msg: '你不并在这个团队里面'},
+                state: { code: 1, msg: '你不并在这个团队里面' },
                 data: {}
             });
             return
         }
 
-        if(myRole == "member") {
+        if (myRole == "member") {
             resProcessor.jsonp(req, res, {
-                state: { code: 1, msg: '成员没有管理权限'},
+                state: { code: 1, msg: '成员没有管理权限' },
                 data: {}
             });
             return
         }
 
-        if(role == "creator") {
+        if (role == "creator") {
             resProcessor.jsonp(req, res, {
-                state: { code: 1, msg: '不能设置创建者'},
+                state: { code: 1, msg: '不能设置创建者' },
                 data: {}
             });
             return
@@ -188,7 +198,7 @@ const modifyMemberRole = async (req, res, next) => {
 const modifyTeamInfo = async (req, res, next) => {
     const teamId = req.body.teamId
     const teamInfo = req.body.teamInfo
-    const userId = req.rSession.userId 
+    const userId = req.rSession.userId
 
     /* teamInfo
 
@@ -197,7 +207,7 @@ const modifyTeamInfo = async (req, res, next) => {
         teamDes: des,
     */
 
-    if(!teamInfo || !teamId) {
+    if (!teamInfo || !teamId) {
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: "参数不全" },
             data: {}
@@ -206,9 +216,9 @@ const modifyTeamInfo = async (req, res, next) => {
     }
     try {
         let teamObj = await teamDB.findByTeamId(teamId)
-        if(!teamObj) {
+        if (!teamObj) {
             resProcessor.jsonp(req, res, {
-                state: { code: 1, msg: '团队不存在'},
+                state: { code: 1, msg: '团队不存在' },
                 data: {}
             });
             return
@@ -242,9 +252,9 @@ const modifyTeamInfo = async (req, res, next) => {
 const markTeam = async (req, res, next) => {
     const teamId = req.body.teamId
     const markState = req.body.markState
-    const userId = req.rSession.userId 
+    const userId = req.rSession.userId
 
-    if(!teamId || markState == undefined) {
+    if (!teamId || markState == undefined) {
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: "参数不全" },
             data: {}
@@ -254,17 +264,17 @@ const markTeam = async (req, res, next) => {
 
     try {
         let teamObj = await teamDB.findByTeamId(teamId)
-        if(!teamObj) {
+        if (!teamObj) {
             resProcessor.jsonp(req, res, {
-                state: { code: 1, msg: '团队不存在'},
+                state: { code: 1, msg: '团队不存在' },
                 data: {}
             });
             return
         }
         let userObj = await userDB.findByUserId(userId)
-        if(!userObj) {
+        if (!userObj) {
             resProcessor.jsonp(req, res, {
-                state: { code: 1, msg: '用户不存在'},
+                state: { code: 1, msg: '用户不存在' },
                 data: {}
             });
             return
@@ -291,10 +301,10 @@ const markTeam = async (req, res, next) => {
 const kikMember = async (req, res, next) => {
     const teamId = req.body.teamId
     const tarMemberId = req.body.memberId
-    const userId = req.rSession.userId 
+    const userId = req.rSession.userId
 
 
-    if(!tarMemberId || !teamId) {
+    if (!tarMemberId || !teamId) {
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: "参数不全" },
             data: {}
@@ -304,9 +314,9 @@ const kikMember = async (req, res, next) => {
 
     try {
         let teamObj = await teamDB.findByTeamId(teamId)
-        if(!teamObj) {
+        if (!teamObj) {
             resProcessor.jsonp(req, res, {
-                state: { code: 1, msg: '团队不存在'},
+                state: { code: 1, msg: '团队不存在' },
                 data: {}
             });
             return
@@ -314,13 +324,13 @@ const kikMember = async (req, res, next) => {
 
         let power = false
         teamObj.memberList.map((item) => {
-            if(item.userId == userId && (item.role == 'creator' || item.role == 'admin')) {
+            if (item.userId == userId && (item.role == 'creator' || item.role == 'admin')) {
                 power = true
             }
         })
-        if(!power) {
+        if (!power) {
             resProcessor.jsonp(req, res, {
-                state: { code: 1, msg: '没有权限'},
+                state: { code: 1, msg: '没有权限' },
                 data: {}
             });
             return
@@ -346,7 +356,7 @@ const kikMember = async (req, res, next) => {
 
 const teamInfo = async (req, res, next) => {
     const teamId = req.body.teamId
-    if(!teamId) {
+    if (!teamId) {
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: "参数不全" },
             data: {}
@@ -355,9 +365,9 @@ const teamInfo = async (req, res, next) => {
     }
     try {
         let teamObj = await teamDB.findByTeamId(teamId)
-        if(!teamObj) {
+        if (!teamObj) {
             resProcessor.jsonp(req, res, {
-                state: { code: 1, msg: '团队不存在'},
+                state: { code: 1, msg: '团队不存在' },
                 data: {}
             });
             return
@@ -375,11 +385,12 @@ const teamInfo = async (req, res, next) => {
     }
 }
 
+
 // 个人首页、获取团队列表
 const teamInfoList = async (req, res, next) => {
     const teamIdList = req.body.teamIdList
 
-    if(!teamIdList || !teamIdList.length) {
+    if (!teamIdList || !teamIdList.length) {
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: "参数不全" },
             data: {}
@@ -409,7 +420,7 @@ const teamInfoList = async (req, res, next) => {
 // 直接返回团队的成员列表
 const memberList = async (req, res, next) => {
     const teamId = req.query.teamId
-    if(!teamId) {
+    if (!teamId) {
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: "参数不全" },
             data: {}
@@ -418,7 +429,7 @@ const memberList = async (req, res, next) => {
     }
     try {
         const teamObj = await teamDB.findByTeamId(teamId)
-        if(!teamObj) {
+        if (!teamObj) {
             resProcessor.jsonp(req, res, {
                 state: { code: 1, msg: "团队不存在" },
                 data: {}
@@ -443,6 +454,148 @@ const memberList = async (req, res, next) => {
     }
 }
 
+const taskList = async (req, res, nect) => {
+    const teamId = req.query.teamId
+    if (!teamId) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: "参数不全" },
+            data: {}
+        });
+        return
+    }
+    try {
+        let team = await teamDB.findByTeamId(teamId)
+        if (!team) {
+            resProcessor.jsonp(req, res, {
+                state: { code: 1, msg: '团队不存在' },
+                data: {}
+            });
+            return
+        }
+        const teamObj = team.toObject()
+        const taskListTemp = teamObj.taskList
+        const taskList = []
+        for (var i = 0; i < taskListTemp.length; i++) {
+            var headername = ""
+            if (taskListTemp[i].header) {
+                const headerObj = await userDB.findByUserId(taskListTemp[i].header)
+                headername = headerObj.username
+            }
+            var taskListCom = ""
+            if(taskListTemp[i].completed_time) {
+                const date = taskListTemp[i].completed_time
+                taskListCom = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
+            }
+            var taskListDdl = ""
+            if(taskListTemp[i].deadline) {
+                const date = taskListTemp[i].deadline
+                taskListDdl = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
+            }
+            const obj1 = {
+                id: taskListTemp[i]._id,
+                title: taskListTemp[i].title,
+                content: taskListTemp[i].content,
+                deadline: taskListDdl,
+                state: taskListTemp[i].state,
+                completed_time: taskListCom,
+                header: {
+                    headerId: taskListTemp[i].header,
+                    headername: headername
+                },
+                fileList: taskListTemp[i].fileList
+            }
+            taskList.push(obj1)
+        }
+        const tasklistListTemp = teamObj.tasklistList
+        const tasklistList = []
+        for (var i = 0; i < tasklistListTemp.length; i++) {
+            const temp = await tasklistDB.findByTasklistId(tasklistListTemp[i]._id)
+            if (!temp) {
+                continue;
+            }
+            const result = temp.toObject()
+            console.log(result)
+            const task = []
+            for (var j = 0; j < result.taskList.length; j++) {
+                var headername = ""
+                if (result.taskList[j].header) {
+                    const headerObj = await userDB.findByUserId(result.taskList[j].header)
+                    headername = headerObj.username
+                }
+                var taskListCom = ""
+                if(result.taskList[j].completed_time) {
+                    const date = result.taskList[j].completed_time
+                    taskListCom = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
+                }
+                var taskListDdl = ""
+                if(result.taskList[j].deadline) {
+                    const date = result.taskList[j].deadline
+                    taskListDdl = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
+                }
+                const obj2 = {
+                    taskId: result.taskList[j]._id,
+                    title: result.taskList[j].title,
+                    content: result.taskList[j].content,
+                    deadline: taskListDdl,
+                    state: result.taskList[j].state,
+                    completed_time: taskListCom,
+                    header: {
+                        headerId: result.taskList[j].header,
+                        headername: headername
+                    },
+                    fileList: result.taskList[i].fileList
+                }
+                task.push(obj2)
+            }
+
+            const obj3 = {
+                _id: tasklistListTemp[i]._id,
+                name: tasklistListTemp[i].name,
+                taskList: task
+            }
+
+            tasklistList.push(obj3)
+        }
+        var checkitemNum = 0;
+        var checkitemDoneNum = 0;
+        var taskIdList = []
+        for (var i = 0; i < taskList.length; i++) {
+            taskIdList.push(taskList[i]._id)
+        }
+        for (var i = 0; i < tasklistList.length; i++) {
+            for (var j = 0; j < tasklistList[i].taskList.length; j++) {
+                taskIdList.push(tasklistList[i].taskList[j]._id)
+            }
+        }
+        const task = await taskDB.findByTaskIdList(taskIdList)
+        for (var i = 0; i < task.length; i++) {
+            if (task[i].checkitemList.length) {
+                checkitemNum += task[i].checkitemList.length;
+                for (var j = 0; j < task[i].checkitemList.length; j++) {
+                    if (task[i].checkitemList[j].state == true)
+                        checkitemDoneNum++;
+                }
+            }
+        }
+        const taskObj = {
+            taskList: taskList,
+            tasklistList: tasklistList,
+            checkItemNum: checkitemNum,
+            checkItemDoneNum: checkitemDoneNum
+        }
+        resProcessor.jsonp(req, res, {
+            state: { code: 0, msg: '请求成功' },
+            data: taskObj
+        });
+    } catch (error) {
+        console.error(error);
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: '操作失败' },
+            data: {}
+        });
+    }
+}
+
 
 
 module.exports = [
@@ -457,5 +610,6 @@ module.exports = [
     ['POST', '/api/team/kikMember', apiAuth, kikMember],
 
     ['GET', '/api/team/memberList', apiAuth, memberList],
-    
+    ['GET', '/api/team/taskList', apiAuth, taskList],
+
 ];
