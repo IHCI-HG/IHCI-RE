@@ -1,14 +1,6 @@
 
 import { fillParams } from './url-utils';
-<<<<<<< HEAD
 import { isIOS, isAndroid} from './envi';
-=======
-<<<<<<< HEAD
-import { isIOS, isAndroid} from './envi';
-=======
-import { isIOS, isAndroid, getQlchatVersion} from './envi';
->>>>>>> 34489639a34bf3809a59fa7dedf402a6837210d2
->>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
 
 function copy(obj) {
     // JSON解析之类的其实如果给定格式不对很容易出错滴，自己做好检验~
@@ -45,21 +37,7 @@ export function share(opts) {
         opts.shareUrl = window.location.href;
     }
 
-<<<<<<< HEAD
     var newShareUrl = opts.shareUrl;
-=======
-<<<<<<< HEAD
-    var newShareUrl = opts.shareUrl;
-=======
-    // Todo 根据需要可能要调整或去掉
-    var newShareUrl = opts.shareUrl;
-    // if (opts.shareUrl.indexOf('__sharem=1') > -1) {
-    //     newShareUrl = opts.shareUrl;
-    // } else {
-    //     newShareUrl = opts.shareUrl.replace(/http[s]{0,1}\:\/\/m\.qlchat\.com/, 'http://v' + (Math.random() * 9).toFixed(0) + '.qianliao.tv');
-    // }
->>>>>>> 34489639a34bf3809a59fa7dedf402a6837210d2
->>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
 
 
     // 去掉重复参数以及state, code参数
@@ -169,31 +147,6 @@ export function share(opts) {
 };
 
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
-export function appShare(opts) {
-    var ver = getQlchatVersion()
-    if(ver && ver > 360) {
-        window.qlchat.onMenuShareWeChatTimeline({
-            type: "link", // "link" "image"
-            content: opts.shareUrl, 
-            title:  opts.timelineTitle,
-            desc:  opts.timelineDesc,
-            thumbImage:  opts.imgUrl 
-        });
-        window.qlchat.onMenuShareWeChatFriends({
-            type: "link", // "link" "image"
-            content: opts.shareUrl, 
-            title:  opts.title,
-            desc:  opts.desc,
-            thumbImage:  opts.imgUrl 
-        });
-    }
-}
->>>>>>> 34489639a34bf3809a59fa7dedf402a6837210d2
->>>>>>> cd34279970900fc13cfc41acbe72568f9ea58418
 
 export function closeShare() {
     typeof wx != 'undefined' && wx.ready(function () {
