@@ -483,12 +483,12 @@ const taskList = async (req, res, nect) => {
             }
             var taskListCom = ""
             if(taskListTemp[i].completed_time) {
-                const date = taskListTemp[i].completed_time
+                const date = new Date(taskListTemp[i].completed_time)
                 taskListCom = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
             }
             var taskListDdl = ""
             if(taskListTemp[i].deadline) {
-                const date = taskListTemp[i].deadline
+                const date = new Date(taskListTemp[i].deadline)
                 taskListDdl = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
             }
             const obj1 = {
