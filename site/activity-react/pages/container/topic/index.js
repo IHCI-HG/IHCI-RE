@@ -145,6 +145,7 @@ export default class Topic extends React.Component{
 
     componentDidMount = async() => {
         console.log('mounted!!')
+        console.log(this)
         this.topicId = this.props.params.id
         this.initPageInfo()
         try{
@@ -167,7 +168,6 @@ export default class Topic extends React.Component{
             }
         })
 
-        console.log('topicInfo:', result.data);
         const topicObj = result.data
         this.teamId = result.data.team
 
@@ -444,7 +444,7 @@ export default class Topic extends React.Component{
                     {
                         this.state.discussList.map((item) => {
                             return (
-                                <TopicDiscussItem id={"topic-discuss-item-" + item._id} onBlur={() => this.undoHighlight()} key={"topic-discuss-item-" + item._id} enableHighlight={this.state.enableHighlight} highlight={this.props.location.state.id == item._id? true : false} allowEdit={this.props.personInfo._id == item.creator._id} {...item} saveEditHandle = {this.saveDiscussEditHandle}/>
+                                <TopicDiscussItem id={"topic-discuss-item-" + item._id} onBlur={() => this.undoHighlight()} key={"topic-discuss-item-" + item._id} enableHighlight={this.state.enableHighlight} highlight={!!this.props.location.state && this.props.location.state.id == item._id? true : false} allowEdit={this.props.personInfo._id == item.creator._id} {...item} saveEditHandle = {this.saveDiscussEditHandle}/>
                             )
                         })
                     }
