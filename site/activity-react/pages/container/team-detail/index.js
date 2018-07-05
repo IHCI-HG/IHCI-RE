@@ -407,6 +407,7 @@ export default class Team extends React.Component{
     handleDateChange = async(lIndex, lId, id, e) => {
         let editTask = {}
         editTask.ddl = e.target.value
+        console.log(editTask)
         const resp = await api('/api/task/edit',{
             method:'POST',
             body:{
