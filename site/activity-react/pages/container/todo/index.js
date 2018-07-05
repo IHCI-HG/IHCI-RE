@@ -367,7 +367,7 @@ export default class Task extends React.Component{
     }
 
     copyHandle = async () => {
-        if(this.state.copyNumber==0){
+        if(this.state.copyNumber<=0||this.state.copyNumber>50){
             alert("请输入数量[1~50]")
         }
         else{
