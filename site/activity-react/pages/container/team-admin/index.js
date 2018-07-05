@@ -203,8 +203,8 @@ export default class TeamAdmin extends React.Component{
                 {
                     this.state.showAddMemberDialog && <div className="add-member-dialog-bg" onClick={this.hideAddMemberDialogHandle}>
                         <div className="add-member-dialog">
-                            <div className="close">X</div>
-                            <div className="des">将下面的公共邀请链接通发送给需要邀请的人</div>
+                            <div><img className="close" type="button" src={require('../team-admin/icon_close.png')} alt=""/></div>
+                            <div className="des">将下面的公共邀请链接发送给需要邀请的人</div>
                             <input type="text" value={`${location.host}/team-join/${this.teamId}`} className="invite-input" />
                         </div>
                     </div>

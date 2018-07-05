@@ -1,7 +1,8 @@
 .discuss-page {
- 
+    padding: 30px 0;
+
     .sp-nav {
-        padding: 10px 0 30px 0;
+        margin: 10px 0 30px 0;
         font-size: 20px;
 
         .to-team {
@@ -10,10 +11,14 @@
             cursor: pointer;
             color: rgb(42, 42, 50);
         }
+        .pre-tag{
+            cursor: pointer;
+        }
     }
 
+
     .discuss-con {
-        margin-top: 40px;
+        margin-top: 20px;
         padding: 20px 30px 40px 30px;
 
         .team-info {

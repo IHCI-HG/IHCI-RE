@@ -20,9 +20,17 @@ var TestDB = mongoose.model('test')
 var UserDB = mongoose.model('user')
 var TeamDB = mongoose.model('team')
 
-// 路由前判定是否已经登录
+// 路由前判定是否已经登录或信息填写完全
 const routerAuthJudge = async (req, res, next) => { 
-    if(req.rSession.userId) {
+    const userId = req.rSession.userId
+    if(userId) {
+        const user = await UserDB.findByUserId(userId)
+
+        if (req.url != '/person' &&  user.personInfo==null)
+        {
+            res.redirect('/person')
+            return
+        }
     } else {
         res.redirect('/')
         return
@@ -141,6 +149,8 @@ module.exports = [
     // 主页
     ['GET', '/', clientParams(), mainPage],
 
+    ['GET', '/activate', clientParams(), pageHandle()],
+
     ['GET', '/auth', clientParams(), wxAuthCodeHandle , mainPage],
 
     ['GET', '/team', clientParams(), routerAuthJudge, pageHandle() ],
@@ -160,4 +170,5 @@ module.exports = [
     ['GET', '/discuss/topic/:id', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/timeline', clientParams(),    routerAuthJudge, pageHandle() ],
     ['GET', '/member', clientParams(),   routerAuthJudge, pageHandle() ],
+    ['GET', '/search', clientParams(),   routerAuthJudge, pageHandle() ],
 ];

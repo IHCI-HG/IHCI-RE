@@ -92,7 +92,13 @@ export default class MainPage extends React.Component {
         })
 
         if(result.state.code === 0) {
-            location.href = '/person'
+            window.toast("注册成功")
+            setTimeout(() => {
+                location.href = '/person'
+            }, 300);
+        }
+        else{
+            window.toast(result.state.msg || "注册失败")
         }
     }
 

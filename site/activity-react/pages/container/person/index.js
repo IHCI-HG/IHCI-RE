@@ -1,16 +1,14 @@
 import * as React from 'react';
 import './style.scss'
-
 import api from '../../../utils/api';
 import Page from '../../../components/page'
 import WxLoginDialog from '../../../components/wx-login-dialog'
 import fileUploader from '../../../utils/file-uploader';
+import FollowDialog from '../../../components/follow-dialog'
 
-export default class Team extends React.Component{
+export default class Person extends React.Component{
     componentDidMount = async() => {
         this.personInfo = {}
-        console.log(INIT_DATA);
-
         if(INIT_DATA.userObj) {
             this.setState({
                 userObj: INIT_DATA.userObj,
@@ -37,6 +35,13 @@ export default class Team extends React.Component{
             window.toast("该微信号已经绑定")
             history.pushState({}, {}, '/person')
         }
+
+        if(INIT_DATA.userObj.personInfo.mail.length>0)
+        {
+            this.setState({
+                hasMail: true,
+            })
+        }
     }
 
     starHandle = async (id) => {
@@ -59,13 +64,23 @@ export default class Team extends React.Component{
 
     state = {
         showWxLogin: false,
+        showFollow: false,
         userObj: {},
         personInfo: {
-            // name: '阿鲁巴大将军',
-            // headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-            // phone: '17728282828',
-            // mail: 'ada@qq.com',
-        }
+            name: '',
+            headImg: '',
+            phone: '',
+            mail: '',
+        },
+        infoCheck:{
+            illegalEmailAddress: false,
+            illegalPhoneNumber:false,
+            illegalName: false,
+        },
+        confirmEditMail: false,
+        submittable: false,
+        hasMail: false,
+        sendMailEnabled: true,
     }
 
     headImgInputHandle = (e) => {
@@ -76,30 +91,88 @@ export default class Team extends React.Component{
             }
         })
     }
+
+    isName = (name) => {
+        const reg = /^[\u4E00-\u9FA5A-Za-z]{1}[\u4E00-\u9FA5A-Za-z0-9_\-]{0,11}$/;
+        return reg.test(name);
+    }
+
     nameInputHandle = (e) => {
+        const name = e.target.value
+        var illegalName = false
+        if (!this.isName(name)){
+            illegalName = true
+        }
         this.setState({
             personInfo: {
                 ...this.state.personInfo,
-                name: e.target.value
-            }
+                name: name,
+            },
+            infoCheck: {
+                ...this.state.infoCheck,
+                illegalName: illegalName,
+            },
         })
     }
+
+    isPhoneNumber = (phoneNumber) => {
+        const reg = /^0?(1[0-9][0-9]|15[012356789]|17[013678]|18[0-9]|14[57])[0-9]{8}$/;
+        return reg.test(phoneNumber);
+    }
+
     phoneInputHandle = (e) => {
+        const phonNumber = e.target.value
+        var illegalPhoneNumber = false
+        if (!this.isPhoneNumber(phonNumber)){
+            illegalPhoneNumber = true
+        }
         this.setState({
             personInfo: {
                 ...this.state.personInfo,
-                phone: e.target.value
-            }
+                phone: phonNumber,
+            },
+            infoCheck: {
+                ...this.state.infoCheck,
+                illegalPhoneNumber: illegalPhoneNumber,
+            },
         })
     }
+
+    isEmailAddress = (emailAddress) => {
+        const reg = /^[A-Za-z0-9._%-]+@([A-Za-z0-9-]+\.)+[A-Za-z]{2,4}$/;
+        return reg.test(emailAddress);
+    }
+
     mailInputHandle = (e) => {
+        const email = e.target.value
+        var illegalEmailAddress = false
+        if (!this.isEmailAddress(email)){
+            illegalEmailAddress = true
+        }
+
         this.setState({
             personInfo: {
                 ...this.state.personInfo,
-                mail: e.target.value
-            }
+                mail: email,
+            },
+            infoCheck: {
+                ...this.state.infoCheck,
+                illegalEmailAddress: illegalEmailAddress,
+            },
         })
     }
+    openFollowDialogHandle = () => {
+        this.setState({
+            showFollow: true
+        })
+    }
+
+    closeFollowDialogHandle = () => {
+        this.setState({
+            showFollow: false
+        })
+    }
+
 
     openWxLoginHandle = () => {
         this.setState({
@@ -113,8 +186,45 @@ export default class Team extends React.Component{
         })
     }
 
+    infoCheckIllegal = () =>{
+        var infoCheck = {
+            illegalEmailAddress: false,
+            illegalPhoneNumber: false,
+            illegalName: false,
+        }
+
+        if (!this.isEmailAddress(this.state.personInfo.mail)){
+            infoCheck.illegalEmailAddress = true
+        }
+
+        if (!this.isPhoneNumber(this.state.personInfo.phone)){
+            infoCheck.illegalPhoneNumber = true
+        }
+
+        if (!this.isName(this.state.personInfo.name)){
+            infoCheck.illegalName = true
+        }
+
+        this.setState({
+            infoCheck: infoCheck,
+        })
+
+        for(var key in infoCheck)
+        {
+            // console.log(infoCheck[key])
+            if (infoCheck[key])
+                return true
+        }
+        return false
+    }
 
     saveHandle = async () => {
+        var infoCheckIllegal = this.infoCheckIllegal()
+
+        if (infoCheckIllegal){
+            window.toast("设置失败，请检查格式")
+            return
+        }
         const result = await api('/api/setUserInfo', {
             method: 'POST',
             body: {
@@ -200,9 +310,52 @@ export default class Team extends React.Component{
         console.log(this.state.personInfo.headImg)
     }
 
+
+    activateMailHandle = async() => {
+        if(!this.state.sendMailEnabled){
+            window.toast("请不要重复提交激活请求，请等待60s后再尝试发送")
+            return
+        }
+
+        if (this.state.personInfo.mail.length <= 0)
+        {
+            window.toast("邮箱未设置，请先修改邮箱")
+            return
+        }
+
+        const result = await api('/api/activation', {
+            method: 'POST',
+            body: {
+                mailAccount: this.state.personInfo.mail,
+            }
+        })
+
+        if(result.state.code === 0) {
+            window.toast("已发送激活邮件，请检查邮箱")
+        } else {
+            window.toast("激活邮件发送失败，请稍后再试")
+        }
+
+        this.setState({
+            sendMailEnabled: false,
+        })
+
+        setTimeout(() => {
+            this.setState({
+                sendMailEnabled: true,
+            })
+        }, 60000);
+
+    }
+
+    editConfirmHangle = () => {
+        this.setState({
+            confirmEditMail: true,
+        })
+    }
     
     render() {
-        let personInfo = this.state.personInfo
+        // let personInfo = this.state.personInfo
         return (
             <Page title={"个人设置"} className="person-edit-page page-wrap">
                 <input className='file-input-hidden' type="file" ref={(fileInput) => this.fileInput = fileInput} onChange={this.uploadFileHandle}></input>
@@ -238,26 +391,44 @@ export default class Team extends React.Component{
                     <div className="before">服务号</div>
 
                     { !!this.state.userObj.subState ? <div className="bind-wx act">已关注</div> : <div className="bind-wx">未关注</div> }
-                    
-
-                    <div>需要关注服务号才能接受讨论消息提醒</div>
+                
+                    { !!!this.state.userObj.subState && <div className='after'>需要<div className='follow-btn' onClick={this.openFollowDialogHandle}>关注服务号</div>才能接受讨论消息提醒</div>}
 
 
                 </div>
 
                 <div className="edit-con">
                     <div className="before">名字</div>
-                    <input type="text" onChange={this.nameInputHandle} className="input-edit"  value={personInfo.name}/>
+                    <input type="text" onChange={this.nameInputHandle} className="input-edit"  value={this.state.personInfo.name}/>
+                    {this.state.infoCheck.illegalName && <div className='after error'>名字以不超过12个的英文、汉字、数字、下划线与短横构成，并以中文或英文开头</div>}
                 </div>
 
                 <div className="edit-con">
+                    
                     <div className="before">邮箱</div>
-                    <input type="text" onChange={this.mailInputHandle} className="input-edit" value={personInfo.mail}/>
+                    {(!this.state.confirmEditMail && this.state.hasMail) && 
+                        <div className='mail-present-bar'>
+                            <div className='after default-color'>
+                                {this.state.personInfo.mail}
+                            </div>
+                            <div className='edit-btn' onClick={this.editConfirmHangle}>修改邮箱</div>
+ 
+                            <div className='active-info'>
+                                {this.state.userObj.isLive ?
+                                    <div className='active-info'><div className='iconfont icon-mail green'></div><div className='active-info'>邮箱已激活</div></div>
+                                    : <div className='active-info'><div className='iconfont icon-mail yellow'></div><div className='active-info'>邮箱未<div className={this.state.sendMailEnabled ? 'activate-btn-active' : 'activate-btn'} onClick={this.activateMailHandle}>激活</div></div></div>
+                                }
+                            </div>
+                        </div>}
+                    {(!this.state.hasMail || this.state.confirmEditMail) && <input type="text" onChange={this.mailInputHandle} className="input-edit" value={this.state.personInfo.mail}/>}
+                    {this.state.infoCheck.illegalEmailAddress && <div className='after error'>格式错误,请填写正确格式的邮件地址</div>}
+                        
                 </div>
 
                 <div className="edit-con">
                     <div className="before">手机</div>
-                    <input type="text" onChange={this.phoneInputHandle} className="input-edit" value={personInfo.phone}/>
+                    <input type="text" onChange={this.phoneInputHandle} className="input-edit" value={this.state.personInfo.phone}/>
+                    {this.state.infoCheck.illegalPhoneNumber && <div className='after error'>格式错误,请填写正确格式的电话号码</div>}
                 </div>
 
                 {/*
@@ -276,10 +447,14 @@ export default class Team extends React.Component{
                 <div className="sava-btn" onClick={this.saveHandle}>保存</div>
 
                 <div className="sava-btn" onClick={this.logOutHandle}>登出</div>
-                
                 {
                     this.state.showWxLogin && <WxLoginDialog state="bind" closeHandle={this.closeWxLoginHandle}/>
                 }
+
+                {
+                    this.state.showFollow && <FollowDialog closeHandle={this.closeFollowDialogHandle}/>
+                }
+
             </Page>
         )
     }
