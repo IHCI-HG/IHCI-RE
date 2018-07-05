@@ -13,9 +13,16 @@ class TopicDiscussItem extends React.Component {
         })
     }
 
+    // componentWillReceiveProps = (nextProps) => {
+    //     this.setState({
+    //         enableHighlight: nextProps
+    //     })
+    // }
+
     state = {
         content: '',
         editState: false,
+        enableHighlight: false,
     }
 
     editInputHandle = (e) => {
@@ -38,9 +45,9 @@ class TopicDiscussItem extends React.Component {
         } = this.props
 
         return (
-            <div>
+            <div id={this.props.id} tabIndex="0" onBlur={this.props.onBlur}>
                 {
-                    this.state.editState ? <div className="topic-subject-edit">
+                    this.state.editState ? <div className={(this.props.enableHighlight &&this.props.highlight) ? "topic-subject-edit highlight" : "topic-subject-edit"}>
                         <textarea className='discuss-content' value={this.state.content} onChange={this.editInputHandle}></textarea>
 
                         <div className="button-warp">
@@ -49,7 +56,7 @@ class TopicDiscussItem extends React.Component {
                         </div>
                     </div>
                         :
-                        <div id={this.props.id} className="topic-subject-con discuss-con">
+                        <div  className={(this.props.enableHighlight &&this.props.highlight) ? "topic-subject-con discuss-con highlight" :"topic-subject-con discuss-con"}>
                             <div className="flex">
                                 <img className="head-img" src={creator.headImg}></img>
                                 <div className="topic-main">
@@ -95,6 +102,8 @@ export default class Topic extends React.Component{
 
         createDiscussChosen: false,
         createDiscussContent: '',
+
+        enableHighlight: false,
     }
 
     componentDidMount = async() => {
@@ -261,17 +270,26 @@ export default class Topic extends React.Component{
     scrollToAnchor = (anchorName) => {
         if (anchorName) {
             let anchorElement = document.getElementById(anchorName);
-            console.log(anchorElement)
             setTimeout(() => {
-                anchorElement.style.transition="all 1.5s";
-                anchorElement.style.padding = '15px'
-                anchorElement.style.backgroundColor = '#FFEECC'
-                anchorElement.style.boxShadow = '5px 5px 5px #888888'
+                // anchorElement.style.transition="all 1.2s";
+                // anchorElement.style.padding = '15px'
+                // anchorElement.style.backgroundColor = '#FFEECC'
+                // anchorElement.style.boxShadow = '5px 5px 5px #888888'
                 // anchorElement.props.className = 'active'
+                this.setState({
+                    enableHighlight: true,
+                })
             }, 500);
             
             if(anchorElement) { anchorElement.scrollIntoView({behavior: 'smooth'}); }
         }
+    }
+
+    undoHighlight = () =>{
+        console.log("blur!!")
+        this.setState({
+            enableHighlight: false,
+        })
     }
 
     render() {
@@ -328,7 +346,7 @@ export default class Topic extends React.Component{
                     {
                         this.state.discussList.map((item) => {
                             return (
-                                <TopicDiscussItem id={"topic-discuss-item-" + item._id} key={"topic-discuss-item-" + item._id} allowEdit={this.props.personInfo._id == item.creator._id} {...item} saveEditHandle = {this.saveDiscussEditHandle}/>
+                                <TopicDiscussItem id={"topic-discuss-item-" + item._id} onBlur={() => this.undoHighlight()} key={"topic-discuss-item-" + item._id} enableHighlight={this.state.enableHighlight} highlight={this.props.location.state.id == item._id? true : false} allowEdit={this.props.personInfo._id == item.creator._id} {...item} saveEditHandle = {this.saveDiscussEditHandle}/>
                             )
                         })
                     }
