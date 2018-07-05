@@ -172,7 +172,13 @@
         }
 
     }
+}
 
-
-
+.file-list {
+    margin: 10px 100px 0px;
+    padding: 14px;
+    .file-item {
+        margin: 8px 0;
+        color: #6a6f7b;
+    }
 }

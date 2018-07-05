@@ -2,10 +2,10 @@ import * as React from 'react';
 import './style.scss'
 import Page from '../../../components/page'
 import api from '../../../utils/api';
-import { timeBefore } from '../../../utils/util'
-
+import { timeBefore, createMarkup } from '../../../utils/util'
+import Editor from '../../../components/editor'
+import fileUploader from '../../../utils/file-uploader'
 import MemberChosenList from '../../../components/member-chose-list'
-
 class TopicDiscussItem extends React.Component {
     componentDidMount = () => {
         this.setState({
@@ -13,16 +13,11 @@ class TopicDiscussItem extends React.Component {
         })
     }
 
-    // componentWillReceiveProps = (nextProps) => {
-    //     this.setState({
-    //         enableHighlight: nextProps
-    //     })
-    // }
-
     state = {
         content: '',
         editState: false,
         enableHighlight: false,
+        discussAttachments:[],
     }
 
     editInputHandle = (e) => {
@@ -31,52 +26,80 @@ class TopicDiscussItem extends React.Component {
         })
     }
 
+    discussContentHandle = (contents) => {
+        this.setState({
+            content: contents
+        })
+    }
+    discussFileUploadHandle = async (e) => {
+        const resp = await fileUploader('teamId', '', e.target.files[0])
+        let discussAttachments = this.state.discussAttachments;
+        discussAttachments = [...discussAttachments, resp]
+        this.setState({
+            discussAttachments,
+        })
+    }
+    deleteDiscussFile = async (e, index) => {
+        let discussAttachments = this.state.discussAttachments
+        discussAttachments.splice(index,1);
+        this.setState({
+            discussAttachments,
+        })
+    }
     render() {
         const {
             _id,
             creator,
             content,
             create_time,
-
-            delHandle,
             saveEditHandle,
             allowEdit,
-
+            fileList,
         } = this.props
 
         return (
             <div id={this.props.id} tabIndex="0" onBlur={this.props.onBlur}>
                 {
                     this.state.editState ? <div className={(this.props.enableHighlight &&this.props.highlight) ? "topic-subject-edit highlight" : "topic-subject-edit"}>
-                        <textarea className='discuss-content' value={this.state.content} onChange={this.editInputHandle}></textarea>
-
+                        <Editor handleContentChange={this.discussContentHandle.bind(this)}
+                            handleFileUpload={this.discussFileUploadHandle.bind(this)}
+                            content={this.state.content}
+                            deleteFile={this.deleteDiscussFile.bind(this)}
+                            attachments={this.state.discussAttachments}>
+                        </Editor>
                         <div className="button-warp">
                             <div className="save-btn" onClick={() => { saveEditHandle(_id, this.state.content); this.setState({ editState: false }) }}>保存</div>
                             <div className="cancel-btn" onClick={() => { this.setState({ editState: false }) }}>取消</div>
                         </div>
                     </div>
-                        :
-                        <div  className={(this.props.enableHighlight &&this.props.highlight) ? "topic-subject-con discuss-con highlight" :"topic-subject-con discuss-con"}>
-                            <div className="flex">
-                                <img className="head-img" src={creator.headImg}></img>
-                                <div className="topic-main">
-                                    <div className="head-wrap">
-                                        <div className="left">
-                                            <span className="name">{creator.name}</span>
-                                            <span className="time">{timeBefore(create_time)}</span>
-                                        </div>
-                                        {
-                                            allowEdit && <div className="right">
-                                                <span className="edit" onClick={() => { this.setState({ editState: true }) }}>编辑</span>
-                                                {/* <span className="edit">删除</span> */}
-                                            </div>
-                                        }
+                    :
+                    <div  className={(this.props.enableHighlight &&this.props.highlight) ? "topic-subject-con discuss-con highlight" :"topic-subject-con discuss-con"}>
+                        <div className="flex">
+                            <img className="head-img" src={creator.headImg}></img>
+                            <div className="topic-main">
+                                <div className="head-wrap">
+                                    <div className="left">
+                                        <span className="name">{creator.name}</span>
+                                        <span className="time">{timeBefore(create_time)}</span>
                                     </div>
-                                    <div className="content"><pre>{content}</pre></div>
+                                    {
+                                        allowEdit && <div className="right">
+                                            <span className="edit" onClick={() => { this.setState({ editState: true }) }}>编辑</span>
+                                        </div>
+                                    }
                                 </div>
+                                <p dangerouslySetInnerHTML={createMarkup(content)}></p>
                             </div>
                         </div>
+                    </div>
                 }
+                <div className="file-list">
+                    {
+                        this.state.discussAttachments && this.state.discussAttachments.map((item) => {
+                            return ( <div className="file-item" key={Math.random()}>{item.name}</div> )
+                        })
+                    }
+                </div>
             </div>
         )
     }
@@ -92,10 +115,24 @@ export default class Topic extends React.Component{
             title: '',
             content: '',
             create_time: '',
+            todoDesc: '',
         },
-
+        discussObj: {
+            editStatus: false,
+            topicId: 1,
+            creator: {},
+            title: '',
+            content: '',
+            create_time: '',
+            todoDesc: '',
+        },
         topicNameInput: '',
         topicContentInput: '',
+        topicAttachments: [],
+
+        discussNameInput: '',
+        discussContentInput: '',
+        discussAttachments: [],
 
         discussList: [],
         memberList: [],
@@ -107,6 +144,7 @@ export default class Topic extends React.Component{
     }
 
     componentDidMount = async() => {
+        console.log('mounted!!')
         this.topicId = this.props.params.id
         this.initPageInfo()
         if (this.props.location.state.type == 'REPLY' && this.props.location.state.id)
@@ -126,6 +164,7 @@ export default class Topic extends React.Component{
             }
         })
 
+        console.log('topicInfo:', result.data);
         const topicObj = result.data
         this.teamId = result.data.team
 
@@ -142,8 +181,8 @@ export default class Topic extends React.Component{
                 chosen: false,
             })
         ])
-        
 
+        this.state.topicAttachments = topicObj.fileList;
         this.setState({
             topicObj: {
                 ...topicObj,
@@ -151,47 +190,88 @@ export default class Topic extends React.Component{
             },
             topicNameInput: topicObj.title,
             topicContentInput: topicObj.content,
-
             discussList: result.data.discussList,
             memberList: memberList
         })
     }
 
+    topicContentHandle = (content) => {
+        this.setState({
+            topicContentInput: content
+        })
+    }
+    discussContentHandle = (content) => {
+        this.setState({
+            createDiscussContent: content
+        })
+    }
 
-
+    topicFileUploadHandle = async (e) => {
+        const resp = await fileUploader('teamId', '', e.target.files[0])
+        let topicAttachments = this.state.topicAttachments;
+        topicAttachments = [...topicAttachments, resp]
+        this.setState({
+            topicAttachments,
+        })
+    }
+    discussFileUploadHandle = async (e) => {
+        const resp = await fileUploader('teamId', '', e.target.files[0])
+        let discussAttachments = this.state.discussAttachments;
+        discussAttachments = [...discussAttachments, resp]
+        this.setState({
+            discussAttachments,
+        })
+    }
+    deleteFile = async (e, index) => {
+        let topicAttachments = this.state.topicAttachments
+        topicAttachments.splice(index,1);
+        this.setState({
+            topicAttachments,
+        })
+    }
+    deleteDiscussFile = async (e, index) => {
+        let discussAttachments = this.state.discussAttachments
+        discussAttachments.splice(index,1);
+        this.setState({
+            discussAttachments,
+        })
+    }
 
     topicNameInput = (e) => {
         this.setState({
             topicNameInput: e.target.value
         })
     }
-    topicContentHandle = (e) => {
-        this.setState({
-            topicContentInput: e.target.value
-        })
-    }
 
     topicChangeSaveHandle = async () => {
+        let editTopic = {
+            title: this.state.topicNameInput,
+                content: this.state.topicContentInput,
+                fileList: this.state.topicAttachments,
+        }
         const result = await api('/api/topic/editTopic', {
             method: 'POST',
             body: {
                 teamId: this.teamId,
                 topicId: this.topicId,
-                editTopic: {
-                    title: this.state.topicNameInput,
-                    content: this.state.topicContentInput,
-                },
+                editTopic,
                 informList: []
             }
         })
-        this.setState({
-            topicObj: {
-                ...this.state.topicObj,
-                name: this.state.topicNameInput,
-                content: this.state.topicContentInput,
-                editStatus: false,
-            }
-        })
+        console.log(editTopic)
+        console.log('result', result);
+
+        if (result) {
+            this.setState({
+                topicObj: {
+                    ...this.state.topicObj,
+                    name: this.state.topicNameInput,
+                    content: this.state.topicContentInput,
+                    fileList: this.state.topicAttachments,
+                    editStatus: false,
+                }
+            })
+        }
     }
 
     saveDiscussEditHandle = async (_id, content) => {
@@ -211,6 +291,7 @@ export default class Topic extends React.Component{
             discussList.map((item, idx) => {
                 if(item._id == _id) {
                     discussList[idx].content = content
+                    discussList[idx].discussAttachments=this.state.discussAttachments
                 }
             })
             this.setState({
@@ -229,19 +310,22 @@ export default class Topic extends React.Component{
         this.setState({memberList})
     }
 
+    
+    
     createDiscussInputHandle = (e) => {
         this.setState({
             createDiscussContent: e.target.value
         })
+        console.log('here:',this.state.createDiscussContent)
     }
 
     createDiscussHandle = async () => {
         const informList = []
-        this.state.memberList.map((item) => {
-            if(item.chosen) {
-                informList.push(item._id)
-            }
-        })
+        // this.state.memberList.map((item) => {
+        //     if(item.chosen) {
+        //         informList.push(item._id)
+        //     }
+        // })
 
         const result = await api('/api/topic/createDiscuss', {
             method: 'POST',
@@ -249,7 +333,7 @@ export default class Topic extends React.Component{
                 teamId: this.teamId,
                 topicId: this.topicId,
                 content: this.state.createDiscussContent,
-                informList: informList
+                // informList: informList
             }
         })
 
@@ -261,6 +345,9 @@ export default class Topic extends React.Component{
                 createDiscussContent: '',
                 createDiscussChosen: false,
             })
+                        // this.deleteDiscussFile()
+            console.log(this.state.discussAttachments)
+            
         } else {
             window.toast(result.state.msg)
         }
@@ -271,11 +358,6 @@ export default class Topic extends React.Component{
         if (anchorName) {
             let anchorElement = document.getElementById(anchorName);
             setTimeout(() => {
-                // anchorElement.style.transition="all 1.2s";
-                // anchorElement.style.padding = '15px'
-                // anchorElement.style.backgroundColor = '#FFEECC'
-                // anchorElement.style.boxShadow = '5px 5px 5px #888888'
-                // anchorElement.props.className = 'active'
                 this.setState({
                     enableHighlight: true,
                 })
@@ -307,13 +389,18 @@ export default class Topic extends React.Component{
                     {
                         this.state.topicObj.editStatus ? <div className="topic-subject-edit">
                                 <input type="text" onChange={this.topicNameInput} value={this.state.topicNameInput} className="topic-title"/>
-                                <textarea className='topic-content' onChange={this.topicContentHandle}  value={this.state.topicContentInput}></textarea>
+                                {/*<textarea className='topic-content' onChange={this.topicContentHandle}  value={this.state.topicContentInput}></textarea>*/}
+                                <Editor handleContentChange={this.topicContentHandle.bind(this)}
+                                        handleFileUpload={this.topicFileUploadHandle.bind(this)}
+                                        content={this.state.topicContentInput}
+                                        deleteFile={this.deleteFile.bind(this)}
+                                        attachments={this.state.topicAttachments}></Editor>
 
                                 <div className="button-warp">
                                     <div className="save-btn" onClick={this.topicChangeSaveHandle}>保存</div>
                                     <div className="cancel-btn" onClick={() => {this.setState({topicObj: {...this.state.topicObj, editStatus: false}})}}>取消</div>
                                 </div>
-                            </div> 
+                            </div>
                         :
                             <div className="topic-subject-con">
                                 <div className="topic-title">{this.state.topicObj.title}</div>
@@ -332,12 +419,20 @@ export default class Topic extends React.Component{
                                                      {/* <span className="edit">删除</span> */}
                                                 </div>
                                             }
-
                                         </div>
-                                        <div className="content"><pre>{this.state.topicObj.content}</pre></div>
+                                        <p dangerouslySetInnerHTML={createMarkup(this.state.topicObj.content)}></p>
                                     </div>
                                 </div>
                             </div>
+                    }
+                    { this.state.topicObj.editStatus== false &&
+                        <div className="file-list">
+                            {
+                                this.state.topicObj.fileList && this.state.topicObj.fileList.map((item) => {
+                                    return ( <div className="file-item" key={Math.random()}>{item.name}</div> )
+                                })
+                            }
+                        </div>
                     }
 
                     <div className="div-line"></div>
@@ -358,31 +453,31 @@ export default class Topic extends React.Component{
                                 {
                                     this.state.createDiscussChosen ?
                                         <div className='topic-subject-edit no-pading'>
-                                            <textarea autoFocus className='discuss-content' value={this.state.createDiscussContent} onChange={this.createDiscussInputHandle}></textarea>
-                                            <div className="infrom">请选择要通知的人：</div>
-                                            <MemberChosenList choseHandle={this.memberChoseHandle} memberList={this.state.memberList}/>
+                                            <Editor handleContentChange={this.discussContentHandle.bind(this)}
+                                                handleFileUpload={this.discussFileUploadHandle.bind(this)}
+                                                content={this.state.discussContentInput}
+                                                deleteFile={this.deleteDiscussFile.bind(this)}
+                                                attachments={this.state.discussAttachments}>
+                                            </Editor>
+                                            {/* <textarea autoFocus className='discuss-content' value={this.state.createDiscussContent} onChange={this.createDiscussInputHandle}></textarea> */}
+                                            {/* <div className="infrom">请选择要通知的人：</div>
+                                            <MemberChosenList choseHandle={this.memberChoseHandle} memberList={this.state.memberList}/> */}
                                             <div className="button-warp" >
                                                 <div className="save-btn" onClick={this.createDiscussHandle}>发表</div>
                                                 <div className="cancel-btn" onClick={() => { this.setState({ createDiscussContent: '',createDiscussChosen: false }) }}>取消</div>
                                             </div>
                                         </div>
-                                        : 
+                                        :
                                         <div className='topic-subject-edit no-pading'>
                                             <input placeholder={"点击发表评论"} type="text" onClick={() => {this.setState({createDiscussChosen: true})}} className="topic-title"/>
                                         </div>
-                                }   
+                                }
                             </div>
                         </div>
                     </div>
-
                     </div>
-
-
                 </div>
-
             </Page>
         )
     }
 }
-
-

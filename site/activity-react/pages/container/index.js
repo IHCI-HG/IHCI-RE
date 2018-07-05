@@ -16,11 +16,13 @@ import TeamAdmin from './team-admin'
 import TeamJoin from './team-join'
 import TeamCreate from './team-create'
 import Person from './person'
-import Discuss from './discuss'
+
+import TeamDetail from './team-detail'
 import Topic from './topic'
 import Timeline from './timeline'  
 import Member from './member'  
 import Sign from './sign'
+import TaskDetail from './todo'
 import Files from './files'
 import SearchResult from './search'
 import ActivateMail from './activate-mail'
@@ -155,20 +157,26 @@ const routeConfig = [
         component: App,
         indexRoute: { component: Team },
         childRoutes: [
-            { path: 'test', component: Test },
-            { path: 'test-editor', component: TestEditor },
-            { path: 'team', component: Team },
-            { path: 'files/:id', component: Files },
-            { path: 'team-admin/:id', component: TeamAdmin },
-            { path: 'team-join/:id', component: TeamJoin },
-            { path: 'sign', component: Sign },
-            { path: 'team-create', component: TeamCreate },
-            { path: 'person', component: Person },
-            { path: 'discuss/:id', component: Discuss },
-            { path: 'discuss/topic/:id', component: Topic },
+            { path: 'search', component: SearchResult },
             { path: 'timeline', component: Timeline },
             { path: 'member', component: Member },
-            { path: 'search', component: SearchResult },
+
+            { path: 'team', component: Team },
+            { path: 'team/:id', component: TeamDetail },
+            { path: 'team-admin/:id', component: TeamAdmin },
+            { path: 'team-join/:id', component: TeamJoin },
+            { path: 'team-create', component: TeamCreate },
+
+            { path: 'files/:id', component: Files },
+            { path: 'discuss/topic/:id', component: Topic },
+            { path: 'todo/:id', component: TaskDetail },
+
+            { path: 'person', component: Person },
+
+            { path: 'sign', component: Sign },
+            
+            { path: 'test', component: Test },
+            { path: 'test-editor', component: TestEditor },
         ]
     },
     {
