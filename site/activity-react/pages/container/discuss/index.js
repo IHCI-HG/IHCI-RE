@@ -563,7 +563,7 @@ export default class Discuss extends React.Component{
                     {
                         this.state.topicList.map((item) => {
                             return (
-                                <TopicItem locationTo={this.locationTo} {...item} />
+                                <TopicItem key={'topic-item' + item._id} locationTo={this.locationTo} {...item} />
                             )
                         })
                     }
