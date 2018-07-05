@@ -21,6 +21,7 @@ import Topic from './topic'
 import Timeline from './timeline'  
 import Member from './member'  
 import Sign from './sign'
+import Files from './files'
 import SearchResult from './search'
 import ActivateMail from './activate-mail'
 
@@ -157,6 +158,7 @@ const routeConfig = [
             { path: 'test', component: Test },
             { path: 'test-editor', component: TestEditor },
             { path: 'team', component: Team },
+            { path: 'files/:id', component: Files },
             { path: 'team-admin/:id', component: TeamAdmin },
             { path: 'team-join/:id', component: TeamJoin },
             { path: 'sign', component: Sign },
