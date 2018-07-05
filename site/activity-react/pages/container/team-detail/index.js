@@ -360,6 +360,7 @@ export default class Team extends React.Component {
                 editTask: editTask,
             }
         })
+        console.log(resp)
         if (resp.state.code === 0) {
             const todoListArr = this.state.todoListArr
             const todolist = todoListArr[lIndex]
