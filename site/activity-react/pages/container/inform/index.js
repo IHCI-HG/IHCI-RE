@@ -5,6 +5,10 @@ import api from '../../../utils/api';
 import { timeParse, formatDate } from '../../../utils/util'
 import Page from '../../../components/page'
 
+//import { Router, Route, Link, browserHistory } from 'react-router'
+//import routerConf from '../router'
+//import Test from '../../test'
+//import TestEditor from '../../test-editor'
 class InformItem extends React.PureComponent{
     typeMap = {
         'CREATE_TOPIC': '创建了讨论：',
@@ -15,11 +19,11 @@ class InformItem extends React.PureComponent{
       switch (this.props.type){
         case 'CREATE_TOPIC':
             return (
-                <div className='infs-item-wrap'>
+                <div className='infs-item-wrap' key={"infs-item-wrap-" + this.props._id} onClick={() => {this.props.locationTo('/discuss/topic/' + this.props.content._id)}}>
                 <div className="date">{formatDate(this.props.create_time, 'MM月dd日')}</div>
                   <img src={this.props.creator.headImg} alt="" className="head-img" />
 
-                  <div className="infs-con">
+                  <div className='news-con'>
                       <div className="des-line">
                           <span className="name">{this.props.creator.name}</span>
                           <span className="type">{this.typeMap[this.props.type]}</span>
@@ -34,7 +38,7 @@ class InformItem extends React.PureComponent{
           )
         case 'REPLY_TOPIC':
             return (
-                <div className='infs-item-wrap'>
+                <div className='infs-item-wrap' key={"infs-item-wrap-" + this.props._id} onClick={() => {this.props.locationTo('/discuss/topic/' + this.props.content.topicId)}}>
                     <div className="date">{formatDate(this.props.create_time, 'MM月dd日')}</div>
                     <img src={this.props.creator.headImg} alt="" className="head-img" />
 
@@ -58,37 +62,24 @@ class InformItem extends React.PureComponent{
     }
 }
 export default class Infs extends React.Component{
+      componentWillMount = async() => {
+
+      }
       componentDidMount = async() => {
-          await this.initInformData()
-        //  this.initTeamList()
+
+        await this.initUnreadList()
+        console.log(this.state.unreadList)
       }
 
-      initInformData = async () => {
-          const queryTeamId = this.props.location.query.topicId
-
-          const result = await api('/api/timeline/getTimeline', {
-              method: 'POST',
-              body: queryTeamId ? {
-                  teamId: queryTeamId
-              } : {}
-          })
+      loadMoreHandle = () => {
           this.setState({
-              infsList: result.data
-          }, () => {
-              this.appendToShowList(this.state.infsList)
+              index: this.state.index + 10
           })
-
       }
-
-  //    initTeamList = () => {
-  //        this.setState({
-  //            shownTeam: this.props.personInfo && this.props.personInfo.teamList || [],
-    //      })
-  //    }
 
       appendToShowList = (list) => {
           let showList = this.state.showList
-
+          console.log(list)
           list.map((item) => {
               var timeKey = timeParse(item.create_time)
               if(!showList[timeKey]) {
@@ -104,43 +95,89 @@ export default class Infs extends React.Component{
               }
               showList[timeKey][item.teamId].infsList.push(item)
           })
-          console.log(showList);
+          console.log(showList)
           this.setState({
               showList: showList
           })
       }
-
       typeMap = {
           'CREATE_TOPIC': '创建了讨论：',
           'REPLY_TOPIC': '回复了讨论：',
       }
-
       state = {
           // type: create, reply
-          infsList: [],
-
+          unreadList: [],
+          isreadList: [],
+          index: 0,
+          activeTag: 'unread',
           showList: {
               keyList : [],
           },
-
-    //      showTeamFilter: false,
-    //      teamList: [],
+          readState:''
       }
 
+      initIsreadList = async () => {
+              const result = await api('/api/user/showReadList', {
+                  method: 'POST',
+                  body:{}
+              })
 
-    //  teamFilterHandle = () => {
-      //    this.setState({
-        //      teamList: this.props.personInfo.teamList,
-          //    showTeamFilter: !this.state.showTeamFilter
-        //  })
-    //  }
+              const readlist = result.data
+              this.setState({
+                showList: {
+                    keyList : [],
+                },
+                  isreadList: readlist
+              }, () =>{
+                this.appendToShowList(readlist)
+              })
+              console.log(result)
+          }
 
+      initUnreadList = async () => {
+            const result = await api('/api/user/showUnreadList', {
+                method: 'POST',
+                body:{}
+            })
+            this.setState({
+              showList: {
+                  keyList : [],
+              },
+                unreadList: result.data
+            }, () =>{
+              this.appendToShowList(this.state.unreadList)
+            })
+            console.log(this.state.unreadList)
+        }
+
+    toReadHandle = (readState) => {
+          if (readState=="unread")
+              this.initUnreadList()
+          else this.initIsreadList()
+          this.setState({
+              activeTag: readState,
+              index: 0
+          })
+      }
+//<StateChoseItem key={'state' + this.readState} routerTo={this.routerTo} />
+//<div className="readStateChosen">
+//<div onClick={() => {location.href = '/inform?readState=unread'; this.getUnreadInform}} locationTo={this.locationTo}>
+  //  <div className={this.state.activeTag == 'unread'?'read-tag-item act':'read-tag-item'}>未读</div>
+//</div>
+//<div onClick={() => {location.href = '/inform?readState=isread'; this.getIsreadInform}} locationTo={this.locationTo}>
+  //  <div className={this.state.activeTag == 'isread'?'read-tag-item act':'read-tag-item'}>已读</div>
+//</div>
+//</div>
       render() {
-          const showList = this.state.showList
+        const showList = this.state.showList
           return (
               <Page className="infs-page">
-
+              <div className="readStateChosen">
+                  <div className={this.state.activeTag == 'unread'?'read-tag-item act':'read-tag-item'} onClick={this.toReadHandle.bind(this,"unread")}>未读</div>
+                  <div className={this.state.activeTag == 'isread'?'read-tag-item act':'read-tag-item'} onClick={this.toReadHandle.bind(this,"isread")}>已读</div>
+              </div>
                       {
+
                           showList.keyList.map((timeKey) => {
                               return (
                                   <div className="infs-day" key={'time-group-' + timeKey}>
@@ -152,7 +189,9 @@ export default class Infs extends React.Component{
                                                       <div className="group-line">{showList[timeKey][teamKey].teamName}</div>
                                                       {
                                                           showList[timeKey][teamKey].infsList.map((item) => {
-                                                              return <InformItem key={'timeline-' + item._id} {...item}/>
+                                                              return (
+                                                                <InformItem locationTo={this.locationTo} key={'timeline-' + item._id} {...item}/>
+                                                              )
                                                           })
                                                       }
                                                   </div>
@@ -164,10 +203,7 @@ export default class Infs extends React.Component{
                           })
                       }
 
-                      <div className="load-more" onClick={() => {}}>点击加载更多</div>
-
-
-
+                      <div className="load-more" style={{display: this.state.showList.length > (this.state.index + 10) ? 'block' : 'none'}} onClick={() => {this.loadMoreHandle}}>点击加载更多</div>
               </Page>
           )
       }

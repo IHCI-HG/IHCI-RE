@@ -21,6 +21,7 @@ import Topic from './topic'
 import Timeline from './timeline'  
 import Member from './member'  
 import Sign from './sign'
+import SearchResult from './search'
 import Inform from './inform'
 import SearchResult from './search'
 
@@ -65,7 +66,7 @@ class App extends React.Component{
     }
 
     handleSearchRequest = (e) => {
-        location.href = '/search' + (this.state.searchText? '?text=' + this.state.searchText : '') 
+        location.href = '/search' + (this.state.searchText? '?text=' + this.state.searchText : '')
         e.preventDefault();
     }
 

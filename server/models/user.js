@@ -9,7 +9,7 @@ const conf = require('../conf')
 */
 
 /*
-wxUserInfo 
+wxUserInfo
 {
     "openid": "oAX1fwRD4MfWXbsP5NJdUX4l2kGU",
     "nickname": "Arluber",
@@ -97,7 +97,7 @@ userSchema.statics = {
         } else {
             return []
         }
-    }, 
+    },
 
 
     // team 操作相关
@@ -227,6 +227,10 @@ userSchema.statics = {
     //     return user.noticeList.find({readState: false}).sort({create_time: -1}).exec()
     // },
 
+    // findUnreadNotice: function(userId) {
+    //     const user = this.find({userId: userId})
+    //     return user.noticeList.find({readState: false}).sort({create_time: -1}).exec()
+    // },
 
 }
 
