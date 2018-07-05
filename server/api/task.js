@@ -54,6 +54,11 @@ const createTasklist = async (req, res, next) => {
             desc: listDesc
         }
 
+        //7.5
+        const teamObj = await teamDB.findByTeamId(teamId)
+        const baseInfoObj = await userDB.baseInfoById(userId)
+        await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'CREATE_TASKLIST', tasklist._id, tasklist.name, tasklist)
+
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
             data: result
@@ -129,9 +134,19 @@ const delTasklist = async (req, res, next) => {
     }
 
     try {
+
+        const tasklistObj = await tasklistDB.findByTasklistId(listId)//7.5
+        
         const result = await tasklistDB.delTasklist(listId);
 
         await teamDB.delTasklist(listId)
+
+        //7.5
+        const teamId = tasklistObj.teamId;
+        const teamObj = await teamDB.findByTeamId(teamId)
+        const baseInfoObj = await userDB.baseInfoById(userId)
+        await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'DELETE_TASKLIST', tasklistObj._id, tasklistObj.name, tasklistObj)
+
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
