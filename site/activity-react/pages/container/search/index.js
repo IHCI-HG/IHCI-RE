@@ -128,10 +128,14 @@ class SearchResultItem extends React.PureComponent{
 export default class SearchResult extends React.Component{
     componentDidMount = async() => {
         var queryText = this.props.location.query.text
-        if (queryText.length > 42)
-            this.props.location.query.text = queryText.substring(0,42)
 
         if (queryText){
+            console.log(queryText.length)
+            console.log(queryText.length >42)
+            
+            if (queryText.length > 42)
+                this.props.location.query.text = queryText.substring(0,42)
+
             this.setState({
                 title: '搜索 - ' + this.props.location.query.text + ' - IHCI'
             })
