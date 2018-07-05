@@ -147,13 +147,16 @@ export default class Topic extends React.Component{
         console.log('mounted!!')
         this.topicId = this.props.params.id
         this.initPageInfo()
-        if (this.props.location.state.type == 'REPLY' && this.props.location.state.id)
-        {
-            setTimeout(() => {
-                const itemKey = "topic-discuss-item-" + this.props.location.state.id
-                this.scrollToAnchor(itemKey)
-            }, 500);
-        }
+        try{
+            if (this.props.location.state.type == 'REPLY' && this.props.location.state.id)
+            {
+                setTimeout(() => {
+                    const itemKey = "topic-discuss-item-" + this.props.location.state.id
+                    this.scrollToAnchor(itemKey)
+                }, 500);
+            }
+        }catch(error)
+        {}
     }
 
     initPageInfo = async () => {
