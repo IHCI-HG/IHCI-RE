@@ -9,57 +9,6 @@ import Page from '../../../components/page'
 //import routerConf from '../router'
 //import Test from '../../test'
 //import TestEditor from '../../test-editor'
-
-class StateChoseItem extends React.PureComponent{
-
-  state={
-    activeTag:'unread',
-    showList: {
-        keyList : [],
-    },
-
-  }
-  componentDidMount = () => {
-      this.activeTagHandle(this.props.pathname)
-  }
-  //routerHandle = (toUrl) => {
-  //    this.activeTagHandle(toUrl)
-      //this.props.router.push(toUrl)
-  //}
-  //console.log(this.props.pathname)
-  activeTagHandle = (url) => {
-    if(/inform?readState=unread/.test(url)){
-      this.setState({activeTag: 'unread'});
-      //this.getUnreadInform()
-    }
-    if(/inform?eradState=isread/.test(url)){
-      this.setState({activeTag: 'isread'});
-      //this.getIsreadInform()
-    }
-    //const theUrl=getQueryStringArgs();
-    console.log(this)
-    //location.href = '/inform?readState='+this.state.activeTag
-  }
-
-  render(){
-    //this.setUnread; location.href = '/inform?readState=' + this.state.activeTag; this.getUnreadInform
-//<div onClick={() => {this.routerHandle.bind(this, '/inform?readState=isread'); location.href = '/inform?readState=' + this.state.activeTag}}>
-//    <div className={this.state.activeTag == 'isread'?'read-tag-item act':'read-tag-item'}>已读</div>
-//</div>
-    return(
-      <div className="readStateChosen">
-      <div onClick={() => {this.props.locationTo('/inform?readState=unread')}}>
-          <div className={this.state.activeTag == 'unread'?'read-tag-item act':'read-tag-item'}>未读</div>
-      </div>
-      <div onClick={() => {this.props.locationTo('/inform?readState=isread')}}>
-          <div className={this.state.activeTag == 'isread'?'read-tag-item act':'read-tag-item'}>已读</div>
-      </div>
-      </div>
-
-    )
-  }
-}
-
 class InformItem extends React.PureComponent{
     typeMap = {
         'CREATE_TOPIC': '创建了讨论：',
@@ -114,33 +63,18 @@ class InformItem extends React.PureComponent{
 }
 export default class Infs extends React.Component{
       componentWillMount = async() => {
-      await this.activeTagHandle(this.props.pathname)
+
       }
       componentDidMount = async() => {
-        this.teamId = this.props.params.id
-          //await this.initInformData()
-          await this.getUnreadInform()
+
+        await this.initUnreadList()
+        console.log(this.state.unreadList)
       }
 
-      locationTo = (url) => {
-          this.props.router.push(url)
-      }
-
-      initInformData = async () => {
-          const queryTeamId = this.props.location.query.teamId
-
-          const result = await api('/api/timeline/getTimeline', {
-              method: 'POST',
-              body: queryTeamId ? {
-                  teamId: queryTeamId
-              } : {}
-          })
+      loadMoreHandle = () => {
           this.setState({
-              infsList: result.data
-          }, () => {
-              this.appendToShowList(this.state.infsList)
+              index: this.state.index + 10
           })
-
       }
 
       appendToShowList = (list) => {
@@ -172,72 +106,59 @@ export default class Infs extends React.Component{
       }
       state = {
           // type: create, reply
-          activeTag:'isread',
-          infsList: [],
+          unreadList: [],
+          isreadList: [],
+          index: 0,
+          activeTag: 'unread',
           showList: {
               keyList : [],
           },
-    //      showTeamFilter: false,
-    //      teamList: [],
+          readState:''
       }
-    //  teamFilterHandle = () => {
-      //    this.setState({
-        //      teamList: this.props.personInfo.teamList,
-          //    showTeamFilter: !this.state.showTeamFilter
-        //  })
-    //  }
 
-    //routerHandle = (toUrl) => {
-    //    this.activeTagHandle(toUrl)
-        //this.props.router.push(toUrl)
-    //}
-    //console.log(this.props.pathname)
-    getUnreadInform = async () => {
+      initIsreadList = async () => {
+              const result = await api('/api/user/showReadList', {
+                  method: 'POST',
+                  body:{}
+              })
 
-      const result = await api('/api/timeline/getTimeline', {
-          method: 'POST',
-          body: {
-
+              const readlist = result.data
+              this.setState({
+                showList: {
+                    keyList : [],
+                },
+                  isreadList: readlist
+              }, () =>{
+                this.appendToShowList(readlist)
+              })
+              console.log(result)
           }
-      })
-      this.setState({
-        showList: {
-            keyList : [],
-        },
-          infsList: result.data
-      }, () => {
-          this.appendToShowList(this.state.infsList)
-      })
-    }
 
-    getIsreadInform = async () => {
-      const result = await api('/api/timeline/getTimeline', {
-        methods: 'POST',
-        body: {
-
+      initUnreadList = async () => {
+            const result = await api('/api/user/showUnreadList', {
+                method: 'POST',
+                body:{}
+            })
+            this.setState({
+              showList: {
+                  keyList : [],
+              },
+                unreadList: result.data
+            }, () =>{
+              this.appendToShowList(this.state.unreadList)
+            })
+            console.log(this.state.unreadList)
         }
-      })
-      this.setState({
-        showList: {
-            keyList : [],
-        },
-        infslist: result.data
-      }, () => {
-        this.appendToShowList(this.state.infsList)
-      })
-    }
 
-    activeTagHandle = (url) => {
-      if(/inform?readState=unread/.test(url)){
-        this.setState({activeTag: 'unread'});
-        //this.getUnreadInform()
+    toReadHandle = (readState) => {
+          if (readState=="unread")
+              this.initUnreadList()
+          else this.initIsreadList()
+          this.setState({
+              activeTag: readState,
+              index: 0
+          })
       }
-      if(/inform?eradState=isread/.test(url)){
-        this.setState({activeTag: 'isread'});
-        //this.getIsreadInform()
-      }
-      //location.href = '/inform?readState='+this.state.activeTag
-    }
 //<StateChoseItem key={'state' + this.readState} routerTo={this.routerTo} />
 //<div className="readStateChosen">
 //<div onClick={() => {location.href = '/inform?readState=unread'; this.getUnreadInform}} locationTo={this.locationTo}>
@@ -248,11 +169,15 @@ export default class Infs extends React.Component{
 //</div>
 //</div>
       render() {
-          const showList = this.state.showList
+        const showList = this.state.showList
           return (
               <Page className="infs-page">
-              <StateChoseItem key={'state' + this.readState} locationTo={this.locationTo} />
+              <div className="readStateChosen">
+                  <div className={this.state.activeTag == 'unread'?'read-tag-item act':'read-tag-item'} onClick={this.toReadHandle.bind(this,"unread")}>未读</div>
+                  <div className={this.state.activeTag == 'isread'?'read-tag-item act':'read-tag-item'} onClick={this.toReadHandle.bind(this,"isread")}>已读</div>
+              </div>
                       {
+
                           showList.keyList.map((timeKey) => {
                               return (
                                   <div className="infs-day" key={'time-group-' + timeKey}>
@@ -278,7 +203,7 @@ export default class Infs extends React.Component{
                           })
                       }
 
-                      <div className="load-more" onClick={() => {}}>点击加载更多</div>
+                      <div className="load-more" style={{display: this.state.showList.length > (this.state.index + 10) ? 'block' : 'none'}} onClick={() => {this.loadMoreHandle}}>点击加载更多</div>
               </Page>
           )
       }
