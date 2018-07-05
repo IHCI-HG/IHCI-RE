@@ -7,7 +7,6 @@ import WxLoginDialog from '../../../components/wx-login-dialog'
 
 export default class Sign extends React.Component{
     componentDidMount = async() => {
-        console.log(INIT_DATA);
     }
 
     starHandle = async (id) => {
@@ -61,19 +60,21 @@ export default class Sign extends React.Component{
         })
     }
 
+   
     signHandle = async () => {
         // todo 检验账号密码是否可用
+        const mailCode = this.randomChar()
         const result = await api('/api/signUp', {
             method: 'POST',
             body: {
                 userInfo: {
                     username: this.state.username,
                     password: this.state.password,
-                }
+                },
             }
         })
 
-        console.log(result);
+     
 
         if(result.state.code === 0) {
             location.href = '/person'

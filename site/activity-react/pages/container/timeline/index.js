@@ -78,28 +78,30 @@ export default class News extends React.Component{
 
     initTimelineData = async () => {
         const queryTeamId = this.props.location.query.teamId
-
+        const queryPerson = this.props.location.query.userId
         const result = await api('/api/timeline/getTimeline', {
             method: 'POST',
-            body: queryTeamId ? {
-                teamId: queryTeamId
-            } : {}
+            body: {
+                teamId: queryTeamId ? queryTeamId :'',
+                userId: queryPerson ? queryPerson : '',
+            }
         })
         this.setState({
-            newsList: result.data
+            newsList: result.data,
+            memberJumped: !!queryPerson ? !!queryPerson : false,
         }, () => {
             this.appendToShowList(this.state.newsList)
         })
-        if(queryUserId){
-            this.setState({
-                showFilter: false
-            })
-        }
-        if(result.data.length<newTimeLineItemNum){
-            this.setState({
-                noMoreResult: true
-            })
-        }
+        // if(result.data.length == 0){
+        //     this.setState({
+        //         noResult: true,
+        //     })
+        // }
+        // if(result.data.length<newTimeLineItemNum){
+        //     this.setState({
+        //         noMoreResult: true
+        //     })
+        // }
     }
 
     initTeamList = () => {
@@ -110,11 +112,14 @@ export default class News extends React.Component{
     
     getMoreTimelineData = async () => {
         const queryTeamId = this.props.location.query.teamId
+        const queryPerson = this.props.location.query.userId
         const lastStamp = this.state.lastStamp
+
         const result = await api('/api/timeline/getTimeline', {
             method: 'POST',
             body: {
                 teamId: queryTeamId ? queryTeamId :'',
+                userId: queryPerson ? queryPerson : '',
                 timeStamp: lastStamp? lastStamp: '',
             }
         })
@@ -125,7 +130,8 @@ export default class News extends React.Component{
         })
         if(result.data.length<moreTimeLineItemNum){
             this.setState({
-                noMoreResult: true
+                noMoreResult: true,
+                memberJumped: !!queryPerson ? !!queryPerson : false,
             })
         }
     }
@@ -199,6 +205,7 @@ export default class News extends React.Component{
         teamList: [],
         noResult: false,
         noMoreResult: false,
+        memberJumped: false,
     }
 
 
@@ -266,14 +273,24 @@ export default class News extends React.Component{
                 
 
                 <div className="news-list page-wrap">
-                    <div className='news-filter' onClick={this.teamFilterHandle}>
-                        筛选动态： {
-                            this.props.location.query.teamId ? this.props.personInfo.teamList.map((item) => {
-                                if(item.teamId == this.props.location.query.teamId)
-                                    return item.teamName
-                            }) : "根据团队"
-                        }
-                    </div>
+                    {
+                        !this.state.memberJumped && <div className='title-bar'>
+                            <div className='filter-title'>
+                                筛选动态:
+                                <span className='team-filter'  onClick={this.teamFilterHandle}>
+                                {
+                                    this.props.location.query.teamId ? this.props.personInfo.teamList.map((item) => {
+                                        if(item.teamId == this.props.location.query.teamId)
+                                            return item.teamName
+                                    }) : "根据团队"
+                                }
+                                </span>
+                            </div>
+
+                        </div>
+                    }
+
+                    
                     {
                         showList.keyList.map((timeKey) => {
                             return (

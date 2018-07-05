@@ -128,7 +128,17 @@ class SearchResultItem extends React.PureComponent{
 export default class SearchResult extends React.Component{
     componentDidMount = async() => {
         var queryText = this.props.location.query.text
+
         if (queryText){
+            console.log(queryText.length)
+            console.log(queryText.length >42)
+            
+            if (queryText.length > 42)
+                this.props.location.query.text = queryText.substring(0,42)
+
+            this.setState({
+                title: '搜索 - ' + this.props.location.query.text + ' - IHCI'
+            })
             await this.initSearchResultData()
         }
         else {
@@ -186,7 +196,6 @@ export default class SearchResult extends React.Component{
     }
 
     appendToShowList = (list) => {
-        console.log(list)
         let showList = this.state.showList
         var listLength = list.length
         if(listLength > 0){
@@ -236,6 +245,17 @@ export default class SearchResult extends React.Component{
         path += (!(typeof(type) == 'undefined')) ? (type == '' ? '': ('&type=' + type)) : (queryType ? ('&type=' + queryType) :'')
         location.href = path
 
+        // const query = {
+        //     text: queryText,
+        //     teamId: (!(typeof(teamId) == 'undefined')) ? (teamId == '' ? '': (teamId)) : (queryTeamId ? (queryTeamId) :''),
+        //     type: (!(typeof(type) == 'undefined')) ? (type == '' ? '': (type)) : (queryType ? (queryType) :''),
+        // }
+        // const location = {pathname: '/search', query: query}
+        // console.log(this.props);
+        // this.props.router.push('/')
+        // this.props.router.push(location)
+        // this.props.router.forceUpdate()
+    
     }
 
     typeMap = {
@@ -248,6 +268,7 @@ export default class SearchResult extends React.Component{
     }
 
     state = {
+        title: '搜索 - IHCI',
         resultList: [],
         showList: {
             keyList : [],
@@ -303,7 +324,7 @@ export default class SearchResult extends React.Component{
     render() {
         var showList = this.state.showList
         return (
-            <Page title='搜索 - IHCI'  className="result-page">
+            <Page title={this.state.title}  className="result-page">
                 
                 {
                     this.state.showTeamFilter && <div className="team-list" onMouseLeave={this.teamFilterHandle}>

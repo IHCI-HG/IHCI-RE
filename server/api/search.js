@@ -47,7 +47,6 @@ const search = async (req, res, next) => {
         const result = []
         if(type){
             const flag = (type=="TOPIC")
-            console.log("flag", flag)
             searchResult.map((item) => {    
                 if(flag){
                     if((item.type=="CREATE_TOPIC")||(item.type=="EDIT_TOPIC")){

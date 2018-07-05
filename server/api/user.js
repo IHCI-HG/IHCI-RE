@@ -29,6 +29,8 @@ var sysTime = function(req, res, next) {
     });
 };
 
+
+
 const signUp = async (req, res, next) => {
     const userInfo = req.body.userInfo
     if(!userInfo.username || !userInfo.password) {
@@ -41,7 +43,8 @@ const signUp = async (req, res, next) => {
     const result = await UserDB.createUser(
         userInfo.username,
         userInfo.password,
-        userInfo
+        userInfo,
+        
     )
     if(!result) {
         resProcessor.jsonp(req, res, {
@@ -118,6 +121,7 @@ const logout = async (req, res, next) => {
 
 const setUserInfo = async (req, res, next) => {
     const userId = req.rSession.userId
+    const user = await UserDB.findByUserId(userId)
     const personInfoObj = {}
     if(req.body.headImg) {
         personInfoObj.headImg = req.body.headImg
@@ -130,6 +134,9 @@ const setUserInfo = async (req, res, next) => {
     }
     if(req.body.mail) {
         personInfoObj.mail = req.body.mail
+        if(user.personInfo!=null && !(req.body.mail==user.personInfo.mail)){
+            const result = await UserDB.findByIdAndUpdate({_id: userId}, {isLive: false}, {new: true})
+        }
     }
     const result = await UserDB.updateUser(userId, {
         personInfo: personInfoObj
