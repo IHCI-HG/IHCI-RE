@@ -3,16 +3,16 @@ var _ = require('underscore'),
     proxy = require('../components/proxy/proxy'),
     conf = require('../conf');
 
-    
+
 import fetch from 'isomorphic-fetch';
 import lo from 'lodash';
 import apiAuth from '../components/auth/api-auth'
 
-    
+
 import { pub_pushTemplateMsg } from '../components/wx-utils/wx-utils'
 
-import { 
-    web_codeToAccessToken, 
+import {
+    web_codeToAccessToken,
     web_accessTokenToUserInfo,
     web_codeToUserInfo,
 } from '../components/wx-utils/wx-utils'
@@ -65,6 +65,7 @@ const signUp = async (req, res, next) => {
 }
 
 const login = async (req, res, next) => {
+
     const username = lo.get(req, 'body.username')
     const password = lo.get(req, 'body.password')
 
@@ -94,7 +95,7 @@ const login = async (req, res, next) => {
 }
 
 const getMyInfo = async (req, res, next) => {
-    const userID = req.rSession.userId 
+    const userID = req.rSession.userId
     const result = await UserDB.findByUserId(userID)
     if(result) {
         result.password = undefined
@@ -174,7 +175,7 @@ const wxLogin = async (req, res, next) => {
                 }
 
                 const userInfo = await web_accessTokenToUserInfo(result.access_token, result.openid)
-                const userDBresult = await UserDB.updateUser(userId, { 
+                const userDBresult = await UserDB.updateUser(userId, {
                     unionid: result.unionid,
                     wxUserInfo: userInfo,
                 })
@@ -247,7 +248,7 @@ const userInfoList = async (req, res, next) => {
             resultPromiseList.push(UserDB.baseInfoById(item))
         })
         const resultList = await Promise.all(resultPromiseList)
-    
+
         if(resultList) {
             resProcessor.jsonp(req, res, {
                 state: { code: 0 },
@@ -272,7 +273,7 @@ const userInfoList = async (req, res, next) => {
 
 module.exports = [
     ['GET', '/api/base/sys-time', sysTime],
-    
+
     ['GET', '/api/getMyInfo',apiAuth, getMyInfo],
     ['POST', '/api/userInfoList',apiAuth, userInfoList],
 
