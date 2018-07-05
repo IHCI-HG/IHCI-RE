@@ -256,8 +256,6 @@ const updateFileName = async (req, res, next) => {
     const fileInfo = req.body.fileInfo
     const tarName = req.body.tarName
 
-    console.log(fileInfo)
-
     try {
         await file.updateFileName(fileInfo.teamId, fileInfo.dir, fileInfo.fileName, tarName)
 

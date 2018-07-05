@@ -149,7 +149,6 @@ export default class Files extends React.Component {
         var succeeded;
         const uploadResult = fileUploader(file, ossKey)
         await uploadResult.then(function(val) {
-            console.log(val)
             succeeded = 1
         }).catch(function(reason){
             console.log(reason)
