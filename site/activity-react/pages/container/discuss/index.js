@@ -179,6 +179,10 @@ export default class Team extends React.Component{
     toAdminHandle = () => {
         location.href = '/team-admin/' + this.teamId
     }
+    toMemberHandle = () =>{
+        const location = {pathname:'/member', state:{teamId:this.state.teamInfo._id}}
+        this.props.router.push(location)
+    }
 
     render() {
         let teamInfo = this.state.teamInfo
@@ -198,8 +202,8 @@ export default class Team extends React.Component{
                             <pre><div className="team-des">{teamInfo.desc}</div>  </pre>
                         </div>
                         <div className="right">
-                            <div className="admin">
-                                <div className="admin-con member-num">{this.state.memberNum}</div>
+                            <div className="admin"onClick={this.toMemberHandle}>
+                                <div className="admin-con member-num" >{this.state.memberNum}</div>
                                 <span>成员</span>
                             </div>
                             {
@@ -239,7 +243,7 @@ export default class Team extends React.Component{
                         {
                             this.state.topicList.map((item) => {
                                 return (
-                                    <TopicItem locationTo={this.locationTo} {...item} />
+                                    <TopicItem key={'topic-item' + item._id} locationTo={this.locationTo} {...item} />
                                 )
                             })
                         }

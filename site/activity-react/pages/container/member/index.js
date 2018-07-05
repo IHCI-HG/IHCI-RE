@@ -14,7 +14,11 @@ export default class Members extends React.Component{
             })
         }
         else this.initTeamList()
-        this.initMemberList()
+        const teamId = this.props.location.state.teamId
+        if (teamId)
+            this.toTeamHandle(teamId)
+        else
+            this.initMemberList()
     }
 
     initMemberList = async (id) => {
@@ -62,8 +66,17 @@ export default class Members extends React.Component{
     }
 
     toTeamHandle = (teamId, teamName) => {
-        if (teamId)
+        if (teamId){
             this.initMemberList(teamId)
+            if (!teamName){
+                const teamList = this.props.personInfo.teamList
+                for(var i in teamList)
+                {
+                    if(teamList[i].teamId == teamId)
+                        teamName = teamList[i].teamName
+                }
+            }
+        }
         else this.initMemberList()
         this.setState({
             activeTag: teamName == null ? 'all' : teamName,
