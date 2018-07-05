@@ -5,16 +5,18 @@ const conf = require('../conf')
 const topicSchema = new mongoose.Schema({
     create_time: { type: String, default : Date.now},
     title: String,
-    content: String,
+    content: {type: mongoose.Schema.Types.Mixed},
+    fileList: [mongoose.Schema.Types.Mixed],
     creator: { type: mongoose.Schema.Types.Mixed , required: true },
     team: String, // team的_id
     discussList: [mongoose.Schema.Types.Mixed],
 })
 
 topicSchema.statics = {
-    createTopic: async function(title, content, creatorObj, teamId) {
+    createTopic: async function(title, fileList, content, creatorObj, teamId) {
         return this.create({
             title: title, 
+            fileList: fileList,
             content: content,
             creator: creatorObj,
             team: teamId,
@@ -52,6 +54,16 @@ topicSchema.statics = {
             { $set: { "discussList.$.content": content}}
         ).exec()
     },
+
+    //6.22
+    getByPage:async function(teamId,currentPage){
+        var pageSize = 20;
+        var sortFunc = {create_time:-1};
+        var skipNumber = (currentPage - 1) * pageSize;
+
+        const result = this.find({team:teamId}).skip(skipNumber).limit(pageSize).sort(sortFunc).exec();
+        return result;
+    }
 
 }
 

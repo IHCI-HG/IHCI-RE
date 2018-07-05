@@ -53,7 +53,7 @@ userSchema.statics = {
                 password: crypto.createHmac('sha1', conf.salt).update(password).digest('hex'),
                 personInfo: {
 
-                },         
+                }
             })
         }
     },

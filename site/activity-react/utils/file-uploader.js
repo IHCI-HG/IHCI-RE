@@ -58,7 +58,7 @@ const getOssClient = async () => {
         body: {}
     })
     const token = result.data
-    console.log(token);
+    console.log('token', token);
 
     const client = new OSSW({
         region: token.region,

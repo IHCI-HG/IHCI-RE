@@ -1,7 +1,7 @@
 
 /**
  * 定制化输出日期时间
- * @param time {Number/String} unix时间戳 
+ * @param time {Number/String} unix时间戳
  * @returns {String} 例如'20180123'这样的字符串
  */
 export function timeParse(time) {
@@ -227,14 +227,14 @@ export function digitFormat(digit, block) {
         digit = digit / 1000;
 
         digit = digit.toFixed(1) + '千';
-        
+
 
     } else if (digit > 10000 && digit >= format) {
 
         digit = digit / 10000;
 
         digit = digit.toFixed(1) + '万';
-        
+
     }
 
     return digit;
@@ -465,7 +465,7 @@ export  const htmlTransferGlobal = (sf) => {
     sfData = sfData.replace(/&lt;/g, (m) => "<");
     sfData = sfData.replace(/&gt;/g, (m) => ">");
     return sfData;
-}; 
+};
 
 /**
  * 根据时间戳显示周几的字符串
@@ -522,7 +522,7 @@ export const dateJudge = (judgeTime, nowTime) => {
     } else {
         return "后天以后"
     }
-    
+
 };
 
 /**
@@ -871,12 +871,12 @@ export const delCookie = (name) => {
 
 /**
  * 一个简单的字符串长度验证
- * 
+ *
  * @export
- * @param {string} val 字符串 
- * @param {number} [maxLength=10] 最大长度 
+ * @param {string} val 字符串
+ * @param {number} [maxLength=10] 最大长度
  * @param {number} [minLength=0] 最小长度
- * @returns 
+ * @returns
  */
 export function stringLengthValid(val, maxLength = 10, minLength = 1,name='') {
     if (!val.length || val.length < minLength) {
@@ -905,7 +905,7 @@ export const wait = (time) => {
 
 /**
  * 获取对象的指定key值
- * eg: 
+ * eg:
  *  var obj = {
  *      a:1,
  *      b:2,
@@ -921,7 +921,7 @@ export const wait = (time) => {
  *          ]
  *      }
  *  };
- * 
+ *
  *  console.log(
  *      getVal(obj, 'a'),
  *      getVal(obj, 'c.d'),
@@ -930,9 +930,9 @@ export const wait = (time) => {
  *      getVal(obj, 'c.f.f', 'haha'),
  *      obj
  *  )
- * @param {Object|Array} target 
- * @param {string} query 
- * @param {any} defaultValue 
+ * @param {Object|Array} target
+ * @param {string} query
+ * @param {any} defaultValue
  */
 export function getVal(target, query, defaultValue) {
     if (target == null || (typeof target !== 'object' && !target instanceof Array)) {
@@ -960,11 +960,11 @@ export function getVal(target, query, defaultValue) {
 }
 
 /**
- * 
+ *
  * 排序
- * @param {any} attr 
- * @param {any} rev 
- * @returns 
+ * @param {any} attr
+ * @param {any} rev
+ * @returns
  * @memberof StudioLiveMain
  */
 export function sortBy(attr,rev){
@@ -1018,9 +1018,9 @@ export function updateUrl(url, key) {
  * item 塞入数组的对象
  * maxLength 为存储的数组的最大长度 如果不传则对长度不做限制
  * 超出最大长度的从头开始丢失数据，若原有长度超出最大长度，持续丢失数据到最大长度为止
- * @param {string} key 
- * @param {any} item 
- * @param {number} maxLength 
+ * @param {string} key
+ * @param {any} item
+ * @param {number} maxLength
  */
 export function saveLocalStorageArray(key, item, maxLength) {
     if( typeof key != "string" || (maxLength && typeof maxLength != "number") ) {
@@ -1049,8 +1049,8 @@ export function saveLocalStorageArray(key, item, maxLength) {
  * @param {string} localstorage 的key
  * @param {string} item 的key
  * @param {string} itemContent 的内容
- * @param {any} item 
- * 
+ * @param {any} item
+ *
  */
 export function setLocalStorageArrayItem(localStorageKey, itemKey, itemContent, item, ifAdd, maxLength) {
     if( typeof localStorageKey != "string" || typeof itemKey != "string" || (maxLength && typeof maxLength != "number")) {
@@ -1075,7 +1075,7 @@ export function setLocalStorageArrayItem(localStorageKey, itemKey, itemContent, 
             dataList.shift()
         }
         dataList.push(item)
-    } 
+    }
     window.localStorage.setItem(localStorageKey, JSON.stringify(dataList))
     return dataList
 }
@@ -1125,5 +1125,12 @@ export function sortByCreateTime(topicList, positive) {
             return 0
         })
     }
-    return 
+    return
+}
+
+
+export function createMarkup(html) {
+    return {
+        __html: html,
+    }
 }

@@ -31,6 +31,7 @@ const returnAll = async (req, res, next) => {
 // 如果传了teamID，就返回该teamID的动态，如果没有传，就返回该用户全部的动态
 const returnTimeline = async (req, res, next) => {
     const teamId = req.body.teamId
+    const currentPage = req.body.currentPage;
     const personId = req.body.userId
     const timeStamp = req.body.timeStamp
     const userId = req.rSession.userId 
