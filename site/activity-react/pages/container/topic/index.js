@@ -38,7 +38,7 @@ class TopicDiscussItem extends React.Component {
         } = this.props
 
         return (
-            <div id={this.props.id}>
+            <div>
                 {
                     this.state.editState ? <div className="topic-subject-edit">
                         <textarea className='discuss-content' value={this.state.content} onChange={this.editInputHandle}></textarea>
@@ -49,7 +49,7 @@ class TopicDiscussItem extends React.Component {
                         </div>
                     </div>
                         :
-                        <div className="topic-subject-con discuss-con">
+                        <div id={this.props.id} className="topic-subject-con discuss-con">
                             <div className="flex">
                                 <img className="head-img" src={creator.headImg}></img>
                                 <div className="topic-main">
@@ -261,7 +261,16 @@ export default class Topic extends React.Component{
     scrollToAnchor = (anchorName) => {
         if (anchorName) {
             let anchorElement = document.getElementById(anchorName);
-            if(anchorElement) { anchorElement.scrollIntoView(); }
+            console.log(anchorElement)
+            setTimeout(() => {
+                anchorElement.style.transition="all 1.5s";
+                anchorElement.style.padding = '15px'
+                anchorElement.style.backgroundColor = '#FFEECC'
+                anchorElement.style.boxShadow = '5px 5px 5px #888888'
+                // anchorElement.props.className = 'active'
+            }, 500);
+            
+            if(anchorElement) { anchorElement.scrollIntoView({behavior: 'smooth'}); }
         }
     }
 
