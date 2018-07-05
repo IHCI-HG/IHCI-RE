@@ -4,7 +4,7 @@ var _ = require('underscore'),
     conf = require('../conf');
 
 import apiAuth from '../components/auth/api-auth'
-
+import {notificationMail} from '../components/mail/notificationMail'
 import { 
     createTopicTemplate,
     replyTopicTemplate
@@ -17,6 +17,7 @@ var userDB = mongoose.model('user')
 var topicDB = mongoose.model('topic')
 var discussDB = mongoose.model('discuss')
 var timelineDB = mongoose.model('timeline')
+
 
 const createTopic = async (req, res, next) => {
     const teamId = req.body.teamId
@@ -44,8 +45,9 @@ const createTopic = async (req, res, next) => {
         //如果有需要通知的人，则走微信模板消息下发流程
         if(informList && informList.length) {
             createTopicTemplate(informList, result)
-        }
+            notificationMail(informList, result, "创建了讨论")
 
+        }
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
             data: result
@@ -78,9 +80,10 @@ const editTopic = async (req, res, next) => {
 
     try {
         let topicObj = await topicDB.findByTopicId(topicId)
-        // if(informList && informList.length) {
-        //   todo 走微信模板消息下发流程
-        // }
+          //   todo 走微信模板消息下发流程
+         if(informList && informList.length) { 
+           // notificationMail(informList, result, "编辑了讨论")
+         }
         if(!topicObj) {
             resProcessor.jsonp(req, res, {
                 state: { code: 1, msg: "话题不存在" },
@@ -91,7 +94,10 @@ const editTopic = async (req, res, next) => {
 
         const result1 = await topicDB.updateTopic(topicId, editTopic)
         const result2 = await teamDB.updateTopic(teamId, topicId, editTopic)
-        
+
+        const userObj = await userDB.baseInfoById(userId)
+        const teamObj = await teamDB.findByTeamId(teamId)
+        await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'EDIT_TOPIC', result1._id, result1.title, result1)
         //todo 还要在timeline表中增加项目
 
         resProcessor.jsonp(req, res, {
@@ -119,9 +125,7 @@ const createDiscuss = async (req, res, next) => {
     
     // todo 回复可以添加附件，这里留着
     const fileList = req.body.fileList || []
-
     const userId = req.rSession.userId 
-
     // todo 各种权限判断
 
     if(!teamId || !topicId || !content) {
@@ -132,8 +136,6 @@ const createDiscuss = async (req, res, next) => {
         return
     }
     
-
-
     try {
         const userObj = await userDB.baseInfoById(userId)
         const topicObj = await topicDB.findByTopicId(topicId)
@@ -148,6 +150,7 @@ const createDiscuss = async (req, res, next) => {
         //如果有需要通知的人，则走微信模板消息下发流程
         if(informList && informList.length) {
             replyTopicTemplate(informList, result)
+            notificationMail(informList, result, "回复了讨论")
         }
 
         resProcessor.jsonp(req, res, {
@@ -164,11 +167,11 @@ const createDiscuss = async (req, res, next) => {
 }
 
 const editDiscuss = async (req, res, next) => {
+    const teamId = req.body.teamId
     const topicId = req.body.topicId
     const discussId = req.body.discussId
     const content = req.body.content
-    const informList = req.body.informList || []
-    
+    const informList = req.body.informList || []  
     // todo 回复可以添加附件，这里留着
     const fileList = req.body.fileList || []
 
@@ -183,17 +186,21 @@ const editDiscuss = async (req, res, next) => {
         });
         return
     }
-    
+  
     if(informList && informList.length) {
         //todo 走微信模板消息下发流程
+       // notificationMail(informList, result, "编辑了回复")
     }
-
     try {
 
         const result = await discussDB.updateDiscuss(discussId, {content: content})
         await topicDB.updateDiscuss(topicId, discussId, content)
 
-        //todo 还要在timeline表中增加项目
+        const userObj = await userDB.baseInfoById(userId)
+        const topicObj = await topicDB.findByTopicId(topicId)
+        const teamObj = await teamDB.findByTeamId(teamId)
+        await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'EDIT_REPLY', result._id, topicObj.title, result)
+        console.log(teamId, teamObj.name, userObj, 'EDIT_REPLY', result._id, topicObj.title, result)
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },

@@ -51,6 +51,7 @@
     "mongodb": "^3.0.3",
     "morgan": "1.6.1",
     "multer": "1.0.3",
+    "nodemailer": "^4.6.0",
     "node-sass": "^4.7.2",
     "node-uuid": "^1.4.7",
     "normalizr": "^2.2.1",

@@ -36,9 +36,10 @@
 }
 
 .discuss-page {
- 
+    padding: 30px 0;
+
     .sp-nav {
-        padding: 10px 0 30px 0;
+        margin: 10px 0 30px 0;
         font-size: 20px;
 
         .to-team {
@@ -47,9 +48,14 @@
             cursor: pointer;
             color: rgb(42, 42, 50);
         }
+        .pre-tag{
+            cursor: pointer;
+        }
     }
+
+
     .discuss-con {
-        margin-top: 40px;
+        margin-top: 20px;
         padding: 20px 30px 40px 30px;
 
         .team-info {
@@ -87,6 +93,58 @@
         }
         .div-line {
            border: 1px solid #e6e6e6; /*no*/
+        }
+    }
+
+    .file-list {
+        .file-line {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #e6e6e6; /*no*/
+
+            &.files {
+                font-size: 14px;
+                line-height: 50px; 
+            }
+            &.header {
+                font-size: 12px;
+                line-height: 50px;
+                color: #999;
+            }
+        }
+        .folder-name {
+            display: block;
+            border: none;
+            flex-grow: 1;
+            height: 50px;
+            font-size: 14px;
+            line-height: 50px;
+        }
+
+        div {
+            flex-grow: 0;
+            flex-shrink: 0;
+            overflow: hidden;
+            text-overflow:ellipsis;
+            white-space: nowrap;
+        }
+        .name {
+            width: 50%;
+        }
+        .size {
+            width: 15%;
+        }
+        .last-modify {
+            width: 15%;
+        }
+        .tools {
+            width: 20%;
+            span {
+                margin-right: 10px;
+            }
+        } 
+        .show-all-file {
+            margin-top: 16px;
         }
     }
 

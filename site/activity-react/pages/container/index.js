@@ -8,8 +8,10 @@ import routerConf from './router'
 import './style.scss'
 import '../../commen/style.scss'
 
-import Team from './team'
 import Test from './test'
+import TestEditor from './test-editor'
+
+import Team from './team'
 import TeamAdmin from './team-admin'
 import TeamJoin from './team-join'
 import TeamCreate from './team-create'
@@ -21,6 +23,9 @@ import Timeline from './timeline'  
 import Member from './member'  
 import Sign from './sign'
 import TaskDetail from './todo'
+import Files from './files'
+import SearchResult from './search'
+import ActivateMail from './activate-mail'
 
 class App extends React.Component{
     state = {
@@ -29,7 +34,9 @@ class App extends React.Component{
         personInfo: {
             teamList: []
         },
+        searchText : '',
     }
+    
     componentWillMount = async() => { 
         this.setHeadImg()
     }
@@ -48,12 +55,52 @@ class App extends React.Component{
                 }
             })
         }
+        if (!(/team-join/.test(this.props.location.pathname)) && !this.infoAllFilled()){
+            window.toast("请先完成资料填写")
+        }
+    }
+
+    infoAllFilled = () => {
+        if (!this.state.personInfo.name){
+            return false
+        }
+        if (!this.state.personInfo.mail){
+            return false
+        }
+        if (!this.state.personInfo.phone){
+            return false
+        }
+        return true
+    }
+
+    handleSearchTextChange = (e) =>{
+        var searchInputText =  e.target.value
+        var length = searchInputText.length
+        if (length > 42)
+            searchInputText = searchInputText.substring(0,42)
+
+        this.setState({
+            searchText : searchInputText
+        })
+    }
+
+    handleSearchRequest = (e) => {
+        location.href = '/search' + (this.state.searchText? '?text=' + this.state.searchText : '') 
+        e.preventDefault();
     }
 
     routerHandle = (toUrl) => {
-        this.activeTagHandle(toUrl)
-        this.props.router.push(toUrl)
-    } 
+        if (this.infoAllFilled())
+        {
+            this.activeTagHandle(toUrl)
+            this.props.router.push(toUrl)
+        }
+        else{
+            this.props.router.push('/person')
+            window.toast("请先完成资料填写")
+        }
+        
+    }
 
     // 处理路由变化的时候高亮的tag
     activeTagHandle = (url) => {
@@ -68,6 +115,9 @@ class App extends React.Component{
         }
         if(/timeline/.test(url)) {
             this.setState({activeTag: 'timeline'})
+        }
+        if(/search/.test(url)) {
+            this.setState({activeTag: 'search'})
         }
     }
 
@@ -84,12 +134,18 @@ class App extends React.Component{
                         </div>
                     </div>
                     <div className="person">
+                        <div className='search-bar'>
+                            <form className="searchBox" onSubmit={this.handleSearchRequest}>
+                                <span className="iconfont icon-search" onClick={()=>{this.searchInputr.focus()}}></span>
+                                <input className='searchInput' ref={(input) => { this.searchInputr = input; }} type="text" onChange={this.handleSearchTextChange} placeholder="搜索"/>
+                            </form>
+                        </div>
                         <Link className='nav-item' activeClassName='nav-item active' to="/person">
                             <img className="head-img" src={this.state.headImg} />
                         </Link>
                     </div>
                 </div>
-                { this.props.children && React.cloneElement(this.props.children, {personInfo: this.state.personInfo}) }
+                { this.props.children && React.cloneElement(this.props.children, {personInfo: this.state.personInfo, activeTagHandle: this.activeTagHandle.bind(this)}) }
             </div>
         )
     }
@@ -102,7 +158,9 @@ const routeConfig = [
         indexRoute: { component: Team },
         childRoutes: [
             { path: 'test', component: Test },
+            { path: 'test-editor', component: TestEditor },
             { path: 'team', component: Team },
+            { path: 'files/:id', component: Files },
             { path: 'team-admin/:id', component: TeamAdmin },
             { path: 'team-join/:id', component: TeamJoin },
             { path: 'sign', component: Sign },
@@ -116,10 +174,14 @@ const routeConfig = [
             { path: 'timeline', component: Timeline },
             { path: 'member', component: Member },
             { path: 'todo/:id', component: TaskDetail },
+            { path: 'search', component: SearchResult },
         ]
+    },
+    {
+        path: '/activate',
+        component: ActivateMail,
     }
 ]
-
 
 
 render(<Router routes={routeConfig} history={browserHistory}/>, document.getElementById('app'));

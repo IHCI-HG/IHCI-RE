@@ -1,11 +1,11 @@
 require('babel-polyfill');
 
-var fs = require('fs'),
+var fs = require('fs'),                 
     path = require('path'),
-    cluster = require('cluster'),
+    cluster = require('cluster'),       
     os = require('os'),
     express = require('express'),
-    commander = require('commander'),
+    commander = require('commander'),      
 
     server = require('./server'),
     conf = require('./conf'),
