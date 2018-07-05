@@ -42,16 +42,13 @@ export default class BackUp extends React.Component{
     }
 
     state = {
-        memberList: [
+        projectList: [
             {
                 _id: 11,
                 name: 'project',
                 chosen: false,
             },
         ],
-
-
-
     }
 
     constructor(props) {  
@@ -59,6 +56,7 @@ export default class BackUp extends React.Component{
         this.state = {value: []};  
         this.handleChange = this.handleChange.bind(this);  
     }  
+
     handleChange(event) {  
         let item = event.target.value;  
         let items = this.state.value.slice();  
