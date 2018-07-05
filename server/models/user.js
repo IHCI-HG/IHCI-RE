@@ -217,15 +217,15 @@ userSchema.statics = {
     },
 
 
-    findNotice: function(userId) {
-        const queryList = this.findById(userId).noticeList
+    // findReadNotice: function(userId) {
+    //     const user = this.find({userId: userId})
+    //     return user.noticeList.find({readState: true}).sort({create_time: -1}).exec()
+    // },
 
-        if(queryList && queryList.length) {
-            return this.find({$or: queryList}).sort({create_time: -1}).exec()
-        } else {
-            return []
-        }
-    },
+    // findUnreadNotice: function(userId) {
+    //     const user = this.find({userId: userId})
+    //     return user.noticeList.find({readState: false}).sort({create_time: -1}).exec()
+    // },
 
 
 }

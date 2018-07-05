@@ -302,9 +302,11 @@ const showReadList = async (req, res, next) => {
     const timeStamp = req.body.timeStamp 
     const result = []
 
-    const allNotice = await userDB.findNotice(userId)
+    const userObj = await UserDB.findById(userId)
 
-    allNotice.map((item)=>{
+    // const result = await UserDB.findReadNotice(userObj)
+
+    userObj.noticeList.map((item)=>{
         if(item.readState){
             result.push(item)
         }
@@ -338,9 +340,11 @@ const showUnreadList = async (req, res, next) => {
     const timeStamp = req.body.timeStamp 
     const result = []
 
-    const allNotice = await userDB.findNotice(userId)
+    const userObj = await UserDB.findById(userId)
 
-    allNotice.map((item)=>{
+    // const result = await UserDB.findUnreadNotice(userId)
+
+    userObj.noticeList.map((item)=>{
         if(!item.readState){
             result.push(item)
         }
