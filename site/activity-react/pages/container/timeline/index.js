@@ -42,8 +42,17 @@ class TimelineItem extends React.PureComponent{
 
         'COPY_TASK': '复制了任务',
         'MOVE_TASK': '移动了任务',
-        'EDIT_TOPIC': '编辑了讨论：',
-        'EDIT_REPLY': '编辑了回复：',
+        'EDIT_TOPIC': '编辑了回复：',
+        'EDIT_REPLY': '编辑了话题：',
+        'CREATE_TASKLIST':'创建了清单',
+        'DELETE_TASKLIST':'删除了清单',
+
+        'CHANGE_TASK_HEADER':'指派了任务',
+        'CHANGE_CHECKITEM_HEADER':'指派了检查项',
+        'CHANGE_TASK_DDL':'更改了任务完成时间',
+        'CHANGE_CHECKITEM_DDL':'更改了检查项完成时间',
+        'REOPEN_TASK':'重新打开了任务',
+        'REOPEN_CHECKITEM':'重新打开了检查项',
     }
 
     render() {
@@ -190,29 +199,7 @@ export default class News extends React.Component{
         }
     }
 
-    typeMap = {
-        'CREATE_TOPIC': '创建了讨论：',
-        'REPLY_TOPIC': '回复了讨论：',
-        'DELETE_TOPIC': '删除了讨论',
-
-        'DELETE_TOPIC_REPLY': '删除了讨论回复',
-
-        'CREATE_TASK': '创建了任务',
-        'DELETE_TASK': '删除了任务',
-        'FINISH_TASK': '完成了任务',
-
-        'REPLY_TASK': '回复了任务',
-        'DELETE_TASK_REPLY': '删除了任务回复',
-
-        'CREATE_CHECK_ITEM': '创建了检查项',
-        'DELETE_CHECK_ITEM': '删除了检查项',
-        'FINISH_CHECITEM_ITEM': '完成了检查项',
-
-        'COPY_TASK': '复制了任务',
-        'MOVE_TASK': '移动了任务',
-        'EDIT_TOPIC': '编辑了回复：',
-        'EDIT_REPLY': '编辑了话题：',
-    }
+   
 
     state = {
         // type: create, reply
