@@ -412,6 +412,11 @@ const editTask = async (req, res, next) => {
             task.header = taskObj.header
         } else {
             task.header = editTask.assigneeId
+
+            //7.6
+            await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'CHANGE_TASK_HEADER', taskObj._id, taskObj.title, task);
+
+
         }
         console.log(task.header)
         var headername = ""
@@ -432,6 +437,13 @@ const editTask = async (req, res, next) => {
         } else {
             task.state = false;
             task.completed_time = "";
+
+            //7.6
+            if(editTask.hasDone == false)
+            {
+                await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'REOPEN_TASK', taskObj._id, taskObj.title, taskObj);
+            }
+           
         }
 
 
@@ -484,6 +496,13 @@ const editTask = async (req, res, next) => {
             const date = new Date(task.deadline)
             task.deadline = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
         }
+
+        //7.6
+        if(editTask.ddl)
+        {
+            await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'CHANGE_TASK_DDL', taskObj._id, taskObj.title, task);
+        }
+
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
             data: task
@@ -834,6 +853,12 @@ const editCheckitem = async (req, res, next) => {
         } else {
             checkitemObj.state = false;
             checkitemObj.completed_time = "";
+            if(editCheckitem.hasDone == false)
+            {
+                const teamObj = await teamDB.findByTeamId(teamId);
+                const baseInfoObj = await userDB.baseInfoById(userId);
+                await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'REOPEN_CHECKITEM', checkitemObj._id, checkitemObj.title, checkitemObj);
+            }
         }
 
         const result1 = await taskDB.updateCheckitem(taskId, checkitemId, checkitemObj);
@@ -846,6 +871,8 @@ const editCheckitem = async (req, res, next) => {
             const headername = headerObj.username
             compCheckitemTemplate(creatorId, checkitemObjTemp, headername)
         }
+
+
         if (editCheckitem.assigneeId != checkitemObjTemp.header) {
             if (editCheckitem.assigneeId) {
                 const headerList = []
@@ -861,11 +888,24 @@ const editCheckitem = async (req, res, next) => {
                 const headername = headerObj.username
                 delCheckHeaderTemplate(headerList, checkitemObjTemp, headername)
             }
+
+            //7.6
+            const teamObj = await teamDB.findByTeamId(teamId);
+            const baseInfoObj = await userDB.baseInfoById(userId);
+            await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'CHANGE_CHECKITEM_HEADER', checkitemObj._id, checkitemObj.title, checkitemObj);
         }
 
         if(checkitemObj.deadline) {
             const date = new Date(checkitemObj.deadline)
             checkitemObj.deadline = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
+        }
+
+        //7.6
+        if(editCheckitem.ddl)
+        {
+            const teamObj = await teamDB.findByTeamId(teamId);
+            const baseInfoObj = await userDB.baseInfoById(userId);
+            await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'CHANGE_CHECKITEM_DDL', checkitemObj._id, checkitemObj.title, checkitemObj);
         }
 
         if(checkitemObj.completed_time) {
