@@ -58,9 +58,9 @@ class TopicDiscussItem extends React.Component {
         } = this.props
 
         return (
-            <div id={this.props.id} tabIndex="0" onBlur={this.props.onBlur}>
+            <div className='no-border' id={this.props.id} tabIndex="0" onBlur={this.props.onBlur}>
                 {
-                    this.state.editState ? <div className={(this.props.enableHighlight &&this.props.highlight) ? "topic-subject-edit highlight" : "topic-subject-edit"}>
+                    this.state.editState ? <div className="topic-subject-edit">
                         <Editor handleContentChange={this.discussContentHandle.bind(this)}
                             handleFileUpload={this.discussFileUploadHandle.bind(this)}
                             content={this.state.content}
@@ -383,7 +383,7 @@ export default class Topic extends React.Component{
                 <div className="sp-nav">
                     <span className='to-team' onClick={() => { this.props.router.push('/team') }} >团队列表</span>
                     <span className="iconfont icon-enter"></span>
-                    <span className='pre-tag' onClick={() => {this.props.router.push('/discuss/' + this.teamId)}}>{"团队主页"}</span>
+                    <span className='pre-tag' onClick={() => {this.props.router.push('/team/' + this.teamId)}}>{"团队主页"}</span>
                     <span className="iconfont icon-enter"></span>
                     <span>讨论</span>
                 </div>

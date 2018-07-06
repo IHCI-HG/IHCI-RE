@@ -25,10 +25,16 @@
         border-radius: 2px;
         padding: 20px 30px 40px 30px;
 
+        .no-border{
+            outline: none;
+
+        }
+        // .no-border:focus{
+        //     border-style: none;
+        // }
 
         .topic-subject-con {
             transition: all 1.2s;
-            border-width: 0px;
 
             &.discuss-con {
                 padding-right: 100px;
@@ -95,7 +101,6 @@
             padding: 30px;
             margin-bottom: 40px;
             transition: all 1.2s;
-            border-width: 0px;
 
             &.no-pading {
                 padding: 0;

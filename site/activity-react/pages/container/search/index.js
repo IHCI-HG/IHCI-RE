@@ -32,22 +32,56 @@ class SearchResultItem extends React.PureComponent{
         'CREATE_TOPIC': '讨论：',
         'REPLY_TOPIC': '回复：',
         'UPLOAD_FILE': '文件：',
-        'RELEASE_TASK': '任务：',
         'EDIT_REPLY': '编辑回复：',
-        'EDIT_TOPIC': '编辑讨论：'
+        'EDIT_TOPIC': '编辑讨论：',
+
+        'FINISH_TASK': '完成了任务：',
+        'CREATE_TASK': '创建了任务：',
+        
+        'DELETE_TOPIC_REPLY': '删除了讨论回复：',
+
+        'CREATE_TASK': '创建了任务：',
+        'DELETE_TASK': '删除了任务：',
+
+        'REPLY_TASK': '回复了任务：',
+        'DELETE_TASK_REPLY': '删除了任务回复：',
+
+        'CREATE_CHECK_ITEM': '创建了检查项：',
+        'DELETE_CHECK_ITEM': '删除了检查项：',
+        'FINISH_CHECITEM_ITEM': '完成了检查项：',
+
+        'COPY_TASK': '复制了任务：',
+        'MOVE_TASK': '移动了任务：',
     }
 
     toOriginHandle = () => {
         console.log(this)
         const pathname = ''
         const type = 'TOPIC'
-        if (this.props.type == 'REPLY_TOPIC' || this.props.type == 'EDIT_REPLY')
-        {
-            pathname = '/discuss/topic/' + this.props.content.topicId
-            type = 'REPLY'
+        switch(this.props.type){
+            case 'CREATE_TOPIC':
+            case 'EDIT_TOPIC':
+            {
+                pathname = '/discuss/topic/' + this.props.content._id
+                break
+            }
+            case 'REPLY_TOPIC':
+            case 'EDIT_REPLY':
+            {
+                pathname = '/discuss/topic/' + this.props.content.topicId
+                type = 'REPLY'
+                break
+            }
+            case 'CREATE_TASK':
+            case 'CREATE_CHECK_ITEM':
+            case 'COPY_TASK':
+            case 'MOVE_TASK':
+            {
+                pathname = '/todo/' + this.props.tarId
+            }
+
         }
-        if (this.props.type == 'CREATE_TOPIC' || this.props.type == 'EDIT_TOPIC')
-            pathname = '/discuss/topic/' + this.props.content._id
+
         const location = {
             pathname: pathname,
             state:{
@@ -59,6 +93,7 @@ class SearchResultItem extends React.PureComponent{
     }
 
     render() {
+        console.log(this.props.type)
         switch (this.props.type) {
             case 'CREATE_TOPIC':
             case 'REPLY_TOPIC':
@@ -76,7 +111,29 @@ class SearchResultItem extends React.PureComponent{
                             </div>
                             <div className="content">
                                 <span className="name">{this.props.creator.name}</span>-
-                                <span className="content">{this.props.content.content}</span>
+                                <span className="content" dangerouslySetInnerHTML={{__html: this.props.content.content}}>{}</span>
+                            </div>
+                        </div>
+                    </div>
+                )
+                break;
+            case 'CREATE_TASK':
+            case 'CREATE_CHECK_ITEM':
+            case 'COPY_TASK':
+            case 'MOVE_TASK':
+                return(
+                    <div className='search-result-item-wrap'>
+                        <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
+                        <img src={this.props.creator.headImg} alt="" className="head-img" />
+
+                        <div className="result-con" onClick={this.toOriginHandle}>
+                            <div className="des-line">
+                                <span className="type">{this.typeMap[this.props.type]}</span>
+                                <span className="topic">{this.props.content.title}</span>
+                            </div>
+                            <div className="content">
+                                <span className="name">{this.props.creator.name}</span>-
+                                <span className="content" dangerouslySetInnerHTML={{__html: this.props.content.content}}>{}</span>
                             </div>
                         </div>
                     </div>
