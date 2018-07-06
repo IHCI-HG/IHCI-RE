@@ -142,6 +142,7 @@ export default class News extends React.Component{
             }
         })
 
+        console.log(result)
         this.setState({
             newsList: result.data
         }, () => {

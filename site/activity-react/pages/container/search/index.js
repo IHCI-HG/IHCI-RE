@@ -139,64 +139,6 @@ class SearchResultItem extends React.PureComponent{
                     </div>
                 )
                 break;
-            // case 'REPLY_TOPIC':
-            //     return (
-            //         <div className='search-result-item-wrap'>
-            //             <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
-            //             <img src={this.props.creator.headImg} alt="" className="head-img" />
-
-            //             <div className="result-con">
-            //                 <div className="des-line">
-            //                     <span className="type">{this.typeMap[this.props.type]}</span>
-            //                     <span className="topic">{this.props.content.title}</span>
-            //                 </div>
-
-            //                 <div className="content">
-            //                     <span className="name">{this.props.creator.name}</span>-
-            //                     <span className="content">{this.props.content.content}</span>
-            //                 </div>
-            //             </div>
-            //         </div>
-            //     )
-            //     break;
-            // case 'UPLOAD_FILE':
-            //     return (
-            //         <div className='search-result-item-wrap'>
-            //             <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
-            //             <img src={this.props.creator.headImg} alt="" className="file-catagory-img" />
-
-            //             <div className="result-con">
-            //                 <div className="des-line">
-            //                     <span className="type">{this.typeMap[this.props.type]}</span>
-            //                     <span className="topic">{this.props.content.title}</span>
-            //                 </div>
-
-            //                 <div className="content">
-            //                     <span className="name">{this.props.creator.name}</span>-
-            //                     <span className="content">{this.props.content.content}</span>
-            //                 </div>
-            //             </div>
-            //         </div>
-            //     )
-            //     break;
-            // case 'RELEASE_TASK':
-            //     return(
-            //         <div className='search-result-item-wrap'>
-            //             <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
-            //             <img src={this.props.creator.headImg} alt="" className="head-img" />
-
-            //             <div className="result-con">
-            //                 <div className="des-line">
-            //                     <span className="name">{this.props.creator.name}</span>
-            //                     <span className="type">{this.typeMap[this.props.type]}</span>
-            //                     <span className="topic">{this.props.content.title}</span>
-            //                 </div>
-
-            //                 <div className="content">{this.props.content.content}</div>
-            //             </div>
-            //         </div>
-            //     )
-            //     break;
             default:
                 return ''
         }
@@ -322,17 +264,6 @@ export default class SearchResult extends React.Component{
         path += (!(typeof(teamId) == 'undefined')) ? (teamId == '' ? '': ('&teamId=' + teamId)) : (queryTeamId ? ('&teamId=' + queryTeamId) :'')
         path += (!(typeof(type) == 'undefined')) ? (type == '' ? '': ('&type=' + type)) : (queryType ? ('&type=' + queryType) :'')
         location.href = path
-
-        // const query = {
-        //     text: queryText,
-        //     teamId: (!(typeof(teamId) == 'undefined')) ? (teamId == '' ? '': (teamId)) : (queryTeamId ? (queryTeamId) :''),
-        //     type: (!(typeof(type) == 'undefined')) ? (type == '' ? '': (type)) : (queryType ? (queryType) :''),
-        // }
-        // const location = {pathname: '/search', query: query}
-        // console.log(this.props);
-        // this.props.router.push('/')
-        // this.props.router.push(location)
-        // this.props.router.forceUpdate()
     
     }
 
@@ -343,6 +274,7 @@ export default class SearchResult extends React.Component{
         'RELEASE_TASK': '任务',
         'TOPIC': '讨论',
         'REPLY': '回复',
+        'TASK': '任务'
     }
 
     state = {
@@ -442,6 +374,9 @@ export default class SearchResult extends React.Component{
                         </div>
                         <div className="admin-type-item" onClick={this.filterHandle.bind(this, {type:'REPLY'})}>
                             <div className='type-name'>{this.typeMap.REPLY_TOPIC}</div>
+                        </div>
+                        <div className="admin-type-item" onClick={this.filterHandle.bind(this, {type:'TASK'})}>
+                            <div className='type-name'>{this.typeMap.TASK}</div>
                         </div>
                     </div>
                 }
