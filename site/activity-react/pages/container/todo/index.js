@@ -101,7 +101,8 @@ export default class Task extends React.Component{
         copyTeamList:[],
         moveTeamList:[],
         loadMoreCount:1,
-        replyCount:0
+        // replyCount:0
+        teamName:""
     }
 
     componentDidMount = async() => {
@@ -155,9 +156,12 @@ export default class Task extends React.Component{
                 teamId: this.state.todo.teamId
             }
         })
-
         if(!result.data) {
             window.toast('团队内容加载出错')
+        }
+        else{
+            const teamName = result.data.name
+            this.setState({teamName})
         }
 
         const curUserId = this.props.personInfo._id
@@ -205,6 +209,7 @@ export default class Task extends React.Component{
         todo.name = resp.data.title
         todo.fileList = resp.data.fileList
         todo.list = []
+        todo.listId = resp.data.listId
         todo.teamId = resp.data.teamId
         todo.assignee = {}
         todo.assignee.id = resp.data.header
@@ -248,9 +253,9 @@ export default class Task extends React.Component{
     }
 
     createTopicHandle = async () => {
-        this.setState({
-            replyCount:this.state.replyCount+1
-        })
+        // this.setState({
+        //     replyCount:this.state.replyCount+1
+        // })
         const informList = []
         this.state.memberList.map((item) => {
             if(item.chosen) {
@@ -362,7 +367,7 @@ export default class Task extends React.Component{
     }
 
     copyHandle = async () => {
-        if(this.state.copyNumber==0){
+        if(this.state.copyNumber<=0||this.state.copyNumber>50){
             alert("请输入数量[1~50]")
         }
         else{
@@ -526,54 +531,54 @@ export default class Task extends React.Component{
     }
 
     handleTodoDelete = async(index,id) => {
-        const resp = await api('/api/task/dropCheckitem', {
+        const resp = await api('/api/task/delTask', {
             method: 'POST',
             body: {
-                todoId: this.props.params.id,
-                checkitemId: id
+                taskId: this.props.params.id,
+                teamId:this.state.todo.teamId,
+                listId:this.state.todo.listId
             }
         })
         if (resp.state.code === 0) {
-            const todo = this.state.todo
-            todo.list.map((cItem, index) => {
-                if(cItem.id===id){
-                    checkList.splice(index,1)
-                }
-            })
-            this.setState({ todo })
+            this.locationTo('/team/' + this.state.todo.teamId)
         }
         return resp
     }
 
     // check create 需要返回
     handleCheckCreate = async(todoInfo) => {
-        const resp = await api('/api/task/addCheckitem', {
-            method: 'POST',
-            body: {
-                todoId: this.props.params.id,
-                name: todoInfo.name,
-                ddl: todoInfo.date,
-                assigneeId: todoInfo.assigneeId,
-                teamId:this.state.todo.teamId,
-            }
-        })
-
-        console.log('assigneeId', todoInfo.assigneeId)
-        console.log('resp', resp)
-
-        if (resp.state.code === 0) {
-            const todo = this.state.todo
-            const checkItem = {}
-            checkItem.id = resp.data.id
-            checkItem.name = resp.data.content
-            checkItem.assignee = {}
-            checkItem.assignee.id = resp.data.header
-            checkItem.ddl = resp.data.deadline
-            checkItem.hasDone = false
-            todo.list = [...todo.list, checkItem]
-            this.setState({ todo })
+        if(!todoInfo.name){
+            alert("请输入检查项名")
         }
-        return resp
+        else{
+            const resp = await api('/api/task/addCheckitem', {
+                method: 'POST',
+                body: {
+                    todoId: this.props.params.id,
+                    name: todoInfo.name,
+                    ddl: todoInfo.date,
+                    assigneeId: todoInfo.assigneeId,
+                    teamId:this.state.todo.teamId,
+                }
+            })
+    
+            console.log('assigneeId', todoInfo.assigneeId)
+            console.log('resp', resp)
+    
+            if (resp.state.code === 0) {
+                const todo = this.state.todo
+                const checkItem = {}
+                checkItem.id = resp.data.id
+                checkItem.name = resp.data.content
+                checkItem.assignee = {}
+                checkItem.assignee.id = resp.data.header
+                checkItem.ddl = resp.data.deadline
+                checkItem.hasDone = false
+                todo.list = [...todo.list, checkItem]
+                this.setState({ todo })
+            }
+            return resp
+        }
     }
 
     handleCheckModify = async(index, id, checkItemInfo) => {
@@ -696,33 +701,32 @@ export default class Task extends React.Component{
         return resp
     }
 
+    setEdit = () => {
+        this.refs['todoItem'].setMode('edit')
+    } 
+
     render() {
         let actionList = this.state.actionList || []
         let moveExpanded = this.state.moveExpanded
         let copyExpanded = this.state.copyExpanded
-        console.log('todo', this.state.todo)
 
         return (
             <Page title={"任务详情"} className="discuss-page">
-
+                 <div className="return" onClick={()=>{this.locationTo('/team/'+this.state.todo.teamId)}}>
+                        <div className="teamName">{this.state.teamName}</div>
+                </div>
                  <div className="discuss-con page-wrap">
-
                      <TodoItem
                          {...this.state.todo}
                          detail='detail'
+                         ref='todoItem'
                          memberList={this.state.memberList}
                          handleAssigneeChange={this.handleAssigneeChange}
                          handleDateChange={this.handleDateChange}
                          handleTodoModify={this.handleTodoModify}
                          handleTodoCheck={this.handleTodoCheck}
                          handleTodoDelete={this.handleTodoDelete}/>
-                     <div className="file-list">
-                         {
-                             this.state.todo.fileList && this.state.todo.fileList.map((item) => {
-                                 return( <div key={Math.random()}>{item.name}</div> )
-                             })
-                         }
-                     </div>
+
                      <div className="checkitem-list">
                          {
                              this.state.todo.list &&
@@ -760,6 +764,25 @@ export default class Task extends React.Component{
                              添加检查项
                          </div>
                      }
+                    {/* {this.state.showCreateDetail?
+                         <NewCheck
+                             memberList={this.state.memberList}
+                             confirmLabel="保存"
+                             handleConfirm={this.handleCheckCreate}
+                             handleClose={() => {
+                                 this.setState({ showCreateCheck: false})
+                             }}
+                         />: */}
+                         {(this.state.todo.desc==="")&&
+                         <div className="new-check"
+                             onClick={() => {
+                                 this.setEdit()
+                            }}>
+                             <i className="icon iconfont">&#xe6e0;</i>
+                             添加任务描述
+                         </div>
+                         }
+                     {/* } */}
 
                     <div className="detail-actions">
                         <div className={"item "+((copyExpanded)?"expanded":"")}>

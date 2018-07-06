@@ -64,9 +64,10 @@
 
     .actions-wrap {
         position: absolute;
-        left: -0.7rem;
+        left: -1.5rem;
         top: 2px;
-        width: 56px;
+        width: 100px;
+        margin-right:10px;
         > * {
             float: right;
         }
@@ -239,6 +240,31 @@
 }
 
 .discuss-page {
+    .return{
+        cursor: pointer;
+        margin-left:0.25rem;
+        margin-top: 40px;
+        display: block;
+        padding: 10px 0 10px 0;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        width: 16.566667rem;
+        height:45px;
+        font-size: 25px;
+        color: #888888;
+        background: #f9f9f9;
+        border: 1px solid #e6e6e6;
+        border-bottom: none;
+        -webkit-border-radius: 0.026667rem;
+        border-radius: 0.026667rem;
+        .teamName{
+            margin-left:20px;
+        }
+        &:hover{
+            background-color: #fff;
+        }
+    }
     .file-list {
         margin: 20px 10px;
         padding-left: 0.4rem;
@@ -256,11 +282,11 @@
     }
 
     .discuss-con {
-        margin-top: 40px;
+        margin-top: 0!important;
         padding: 20px 30px 40px 30px;
         .detail-actions{
             position: absolute;
-            top: 20px;
+            top: 100px;
             right: 5px;
             padding: 10px 0 10px 10px;
             margin-top: 42px;

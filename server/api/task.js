@@ -451,6 +451,7 @@ const editTask = async (req, res, next) => {
         if (tasklistId) {
             await tasklistDB.updateTask(tasklistId, taskId, task);
         } else {
+            console.log("...........")
             await teamDB.updateTask(teamId, taskId, task);
         }
 

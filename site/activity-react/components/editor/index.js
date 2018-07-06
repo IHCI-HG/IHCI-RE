@@ -3,8 +3,6 @@ import BraftEditor from 'braft-editor'
 import './braft.scss'
 import './style.scss'
 
-
-
 export default class Beditor extends React.Component{
 
     openFileInput = () => {
@@ -47,10 +45,13 @@ export default class Beditor extends React.Component{
 
                 <BraftEditor {...editorProps} />
 
-                <div className="file-list">
+                <div className="editor-file-list">
                     {
-                        _props.attachments.map((item) => {
-                            return( <div key={Math.random()}>{item.name}</div> )
+                        _props.attachments&&_props.attachments.map((item, index) => {
+                            return( <div className="file-item" key={Math.random()}>
+                                {item.name}
+                                <i className="icon iconfont" onClick={_props.deleteFile.bind(index)}>&#xe70b;</i>
+                            </div> )
                         })
                     }
                 </div>

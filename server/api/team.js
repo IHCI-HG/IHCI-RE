@@ -15,6 +15,7 @@ import {
     applyIntoTeam,
     admitIntoTeam
 } from '../components/wx-utils/wx-utils'
+import { MongooseDocument } from 'mongoose';
 
 var mongoose = require('mongoose')
 
@@ -23,7 +24,9 @@ var userDB = mongoose.model('user')
 var topicDB = mongoose.model('topic')
 var tasklistDB = mongoose.model('tasklist')
 var taskDB = mongoose.model('task')
+var folderDB = mongoose.model('folder')
 
+var file = require('../models/file')
 
 const creatTeam = async (req, res, next) => {
     const teamInfo = req.body.teamInfo || {}
@@ -43,6 +46,8 @@ const creatTeam = async (req, res, next) => {
         await userDB.addTeam(userId, teamObj, 'creator')
         teamObj = await teamDB.findByTeamId(teamObj._id)
 
+        await folderDB.createFolder(teamObj._id,'','')
+         
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '创建成功' },
             data: {
@@ -478,12 +483,12 @@ const taskList = async (req, res, nect) => {
             }
             var taskListCom = ""
             if(taskListTemp[i].completed_time) {
-                const date = taskListTemp[i].completed_time
+                const date = new Date(taskListTemp[i].completed_time)
                 taskListCom = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
             }
             var taskListDdl = ""
             if(taskListTemp[i].deadline) {
-                const date = taskListTemp[i].deadline
+                const date = new Date(taskListTemp[i].deadline)
                 taskListDdl = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
             }
             const obj1 = {

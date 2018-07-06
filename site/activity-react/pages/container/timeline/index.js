@@ -2,8 +2,11 @@ import * as React from 'react';
 import './style.scss'
 
 import api from '../../../utils/api';
-import { timeParse, formatDate } from '../../../utils/util'
+import { timeParse, formatDate, createMarkup } from '../../../utils/util'
 import Page from '../../../components/page'
+
+const newTimeLineItemNum = 20
+const moreTimeLineItemNum = 10
 
 
 class TeamChoseItem extends React.PureComponent{
@@ -39,6 +42,8 @@ class TimelineItem extends React.PureComponent{
 
         'COPY_TASK': '复制了任务',
         'MOVE_TASK': '移动了任务',
+        'EDIT_TOPIC': '编辑了讨论：',
+        'EDIT_REPLY': '编辑了回复：',
     }
 
     render() {
@@ -54,10 +59,31 @@ class TimelineItem extends React.PureComponent{
                         <span className="topic">{this.props.content.title}</span>
                     </div>
 
-                    <div className="content">{this.props.content.content}</div>
+                    <div className="content" dangerouslySetInnerHTML={createMarkup(this.props.content.content)}></div>
                 </div>
             </div>
         )
+            // case 'REPLY_TOPIC':
+            //     return (
+            //         <div className='news-item-wrap'>
+            //             <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
+            //             <img src={this.props.creator.headImg} alt="" className="head-img" />
+
+            //             <div className="news-con">
+            //                 <div className="des-line">
+            //                     <span className="name">{this.props.creator.name}</span>
+            //                     <span className="type">{this.typeMap[this.props.type]}</span>
+            //                     <span className="topic">{this.props.content.title}</span>
+            //                 </div>
+
+            //                 <div className="content">{this.props.content.content}</div>
+            //             </div>
+            //         </div>
+            //     )
+            //     break;
+            // default:
+            //     return ''
+        // }
     }
 }
 
@@ -69,20 +95,31 @@ export default class News extends React.Component{
 
     loadTimelineData = async () => {
         const queryTeamId = this.props.location.query.teamId
+        const queryPerson = this.props.location.query.userId
         const result = await api('/api/timeline/getTimeline', {
             method: 'POST',
-            body: queryTeamId ? {
-                teamId: queryTeamId,
-                currentPage:this.state.loadMoreCount
-            } : {}
+            body: {
+                teamId: queryTeamId ? queryTeamId :'',
+                userId: queryPerson ? queryPerson : '',
+            }
         })
         this.setState({
-            newsList: result.data
+            newsList: result.data,
+            memberJumped: !!queryPerson ? !!queryPerson : false,
         }, () => {
             console.log(this.state.newsList)
              this.appendToShowList(this.state.newsList)
         })
-
+        // if(result.data.length == 0){
+        //     this.setState({
+        //         noResult: true,
+        //     })
+        // }
+        // if(result.data.length<newTimeLineItemNum){
+        //     this.setState({
+        //         noMoreResult: true
+        //     })
+        // }
     }
 
     initTeamList = () => {
@@ -90,29 +127,67 @@ export default class News extends React.Component{
             shownTeam: this.props.personInfo && this.props.personInfo.teamList || [],
         })
     }
+    
+    getMoreTimelineData = async () => {
+        const queryTeamId = this.props.location.query.teamId
+        const queryPerson = this.props.location.query.userId
+        const lastStamp = this.state.lastStamp
 
-    appendToShowList = (list) => {
-        let showList = this.state.showList
-
-        list.map((item) => {
-            var timeKey = timeParse(item.create_time)
-            if(!showList[timeKey]) {
-                showList.keyList.push(timeKey)
-                showList[timeKey] = {}
-                showList[timeKey].teamKeyList = []
+        const result = await api('/api/timeline/getTimeline', {
+            method: 'POST',
+            body: {
+                teamId: queryTeamId ? queryTeamId :'',
+                userId: queryPerson ? queryPerson : '',
+                timeStamp: lastStamp? lastStamp: '',
             }
-            if(!showList[timeKey][item.teamId]) {
-                showList[timeKey].teamKeyList.push(item.teamId)
-                showList[timeKey][item.teamId] = {}
-                showList[timeKey][item.teamId].teamName = item.teamName
-                showList[timeKey][item.teamId].newsList = []
-            }
-            showList[timeKey][item.teamId].newsList.push(item)
         })
 
         this.setState({
-            showList: showList
+            newsList: result.data
+        }, () => {
+            this.appendToShowList(this.state.newsList)
         })
+        if(result.data.length<moreTimeLineItemNum){
+            this.setState({
+                noMoreResult: true,
+                memberJumped: !!queryPerson ? !!queryPerson : false,
+            })
+        }
+    }
+
+    appendToShowList = (list) => {
+        let showList = this.state.showList
+        var listLength = list.length
+        if(listLength > 0){
+            list.map((item) => {
+                var timeKey = timeParse(item.create_time)
+                if(!showList[timeKey]) {
+                    showList.keyList.push(timeKey)
+                    showList[timeKey] = {}
+                    showList[timeKey].teamKeyList = []
+                }
+                if(!showList[timeKey][item.teamId]) {
+                    showList[timeKey].teamKeyList.push(item.teamId)
+                    showList[timeKey][item.teamId] = {}
+                    showList[timeKey][item.teamId].teamName = item.teamName
+                    showList[timeKey][item.teamId].newsList = []
+                }
+                showList[timeKey][item.teamId].newsList.push(item)
+            })
+            this.setState({
+                showList: showList,
+                lastStamp: list[listLength - 1].create_time
+            })
+        }
+        else if (showList.keyList.length == 0){
+            this.setState({
+                noResult: true,
+            })
+        } else {
+            this.setState({
+                noMoreResult: true,
+            })
+        }
     }
 
     typeMap = {
@@ -135,6 +210,8 @@ export default class News extends React.Component{
 
         'COPY_TASK': '复制了任务',
         'MOVE_TASK': '移动了任务',
+        'EDIT_TOPIC': '编辑了回复：',
+        'EDIT_REPLY': '编辑了话题：',
     }
 
     state = {
@@ -162,6 +239,9 @@ export default class News extends React.Component{
 
         showTeamFilter: false,
         teamList: [],
+        noResult: false,
+        noMoreResult: false,
+        memberJumped: false,
     }
 
     loadMoreHandle = () => {
@@ -199,16 +279,10 @@ export default class News extends React.Component{
         }
     }
 
-    // routerTo = (url) => {
-    //     this.props.router.push(url)
-    //     // await this.componentDidMount()
-    //     // this.render()
-    // }
-
     render() {
         const showList = this.state.showList
         return (
-            <Page className="news-page">
+            <Page title='动态 - IHCI' className="news-page">
                 
                 {
                     this.state.showTeamFilter && <div className="team-list" onMouseLeave={this.teamFilterHandle}>
@@ -239,14 +313,24 @@ export default class News extends React.Component{
                 
 
                 <div className="news-list page-wrap">
-                    <div className='news-filter' onClick={this.teamFilterHandle}>
-                        筛选动态： {
-                            this.props.location.query.teamId ? this.props.personInfo.teamList.map((item) => {
-                                if(item.teamId == this.props.location.query.teamId)
-                                    return item.teamName
-                            }) : "根据团队"
-                        }
-                    </div>
+                    {
+                        !this.state.memberJumped && <div className='title-bar'>
+                            <div className='filter-title'>
+                                筛选动态:
+                                <span className='team-filter'  onClick={this.teamFilterHandle}>
+                                {
+                                    this.props.location.query.teamId ? this.props.personInfo.teamList.map((item) => {
+                                        if(item.teamId == this.props.location.query.teamId)
+                                            return item.teamName
+                                    }) : "根据团队"
+                                }
+                                </span>
+                            </div>
+
+                        </div>
+                    }
+
+                    
                     {
                         showList.keyList.map((timeKey) => {
                             return (
@@ -273,9 +357,13 @@ export default class News extends React.Component{
                         })
                     } 
 
-                    {
-                        (this.state.newsList.length>=20*this.state.loadMoreCount)&&<div className="load-more" onClick={this.loadMoreHandle}>点击加载更多</div>
-                    }
+                    {this.state.noResult && <div className='null-info'>无动态</div>}
+                    <div className='load-more-bar'>
+                        {!this.state.noResult && !this.state.noQuery && !this.state.noMoreResult && <div className="load-more" onClick={this.getMoreTimelineData}>
+                            点击加载更多
+                        </div>}
+                        {this.state.noMoreResult && <div className="no-more-result-alert">没有更多动态！</div>}
+                    </div>
                 </div>
 
                 

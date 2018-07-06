@@ -1,7 +1,7 @@
 import * as React from 'react';
 import './style.scss'
 import api from '../../../utils/api';
-import { timeBefore, sortByCreateTime, createMarkup } from '../../../utils/util'
+import { timeBefore, sortByCreateTime, createMarkup, formatDate } from '../../../utils/util'
 import Page from '../../../components/page'
 import MemberChosenList from '../../../components/member-chose-list'
 import Editor from '../../../components/editor'
@@ -9,9 +9,9 @@ import EditTodoList from '../todo/todolist/editTodoList'
 import TodoList from '../todo/todolist/todoList'
 import fileUploader from '../../../utils/file-uploader';
 
-class TeamChoseItem extends React.PureComponent{
+class TeamChoseItem extends React.PureComponent {
     render() {
-        return(
+        return (
             <div className="admin-team-item">
                 <div className="team-img"></div>
                 <div className="team-name">{this.props.name}</div>
@@ -20,17 +20,17 @@ class TeamChoseItem extends React.PureComponent{
         )
     }
 }
-class TopicItem extends React.PureComponent{
+class TopicItem extends React.PureComponent {
     render() {
-        return(
-            <div className="topic-item" key={"topic-item-" + this.props._id} onClick={() => {this.props.locationTo('/discuss/topic/' + this.props._id)}}>
+        return (
+            <div className="topic-item" key={"topic-item-" + this.props._id} onClick={() => { this.props.locationTo('/discuss/topic/' + this.props._id) }}>
                 <img src={this.props.creator.headImg} alt="" className="head-img" />
                 <div className="name">{this.props.creator.name}</div>
                 <div className="main">
                     <div className="topic-title">{this.props.title}</div>
-                    <p className="text-max-line-1" dangerouslySetInnerHTML={createMarkup(this.props.content.content)}></p>
+                    <p className="text-max-line-1" dangerouslySetInnerHTML={createMarkup(this.props.content)}></p>
                 </div>
-                {this.props.content.attachment.length>0 &&
+                {this.props.fileList.length > 0 &&
                     <i className="icon iconfont time">&#xe6dd;</i>
                 }
                 <div className="time">{timeBefore(this.props.create_time)}</div>
@@ -52,7 +52,7 @@ function getUpdateItem(arr, id) {
     return [item, index]
 }
 
-export default class Team extends React.Component{
+export default class Team extends React.Component {
     state = {
         showCreateTopic: false,
         showCreateTodo: false,
@@ -68,30 +68,54 @@ export default class Team extends React.Component{
         topicList: [],
         memberList: [],
         todoListArr: [],
+
+
+        fileList: [],
+        showCreateFolder: false,
+        createFolderName: '新建文件夹',
     }
 
-    componentDidMount = async() => {
+    componentDidMount = async () => {
         this.teamId = this.props.params.id
         this.initTeamInfo()
         this.initTodoListArr()
+        this.initTeamFile()
     }
 
-    initTodoListArr = async() => {
+    initTeamFile = async () => {
+        const result = await api('/api/file/getDirFileList', {
+            method: 'POST',
+            body: {
+                dirInfo: {
+                    teamId: this.teamId,
+                    dir: '/',
+                }
+            }
+        })
+        if (result && result.data && result.data.fileList) {
+            this.setState({
+                fileList: result.data.fileList
+            })
+        }
+    }
+
+    initTodoListArr = async () => {
         // 请求todoListArr数据
         const resp = await api('/api/team/taskList', {
-            method:'GET',
-            body:{
+            method: 'GET',
+            body: {
                 teamId: this.teamId
-            }})
+            }
+        })
         console.log('resp', resp)
         let todoListArr = this.state.todoListArr
         let unclassifiedList = []
         let unclassified = {}
         let todoList = []
-        if(resp.data.taskList==undefined){
-            resp.data.taskList=[]
+        if (resp.data.taskList == undefined) {
+            resp.data.taskList = []
         }
-        resp.data.taskList.map((item)=>{
+        resp.data.taskList.map((item) => {
             let todoItem = {}
             todoItem.id = item.id
             todoItem.name = item.title
@@ -103,15 +127,15 @@ export default class Team extends React.Component{
             unclassifiedList.push(todoItem)
         })
         unclassified.list = unclassifiedList
-        if(resp.data.tasklistList==undefined){
-            resp.data.tasklistList=[]
+        if (resp.data.tasklistList == undefined) {
+            resp.data.tasklistList = []
         }
-        resp.data.tasklistList.map((item)=>{
+        resp.data.tasklistList.map((item) => {
             let todoListItem = {}
             todoListItem.id = item._id
             todoListItem.name = item.name
             todoListItem.list = []
-            item.taskList.map((mapTodoItem)=>{
+            item.taskList.map((mapTodoItem) => {
                 let todoItem = {}
                 todoItem.id = mapTodoItem.taskId
                 todoItem.name = mapTodoItem.title
@@ -125,7 +149,7 @@ export default class Team extends React.Component{
             })
             todoList.push(todoListItem)
         })
-        todoListArr = [unclassified,...todoList]
+        todoListArr = [unclassified, ...todoList]
         if (resp.state.code === 0) {
             this.setState({ todoListArr })
         }
@@ -139,7 +163,7 @@ export default class Team extends React.Component{
             }
         })
 
-        if(!result.data) {
+        if (!result.data) {
             window.toast('团队内容加载出错')
         }
 
@@ -157,7 +181,7 @@ export default class Team extends React.Component{
 
         let isCreator = false
         result.data.memberList.map((item) => {  // 判断是否是创建者 ？
-            if(item.userId == curUserId) {
+            if (item.userId == curUserId) {
                 isCreator = true
             }
             memberIDList.push(item.userId)
@@ -196,35 +220,32 @@ export default class Team extends React.Component{
     createTopicHandle = async () => {
         const informList = []
         this.state.memberList.map((item) => {
-            if(item.chosen) {
+            if (item.chosen) {
                 informList.push(item._id)
             }
         })
 
-        console.log('topicAttachments', this.state.topicAttachments)
-        const content = {
-            content: this.state.topicContent,
-            attachment: this.state.topicAttachments,
-        }
         const result = await api('/api/topic/createTopic', {
             method: 'POST',
             body: {
                 teamId: this.teamId,
                 name: this.state.topicName,
-                content,
+                content: this.state.topicContent,
+                fileList: this.state.topicAttachments,
                 informList: informList,
             }
         })
         console.log('createTopicHandle', result.data)
 
-        if(result.state.code == 0) {
+        if (result.state.code == 0) {
             const topicList = this.state.topicList
             const time = new Date().getTime()
             topicList.unshift({
                 _id: result.data._id,
                 creator: this.props.personInfo,
                 title: this.state.topicName,
-                content,
+                content: this.state.topicContent,
+                fileList: this.state.topicAttachments,
                 time: time,
             })
             this.setState({
@@ -236,6 +257,15 @@ export default class Team extends React.Component{
         } else {
             window.toast(result.state.msg)
         }
+    }
+
+
+    deleteFile = async (e, index) => {
+        let topicAttachments = this.state.topicAttachments
+        topicAttachments.splice(index, 1);
+        this.setState({
+            topicAttachments,
+        })
     }
 
     topicNameInputHandle = (e) => {
@@ -262,11 +292,11 @@ export default class Team extends React.Component{
     memberChoseHandle = (tarId) => {
         const memberList = this.state.memberList
         memberList.map((item) => {
-            if(item._id == tarId) {
+            if (item._id == tarId) {
                 item.chosen = !item.chosen
             }
         })
-        this.setState({memberList})
+        this.setState({ memberList })
     }
 
     toAdminHandle = () => {
@@ -274,14 +304,14 @@ export default class Team extends React.Component{
     }
 
     // todo
-    handlecloseEditTodo =() => {
+    handlecloseEditTodo = () => {
         this.setState({ showCreateTodo: false })
     }
 
-    handleTodoCreate = async(lIndex, id, todoInfo) => {
+    handleTodoCreate = async (lIndex, id, todoInfo) => {
         const result = await api('/api/task/create', {
             method: 'POST',
-            body:{
+            body: {
                 teamId: this.teamId,
                 listId: id,
                 name: todoInfo.name,
@@ -315,22 +345,23 @@ export default class Team extends React.Component{
         return result
     }
 
-    handleTodoModify = async(lIndex, lId, id, todoInfo) => {
+    handleTodoModify = async (lIndex, lId, id, todoInfo) => {
         let editTask = {}
         console.log(todoInfo)
         editTask.name = todoInfo.name
         editTask.ddl = todoInfo.date
         editTask.assigneeId = todoInfo.assigneeId
-        const resp = await api('/api/task/edit',{
-            method:'POST',
-            body:{
+        const resp = await api('/api/task/edit', {
+            method: 'POST',
+            body: {
                 listId: lId,
                 taskId: todoInfo.id,
                 teamId: this.teamId,
                 editTask: editTask,
             }
         })
-        if (resp.state.code ===0) {
+        console.log(resp)
+        if (resp.state.code === 0) {
             const todoListArr = this.state.todoListArr
             const todolist = todoListArr[lIndex]
             const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
@@ -344,12 +375,12 @@ export default class Team extends React.Component{
         return resp
     }
 
-    handleTodoCheck = async(lIndex, lId, id, hasDone) => {
+    handleTodoCheck = async (lIndex, lId, id, hasDone) => {
         let editTask = {}
         editTask.hasDone = !hasDone
-        const resp = await api('/api/task/edit',{
-            method:'POST',
-            body:{
+        const resp = await api('/api/task/edit', {
+            method: 'POST',
+            body: {
                 listId: lId,
                 taskId: id,
                 teamId: this.teamId,
@@ -371,12 +402,12 @@ export default class Team extends React.Component{
         }
     }
 
-    handleAssigneeChange = async(lIndex, lId, id, e) => {
+    handleAssigneeChange = async (lIndex, lId, id, e) => {
         let editTask = {}
         editTask.assigneeId = e.target.value
-        const resp = await api('/api/task/edit',{
-            method:'POST',
-            body:{
+        const resp = await api('/api/task/edit', {
+            method: 'POST',
+            body: {
                 listId: lId,
                 taskId: id,
                 teamId: this.teamId,
@@ -398,19 +429,20 @@ export default class Team extends React.Component{
         }
     }
 
-    handleDateChange = async(lIndex, lId, id, e) => {
+    handleDateChange = async (lIndex, lId, id, e) => {
         let editTask = {}
         editTask.ddl = e.target.value
-        const resp = await api('/api/task/edit',{
-            method:'POST',
-            body:{
+        console.log(editTask)
+        const resp = await api('/api/task/edit', {
+            method: 'POST',
+            body: {
                 listId: lId,
                 taskId: id,
                 teamId: this.teamId,
                 editTask: editTask,
             }
         })
-        console.log(resp)
+        console.log("date",resp)
         if (resp.state.code === 0) {
             const todoListArr = this.state.todoListArr
             const todolist = todoListArr[lIndex]
@@ -422,22 +454,22 @@ export default class Team extends React.Component{
         }
     }
 
-    handleTodoDelete = async(lIndex, lId, id) => {
+    handleTodoDelete = async (lIndex, lId, id) => {
         console.log(lIndex, lId, id)
-        const resp = await api('/api/task/delTask',{
-            method:"POST",
-            body:{
+        const resp = await api('/api/task/delTask', {
+            method: "POST",
+            body: {
                 taskId: id,
                 teamId: this.teamId,
                 listId: lId,
             }
         })
         console.log(resp)
-        if (resp.state.code ===0) {
+        if (resp.state.code === 0) {
             const todoListArr = this.state.todoListArr
             const todolist = todoListArr[lIndex]
             const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
-            todolist.list.splice(itemIndex,1)
+            todolist.list.splice(itemIndex, 1)
             todolist.list = todolist.list.slice()
             this.setState({ todoListArr })
             return resp
@@ -445,34 +477,43 @@ export default class Team extends React.Component{
     }
 
     // todoList
-    handleTodoListCreate = async(info) => {
-        const result = await api('/api/task/createTaskList', {
-            method: 'POST',
-            body: {
-                teamId: this.teamId,
-                name: info.name,
+    handleTodoListCreate = async (info) => {
+        const listExist = false
+        this.state.todoListArr.map((item) => {
+            if (item.name === info.name) {
+                alert("清单已存在")
+                listExist = true
             }
         })
-        if (result.state.code === 0) {
-            let createTodo = {
-                id:result.data.id,
-                name:result.data.name,
-                list:[],
-            }
-            let todoListArr = this.state.todoListArr
-            todoListArr = [...todoListArr, createTodo]
-            this.setState({
-                showCreateTodoList: false,
-                todoListArr
+        if (!listExist) {
+            const result = await api('/api/task/createTaskList', {
+                method: 'POST',
+                body: {
+                    teamId: this.teamId,
+                    name: info.name,
+                }
             })
+            if (result.state.code === 0) {
+                let createTodo = {
+                    id: result.data.id,
+                    name: result.data.name,
+                    list: [],
+                }
+                let todoListArr = this.state.todoListArr
+                todoListArr = [...todoListArr, createTodo]
+                this.setState({
+                    showCreateTodoList: false,
+                    todoListArr
+                })
+            }
         }
     }
 
-    handleTodoListModify = async(index, id, info) => {
+    handleTodoListModify = async (index, id, info) => {
         const todoListArr = this.state.todoListArr
         const resp = await api('/api/task/updateTasklist', {
-            method:"POST",
-            body:{
+            method: "POST",
+            body: {
                 listId: id,
                 name: info.name,
                 teamId: this.teamId,
@@ -485,10 +526,10 @@ export default class Team extends React.Component{
         return resp
     }
 
-    handleTodoListDelete = async(index, id) => {
+    handleTodoListDelete = async (index, id) => {
         const todoListArr = this.state.todoListArr
-        const resp = await api('/api/task/delTasklist',{
-            method:"POST",
+        const resp = await api('/api/task/delTasklist', {
+            method: "POST",
             body: {
                 listId: id
             }
@@ -502,6 +543,206 @@ export default class Team extends React.Component{
         return resp
     }
 
+    createFolderHandle = async () => {
+        this.setState({ showCreateFolder: true })
+    }
+
+    createFolderNameInputHandle = (e) => {
+        this.setState({
+            createFolderName: e.target.value
+        })
+    }
+
+    createFolderComfirmHandle = async () => {
+        const result = await api('/api/file/createFolder', {
+            method: 'POST',
+            body: {
+                folderInfo: {
+                    teamId: this.teamId,
+                    dir: '/',
+                    folderName: this.state.createFolderName
+                }
+            }
+        })
+
+        if (result.state.code === 0) {
+            window.toast("创建文件夹成功")
+            this.setState({ showCreateFolder: false, createFolderName: '新建文件夹' })
+        } else {
+            window.toast(result.state.msg)
+        }
+        this.initTeamFile()
+    }
+
+    createFolderCancelHandle = () => {
+        this.setState({ showCreateFolder: false, createFolderName: '新建文件夹' })
+    }
+
+    openFileInput = () => {
+        this.fileInput.click()
+    }
+
+    uploadFileHandle = async (e) => {
+        var file = e.target.files[0];
+        this.setState({
+            chosenFile: file
+        })
+
+        var ossKey = this.teamId + '/' + Date.now() + '/' + file.name
+
+        var succeeded;
+        const uploadResult = fileUploader(file, ossKey)
+        await uploadResult.then(function (val) {
+            console.log(val)
+            succeeded = 1
+        }).catch(function (reason) {
+            console.log(reason)
+            succeeded = 0
+        })
+
+        if (succeeded === 0) {
+            window.toast("上传文件失败")
+            return
+        }
+
+        const result = await api('/api/file/createFile', {
+            method: 'POST',
+            body: {
+                fileInfo: {
+                    teamId: this.teamId,
+                    size: file.size,
+                    dir: '/',
+                    fileName: file.name,
+                    ossKey: ossKey,
+                }
+            }
+        })
+        console.log(result);
+        if (result.state.code === 0) {
+            window.toast("上传文件成功")
+        } else {
+            window.toast(result.state.msg)
+        }
+
+        this.initTeamFile()
+    }
+
+    viewHandle = async (file) => {
+        if (file.fileType == 'folder') {
+            var path;
+            if (this.state.dir == '/') path = this.state.dir + file.name;
+            else path = this.state.dir + '/' + file.name;
+            this.state.dir = path;
+        }
+        this.getDirFileListHandle()
+    }
+
+    deleteHandle = async (type, name) => {
+        if (type == 'file') {
+            const result = await api('/api/file/delFile', {
+                method: 'POST',
+                body: {
+                    fileInfo: {
+                        teamId: this.teamId,
+                        dir: '/',
+                        fileName: name
+                    }
+                }
+            })
+        }
+        else {
+            const result = await api('/api/file/delFolder', {
+                method: 'POST',
+                body: {
+                    folderInfo: {
+                        teamId: this.teamId,
+                        dir: '/',
+                        folderName: name
+                    }
+                }
+            })
+        }
+
+        this.initTeamFile()
+    }
+
+    downloadHandle = (ossKey) => {
+        window.open(window.location.origin + '/static/' + ossKey)
+    }
+
+    folderClickHandle = (dir) => {
+        location.href = '/files/' + this.teamId + '?dir=/' + dir
+    }
+
+    renameHandle = (item) => {
+        this.state.renameId = item._id
+        this.state.renameName = item.name
+        this.initTeamFile()
+    }
+
+    renameNameInputHandle = async (e) => {
+        this.setState({
+            renameName: e.target.value
+        })
+    }
+
+    renameCancelHandle = () => {
+        this.state.renameId = ''
+        this.state.renameName = ''
+        this.initTeamFile()
+    }
+
+    renameComfirmHandle = async (item) => {
+        if (item.fileType == 'file') {
+
+            const result = await api('/api/file/updateFileName', {
+                method: 'POST',
+                body: {
+                    fileInfo: {
+                        teamId: this.teamId,
+                        dir: this.curDir,
+                        fileName: item.name,
+                    },
+                    tarName: this.state.renameName,
+                }
+            })
+
+            if (result.state.code == 0) {
+                window.toast("修改文件名称成功")
+                this.setState({
+                    renameName: '',
+                    renameId: '',
+                })
+                this.initTeamFile()
+            } else {
+                window.toast(result.state.msg)
+            }
+        } else {
+            const result = await api('/api/file/updateFolderName', {
+                method: 'POST',
+                body: {
+                    folderInfo: {
+                        teamId: this.teamId,
+                        dir: this.curDir,
+                        folderName: item.name,
+                    },
+                    tarName: this.state.renameName,
+                }
+            })
+
+            if (result.state.code == 0) {
+                window.toast("修改文件夹名称成功")
+                this.setState({
+                    renameName: '',
+                    renameId: '',
+                })
+                this.initTeamFile()
+            } else {
+                window.toast(result.state.msg)
+            }
+        }
+    }
+
     render() {
         let teamInfo = this.state.teamInfo
         const unclassified = this.state.todoListArr[0]
@@ -509,7 +750,7 @@ export default class Team extends React.Component{
         return (
             <Page title={"团队名称xx - IHCI"}
                 className="discuss-page">
-
+                 <input className='file-input-hidden' type="file" ref={(fileInput) => this.fileInput = fileInput} onChange={this.uploadFileHandle}></input>
                 <div className="discuss-con page-wrap">
                     <div className="team-info">
                         <div className="left">
@@ -523,9 +764,9 @@ export default class Team extends React.Component{
                             </div>
                             {
                                 this.state.isCreator && <div className="admin">
-                                    <div className="admin-con iconfont icon-setup_fill"  onClick={this.toAdminHandle}></div>
-                                <span>设置</span>
-                            </div>
+                                    <div className="admin-con iconfont icon-setup_fill" onClick={this.toAdminHandle}></div>
+                                    <span>设置</span>
+                                </div>
                             }
 
                         </div>
@@ -536,28 +777,29 @@ export default class Team extends React.Component{
 
                     <div className="head">
                         <span className='head-title'>讨论</span>
-                        <div className="create-btn" onClick={() => {this.setState({showCreateTopic: true})}}>发起讨论</div>
+                        <div className="create-btn" onClick={() => { this.setState({ showCreateTopic: true }) }}>发起讨论</div>
                     </div>
 
                     {
                         this.state.showCreateTopic && <div className="create-area">
                             <input type="text"
-                                   className="topic-name"
-                                   onChange={this.topicNameInputHandle}
-                                   value={this.state.topicName} placeholder="话题" />
+                                className="topic-name"
+                                onChange={this.topicNameInputHandle}
+                                value={this.state.topicName} placeholder="话题" />
                             <Editor handleContentChange={this.handleTopicContentChange.bind(this)}
-                                    handleFileUpload={this.topicFileUploadHandle.bind(this)}
-                                    attachments={this.state.topicAttachments}></Editor>
+                                handleFileUpload={this.topicFileUploadHandle.bind(this)}
+                                deleteFile={this.deleteFile.bind(this)}
+                                attachments={this.state.topicAttachments}></Editor>
 
                             <div className="infrom">请选择要通知的人：</div>
                             <MemberChosenList choseHandle={this.memberChoseHandle}
-                                              memberList={this.state.memberList}/>
+                                memberList={this.state.memberList} />
 
                             <div className="btn-con">
                                 <div className="create-btn"
-                                     onClick={this.createTopicHandle}>发起讨论</div>
+                                    onClick={this.createTopicHandle}>发起讨论</div>
                                 <div className="cancle"
-                                     onClick={() => {this.setState({showCreateTopic: false})}}>取消</div>
+                                    onClick={() => { this.setState({ showCreateTopic: false }) }}>取消</div>
                             </div>
                         </div>
                     }
@@ -566,95 +808,179 @@ export default class Team extends React.Component{
                             this.state.topicList.map((item) => {
                                 return (
                                     <TopicItem locationTo={this.locationTo}
-                                               key={item._id}
-                                               {...item}/>
+                                        key={item._id}
+                                        {...item} />
                                 )
                             })
                         }
                     </div>
-                </div>
 
-                <div className="todo-board">
-                    <div className="head">
-                        <span className='head-title'>任务</span>
-                        <div className="create-btn">
+
+                    <div>
+                        <div className="head">
+                            <span className='head-title'>任务</span>
+                            <div className="create-btn">
                                 <span onClick={(e) => {
-                                    this.setState({showCreateTodo: true})
+                                    this.setState({ showCreateTodo: true })
                                     e.stopPropagation()
                                 }}>添加任务</span>
-                            <i className="icon iconfont"
-                               onClick={(e) => {
-                                   this.setState({showMenu: !this.state.showMenu})
-                                   e.stopPropagation()
-                               }}
-                            >&#xe783;</i>
-                            {   this.state.showMenu &&
-                            <ul className="menu">
-                                <li onClick={(e) => {
-                                    this.setState({showCreateTodo: true, showMenu: false})
-                                    e.stopPropagation()
-                                }}>添加任务
+                                <i className="icon iconfont"
+                                    onClick={(e) => {
+                                        this.setState({ showMenu: !this.state.showMenu })
+                                        e.stopPropagation()
+                                    }}
+                                >&#xe783;</i>
+                                {this.state.showMenu &&
+                                    <ul className="menu">
+                                        <li onClick={(e) => {
+                                            this.setState({ showCreateTodo: true, showMenu: false })
+                                            e.stopPropagation()
+                                        }}>添加任务
                                 </li>
-                                <li onClick={(e) => {
-                                    console.log('添加任务')
-                                    this.setState({showCreateTodoList: true, showMenu: false})
-                                    e.stopPropagation()
-                                }}>添加清单
+                                        <li onClick={(e) => {
+                                            console.log('添加任务')
+                                            this.setState({ showCreateTodoList: true, showMenu: false })
+                                            e.stopPropagation()
+                                        }}>添加清单
                                 </li>
-                            </ul>
+                                    </ul>
+                                }
+                            </div>
+                        </div>
+
+
+                        {unclassified &&
+                            <TodoList
+                                listType="unclassified"
+                                showCreateTodo={this.state.showCreateTodo}
+                                handlecloseEditTodo={this.handlecloseEditTodo.bind(this)}
+                                {...unclassified}
+                                memberList={this.state.memberList}
+                                handleTodoCreate={this.handleTodoCreate.bind(this, 0, null)}
+                                handleTodoCheck={this.handleTodoCheck.bind(this, 0, null)}
+                                handleTodoModify={this.handleTodoModify.bind(this, 0, null)}
+                                handleAssigneeChange={this.handleAssigneeChange.bind(this, 0, null)}
+                                handleDateChange={this.handleDateChange.bind(this, 0, null)}
+                                handleTodoDelete={this.handleTodoDelete.bind(this, 0, null)}
+                                handleTodoListDelete={this.handleTodoListDelete.bind(this, null, unclassified.id)}
+                                handleTodoListModify={this.handleTodoListModify.bind(this, null, unclassified.id)}
+                            ></TodoList>
+                        }
+
+                        {
+                            this.state.showCreateTodoList &&
+                            <EditTodoList
+                                confirmLabel="保存，开始添加任务"
+                                handleConfirm={this.handleTodoListCreate.bind(this)}
+                                handleClose={(() => { this.setState({ showCreateTodoList: false }) }).bind(this)}>
+                            </EditTodoList>
+                        }
+
+                        {this.state.todoListArr.map((todoList, index) => {
+                            if (index === 0) {
+                                return
                             }
+                            return (
+                                <TodoList
+                                    key={todoList.id}
+                                    {...todoList}
+                                    memberList={this.state.memberList}
+                                    handleTodoCreate={this.handleTodoCreate.bind(this, index, todoList.id)}
+                                    handleTodoCheck={this.handleTodoCheck.bind(this, index, todoList.id)}
+                                    handleTodoModify={this.handleTodoModify.bind(this, index, todoList.id)}
+                                    handleAssigneeChange={this.handleAssigneeChange.bind(this, index, todoList.id)}
+                                    handleDateChange={this.handleDateChange.bind(this, index, todoList.id)}
+                                    handleTodoDelete={this.handleTodoDelete.bind(this, index, todoList.id)}
+                                    handleTodoListDelete={this.handleTodoListDelete.bind(this, index, todoList.id)}
+                                    handleTodoListModify={this.handleTodoListModify.bind(this, index, todoList.id)}
+                                ></TodoList>
+                            )
+                        })
+                        }
+
+                        <div className="head">
+                            <span className='head-title'>文件</span>
+                            <div className="create-btn" onClick={this.openFileInput}>上传文件</div>
+                            <div className="create-btn" onClick={this.createFolderHandle}>创建文件夹</div>
+                        </div>
+
+                        <div className="file-list">
+                            <div className="file-line header">
+                                <div className="name">名称</div>
+                                <div className="size">大小</div>
+                                <div className="last-modify">最后修改时间</div>
+                                <div className="tools"></div>
+                            </div>
+
+                            {
+                                this.state.showCreateFolder ? <div className="file-line files">
+                                    <div className="name">
+                                        <input autoFocus="autofocus" type="text" className="folder-name" onChange={this.createFolderNameInputHandle} value={this.state.createFolderName} />
+                                    </div>
+                                    <div className="tools">
+                                        <span onClick={this.createFolderComfirmHandle}>创建</span>
+                                        <span onClick={this.createFolderCancelHandle}>取消</span>
+                                    </div>
+                                </div> : ''
+                            }
+
+                            {
+                                this.state.fileList.map((item, idx) => {
+                                    if (idx > 10) {
+                                        return
+                                    }
+                                    if (item._id == this.state.renameId) {
+                                        return (
+                                            <div className="file-line files">
+                                                <div className="name">
+                                                    <input autoFocus="autofocus" type="text" className="folder-name" onChange={this.renameNameInputHandle} value={this.state.renameName} />
+                                                </div>
+                                                <div className="tools">
+                                                    <span onClick={() => { this.renameComfirmHandle(item) }}>确定</span>
+                                                    <span onClick={this.renameCancelHandle}>取消</span>
+                                                </div>
+                                            </div>
+                                        )
+
+                                    } else {
+                                        if (item.fileType == 'folder') {
+                                            return (
+                                                <div className="file-line files" key={item.fileType + '-' + item._id}>
+                                                    <div className="name" onClick={() => { this.folderClickHandle(item.name) }}>{'(文件夹)'}{item.name}</div>
+                                                    <div className="size">-</div>
+                                                    <div className="last-modify">{formatDate(item.last_modify_time)}</div>
+                                                    <div className="tools">
+                                                        <span>移动</span>
+                                                        <span onClick={() => { this.renameHandle(item) }}> 重命名 </span>
+                                                        <span onClick={() => { this.deleteHandle('folder', item.name) }}>删除</span>
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
+                                        if (item.fileType == 'file') {
+                                            return (
+                                                <div className="file-line files" key={item.fileType + '-' + item._id}>
+                                                    <div className="name">{item.name}</div>
+                                                    <div className="size">{item.size}</div>
+                                                    <div className="last-modify">{formatDate(item.last_modify_time)}</div>
+                                                    <div className="tools">
+                                                        <span onClick={() => { this.downloadHandle(item.ossKey) }}>下载</span>
+                                                        <span>移动</span>
+                                                        <span onClick={() => { this.renameHandle(item) }}> 重命名 </span>
+                                                        <span onClick={() => { this.deleteHandle('file', item.name) }}>删除</span>
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
+                                    }
+                                })
+
+                            }
+                            <div className='show-all-file' onClick={() => { location.href = '/files/' + this.teamId }}> 查看全部文件 </div>
+
                         </div>
                     </div>
 
-
-                    {   unclassified &&
-                    <TodoList
-                        listType="unclassified"
-                        showCreateTodo = {this.state.showCreateTodo}
-                        handlecloseEditTodo={this.handlecloseEditTodo.bind(this)}
-                        {...unclassified}
-                        memberList={this.state.memberList}
-                        handleTodoCreate={this.handleTodoCreate.bind(this, 0, null)}
-                        handleTodoCheck={this.handleTodoCheck.bind(this, 0, null)}
-                        handleTodoModify={this.handleTodoModify.bind(this, 0, null)}
-                        handleAssigneeChange={this.handleAssigneeChange.bind(this, 0, null)}
-                        handleDateChange={this.handleDateChange.bind(this, 0, null)}
-                        handleTodoDelete={this.handleTodoDelete.bind(this, 0, null)}
-                        handleTodoListDelete={this.handleTodoListDelete.bind(this, null, unclassified.id )}
-                        handleTodoListModify={this.handleTodoListModify.bind(this, null, unclassified.id)}
-                    ></TodoList>
-                    }
-
-                    {
-                        this.state.showCreateTodoList &&
-                        <EditTodoList
-                            confirmLabel="保存，开始添加任务"
-                            handleConfirm={this.handleTodoListCreate.bind(this)}
-                            handleClose={(() => {this.setState({showCreateTodoList: false})}).bind(this)}>
-                        </EditTodoList>
-                    }
-
-                    {   this.state.todoListArr.map((todoList, index) => {
-                        if (index === 0) {
-                            return
-                        }
-                        return (
-                            <TodoList
-                                key={todoList.id}
-                                {...todoList}
-                                memberList={this.state.memberList}
-                                handleTodoCreate={this.handleTodoCreate.bind(this, index, todoList.id)}
-                                handleTodoCheck={this.handleTodoCheck.bind(this, index, todoList.id)}
-                                handleTodoModify={this.handleTodoModify.bind(this, index, todoList.id)}
-                                handleAssigneeChange={this.handleAssigneeChange.bind(this, index, todoList.id)}
-                                handleDateChange={this.handleDateChange.bind(this, index, todoList.id)}
-                                handleTodoDelete={this.handleTodoDelete.bind(this, index, todoList.id)}
-                                handleTodoListDelete={this.handleTodoListDelete.bind(this, index, todoList.id )}
-                                handleTodoListModify={this.handleTodoListModify.bind(this, index, todoList.id)}
-                            ></TodoList>
-                        )
-                    })
-                    }
                 </div>
             </Page>
         )
