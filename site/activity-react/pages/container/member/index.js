@@ -14,11 +14,7 @@ export default class Members extends React.Component{
             })
         }
         else this.initTeamList()
-        const teamId = this.props.location.state.teamId
-        if (teamId)
-            this.toTeamHandle(teamId)
-        else
-            this.initMemberList()
+        this.initMemberList()
     }
 
     initMemberList = async (id) => {
