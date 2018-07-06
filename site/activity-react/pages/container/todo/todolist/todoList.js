@@ -107,6 +107,7 @@ class TodoList extends React.Component {
                         this.state.showCreateTodo?
                             <NewTodo
                                 memberList={_props.memberList}
+                                createInput={_props.createInput}
                                 confirmLabel="添加任务"
                                 closeAfterConfirm={false}
                                 handleConfirm={_props.handleTodoCreate}
@@ -125,6 +126,7 @@ class TodoList extends React.Component {
                         _props.showCreateTodo &&
                             <NewTodo
                                 memberList={_props.memberList}
+                                createInput={_props.createInput}
                                 confirmLabel="添加任务"
                                 closeAfterConfirm={false}
                                 handleConfirm={_props.handleTodoCreate}

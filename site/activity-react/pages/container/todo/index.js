@@ -799,6 +799,7 @@ export default class Task extends React.Component{
                      {this.state.showCreateCheck?
                          <NewCheck
                              memberList={this.state.memberList}
+                             createInput="检查项名"
                              confirmLabel="保存"
                              handleConfirm={this.handleCheckCreate}
                              handleClose={() => {

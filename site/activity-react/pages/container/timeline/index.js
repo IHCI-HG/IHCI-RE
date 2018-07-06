@@ -70,7 +70,24 @@ class TimelineItem extends React.PureComponent{
                                 <span className="topic">{this.props.content.title}的完成时间</span>
                             </div>
 
-                            <div className="content" dangerouslySetInnerHTML={{__html: this.props.content.content}}>{}</div>
+                            <div className="content">{this.props.content.deadline}</div>
+                        </div>
+                    </div>
+                )
+            case 'CHANGE_TASK_HEADER': case 'CHANGE_CHECKITEM_HEADER':
+                return(
+                    <div className='news-item-wrap'>
+                        <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
+                        <img src={this.props.creator.headImg} alt="" className="head-img" />
+
+                        <div className="news-con">
+                            <div className="des-line">
+                                <span className="name">{this.props.creator.name}</span>
+                                <span className="type">{this.typeMap[this.props.type]}</span>
+                                <span className="topic">{this.props.content.title}</span>
+                            </div>
+
+                            <div className="content">{this.props.content.header}</div>
                         </div>
                     </div>
                 )
@@ -92,28 +109,6 @@ class TimelineItem extends React.PureComponent{
                     </div>
                 )
         }
-        
-            // case 'REPLY_TOPIC':
-            //     return (
-            //         <div className='news-item-wrap'>
-            //             <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
-            //             <img src={this.props.creator.headImg} alt="" className="head-img" />
-
-            //             <div className="news-con">
-            //                 <div className="des-line">
-            //                     <span className="name">{this.props.creator.name}</span>
-            //                     <span className="type">{this.typeMap[this.props.type]}</span>
-            //                     <span className="topic">{this.props.content.title}</span>
-            //                 </div>
-
-            //                 <div className="content">{this.props.content.content}</div>
-            //             </div>
-            //         </div>
-            //     )
-            //     break;
-            // default:
-            //     return ''
-        // }
     }
 }
 

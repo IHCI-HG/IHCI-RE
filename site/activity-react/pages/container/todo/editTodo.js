@@ -104,7 +104,7 @@ class EditTodo extends React.Component {
                 <div className="todo-wrap">
                     <input ref="name"
                            className="dashed-input"
-                           placeholder="任务名"
+                           placeholder={_props.createInput}
                            defaultValue={_props.value?_props.value:''}>
                     </input>
                     <ItemLabel assigneeId = {this.state.assigneeId}

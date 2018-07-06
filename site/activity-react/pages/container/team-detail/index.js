@@ -859,6 +859,7 @@ export default class Team extends React.Component {
                             <TodoList
                                 listType="unclassified"
                                 showCreateTodo={this.state.showCreateTodo}
+                                createInput="任务名"
                                 handlecloseEditTodo={this.handlecloseEditTodo.bind(this)}
                                 {...unclassified}
                                 memberList={this.state.memberList}
@@ -890,6 +891,7 @@ export default class Team extends React.Component {
                                 <TodoList
                                     key={todoList.id}
                                     {...todoList}
+                                    createInput="任务名"
                                     memberList={this.state.memberList}
                                     handleTodoCreate={this.handleTodoCreate.bind(this, index, todoList.id)}
                                     handleTodoCheck={this.handleTodoCheck.bind(this, index, todoList.id)}
