@@ -17,6 +17,7 @@ import {
 
 var mongoose = require('mongoose')
 var UserDB = mongoose.model('user')
+var followerDB = mongoose.model('follower')
 
 var subscribeEventHandle = async (openid) => {
     // 获取用户信息(拿uid)
@@ -26,11 +27,13 @@ var subscribeEventHandle = async (openid) => {
         if(wxUserInfo && wxUserInfo.unionid) {
             const userObj = await UserDB.findByUnionId(wxUserInfo.unionid)
             if(userObj) {
-                UserDB.updateUser(userObj._id, {
+                await UserDB.updateUser(userObj._id, {
                     openid: wxUserInfo.openid,
                     subState: true
                 })
+                await followerDB.createFollower(openid, wxUserInfo.unionid)
             } 
+
             pub_pushTemplateMsg(openid, 'YH-TY6g0sbVJgC5Ppk-cBDvLlFCfQxRm61QKj7IOSV4', 'www.animita.cn', {
                 "first": {
                     "value": "关注服务号成功，您已注册平台",
@@ -53,25 +56,15 @@ var subscribeEventHandle = async (openid) => {
 }
 
 var unsubscribeEventHandle = async (openid) => {
-    // 获取用户信息(拿uid)
-    // 用uid查用户表 -》 改sub状态
-    try {
-        const wxUserInfo = await pub_openidToUserInfo(openid)
-
-        console.log(wxUserInfo);
-
-        if(wxUserInfo && wxUserInfo.unionid) {
-            const userObj = await UserDB.findByUnionId(wxUserInfo.unionid)
-            if(userObj) {
-                UserDB.updateUser(userObj._id, {
-                    openid: wxUserInfo.openid,
-                    subState: false
-                })
-            } 
-        }
-    } catch (error) {
-        console.error(error);
-    }
+   
+    const userObj = await UserDB.findByOpenId(openid)
+    if(userObj) {
+       await UserDB.updateUser(userObj._id, {
+            openid: '',
+            subState: false
+        })
+      await followerDB.delFollowerByOpenId(openid)
+    } 
 }
 
 var wxReceiver = function(req, res, next) {
