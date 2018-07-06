@@ -276,7 +276,7 @@ const createTask = async (req, res, next) => {
 
         var deadline = ""
         if(result.deadline) {
-            const date = result.deadline
+            const date = new Date(result.deadline)
             deadline = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
         }
 
@@ -780,12 +780,12 @@ const findCheckitem = async (req, res, next) => {
         // await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'OPEN_CHECKITEM', checkitemId, checkitemObj.content, checkitemObj)
 
         if(checkitemObj.deadline) {
-            const date = checkitemObj.deadline
+            const date = new Date(checkitemObj.deadline)
             checkitemObj.deadline = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
         }
 
         if(checkitemObj.completed_time) {
-            const date = checkitemObj.completed_time
+            const date = new Date(checkitemObj.completed_time)
             checkitemObj.completed_time = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
         }
 
