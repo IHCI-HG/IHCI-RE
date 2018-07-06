@@ -506,7 +506,7 @@ export default class Task extends React.Component{
     }
 
     handleTodoModify = async(todoInfo) => {
-        console.log('content', todoInfo.content)
+        console.log(todoInfo)
         const taskId = this.props.params.id;
         const editTask = {};
         editTask.name = todoInfo.name
@@ -518,6 +518,7 @@ export default class Task extends React.Component{
         const resp = await api('/api/task/edit', {
             method: 'POST',
             body: {
+                teamId:this.state.todo.teamId,
                 taskId,
                 editTask
             }
@@ -821,7 +822,7 @@ export default class Task extends React.Component{
                                  this.setState({ showCreateCheck: false})
                              }}
                          />: */}
-                         {(this.state.todo.desc==="")&&
+                         {(this.state.todo.desc===""||"<p></p>")&&
                          <div className="new-check"
                              onClick={() => {
                                  this.setEdit()
