@@ -40,6 +40,20 @@ const timelineSchema = new mongoose.Schema({
         COPY_TASK
         MOVE_TASK
 
+        //7.5
+        CREATE_TASKLIST
+        DELETE_TASKLIST
+
+        //7.6  
+        CHANGE_TASK_HEADER
+        CHANGE_CHECKITEM_HEADER
+        CHANGE_TASK_DDL
+        CHANGE_CHECKITEM_DDL
+        REOPEN_TASK
+        REOPEN_CHECKITEM
+
+
+
 
 */
 

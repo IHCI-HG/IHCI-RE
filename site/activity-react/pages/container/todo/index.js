@@ -6,7 +6,10 @@ import { timeBefore, sortByCreateTime } from '../../../utils/util'
 import Page from '../../../components/page'
 import TodoItem from './todoItem'
 import NewCheck from './editTodo'
+import Editor from '../../../components/editor'
+import fileUploader from '../../../utils/file-uploader'
 
+import { timeBefore, sortByCreateTime, createMarkup } from '../../../utils/util'
 import MemberChosenList from '../../../components/member-chose-list'
 
 function getUpdateItem(arr, id) {
@@ -26,8 +29,9 @@ class TopicItem extends React.Component{
         showEdit: false,
         showCreateTopic: false,
         showButton: true,
-        createTopicContent:this.props.content,
+        discussAttachments:this.props.discussAttachments,
     }
+    
     deleteTopicHandle = () => {
         this.props.deleteTopicHandle(this.props.id)
     }
@@ -37,6 +41,15 @@ class TopicItem extends React.Component{
     }
     sendContent = () => {
         this.props.sendContent(this.props.content)
+    }
+
+    deleteDiscussFile = async (e, index) => {
+        let discussAttachments = this.props.discussAttachments
+        discussAttachments.splice(index,1);
+        this.setState({
+            discussAttachments,
+        })
+        console.log(this.props.discussAttachments)
     }
     render() {
         return(
@@ -59,9 +72,16 @@ class TopicItem extends React.Component{
                     </div>
                     <div className="main">
                         <div className="topic-title">{this.props.title}</div>
-                        {this.state.showButton&&<div className="topic-content">{this.props.content}</div>}
+                        {/* {this.state.showButton&&<div className="topic-content">{this.props.content}</div>} */}
+                        {this.state.showButton&&<p dangerouslySetInnerHTML={createMarkup(this.props.content)}></p>}
                         {this.state.showCreateTopic&&<div className="create-area">
-                            <textarea className="topic-content" onChange={this.props.updateTopicInputHandle} value={this.props.updateTopicContent} placeholder="说点什么" autoFocus></textarea>
+                            {/* <textarea className="topic-content" onChange={this.props.updateTopicInputHandle} value={this.props.updateTopicContent} placeholder="说点什么" autoFocus></textarea> */}
+                            <Editor handleContentChange={this.props.updateTopicInputHandle.bind(this)}//props.discussContentHandle
+                                handleFileUpload={this.discussFileUploadHandle}
+                                content={this.props.updateTopicContent}
+                                deleteFile={this.deleteDiscussFile}
+                                attachments={this.state.discussAttachments}>
+                            </Editor>
                             <div className="infrom">请选择要通知的人：</div>
                             <MemberChosenList choseHandle={this.props.memberChoseHandle} memberList={this.props.memberList}/>
                             <div className="btn-con">
@@ -69,6 +89,14 @@ class TopicItem extends React.Component{
                                 <div className="cancle" onClick={() => {this.setState({showCreateTopic: false,showButton:true})}}>取消</div>
                             </div>
                         </div>}
+                        <div className="file-list">
+                            {
+                    
+                                this.props.discussAttachments && this.props.discussAttachments.map((item) => {
+                                    return ( <div className="file-item" key={Math.random()}>{item.name}</div> )
+                                })
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
@@ -102,7 +130,8 @@ export default class Task extends React.Component{
         moveTeamList:[],
         loadMoreCount:1,
         // replyCount:0
-        teamName:""
+        teamName:"",
+        discussAttachments:[],
     }
 
     componentDidMount = async() => {
@@ -296,6 +325,7 @@ export default class Task extends React.Component{
                 informList.push(item._id)
             }
         })
+        console.log("update")
         const resp = await api('/api/task/editDiscuss', {
             method:"POST",
             body:{
@@ -386,15 +416,33 @@ export default class Task extends React.Component{
         }
     }
 
-    topicContentInputHandle = (e) => {
+    discussContentHandle = (content) => {
         this.setState({
-            createTopicContent: e.target.value
+            createTopicContent: content
         })
     }
 
-    updateTopicInputHandle = (e) => {
+    discussFileUploadHandle = async (e) => {
+        const resp = await fileUploader('teamId', '', e.target.files[0])
+        let discussAttachments = this.state.discussAttachments;
+        discussAttachments = [...discussAttachments, resp]
         this.setState({
-            updateTopicContent: e.target.value
+            discussAttachments,
+        })
+        console.log(this.state.discussAttachments)
+    }
+
+    deleteDiscussFile = async (e, index) => {
+        let discussAttachments = this.state.discussAttachments
+        discussAttachments.splice(index,1);
+        this.setState({
+            discussAttachments,
+        })
+    }
+
+    updateTopicInputHandle = (content) => {
+        this.setState({
+            updateTopicContent: content
         })
     }
 
@@ -873,7 +921,12 @@ export default class Task extends React.Component{
                         this.state.showButton && <input type="text" onClick={() => {this.setState({showCreateTopic: true,showButton:false})}} className="topic-name" placeholder="点击发表评论" /> }
                             {
                                 this.state.showCreateTopic && <div className="create-area">
-                                    <textarea className="topic-content" onChange={this.topicContentInputHandle} value={this.state.createTopicContent} placeholder="说点什么" autoFocus></textarea>
+                                    <Editor handleContentChange={this.discussContentHandle.bind(this)}
+                                                handleFileUpload={this.discussFileUploadHandle.bind(this)}
+                                                content={this.state.createTopicContent}
+                                                deleteFile={this.deleteDiscussFile.bind(this)}
+                                                attachments={this.state.discussAttachments}>
+                                    </Editor>
                                     <div className="infrom">请选择要通知的人：</div>
                                     <MemberChosenList choseHandle={this.memberChoseHandle} memberList={this.state.memberList}/>
                                     <div className="btn-con">
