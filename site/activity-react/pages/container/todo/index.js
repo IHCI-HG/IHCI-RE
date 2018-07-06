@@ -822,7 +822,7 @@ export default class Task extends React.Component{
                                  this.setState({ showCreateCheck: false})
                              }}
                          />: */}
-                         {(this.state.todo.desc===""||"<p></p>")&&
+                         {(this.state.todo.desc===""||this.state.todo.desc==="<p></p>")&&
                          <div className="new-check"
                              onClick={() => {
                                  this.setEdit()

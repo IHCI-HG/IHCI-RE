@@ -49,29 +49,50 @@ class TimelineItem extends React.PureComponent{
 
         'CHANGE_TASK_HEADER':'指派了任务',
         'CHANGE_CHECKITEM_HEADER':'指派了检查项',
-        'CHANGE_TASK_DDL':'更改了任务完成时间',
-        'CHANGE_CHECKITEM_DDL':'更改了检查项完成时间',
+        'CHANGE_TASK_DDL':'更改了任务',
+        'CHANGE_CHECKITEM_DDL':'更改了检查项',
         'REOPEN_TASK':'重新打开了任务',
         'REOPEN_CHECKITEM':'重新打开了检查项',
     }
 
     render() {
-        return(
-            <div className='news-item-wrap'>
-                <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
-                <img src={this.props.creator.headImg} alt="" className="head-img" />
+        switch(this.props.type){
+            case 'CHANGE_TASK_DDL': case 'CHANGE_CHECKITEM_DDL':
+                return(
+                    <div className='news-item-wrap'>
+                        <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
+                        <img src={this.props.creator.headImg} alt="" className="head-img" />
 
-                <div className="news-con">
-                    <div className="des-line">
-                        <span className="name">{this.props.creator.name}</span>
-                        <span className="type">{this.typeMap[this.props.type]}</span>
-                        <span className="topic">{this.props.content.title}</span>
+                        <div className="news-con">
+                            <div className="des-line">
+                                <span className="name">{this.props.creator.name}</span>
+                                <span className="type">{this.typeMap[this.props.type]}</span>
+                                <span className="topic">{this.props.content.title}的完成时间</span>
+                            </div>
+
+                            <div className="content" dangerouslySetInnerHTML={{__html: this.props.content.content}}>{}</div>
+                        </div>
                     </div>
-
-                    <div className="content" dangerouslySetInnerHTML={{__html: this.props.content.content}}>{}</div>
-                </div>
-            </div>
-        )
+                )
+            default:
+                return(
+                    <div className='news-item-wrap'>
+                        <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
+                        <img src={this.props.creator.headImg} alt="" className="head-img" />
+        
+                        <div className="news-con">
+                            <div className="des-line">
+                                <span className="name">{this.props.creator.name}</span>
+                                <span className="type">{this.typeMap[this.props.type]}</span>
+                                <span className="topic">{this.props.content.title}</span>
+                            </div>
+        
+                            <div className="content" dangerouslySetInnerHTML={{__html: this.props.content.content}}>{}</div>
+                        </div>
+                    </div>
+                )
+        }
+        
             // case 'REPLY_TOPIC':
             //     return (
             //         <div className='news-item-wrap'>
