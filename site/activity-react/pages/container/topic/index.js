@@ -84,7 +84,7 @@ class TopicDiscussItem extends React.Component {
                                     </div>
                                     {
                                         allowEdit && <div className="right">
-                                            <span className="edit" onClick={() => { this.setState({ editState: true }) }}>编辑</span>
+                                            <span className="edit" onClick={() => { this.props.onBlur(), this.setState({ editState: true }) }}>编辑</span>
                                         </div>
                                     }
                                 </div>
