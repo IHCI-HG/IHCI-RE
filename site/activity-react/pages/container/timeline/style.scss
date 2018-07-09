@@ -138,6 +138,11 @@
         display: flex;
         align-items: flex-start;
         margin-bottom: 20px;
+
+        .news-con{
+            cursor: pointer;
+        }
+
         .time {
             flex-shrink: 0;
             flex-grow: 0;

@@ -22,6 +22,56 @@ class TeamChoseItem extends React.PureComponent{
 
 
 class TimelineItem extends React.PureComponent{
+
+    toOriginHandle = () => {
+        console.log(this)
+        const pathname = ''
+        const type = 'TOPIC'
+        switch(this.props.type){
+            case 'CREATE_TOPIC':
+            case 'EDIT_TOPIC':
+            {
+                pathname = '/discuss/topic/' + this.props.content._id
+                break
+            }
+            case 'REPLY_TOPIC':
+            case 'EDIT_REPLY':
+            {
+                pathname = '/discuss/topic/' + this.props.content.topicId
+                type = 'REPLY'
+                break
+            }
+            case 'CREATE_TASK':
+            case 'CREATE_CHECK_ITEM':
+            case 'COPY_TASK':
+            case 'MOVE_TASK':
+            case 'DELETE_TASK':
+            case 'FINISH_TASK':
+    
+            case 'REPLY_TASK':
+            case 'DELETE_TASK_REPLY':
+
+            case 'DELETE_CHECK_ITEM':
+            case 'FINISH_CHECITEM_ITEM':
+            case 'COPY_TASK':
+            case 'MOVE_TASK':
+            {
+                pathname = '/todo/' + this.props.tarId
+            }
+
+        }
+
+        const location = {
+            pathname: pathname,
+            state:{
+                type: type,
+                id: this.props.tarId
+            }
+        }
+        this.props.router.push(location)
+    }
+
+
     typeMap = {
         'CREATE_TOPIC': '创建了讨论：',
         'REPLY_TOPIC': '回复了讨论：',
@@ -52,7 +102,7 @@ class TimelineItem extends React.PureComponent{
                 <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
                 <img src={this.props.creator.headImg} alt="" className="head-img" />
 
-                <div className="news-con">
+                <div className="news-con" onClick={this.toOriginHandle}>
                     <div className="des-line">
                         <span className="name">{this.props.creator.name}</span>
                         <span className="type">{this.typeMap[this.props.type]}</span>
@@ -346,7 +396,7 @@ export default class News extends React.Component{
                                                     <div className="group-line">{showList[timeKey][teamKey].teamName}</div>
                                                     {
                                                         showList[timeKey][teamKey].newsList.map((item) => {
-                                                            return <TimelineItem key={'timeline-' + item._id} {...item}/>
+                                                            return <TimelineItem key={'timeline-' + item._id} router={this.props.router}  {...item}/>
                                                         })
                                                     }
                                                 </div>
