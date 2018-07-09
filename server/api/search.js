@@ -80,7 +80,7 @@ const search = async (req, res, next) => {
                  })  
             }else if(type=="FILE"){
                 searchResult.map((item) => {
-                    if(!((item.type=="CREATE_TOPIC")||(item.type=="EDIT_TOPIC")||(item.type=="REPLY_TOPIC")||(item.type=="EDIT_REPLY")||(item.type=="CREATE_TASK")||(item.type=="CREATE_CHECK_ITEM")||(item.type=="COPY_TASK")||(item.type=="MOVE_TASK"))){
+                    if(item.type==null){
                         result.push(item)
                       } 
                  })  
