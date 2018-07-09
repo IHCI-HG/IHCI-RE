@@ -1,5 +1,9 @@
 .infs-page {
-    padding: 30px 0;
+    margin-top: 30px;
+
+    .page-wrap {
+        padding: 20px 30px 40px 30px;
+    }
 
         .readStateChosen{
           display:flex;
@@ -18,7 +22,10 @@
             margin-right: 40px;
             margin-bottom: 30px;
             font-size: 20px;
+            transition: background-color 0.5s ease-in-out;
+
             &.act {
+                transition: background-color 0.3s ease-in-out;
                 background-color: rgb(255, 170, 43);
                 color: #fff;
                 font-weight: bold;

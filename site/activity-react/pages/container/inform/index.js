@@ -127,7 +127,7 @@ export default class Infs extends React.Component{
       }
 
       getMoreIsreadData = async () => {
-        const lastStamp = thsi.state.lastStamp
+        const lastStamp = this.state.lastStamp
         const result = await api('/api/user/showReadList', {
             method: 'POST',
             body:{
@@ -141,7 +141,7 @@ export default class Infs extends React.Component{
           },
             isreadList: readlist
         }, () =>{
-          this.appendToShowList(thsi.state.isreadList)
+            this.appendToShowList(this.state.isreadList)
         })
         if(result.data.length<moreInformItemNum){
           this.setState({
@@ -171,7 +171,7 @@ export default class Infs extends React.Component{
           })
             this.setState({
               showList: showList,
-              lastStamp: list[listLength - 1].create_time
+              lastStamp: list[listLength - 1].create_time,
             })
         } else if (showList.keyList.length ==0){
           this.setState({
@@ -198,7 +198,7 @@ export default class Infs extends React.Component{
           showList: {
               keyList : [],
           },
-          readState:''
+          readState:'',
           noResult: false,
           noMoreResult: false,
       }
@@ -231,15 +231,17 @@ export default class Infs extends React.Component{
                 showList: {
                     keyList : [],
                 },
-                  isreadList: readlist
+                  isreadList: readlist,
+                  noResult: false,
+                  noMoreResult: false,
               }, () =>{
                 this.appendToShowList(this.state.isreadList)
               })
-              if(result.data.length<newInformItemNum){
-                this.setState({
-                  noMoreResult: true
-                })
-              }
+            //   if(result.data.length<newInformItemNum){
+            //     this.setState({
+            //       noResult: true
+            //     })
+            //   }
               console.log(result)
           }
 
@@ -254,15 +256,17 @@ export default class Infs extends React.Component{
               showList: {
                   keyList : [],
               },
-                unreadList: result.data
+                unreadList: result.data,
+                noResult: false,
+                noMoreResult: false,
             }, () =>{
               this.appendToShowList(this.state.unreadList)
             })
-            if(result.data.length<newInformItemNum){
-              this.setState({
-                noMoreResult: true
-              })
-            }
+            // if(result.data.length<newInformItemNum){
+            //   this.setState({
+            //     noMoreResult: true
+            //   })
+            // }
         }
 
     getMoreHandle = (actTag) => {
@@ -300,48 +304,49 @@ export default class Infs extends React.Component{
 
         console.log(this.state)
           return (
-              <Page className="infs-page">
-              <div className="readStateChosen">
-                  <div className={this.state.activeTag == 'unread'?'read-tag-item act':'read-tag-item'} onClick={this.toReadHandle.bind(this,"unread")}>未读</div>
-                  <div className={this.state.activeTag == 'isread'?'read-tag-item act':'read-tag-item'} onClick={this.toReadHandle.bind(this,"isread")}>已读</div>
-              </div>
-                      {
+            <Page className="infs-page">
+            <div className='page-wrap'>
+                <div className="readStateChosen">
+                    <div className={this.state.activeTag == 'unread'?'read-tag-item act':'read-tag-item'} onClick={this.toReadHandle.bind(this,"unread")}>未读</div>
+                    <div className={this.state.activeTag == 'isread'?'read-tag-item act':'read-tag-item'} onClick={this.toReadHandle.bind(this,"isread")}>已读</div>
+                </div>
+                        {
 
-                          showList.keyList.map((timeKey) => {
-                              return (
-                                  <div className="infs-day" key={'time-group-' + timeKey}>
-                                    {
-                                          showList[timeKey].teamKeyList.map((teamKey) => {
-                                            console.log(showList[timeKey][teamKey].teamName)
-                                              return (
-                                                  <div key={'group-line-' + timeKey + teamKey}>
-                                                      {/* 分组线 */}
-                                                      <div className="group-line">{showList[timeKey][teamKey].teamName}</div>
-                                                      {
-                                                          showList[timeKey][teamKey].infsList.map((item) => {
-                                                            console.log(item)
-                                                              return (
+                            showList.keyList.map((timeKey) => {
+                                return (
+                                    <div className="infs-day" key={'time-group-' + timeKey}>
+                                        {
+                                            showList[timeKey].teamKeyList.map((teamKey) => {
+                                                console.log(showList[timeKey][teamKey].teamName)
+                                                return (
+                                                    <div key={'group-line-' + timeKey + teamKey}>
+                                                        {/* 分组线 */}
+                                                        <div className="group-line">{showList[timeKey][teamKey].teamName}</div>
+                                                        {
+                                                            showList[timeKey][teamKey].infsList.map((item) => {
+                                                                console.log(item)
+                                                                return (
 
-                                                                <InformItem locationTo={this.locationTo} key={'inform-' + item.noticeId} {...item} onClick={() => {}}/>
-                                                              )
-                                                          })
-                                                      }
-                                                  </div>
-                                              )
-                                          })
-                                      }
-                                  </div>
-                              )
-                          })
-                      }
-                      {this.state.noResult && <div className='null-info'>无通知</div>}
-                      <div className='load-more-bar'>
-                          {!this.state.noResult && !this.state.noMoreResult && <div className="load-more" onClick={this.getMoreHandle.bind(this,this.state.activeTag}>
-                              点击加载更多
-                          </div>}
-                          {this.state.noMoreResult && <div className="no-more-result-alert">没有更多通知！</div>}
+                                                                    <InformItem locationTo={this.locationTo} key={'inform-' + item.noticeId} {...item} onClick={() => {}}/>
+                                                                )
+                                                            })
+                                                        }
+                                                    </div>
+                                                )
+                                            })
+                                        }
+                                    </div>
+                                )
+                            })
+                        }
+                        {this.state.noResult && <div className='null-info'>无通知</div>}
+                        <div className='load-more-bar'>
+                            {!this.state.noResult && !this.state.noMoreResult && <div className="load-more" onClick={this.getMoreHandle.bind(this,this.state.activeTag)}>
+                                点击加载更多
+                            </div>}
+                            {this.state.noMoreResult && <div className="no-more-result-alert">没有更多通知！</div>}
+                        </div>
                       </div>
-                      
               </Page>
           )
       }
