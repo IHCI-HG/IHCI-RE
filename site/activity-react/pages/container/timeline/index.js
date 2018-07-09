@@ -47,7 +47,7 @@ class TimelineItem extends React.PureComponent{
             case 'MOVE_TASK':
             case 'DELETE_TASK':
             case 'FINISH_TASK':
-    
+
             case 'REPLY_TASK':
             case 'DELETE_TASK_REPLY':
 
@@ -177,7 +177,7 @@ export default class News extends React.Component{
             shownTeam: this.props.personInfo && this.props.personInfo.teamList || [],
         })
     }
-    
+
     getMoreTimelineData = async () => {
         const queryTeamId = this.props.location.query.teamId
         const queryPerson = this.props.location.query.userId
@@ -198,6 +198,7 @@ export default class News extends React.Component{
         }, () => {
             this.appendToShowList(this.state.newsList)
         })
+        console.log(result)
         if(result.data.length<moreTimeLineItemNum){
             this.setState({
                 noMoreResult: true,
@@ -239,6 +240,7 @@ export default class News extends React.Component{
                 noMoreResult: true,
             })
         }
+        console.log(showList)
     }
 
     typeMap = {
@@ -273,7 +275,7 @@ export default class News extends React.Component{
         // showList: {
         //     timeKeyList: ['20170101', '20170102'],
         //     '20170101': {
-        //         'teamKeyList': ['teamId1','teamId2']                
+        //         'teamKeyList': ['teamId1','teamId2']
         //         'teamId1' : {
         //             teamName: '这是团队名称111',
         //             newsList: []
@@ -318,7 +320,7 @@ export default class News extends React.Component{
             this.props.personInfo.teamList.map((item) => {
                 if(partten.test(item.teamName)) {
                     teamList.push(item)
-                } 
+                }
             })
             this.setState({
                 teamList: teamList
@@ -334,7 +336,7 @@ export default class News extends React.Component{
         const showList = this.state.showList
         return (
             <Page title='动态 - IHCI' className="news-page">
-                
+
                 {
                     this.state.showTeamFilter && <div className="team-list" onMouseLeave={this.teamFilterHandle}>
                         <input type="text" className="search" onChange={this.searchInputHandle} />
@@ -361,7 +363,6 @@ export default class News extends React.Component{
                         }
                     </div>
                 }
-                
 
                 <div className="news-list page-wrap">
                     {
@@ -381,7 +382,7 @@ export default class News extends React.Component{
                         </div>
                     }
 
-                    
+
                     {
                         showList.keyList.map((timeKey) => {
                             return (
@@ -391,7 +392,7 @@ export default class News extends React.Component{
                                     {
                                         showList[timeKey].teamKeyList.map((teamKey) => {
                                             return (
-                                                <div key={'group-line-' + timeKey + teamKey}> 
+                                                <div key={'group-line-' + timeKey + teamKey}>
                                                     {/* 分组线 */}
                                                     <div className="group-line">{showList[timeKey][teamKey].teamName}</div>
                                                     {
@@ -406,7 +407,7 @@ export default class News extends React.Component{
                                 </div>
                             )
                         })
-                    } 
+                    }
 
                     {this.state.noResult && <div className='null-info'>无动态</div>}
                     <div className='load-more-bar'>
@@ -417,10 +418,8 @@ export default class News extends React.Component{
                     </div>
                 </div>
 
-                
+
             </Page>
         )
     }
 }
-
-

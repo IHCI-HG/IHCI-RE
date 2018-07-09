@@ -10,6 +10,7 @@ export default class Person extends React.Component{
     componentDidMount = async() => {
         this.personInfo = {}
         if(INIT_DATA.userObj) {
+            
             this.setState({
                 userObj: INIT_DATA.userObj,
                 personInfo: INIT_DATA.userObj.personInfo || {
@@ -19,6 +20,12 @@ export default class Person extends React.Component{
                     headImg: INIT_DATA.userObj && INIT_DATA.userObj.wxUserInfo && INIT_DATA.userObj.wxUserInfo.headimgurl || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnregyyDrMvhEDpfC4wFetzykulWRVMGF-jp7RXIIqZ5ffEdawIA',
                 }
             })
+            if (!!INIT_DATA.userObj.personInfo.name && !!INIT_DATA.userObj.personInfo.mail && !!INIT_DATA.userObj.personInfo.phone)
+            {
+                this.setState({
+                    bondEnable: true,
+                })
+            }
         } else {
             // todo 可以优化为客户端渲染
             window.location.reload()
@@ -42,8 +49,9 @@ export default class Person extends React.Component{
                 hasMail: true,
             })
         }
-    }
 
+    }
+    
     starHandle = async (id) => {
         const result = await api('/api/base/sys-time', {
             method: 'GET',
@@ -81,6 +89,7 @@ export default class Person extends React.Component{
         submittable: false,
         hasMail: false,
         sendMailEnabled: true,
+        bondEnable: false,
     }
 
     headImgInputHandle = (e) => {
@@ -380,10 +389,15 @@ export default class Person extends React.Component{
                             <div className="bind-wx">未绑定</div>  
                     }
                     {
-                        !!this.state.userObj.unionid ? 
+                        this.state.bondEnable && <div>
+                        {
+                            !!this.state.userObj.unionid ? 
                             <div className="band" onClick={this.unbindHandle}>解绑</div>
                             :
                             <div className="band" onClick={this.openWxLoginHandle}>绑定</div>
+                        }
+                        </div>
+                        
                     }
                 </div>
 
@@ -392,7 +406,11 @@ export default class Person extends React.Component{
 
                     { !!this.state.userObj.subState ? <div className="bind-wx act">已关注</div> : <div className="bind-wx">未关注</div> }
                 
-                    { !!!this.state.userObj.subState && <div className='after'>需要<div className='follow-btn' onClick={this.openFollowDialogHandle}>关注服务号</div>才能接受讨论消息提醒</div>}
+                    {
+                        this.state.bondEnable && <div>
+                            {!!!this.state.userObj.subState && <div className='after'>需要<div className='follow-btn' onClick={this.openFollowDialogHandle}>关注服务号</div>才能接受讨论消息提醒</div>}
+                        </div>
+                    }
 
 
                 </div>

@@ -101,6 +101,14 @@ export const pub_openidToUserInfo = async function (openid) {
     return data
 }
 
+//服务号拿关注列表
+export const pub_accessTokenToFollowerList = async function(){
+    const accseeToken = await pub_getAccessToken()
+    const result = await fetch(`https://api.weixin.qq.com/cgi-bin/user/get?access_token=${accseeToken}`)
+    const data = await result.json()
+    return data
+
+}
 
 // 服务号推送模板消息通用方法
 export const pub_pushTemplateMsg = async function (openid, templateId, url, data) {
