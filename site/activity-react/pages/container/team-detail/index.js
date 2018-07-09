@@ -742,6 +742,12 @@ export default class Team extends React.Component {
         }
     }
 
+    toMemberHandle = () =>{
+        const location = {pathname:'/member', state:{teamId:this.state.teamInfo._id}}
+        this.props.router.push(location)
+    }
+
+
     render() {
         let teamInfo = this.state.teamInfo
         const unclassified = this.state.todoListArr[0]
@@ -757,7 +763,7 @@ export default class Team extends React.Component {
                             <pre><div className="team-des">{teamInfo.desc}</div>  </pre>
                         </div>
                         <div className="right">
-                            <div className="admin">
+                            <div className="admin" onClick={this.toMemberHandle}>
                                 <div className="admin-con member-num">{this.state.memberList.length}</div>
                                 <span>成员</span>
                             </div>

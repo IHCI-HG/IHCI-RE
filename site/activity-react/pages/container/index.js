@@ -157,24 +157,26 @@ const routeConfig = [
         component: App,
         indexRoute: { component: Team },
         childRoutes: [
-            { path: 'test', component: Test },
-            { path: 'test-editor', component: TestEditor },
+            { path: 'search', component: SearchResult },
+            { path: 'timeline', component: Timeline },
+            { path: 'member', component: Member },
+
             { path: 'team', component: Team },
-            { path: 'files/:id', component: Files },
+            { path: 'team/:id', component: TeamDetail },
             { path: 'team-admin/:id', component: TeamAdmin },
             { path: 'team-join/:id', component: TeamJoin },
-            { path: 'sign', component: Sign },
             { path: 'team-create', component: TeamCreate },
-            { path: 'person', component: Person },
+
+            { path: 'files/:id', component: Files },
             { path: 'discuss/topic/:id', component: Topic },
-            { path: 'timeline', component: Timeline },
-            { path: 'member', component: Member },
-            { path: 'team/:id', component: TeamDetail },
-            { path: 'discuss/topic/:id', component: Topic },
-            { path: 'timeline', component: Timeline },
-            { path: 'member', component: Member },
             { path: 'todo/:id', component: TaskDetail },
-            { path: 'search', component: SearchResult },
+
+            { path: 'person', component: Person },
+
+            { path: 'sign', component: Sign },
+            
+            { path: 'test', component: Test },
+            { path: 'test-editor', component: TestEditor },
         ]
     },
     {

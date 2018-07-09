@@ -59,7 +59,7 @@ class TimelineItem extends React.PureComponent{
                         <span className="topic">{this.props.content.title}</span>
                     </div>
 
-                    <div className="content">{this.props.content.content}</div>
+                    <div className="content" dangerouslySetInnerHTML={{__html: this.props.content.content}}>{}</div>
                 </div>
             </div>
         )
