@@ -37,7 +37,7 @@ const config = {
     },
     prod: {
         cssName: '[name].[contenthash].css',
-        jsName: '[name].[chunkhash].js',
+        jsName: '[name].[hash].js',
         publicPath: '/activity-react/',
         devtool: false,
         assetsReceiver: 'http://127.0.0.1:5001/receiver',
