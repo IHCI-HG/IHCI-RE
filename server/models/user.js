@@ -168,7 +168,7 @@ userSchema.statics = {
 
 
     //topic相关
-    addCreateNotice: async function(userId, topicObj) {
+    addCreateNotice: async function(userId, topicObj, teamName) {
         return this.update(
             { _id: userId },
             {
@@ -176,11 +176,12 @@ userSchema.statics = {
                     noticeList: {
                         create_time: topicObj.create_time,
                         noticeId: topicObj._id,
-                        teamId: topicObj.teamId,
-                        creator: topicObj.creator.username,
+                        teamId: topicObj.team,
+                        teamName: teamName,
+                        creator: topicObj.creator,
                         noticeTitle: topicObj.title,
                         noticeContent: topicObj.content,
-                        //kind: { type:String, create},
+                        type: "CREATE_TOPIC",
                         readState: false,
                     }
                 }
@@ -188,7 +189,7 @@ userSchema.statics = {
         ).exec()
     },
 
-    addReplyNotice: async function(userId, discussObj) {
+    addReplyNotice: async function(userId, discussObj, teamName) {
         return this.update(
             { _id: userId },
             {
@@ -197,25 +198,33 @@ userSchema.statics = {
                         create_time: discussObj.create_time,
                         noticeId: discussObj._id,
                         teamId: discussObj.teamId,
-                        creator: discussObj.creator.username,
+                        teamName: teamName,
+                        topicId: discussObj.topicId,
+                        creator: discussObj.creator,
                         noticeTitle: discussObj.title,
                         noticeContent: discussObj.content,
-                        //kind: { type:String, reply},
+                        type: "REPLY_TOPIC",
                         readState: false,
                     }
                 }
             }
         ).exec()
     },
-
-    readNotice: async function(userId, noticeId) {
-        noticeId = noticeId.toString()
+    readNotice: async function(userId, noticeId, readState) {
+        const notice = mongoose.Types.ObjectId(noticeId)
         return this.update(
-            {_id: userId, "noticeList.noticeId": noticeId},
-            {$set: {"noticeList.$.readState": true}},
+            {_id: userId, "noticeList.noticeId": notice},
+            {$set: {"noticeList.$.readState": readState}},
+            {new: true}
         ).exec()
     },
 
+    // findNotice: async function(userId, noticeId){
+    // ß
+    //   const user = await this.find({$and:[{_id: userId}, {"noticeList.noticeId": notice}]}).exec()
+    //   console.log(user);
+    //   return user
+    // }
 
     // findReadNotice: function(userId) {
     //     const user = this.find({userId: userId})

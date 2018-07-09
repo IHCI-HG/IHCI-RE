@@ -299,7 +299,7 @@ const userInfoList = async (req, res, next) => {
 
 const showReadList = async (req, res, next) => {
     const userId = req.rSession.userId
-    const timeStamp = req.body.timeStamp 
+    const timeStamp = req.body.timeStamp
     const result = []
 
     const userObj = await UserDB.findById(userId)
@@ -337,7 +337,7 @@ const showReadList = async (req, res, next) => {
 
 const showUnreadList = async (req, res, next) => {
     const userId = req.rSession.userId
-    const timeStamp = req.body.timeStamp 
+    const timeStamp = req.body.timeStamp
     const result = []
 
     const userObj = await UserDB.findById(userId)
@@ -371,6 +371,21 @@ const showUnreadList = async (req, res, next) => {
     });
 
 }
+const readNotice = async (req, res, next) => {
+    const userId = req.rSession.userId
+    const noticeId = req.body.noticeId
+    const readState = req.body.readState
+
+    const result = await UserDB.readNotice(userId, noticeId, readState)
+    console.log("dwdwwdw",result);
+
+  //  const Result = await UserDB.findNotice( userId,noticeId)
+
+    resProcessor.jsonp(req, res, {
+        state: { code: 0 },
+        data: {}
+    });
+}
 
 module.exports = [
     ['GET', '/api/base/sys-time', sysTime],
@@ -391,4 +406,7 @@ module.exports = [
 
     ['POST', '/api/user/showReadList', apiAuth, showReadList],
     ['POST', '/api/user/showUnreadList', apiAuth, showUnreadList],
+
+    ['POST', '/api/user/readNotice', apiAuth, readNotice],
+    //['POST', '/api/user/getUserId', apiAuth, getUserId],
 ];

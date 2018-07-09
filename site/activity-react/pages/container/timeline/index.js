@@ -90,16 +90,17 @@ export default class News extends React.Component{
         }, () => {
             this.appendToShowList(this.state.newsList)
         })
-        if(queryUserId){
-            this.setState({
-                showFilter: false
-            })
-        }
+        //if(queryUserId){
+        //    this.setState({
+        //        showFilter: false
+        //    })
+        //}
         if(result.data.length<newTimeLineItemNum){
             this.setState({
                 noMoreResult: true
             })
         }
+        console.log(this.state.newsList)
     }
 
     initTeamList = () => {
@@ -164,6 +165,7 @@ export default class News extends React.Component{
                 noMoreResult: true,
             })
         }
+        console.log(showList)
     }
 
     typeMap = {
@@ -264,7 +266,6 @@ export default class News extends React.Component{
                         }
                     </div>
                 }
-
 
                 <div className="news-list page-wrap">
                     <div className='news-filter' onClick={this.teamFilterHandle}>

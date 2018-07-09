@@ -5,7 +5,7 @@ var _ = require('underscore'),
 
 import apiAuth from '../components/auth/api-auth'
 
-import { 
+import {
     createTopicTemplate,
     replyTopicTemplate
 } from '../components/wx-utils/wx-utils'
@@ -23,7 +23,7 @@ const createTopic = async (req, res, next) => {
     const topicName = req.body.name
     const topicContent = req.body.content
     const informList = req.body.informList
-    const userId = req.rSession.userId 
+    const userId = req.rSession.userId
 
 
     if(!topicName || !topicContent) {
@@ -48,19 +48,19 @@ const createTopic = async (req, res, next) => {
 
             //添加通知\
             await Promise.all(informList.map(async (item) => {
-                await userDB.addCreateNotice(item, result)
+                await userDB.addCreateNotice(item, result, teamObj.name)
               }));
 
             // informList.map((item) => {
             //     const reader = userDB.findByUserId(item)
             //     userDB.addCreateNotice(reader, result)
 
-            // }) 
+            // })
             console.log('\n\n')
             console.log(userObj.teamList)
             console.log('\n\n')
             console.log(userObj.noticeList)
-            console.log('\n\n')           
+            console.log('\n\n')
         }
 
         resProcessor.jsonp(req, res, {
@@ -84,7 +84,7 @@ const editTopic = async (req, res, next) => {
     const editTopic = req.body.editTopic
     const informList = req.body.informList
 
-    const userId = req.rSession.userId 
+    const userId = req.rSession.userId
 
     if(!teamId || !topicId || !editTopic) {
         resProcessor.jsonp(req, res, {
@@ -137,11 +137,11 @@ const createDiscuss = async (req, res, next) => {
     const topicId = req.body.topicId
     const content = req.body.content
     const informList = req.body.informList || []
-    
+
     // todo 回复可以添加附件，这里留着
     const fileList = req.body.fileList || []
 
-    const userId = req.rSession.userId 
+    const userId = req.rSession.userId
 
     // todo 各种权限判断
 
@@ -152,7 +152,7 @@ const createDiscuss = async (req, res, next) => {
         });
         return
     }
-    
+
 
 
     try {
@@ -161,7 +161,7 @@ const createDiscuss = async (req, res, next) => {
         const result = await discussDB.createDiscuss(teamId, topicId, topicObj.title, content, userObj, fileList)
 
         await topicDB.addDiscuss(topicId, result)
-        
+
         const teamObj = await teamDB.findByTeamId(teamId)
 
         await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'REPLY_TOPIC', result._id, topicObj.title, result)
@@ -172,7 +172,7 @@ const createDiscuss = async (req, res, next) => {
 
             //添加通知
             informList.map((item) => {
-                userDB.addReplyNotice(item, result)
+                userDB.addReplyNotice(item, result, teamObj.name)
             })
 
         }
@@ -196,11 +196,11 @@ const editDiscuss = async (req, res, next) => {
     const discussId = req.body.discussId
     const content = req.body.content
     const informList = req.body.informList || []
-    
+
     // todo 回复可以添加附件，这里留着
     const fileList = req.body.fileList || []
 
-    const userId = req.rSession.userId 
+    const userId = req.rSession.userId
 
     // todo 各种权限判断
 
@@ -211,7 +211,7 @@ const editDiscuss = async (req, res, next) => {
         });
         return
     }
-    
+
     if(informList && informList.length) {
         //todo 走微信模板消息下发流程
     }
@@ -244,7 +244,7 @@ const editDiscuss = async (req, res, next) => {
 
 const topicInfo = async (req, res, next) => {
     const topicId = req.query.topicId
-    const userId = req.rSession.userId 
+    const userId = req.rSession.userId
 
     if(!topicId) {
         resProcessor.jsonp(req, res, {
@@ -256,7 +256,7 @@ const topicInfo = async (req, res, next) => {
 
     try {
         const topicObj = await topicDB.findByTopicId(topicId)
-    
+
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
             data: topicObj
