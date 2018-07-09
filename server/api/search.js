@@ -46,20 +46,28 @@ const search = async (req, res, next) => {
          })
         const result = []
         if(type){
-            const flag = (type=="TOPIC")
-            searchResult.map((item) => {    
-                if(flag){
+            if(type=="TOPIC"){
+                searchResult.map((item) => {    
                     if((item.type=="CREATE_TOPIC")||(item.type=="EDIT_TOPIC")){
                         if(str.test(item.title)||str.test(item.content.content)){                    
                         result.push(item)
                         }
-                     }  
-                     
-                 }
-                else if((item.type=="REPLY_TOPIC")||(item.type=="EDIT_REPLY")&&str.test(item.content.content)){
-                       result.push(item)
-                     }                 
-            })
+                     }                              
+                })
+            }else if(type=="REPLY"){
+                searchResult.map((item) => {
+                    if((item.type=="REPLY_TOPIC")||(item.type=="EDIT_REPLY")&&str.test(item.content.content)){
+                        result.push(item)
+                      } 
+                 })               
+            }else if(type=="TASK"){
+                searchResult.map((item) => {
+                    if((item.type=="CREATE_TASK")||(item.type=="DELETE_TASK")||(item.type=="FINISH_TASK")&&str.test(item.title)){
+                        result.push(item)
+                      } 
+                 })  
+            }
+            
         }else{
             searchResult.map((item) => {
                 result.push(item)           

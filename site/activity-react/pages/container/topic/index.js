@@ -16,6 +16,7 @@ class TopicDiscussItem extends React.Component {
     state = {
         content: '',
         editState: false,
+        enableHighlight: false,
         discussAttachments:[],
     }
 
@@ -23,15 +24,12 @@ class TopicDiscussItem extends React.Component {
         this.setState({
             content: e.target.value
         })
-        console.log(this.state.fileList)
-        console.log(this.state.content)
     }
 
     discussContentHandle = (contents) => {
         this.setState({
             content: contents
         })
-        console.log(this.state.discussAttachments)
     }
     discussFileUploadHandle = async (e) => {
         const resp = await fileUploader('teamId', '', e.target.files[0])
@@ -60,7 +58,7 @@ class TopicDiscussItem extends React.Component {
         } = this.props
 
         return (
-            <div>
+            <div className='no-border' id={this.props.id} tabIndex="0" onBlur={this.props.onBlur}>
                 {
                     this.state.editState ? <div className="topic-subject-edit">
                         <Editor handleContentChange={this.discussContentHandle.bind(this)}
@@ -75,7 +73,7 @@ class TopicDiscussItem extends React.Component {
                         </div>
                     </div>
                     :
-                    <div className="topic-subject-con discuss-con">
+                    <div  className={(this.props.enableHighlight &&this.props.highlight) ? "topic-subject-con discuss-con highlight" :"topic-subject-con discuss-con"}>
                         <div className="flex">
                             <img className="head-img" src={creator.headImg}></img>
                             <div className="topic-main">
@@ -86,7 +84,7 @@ class TopicDiscussItem extends React.Component {
                                     </div>
                                     {
                                         allowEdit && <div className="right">
-                                            <span className="edit" onClick={() => { this.setState({ editState: true }) }}>编辑</span>
+                                            <span className="edit" onClick={() => { this.props.onBlur(), this.setState({ editState: true }) }}>编辑</span>
                                         </div>
                                     }
                                 </div>
@@ -141,11 +139,25 @@ export default class Topic extends React.Component{
 
         createDiscussChosen: false,
         createDiscussContent: '',
+
+        enableHighlight: false,
     }
 
     componentDidMount = async() => {
+        console.log('mounted!!')
+        console.log(this)
         this.topicId = this.props.params.id
         this.initPageInfo()
+        try{
+            if (this.props.location.state.type == 'REPLY' && this.props.location.state.id)
+            {
+                setTimeout(() => {
+                    const itemKey = "topic-discuss-item-" + this.props.location.state.id
+                    this.scrollToAnchor(itemKey)
+                }, 500);
+            }
+        }catch(error)
+        {}
     }
 
     initPageInfo = async () => {
@@ -156,7 +168,6 @@ export default class Topic extends React.Component{
             }
         })
 
-        console.log('topicInfo:', result.data);
         const topicObj = result.data
         this.teamId = result.data.team
 
@@ -345,6 +356,27 @@ export default class Topic extends React.Component{
         }
     }
 
+
+    scrollToAnchor = (anchorName) => {
+        if (anchorName) {
+            let anchorElement = document.getElementById(anchorName);
+            setTimeout(() => {
+                this.setState({
+                    enableHighlight: true,
+                })
+            }, 500);
+            
+            if(anchorElement) { anchorElement.scrollIntoView({behavior: 'smooth'}); }
+        }
+    }
+
+    undoHighlight = () =>{
+        console.log("blur!!")
+        this.setState({
+            enableHighlight: false,
+        })
+    }
+
     render() {
         return (
             <Page className="topic-page">
@@ -412,7 +444,7 @@ export default class Topic extends React.Component{
                     {
                         this.state.discussList.map((item) => {
                             return (
-                                <TopicDiscussItem key={"topic-discuss-item-" + item._id} allowEdit={this.props.personInfo._id == item.creator._id} {...item} saveEditHandle = {this.saveDiscussEditHandle}/>
+                                <TopicDiscussItem id={"topic-discuss-item-" + item._id} onBlur={() => this.undoHighlight()} key={"topic-discuss-item-" + item._id} enableHighlight={this.state.enableHighlight} highlight={!!this.props.location.state && this.props.location.state.id == item._id? true : false} allowEdit={this.props.personInfo._id == item.creator._id} {...item} saveEditHandle = {this.saveDiscussEditHandle}/>
                             )
                         })
                     }
@@ -452,5 +484,3 @@ export default class Topic extends React.Component{
         )
     }
 }
-
-
