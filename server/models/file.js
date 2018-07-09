@@ -93,7 +93,19 @@ fileSchema.statics = {
             fileName: tarFileName,
             last_modify_time: Date.now(),
         }).exec()
+    },   
+    findByTeamIdList: function(teamIdList) {
+        const queryList = []
+        teamIdList.map((item) => {
+            queryList.push({team: item})
+        })
+        if(queryList && queryList.length) {
+            return this.find({$or: queryList}).sort({create_time: -1}).exec()
+        } else {
+            return []
+        }
     },
+    
 }
 folderSchema.statics = {
     modifyDir: function(teamId, dir, folderName, tarDir) {
@@ -596,6 +608,11 @@ const updateFolderName = async function(teamId, dir, folderName, tarName) {
     await folderDB.appendFolder(teamId, dir, folderObj)
 }
 
+const findByTeamIdList  = async function(teamIdList){
+    const allFile = await fileDB.findByTeamIdList(teamIdList)
+    return allFile
+}
+
 exports.createFile = createFile;
 exports.createFolder = createFolder;
 exports.getDirFileList = getDirFileList;
@@ -605,3 +622,4 @@ exports.delFile = delFile;
 exports.delFolder = delFolder;
 exports.updateFileName = updateFileName;
 exports.updateFolderName = updateFolderName;
+exports.findByTeamIdList = findByTeamIdList;
