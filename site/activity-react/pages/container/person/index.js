@@ -42,14 +42,8 @@ export default class Person extends React.Component{
                 hasMail: true,
             })
         }
-     this.checkIfSub()
     }
-    checkIfSub  = async ()=>{
-        const result = await api('/api/checkSub', {
-            method: 'POST',
-            body: {}
-    })
-}
+    
     starHandle = async (id) => {
         const result = await api('/api/base/sys-time', {
             method: 'GET',

@@ -25,21 +25,20 @@ var subscribeEventHandle = async (openid) => {
     try {
         const wxUserInfo = await pub_openidToUserInfo(openid)
         if(wxUserInfo && wxUserInfo.unionid) {
+            await followerDB.createFollower(openid, wxUserInfo.unionid)
             const userObj = await UserDB.findByUnionId(wxUserInfo.unionid)
             if(userObj) {
                 await UserDB.updateUser(userObj._id, {
                     openid: wxUserInfo.openid,
                     subState: true
-                })
-                await followerDB.createFollower(openid, wxUserInfo.unionid)
+                })               
             } 
-
             pub_pushTemplateMsg(openid, 'YH-TY6g0sbVJgC5Ppk-cBDvLlFCfQxRm61QKj7IOSV4', 'www.animita.cn', {
                 "first": {
                     "value": "关注服务号成功，您已注册平台",
                 },
                 "keyword1":{
-                    "value": userObj.personInfo.name  + '关注服务号成功',
+                    "value": userObj.personInfo.name+ '关注服务号成功',
                 },
                 "keyword2": {
                     "value": new Date().toString(),
@@ -56,14 +55,13 @@ var subscribeEventHandle = async (openid) => {
 }
 
 var unsubscribeEventHandle = async (openid) => {
-   
+    await followerDB.delFollowerByOpenId(openid)
     const userObj = await UserDB.findByOpenId(openid)
     if(userObj) {
        await UserDB.updateUser(userObj._id, {
             openid: '',
             subState: false
-        })
-      await followerDB.delFollowerByOpenId(openid)
+        })      
     } 
 }
 

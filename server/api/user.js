@@ -222,22 +222,6 @@ const wxLogin = async (req, res, next) => {
     }
 }
 
-const checkSub = async (req, res, next) =>{
-    const userId = req.rSession.userId
-    const userObj = await UserDB.findByUserId(userId)
-    const result = await followerDB.findByUnionId(userObj.unionid)
-    console.log("我在这：",result)
-    if(!result){
-       const userObj = await UserDB.updateUser(userId, {
-            openid: '',
-            subState: false
-        })
-        resProcessor.jsonp(req, res, {
-            state: { code: 0 , msg: '没有关注服务号'},
-            data: {}
-        });
-    }
-}
 const unbindWechat = async (req, res, next) => {
     const userId = req.rSession.userId
     try {
@@ -313,7 +297,6 @@ module.exports = [
     ['GET', '/wxLogin', wxLogin],
 
     ['POST', '/api/logout', apiAuth, logout],
-    ['POST', '/api/checkSub', apiAuth, checkSub],
     ['POST', '/api/unbindWechat', apiAuth, unbindWechat],
 
     ['POST', '/api/signUp', signUp],
