@@ -62,7 +62,7 @@ const search = async (req, res, next) => {
                  })               
             }else if(type=="TASK"){
                 searchResult.map((item) => {
-                    if((item.type=="CREATE_TASK")||(item.type=="DELETE_TASK")||(item.type=="FINISH_TASK")&&str.test(item.title)){
+                    if((item.type=="CREATE_TASK")||(item.type=="CREATE_CHECK_ITEM")||(item.type=="COPY_TASK")||(item.type=="MOVE_TASK")&&str.test(item.title)){
                         result.push(item)
                       } 
                  })  
