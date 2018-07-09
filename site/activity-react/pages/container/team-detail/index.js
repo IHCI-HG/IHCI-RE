@@ -753,7 +753,7 @@ export default class Team extends React.Component {
         const unclassified = this.state.todoListArr[0]
 
         return (
-            <Page title={"团队名称xx - IHCI"}
+            <Page title={teamInfo.name + " - IHCI"}
                 className="discuss-page">
                  <input className='file-input-hidden' type="file" ref={(fileInput) => this.fileInput = fileInput} onChange={this.uploadFileHandle}></input>
                 <div className="discuss-con page-wrap">
