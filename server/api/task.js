@@ -136,7 +136,7 @@ const delTasklist = async (req, res, next) => {
     try {
 
         const tasklistObj = await tasklistDB.findByTasklistId(listId)//7.5
-
+        
         const result = await tasklistDB.delTasklist(listId);
 
         await teamDB.delTasklist(listId)
@@ -275,9 +275,9 @@ const createTask = async (req, res, next) => {
         }
 
         var deadline = ""
-        if (result.deadline) {
-            const date = new Date(result.deadline)
-            deadline = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
+        if(result.deadline) {
+            const date = result.deadline
+            deadline = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
         }
 
         const taskObj = {
@@ -412,6 +412,7 @@ const editTask = async (req, res, next) => {
             task.header = taskObj.header
         } else {
             task.header = editTask.assigneeId
+            
 
             //7.6
             await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'CHANGE_TASK_HEADER', taskObj._id, taskObj.title, task);
@@ -439,10 +440,11 @@ const editTask = async (req, res, next) => {
             task.completed_time = "";
 
             //7.6
-            if (editTask.hasDone == false) {
+            if(editTask.hasDone == false)
+            {
                 await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'REOPEN_TASK', taskObj._id, taskObj.title, taskObj);
             }
-
+           
         }
 
 
@@ -490,7 +492,7 @@ const editTask = async (req, res, next) => {
 
         if (task.completed_time) {
             const date = new Date(task.completed_time)
-            task.completed_time = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
+            task.completed_time = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
         }
         if (task.deadline) {
             const date = new Date(task.deadline)
@@ -498,7 +500,8 @@ const editTask = async (req, res, next) => {
         }
 
         //7.6
-        if (editTask.ddl) {
+        if(editTask.ddl)
+        {
             await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'CHANGE_TASK_DDL', taskObj._id, taskObj.title, task);
         }
 
@@ -549,7 +552,7 @@ const taskInfo = async (req, res, next) => {
             var completed_time = ""
             if (taskObj.checkitemList[i].completed_time) {
                 const date = new Date(taskObj.checkitemList[i].completed_time)
-                completed_time = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
+                completed_time = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
             }
             var deadline = ""
             if (taskObj.checkitemList[i].deadline) {
@@ -571,7 +574,7 @@ const taskInfo = async (req, res, next) => {
         var taskCompleted_time = ""
         if (taskObj.completed_time) {
             const date = new Date(taskObj.completed_time)
-            taskCompleted_time = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
+            taskCompleted_time = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
         }
         var taskDeadline = ""
         if (taskObj.deadline) {
@@ -651,10 +654,10 @@ const addCheckitem = async (req, res, next) => {
 
         const lastCheckitem = result1.checkitemList[result1.checkitemList.length - 1]
         var checkitemDdl = ""
-        if (lastCheckitem.deadline) {
+        if(lastCheckitem.deadline) {
             console.log(lastCheckitem.deadline)
             const date = new Date(lastCheckitem.deadline)
-            checkitemDdl = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
+            checkitemDdl = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
         }
         const checkitemObj = {
             id: lastCheckitem._id,
@@ -704,11 +707,11 @@ const dropCheckitem = async (req, res, next) => {
         const taskObj = await taskDB.findByTaskId(taskId);
         const userObj = await userDB.findByUserId(userId);
 
-        //6.28
-        const teamId = taskObj.teamId;
+         //6.28
+         const teamId = taskObj.teamId;
 
-        //6.28
-        const baseInfoObj = await userDB.baseInfoById(userId);
+         //6.28
+         const baseInfoObj = await userDB.baseInfoById(userId);
 
 
         var checkitemObj = null;
@@ -722,9 +725,9 @@ const dropCheckitem = async (req, res, next) => {
         // await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'DROP_CHECKITEM', checkitemId, checkitemObj.content, checkitemObj)
 
 
-        //6.28
-        const teamObj = await teamDB.findByTeamId(teamId)
-        await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'DELETE_CHECK_ITEM', checkitemId, checkitemObj.content, checkitemObj)
+         //6.28
+         const teamObj = await teamDB.findByTeamId(teamId)
+         await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'DELETE_CHECK_ITEM', checkitemId, checkitemObj.content, checkitemObj)
 
 
         if (checkitemObj.header) {
@@ -777,14 +780,14 @@ const findCheckitem = async (req, res, next) => {
         }
         // await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'OPEN_CHECKITEM', checkitemId, checkitemObj.content, checkitemObj)
 
-        if (checkitemObj.deadline) {
-            const date = new Date(checkitemObj.deadline)
-            checkitemObj.deadline = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
+        if(checkitemObj.deadline) {
+            const date = checkitemObj.deadline
+            checkitemObj.deadline = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
         }
 
-        if (checkitemObj.completed_time) {
-            const date = new Date(checkitemObj.completed_time)
-            checkitemObj.completed_time = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
+        if(checkitemObj.completed_time) {
+            const date = checkitemObj.completed_time
+            checkitemObj.completed_time = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
         }
 
         resProcessor.jsonp(req, res, {
@@ -844,15 +847,16 @@ const editCheckitem = async (req, res, next) => {
             checkitemObj.state = true;
             checkitemObj.completed_time = new Date();
 
-            //6.28
-            const teamObj = await teamDB.findByTeamId(teamId);
-            const baseInfoObj = await userDB.baseInfoById(userId);
-            await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'FINISH_CHECITEM_ITEM', checkitemObj._id, checkitemObj.title, checkitemObj);
+             //6.28
+             const teamObj = await teamDB.findByTeamId(teamId);
+             const baseInfoObj = await userDB.baseInfoById(userId);
+             await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'FINISH_CHECITEM_ITEM', checkitemObj._id, checkitemObj.title, checkitemObj);
 
         } else {
             checkitemObj.state = false;
             checkitemObj.completed_time = "";
-            if (editCheckitem.hasDone == false) {
+            if(editCheckitem.hasDone == false)
+            {
                 const teamObj = await teamDB.findByTeamId(teamId);
                 const baseInfoObj = await userDB.baseInfoById(userId);
                 await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'REOPEN_CHECKITEM', checkitemObj._id, checkitemObj.title, checkitemObj);
@@ -893,22 +897,29 @@ const editCheckitem = async (req, res, next) => {
             await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'CHANGE_CHECKITEM_HEADER', checkitemObj._id, checkitemObj.title, checkitemObj);
         }
 
-        if (checkitemObj.deadline) {
+        if(checkitemObj.deadline) {
             const date = new Date(checkitemObj.deadline)
-            checkitemObj.deadline = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
+            checkitemObj.deadline = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
         }
 
         //7.6
-        if (editCheckitem.ddl) {
+        if(editCheckitem.ddl)
+        {
             const teamObj = await teamDB.findByTeamId(teamId);
             const baseInfoObj = await userDB.baseInfoById(userId);
             await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'CHANGE_CHECKITEM_DDL', checkitemObj._id, checkitemObj.title, checkitemObj);
         }
 
-        if (checkitemObj.completed_time) {
+        if(checkitemObj.completed_time) {
             const date = new Date(checkitemObj.completed_time)
-            checkitemObj.completed_time = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
+            checkitemObj.completed_time = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
         }
+
+        //7.9
+        const teamObj123 = await teamDB.findByTeamId(teamId);
+        const baseInfoObj123 = await userDB.baseInfoById(userId);
+        await timelineDB.createTimeline(teamId, teamObj123.name, baseInfoObj123, 'CHANGE_CHECKITEM_DDL', checkitemObj._id, checkitemObj.title, checkitemObj);
+
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
@@ -956,7 +967,7 @@ const taskCopy = async (req, res, next) => {
             const baseInfoObj = await userDB.baseInfoById(userId);
             const teamObj = await teamDB.findByTeamId(teamId);
             console.log(teamObj)
-            console.log("id", teamId)
+            console.log("id",teamId)
             await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'COPY_TASK', taskObj._id, taskObj.title, taskObj);
 
             if (tasklistId) {
@@ -1004,24 +1015,25 @@ const taskMove = async (req, res, next) => {
 
         //6.28
         if (result.tasklistId) {
-            await tasklistDB.delTask(result.tasklistId, taskId)
+            await tasklistDB.delTask(result.tasklistId,taskId)
         } else {
-            await teamDB.delTask(result.teamId, taskId);
+            await teamDB.delTask(result.teamId,taskId);
         }
 
         result.create_time = Date.now;
         result.teamId = teamIdMoveTo;
-        result.tasklistId = tasklistId || [];
+        result.tasklistId = tasklistId ||[];
         result.deadline = undefined;
         result.completed_time = undefined;
         result.header = undefined;
         result.state = false;
 
+        var checkitemList = result.checkitemList;
         for (var x in result.checkitemList) {
-            x.create_time = Date.now;
-            x.header = undefined;
-            x.deadline = undefined;
-            x.completed_time = undefined;
+            checkitemList[x].create_time = Date.now;
+            checkitemList[x].header = undefined;
+            checkitemList[x].deadline = undefined;
+            checkitemList[x].completed_time = undefined;
         }
         result = await taskDB.updateTask(taskId, result);
 
@@ -1235,7 +1247,7 @@ const findDiscuss = async (req, res, next) => {
 
 
         var discussIdList = taskObj.discussList;
-        discussList = await discussDB.getDiscussByPage(discussIdList, currentPage);
+        discussList = await discussDB.getDiscussByPage(discussIdList,currentPage);
 
         // await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'OPEN_CHECKITEM', checkitemId, checkitemObj.content, checkitemObj)
 

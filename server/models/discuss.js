@@ -14,14 +14,15 @@ const discussSchema = new mongoose.Schema({
 
 discussSchema.statics = {
     createDiscuss: async function (teamId, topicId, title, content, creatorObj, fileList) {
-        return this.create({
+        const result = this.create({
             teamId: teamId,
             topicId: topicId,
             title: title,
             content: content,
             creator: creatorObj,
             fileList: fileList || [],
-        })
+        });
+        return result;
     },
 
     updateDiscuss: async function (discussId, discussObj) {
