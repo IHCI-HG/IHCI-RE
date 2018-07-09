@@ -15,4 +15,4 @@ npm run activity-react
 cp -r public/ dest/public
 
 #启动服务
-nohup node dest/server/startup.js -p 80 -m prod &  
+node dest/server/startup.js -p 80 -m prod & 
