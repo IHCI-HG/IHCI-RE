@@ -99,8 +99,7 @@ class App extends React.Component{
         }
         else{
             this.props.router.push('/person')
-            if(!/person/.test(toUrl))
-                window.toast("请先完成资料填写")
+            window.toast("请先完成资料填写")
         }
 
     }
