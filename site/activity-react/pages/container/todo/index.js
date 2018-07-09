@@ -429,7 +429,7 @@ export default class Task extends React.Component{
     }
 
     discussFileUploadHandle = async (e) => {
-        var ossKey = this.teamId + '/' + Date.now() + '/' + e.target.files[0].name
+        var ossKey = this.state.todo.teamId + '/' + Date.now() + '/' + e.target.files[0].name
         const resp = await fileUploader(e.target.files[0], ossKey)
         let discussAttachments = this.state.discussAttachments;
         discussAttachments = [...discussAttachments, resp]
@@ -868,6 +868,7 @@ export default class Task extends React.Component{
                         <div className={"item "+((moveExpanded)?"expanded":"")} >
                             {!moveExpanded&&<a onClick={() => {this.setState({moveExpanded: true,copyExpanded: false})}}>移动</a>}
                             {moveExpanded&&<div className="confirm">
+                                <form>
                                     <p className="title">移动任务到小组</p>
                                     <div className="simple-select select-choose-projects require-select" >
                                         <select onChange={this.moveSelectedHandle} value={this.state.teamToMove} className="select-list">
@@ -884,7 +885,7 @@ export default class Task extends React.Component{
                                     </div>
                                     <button className="act" onClick={this.moveToTeamHandle}>移动</button>
                                     <div type="button" className="cancel" onClick={() => {this.setState({moveExpanded: false})}}>取消</div>
-
+                                </form>
                             </div>}
                         </div>
                     </div>
@@ -937,10 +938,10 @@ export default class Task extends React.Component{
                                                 deleteFile={this.deleteDiscussFile.bind(this)}
                                                 attachments={this.state.discussAttachments}>
                                     </Editor>
-                                    <div className="infrom">请选择要通知的人：</div>
-                                    <MemberChosenList choseHandle={this.memberChoseHandle} memberList={this.state.memberList}/>
+                                    {/* <div className="infrom">请选择要通知的人：</div>
+                                    <MemberChosenList choseHandle={this.memberChoseHandle} memberList={this.state.memberList}/> */}
                                     <div className="btn-con">
-                                        <div className="create-btn" onClick={()=>{this.createTopicHandle();this.setState({showCreateTopic: false,showButton:true})}}>发起讨论</div>
+                                        <div className="create-btn" onClick={()=>{this.createTopicHandle();this.setState({showCreateTopic: false,showButton:true})}}>发表评论</div>
                                         <div className="cancle" onClick={() => {this.setState({showCreateTopic: false,showButton:true})}}>取消</div>
                                     </div>
                                 </div>
