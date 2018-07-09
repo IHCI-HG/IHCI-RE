@@ -196,7 +196,7 @@ export default class Topic extends React.Component{
             topicContentInput: topicObj.content,
             discussList: result.data.discussList,
             memberList: memberList
-        },console.log("discuss",result))
+        })
     }
 
     topicContentHandle = (content) => {
