@@ -61,6 +61,9 @@ class TopicItem extends React.Component{
                     <div className="send">
                         <div className="name">{this.props.creator.name}</div>
                         <div className="time">{timeBefore(this.props.time)}</div>
+                        {this.props.fileList.length > 0 &&
+                            <i className="icon iconfont time">&#xe6dd;</i>
+                        }
                         {
                             this.state.showEdit&&<div className="topic-actions-wrap">
                                 <div className="topic-actions">
@@ -268,6 +271,7 @@ export default class Task extends React.Component{
             }
         })
         if (resp.state.code === 0) {
+            console.log(resp)
             const topicListArr = this.state.topicListArr 
             resp.data.map((item)=>{
                 const topic = {}
@@ -275,6 +279,7 @@ export default class Task extends React.Component{
                 topic.creator = item.creator
                 topic.time = item.create_time
                 topic.content = item.content
+                topic.fileList = item.fileList
                 topicListArr.push(topic)
             })
             this.setState({ topicListArr })
@@ -298,6 +303,7 @@ export default class Task extends React.Component{
                 taskId: this.props.params.id,
                 content: this.state.createTopicContent,
                 informList: informList,
+                fileList:this.state.discussAttachments
             }
         })
         if (resp.state.code === 0) {
@@ -423,7 +429,8 @@ export default class Task extends React.Component{
     }
 
     discussFileUploadHandle = async (e) => {
-        const resp = await fileUploader('teamId', '', e.target.files[0])
+        var ossKey = this.teamId + '/' + Date.now() + '/' + e.target.files[0].name
+        const resp = await fileUploader(e.target.files[0], ossKey)
         let discussAttachments = this.state.discussAttachments;
         discussAttachments = [...discussAttachments, resp]
         this.setState({
@@ -691,7 +698,8 @@ export default class Task extends React.Component{
             body: {
                 todoId,
                 checkitemId,
-                editCheckitem
+                editCheckitem,
+                teamId:this.state.todo.teamId,
             }
         })
         if (resp.state.code === 0) {

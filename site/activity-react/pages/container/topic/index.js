@@ -32,7 +32,8 @@ class TopicDiscussItem extends React.Component {
         })
     }
     discussFileUploadHandle = async (e) => {
-        const resp = await fileUploader('teamId', '', e.target.files[0])
+        var ossKey = this.teamId + '/' + Date.now() + '/' + e.target.files[0].name
+        const resp = await fileUploader(e.target.files[0], ossKey)
         let discussAttachments = this.state.discussAttachments;
         discussAttachments = [...discussAttachments, resp]
         this.setState({
@@ -65,10 +66,10 @@ class TopicDiscussItem extends React.Component {
                             handleFileUpload={this.discussFileUploadHandle.bind(this)}
                             content={this.state.content}
                             deleteFile={this.deleteDiscussFile.bind(this)}
-                            attachments={this.state.discussAttachments}>
+                            attachments={this.props.fileList}>
                         </Editor>
                         <div className="button-warp">
-                            <div className="save-btn" onClick={() => { saveEditHandle(_id, this.state.content); this.setState({ editState: false }) }}>保存</div>
+                            <div className="save-btn" onClick={() => { saveEditHandle(_id, this.state.content,this.state.discussAttachments); this.setState({ editState: false }) }}>保存</div>
                             <div className="cancel-btn" onClick={() => { this.setState({ editState: false }) }}>取消</div>
                         </div>
                     </div>
@@ -91,15 +92,15 @@ class TopicDiscussItem extends React.Component {
                                 <p dangerouslySetInnerHTML={createMarkup(content)}></p>
                             </div>
                         </div>
+                        <div className="file-list">
+                            {
+                                this.props.fileList && this.props.fileList.map((item) => {
+                                    return ( <div className="file-item" key={Math.random()}>{item.name}</div> )
+                                })
+                            }
+                        </div>
                     </div>
                 }
-                <div className="file-list">
-                    {
-                        this.state.discussAttachments && this.state.discussAttachments.map((item) => {
-                            return ( <div className="file-item" key={Math.random()}>{item.name}</div> )
-                        })
-                    }
-                </div>
             </div>
         )
     }
@@ -195,7 +196,7 @@ export default class Topic extends React.Component{
             topicContentInput: topicObj.content,
             discussList: result.data.discussList,
             memberList: memberList
-        })
+        },console.log("discuss",result))
     }
 
     topicContentHandle = (content) => {
@@ -210,7 +211,8 @@ export default class Topic extends React.Component{
     }
 
     topicFileUploadHandle = async (e) => {
-        const resp = await fileUploader('teamId', '', e.target.files[0])
+        var ossKey = this.teamId + '/' + Date.now() + '/' + e.target.files[0].name
+        const resp = await fileUploader(e.target.files[0], ossKey)
         let topicAttachments = this.state.topicAttachments;
         topicAttachments = [...topicAttachments, resp]
         this.setState({
@@ -218,7 +220,8 @@ export default class Topic extends React.Component{
         })
     }
     discussFileUploadHandle = async (e) => {
-        const resp = await fileUploader('teamId', '', e.target.files[0])
+        var ossKey = this.teamId + '/' + Date.now() + '/' + e.target.files[0].name
+        const resp = await fileUploader(e.target.files[0], ossKey)
         let discussAttachments = this.state.discussAttachments;
         discussAttachments = [...discussAttachments, resp]
         this.setState({
@@ -258,7 +261,8 @@ export default class Topic extends React.Component{
                 teamId: this.teamId,
                 topicId: this.topicId,
                 editTopic,
-                informList: []
+                informList: [],
+                fileList:this.state.topicAttachments
             }
         })
         console.log(editTopic)
@@ -277,7 +281,7 @@ export default class Topic extends React.Component{
         }
     }
 
-    saveDiscussEditHandle = async (_id, content) => {
+    saveDiscussEditHandle = async (_id, content,fileList) => {
         const result = await api('/api/topic/editDiscuss', {
             method: 'POST',
             body: {
@@ -285,7 +289,8 @@ export default class Topic extends React.Component{
                 topicId: this.topicId,
                 discussId: _id,
                 content: content,
-                informList: []
+                informList: [],
+                fileList:fileList
             }
         })
 
@@ -336,6 +341,7 @@ export default class Topic extends React.Component{
                 teamId: this.teamId,
                 topicId: this.topicId,
                 content: this.state.createDiscussContent,
+                fileList:this.state.discussAttachments
                 // informList: informList
             }
         })
@@ -347,6 +353,7 @@ export default class Topic extends React.Component{
                 discussList: discussList,
                 createDiscussContent: '',
                 createDiscussChosen: false,
+                discussAttachments:[],
             })
                         // this.deleteDiscussFile()
             console.log(this.state.discussAttachments)
@@ -444,7 +451,14 @@ export default class Topic extends React.Component{
                     {
                         this.state.discussList.map((item) => {
                             return (
-                                <TopicDiscussItem id={"topic-discuss-item-" + item._id} onBlur={() => this.undoHighlight()} key={"topic-discuss-item-" + item._id} enableHighlight={this.state.enableHighlight} highlight={!!this.props.location.state && this.props.location.state.id == item._id? true : false} allowEdit={this.props.personInfo._id == item.creator._id} {...item} saveEditHandle = {this.saveDiscussEditHandle}/>
+                                <TopicDiscussItem 
+                                    id={"topic-discuss-item-" + item._id} 
+                                    onBlur={() => this.undoHighlight()} key={"topic-discuss-item-" + item._id} 
+                                    enableHighlight={this.state.enableHighlight} 
+                                    highlight={!!this.props.location.state && this.props.location.state.id == item._id? true : false} 
+                                    allowEdit={this.props.personInfo._id == item.creator._id} {...item} 
+                                    saveEditHandle = {this.saveDiscussEditHandle}
+                                    />
                             )
                         })
                     }

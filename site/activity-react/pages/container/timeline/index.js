@@ -47,8 +47,8 @@ class TimelineItem extends React.PureComponent{
         'CREATE_TASKLIST':'创建了清单',
         'DELETE_TASKLIST':'删除了清单',
 
-        'CHANGE_TASK_HEADER':'指派了任务',
-        'CHANGE_CHECKITEM_HEADER':'指派了检查项',
+        'CHANGE_TASK_HEADER':'将任务',
+        'CHANGE_CHECKITEM_HEADER':'将检查项',
         'CHANGE_TASK_DDL':'更改了任务',
         'CHANGE_CHECKITEM_DDL':'更改了检查项',
         'REOPEN_TASK':'重新打开了任务',
@@ -84,7 +84,7 @@ class TimelineItem extends React.PureComponent{
                             <div className="des-line">
                                 <span className="name">{this.props.creator.name}</span>
                                 <span className="type">{this.typeMap[this.props.type]}</span>
-                                <span className="topic">{this.props.content.title}</span>
+                                <span className="topic">{this.props.content.title}指派给了</span>
                             </div>
 
                             <div className="content">{this.props.content.header}</div>
