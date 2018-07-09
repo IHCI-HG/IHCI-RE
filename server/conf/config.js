@@ -35,6 +35,19 @@ var config = {
     'pubAppId': 'wx87136e7c8133efe3',
     'pubAppSe': '195592b5e345046e61b5efc33d4cb42d',
 
+    'ossConf': {
+        'ossAdminAccessKeyId': 'LTAIkrgpPKLOb6CJ',
+        'ossAdminAccessKeySecret': 'STTW2qHnI6NLNuUJAjmom6rDSO2ksr',
+
+        'accessKeyId': 'LTAI50JBylPO2aRe',
+        'accessKeySecret': 'dCXkMpinyC853SACdOqu2LyM2PI3Cv',
+        'roleArn': 'acs:ram::1656281103392398:role/aliyunosstokengeneratorrole',
+        'region': 'oss-cn-shenzhen',
+        'bucket': 'arluber',
+    },
+
+    mail: 'http://localhost:5000',
+
     db: 'mongodb://127.0.0.1:27017/ihci',
 
     'lruMaxAge': 3600000,

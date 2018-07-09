@@ -18,29 +18,6 @@ const timelineSchema = new mongoose.Schema({
     type:  
         CREATE_TOPIC
         REPLY_TOPIC
-
-        //6.28
-        CREATE_TOPIC
-        DELETE_TOPIC
-
-        REPLY_TOPIC
-        DELETE_TOPIC_REPLY
-
-        CREATE_TASK
-        DELETE_TASK
-        FINISH_TASK
-
-        REPLY_TASK
-        DELETE_TASK_REPLY
-
-        CREATE_CHECK_ITEM
-        DELETE_CHECK_ITEM
-        FINISH_CHECITEM_ITEM
-
-        COPY_TASK
-        MOVE_TASK
-
-
 */
 
 timelineSchema.statics = {
@@ -64,22 +41,13 @@ timelineSchema.statics = {
         return this.find({teamId: teamId}).sort({create_time: -1}).exec()
     },
 
-    findByTeamIdList: async function(teamIdList,currentPage) {
-
-        var pageSize = 20;
-        var sortFunc = {create_time:-1};
-        var skipNumber = (currentPage - 1) * pageSize;
-
-        console.log("...........................")
-        console.log(currentPage);
-
+    findByTeamIdList: function(teamIdList) {
         const queryList = []
         teamIdList.map((item) => {
             queryList.push({teamId: item})
         })
         if(queryList && queryList.length) {
-            var result = await this.find({$or: queryList}).skip(skipNumber).limit(pageSize).sort(sortFunc).exec();
-            return result;
+            return this.find({$or: queryList}).sort({create_time: -1}).exec()
         } else {
             return []
         }
