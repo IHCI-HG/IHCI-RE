@@ -8,6 +8,19 @@
         font-weight: bold;
     }
 
+    .create-btn {
+        display: inline-block;
+        font-size: 16px;
+        padding: 10px;
+        width: 100px;
+        border: 1px solid #e6e6e6; /*no*/
+        border-radius: 4px;
+        margin-right: 30px;
+        cursor: pointer;
+        &:hover {
+            background-color: #e6e6e646;
+        }
+    }
 
 
     .head-edit {
@@ -48,6 +61,64 @@
         .before {
             width: 100px;
             color: #666;
+        }
+        
+        .after{
+            display: flex;
+            color: #666;
+            margin: 10px;
+            align-items: center;
+
+        }
+
+        .mail-present-bar{
+            display: flex;
+            align-items: center;
+
+            .active-info{
+                display: flex;
+                color: #666;
+                margin: 10px;
+                align-items: center;
+
+                .activate-btn-active{
+                    cursor: pointer;
+                    color: rgb(255, 197, 73);
+                }
+                .activate-btn{
+                    cursor: pointer;
+                    color: #ddd;
+                }
+            }
+
+            .edit-btn{
+                cursor: pointer;
+                color: grey;
+                margin-left: 10px;
+            }
+        }
+
+        
+        
+        .error{
+            color: #f00;
+        }
+
+        .default-color{
+            color: #000;
+        }
+
+        .green{
+            color: green;
+        }
+
+        .yellow{
+            color: rgb(255, 197, 73);
+        }
+
+        .follow-btn{
+            cursor: pointer;
+            color: rgb(255, 197, 73);
         }
 
         .bind-wx {

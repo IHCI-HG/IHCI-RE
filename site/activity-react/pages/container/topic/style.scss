@@ -11,7 +11,11 @@
             cursor: pointer;
             color: rgb(42, 42, 50);
         }
+        .pre-tag{
+            cursor: pointer;
+        }
     }
+    
 
     .topic-con {
         box-sizing: border-box;
@@ -21,10 +25,27 @@
         border-radius: 2px;
         padding: 20px 30px 40px 30px;
 
+        .no-border{
+            outline: none;
+
+        }
+        // .no-border:focus{
+        //     border-style: none;
+        // }
+
         .topic-subject-con {
+            transition: all 1.2s;
+
             &.discuss-con {
                 padding-right: 100px;
                 margin-bottom: 40px;
+            }
+            &.highlight{
+                transition: all 1.2s;
+                padding: 15px;
+                padding-right: 95px;
+                background-color: #FFEECC;
+                box-shadow: 5px 5px 5px #888888;
             }
             .topic-title {
                 font-size: 26px;
@@ -78,9 +99,20 @@
         }
         .topic-subject-edit {
             padding: 30px;
+            margin-bottom: 40px;
+            transition: all 1.2s;
+
             &.no-pading {
                 padding: 0;
             }
+
+            &.highlight{
+                transition: all 1.2s;
+                padding: 15px;
+                background-color: #FFEECC;
+                box-shadow: 5px 5px 5px #888888;
+            }
+            
             .topic-title {
                 font-size: 22px;
                 border: 1px solid #e6e6e6; /*no*/
@@ -145,7 +177,13 @@
         }
 
     }
+}
 
-
-
+.file-list {
+    margin: 10px 100px 0px;
+    padding: 14px;
+    .file-item {
+        margin: 8px 0;
+        color: #6a6f7b;
+    }
 }

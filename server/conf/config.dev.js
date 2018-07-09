@@ -41,6 +41,10 @@ var config = {
         'bucket': 'arluber',
     },
 
+    mail: 'http://localhost:5000',
+
+    
+
     db: 'mongodb://127.0.0.1:27017/ihci',
 
     'lruMaxAge': 36000,

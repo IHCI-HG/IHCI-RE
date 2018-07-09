@@ -37,7 +37,7 @@ export default class MainPage extends React.Component {
     }
 
     setToSignUpHandle = () =>  {
-        this.setState({ 
+        this.setState({
             loginBlock: 'signUp'
         });
     }
@@ -45,7 +45,7 @@ export default class MainPage extends React.Component {
         this.setState({ 
             loginBlock: 'login'
         });
-    } 
+    }
 
     usernameHandle = (e) => {
         this.setState({
@@ -92,7 +92,13 @@ export default class MainPage extends React.Component {
         })
 
         if(result.state.code === 0) {
-            location.href = '/person'
+            window.toast("注册成功")
+            setTimeout(() => {
+                location.href = '/person'
+            }, 300);
+        }
+        else{
+            window.toast(result.state.msg || "注册失败")
         }
     }
 
@@ -107,9 +113,6 @@ export default class MainPage extends React.Component {
             showWxDialog: false
         })
     }
-
-    
-
 
 
     render () {
@@ -134,7 +137,7 @@ export default class MainPage extends React.Component {
                                 className={this.state.loginBlock == "login" ? "auth-nav-item active" : "auth-nav-item"}
                                 onClick={this.setToLoginHandle}
                             >登录</div>
-                            <div 
+                            <div
                                 className={this.state.loginBlock == "signUp" ? "auth-nav-item active" : "auth-nav-item"}
                                 onClick = {this.setToSignUpHandle}
                             >注册</div>
@@ -150,7 +153,7 @@ export default class MainPage extends React.Component {
                                     <input className="auth-input" type="password" value={this.state.createPassword} onChange={this.createPasswordHandle}></input>
 
                                     <div className="submit-btn" onClick={this.signHandle}>CREATE ACCOUNT</div>
-                                </div> 
+                                </div>
                             : ""
                         }
                         {
@@ -164,7 +167,7 @@ export default class MainPage extends React.Component {
                                     <div className="submit-btn" onClick={this.loginHandle}>LOG IN</div>
 
                                     <div className="submit-btn" onClick={this.showWxDialogHandle}>微信登录</div>
-                                </div> 
+                                </div>
                             : ""
                         }
                     </div>
@@ -234,3 +237,4 @@ export default class MainPage extends React.Component {
 }
 
 render(<MainPage />, document.getElementById('app'));
+

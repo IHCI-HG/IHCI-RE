@@ -16,12 +16,16 @@ import TeamAdmin from './team-admin'
 import TeamJoin from './team-join'
 import TeamCreate from './team-create'
 import Person from './person'
-import Discuss from './discuss'
+
+import TeamDetail from './team-detail'
 import Topic from './topic'
 import Timeline from './timeline'  
 import Member from './member'  
 import Sign from './sign'
+import TaskDetail from './todo'
+import Files from './files'
 import SearchResult from './search'
+import ActivateMail from './activate-mail'
 import Inform from './inform'
 import SearchResult from './search'
 
@@ -34,6 +38,7 @@ class App extends React.Component{
             teamList: []
         },
     }
+
     componentWillMount = async() => {
         this.setHeadImg()
     }
@@ -52,6 +57,22 @@ class App extends React.Component{
                 }
             })
         }
+        if (!(/team-join/.test(this.props.location.pathname)) && !this.infoAllFilled()){
+            window.toast("请先完成资料填写")
+        }
+    }
+
+    infoAllFilled = () => {
+        if (!this.state.personInfo.name){
+            return false
+        }
+        if (!this.state.personInfo.mail){
+            return false
+        }
+        if (!this.state.personInfo.phone){
+            return false
+        }
+        return true
     }
 
     handleSearchTextChange = (e) =>{
@@ -71,8 +92,16 @@ class App extends React.Component{
     }
 
     routerHandle = (toUrl) => {
-        this.activeTagHandle(toUrl)
-        this.props.router.push(toUrl)
+        if (this.infoAllFilled())
+        {
+            this.activeTagHandle(toUrl)
+            this.props.router.push(toUrl)
+        }
+        else{
+            this.props.router.push('/person')
+            window.toast("请先完成资料填写")
+        }
+
     }
 
     // 处理路由变化的时候高亮的tag
@@ -119,7 +148,7 @@ class App extends React.Component{
                     </div>
 
                 </div>
-                { this.props.children && React.cloneElement(this.props.children, {personInfo: this.state.personInfo}) }
+                { this.props.children && React.cloneElement(this.props.children, {personInfo: this.state.personInfo, activeTagHandle: this.activeTagHandle.bind(this)}) }
             </div>
         )
     }
@@ -131,24 +160,34 @@ const routeConfig = [
         component: App,
         indexRoute: { component: Team },
         childRoutes: [
-            { path: 'test', component: Test },
-            { path: 'test-editor', component: TestEditor },
-            { path: 'team', component: Team },
-            { path: 'team-admin/:id', component: TeamAdmin },
-            { path: 'team-join/:id', component: TeamJoin },
-            { path: 'sign', component: Sign },
-            { path: 'team-create', component: TeamCreate },
-            { path: 'person', component: Person },
-            { path: 'discuss/:id', component: Discuss },
-            { path: 'discuss/topic/:id', component: Topic },
+            { path: 'search', component: SearchResult },
             { path: 'timeline', component: Timeline },
             { path: 'member', component: Member },
-            { path: 'search', component: SearchResult },
             { path: 'inform', component: Inform },
+
+            { path: 'team', component: Team },
+            { path: 'team/:id', component: TeamDetail },
+            { path: 'team-admin/:id', component: TeamAdmin },
+            { path: 'team-join/:id', component: TeamJoin },
+            { path: 'team-create', component: TeamCreate },
+
+            { path: 'files/:id', component: Files },
+            { path: 'discuss/topic/:id', component: Topic },
+            { path: 'todo/:id', component: TaskDetail },
+
+            { path: 'person', component: Person },
+
+            { path: 'sign', component: Sign },
+
+            { path: 'test', component: Test },
+            { path: 'test-editor', component: TestEditor },
         ]
+    },
+    {
+        path: '/activate',
+        component: ActivateMail,
     }
 ]
-
 
 
 render(<Router routes={routeConfig} history={browserHistory}/>, document.getElementById('app'));

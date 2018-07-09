@@ -32,12 +32,68 @@ class SearchResultItem extends React.PureComponent{
         'CREATE_TOPIC': '讨论：',
         'REPLY_TOPIC': '回复：',
         'UPLOAD_FILE': '文件：',
-        'RELEASE_TASK': '任务：',
         'EDIT_REPLY': '编辑回复：',
-        'EDIT_TOPIC': '编辑讨论：'
+        'EDIT_TOPIC': '编辑讨论：',
+
+        'FINISH_TASK': '完成了任务：',
+        'CREATE_TASK': '创建了任务：',
+        
+        'DELETE_TOPIC_REPLY': '删除了讨论回复：',
+
+        'CREATE_TASK': '创建了任务：',
+        'DELETE_TASK': '删除了任务：',
+
+        'REPLY_TASK': '回复了任务：',
+        'DELETE_TASK_REPLY': '删除了任务回复：',
+
+        'CREATE_CHECK_ITEM': '创建了检查项：',
+        'DELETE_CHECK_ITEM': '删除了检查项：',
+        'FINISH_CHECITEM_ITEM': '完成了检查项：',
+
+        'COPY_TASK': '复制了任务：',
+        'MOVE_TASK': '移动了任务：',
+    }
+
+    toOriginHandle = () => {
+        console.log(this)
+        const pathname = ''
+        const type = 'TOPIC'
+        switch(this.props.type){
+            case 'CREATE_TOPIC':
+            case 'EDIT_TOPIC':
+            {
+                pathname = '/discuss/topic/' + this.props.content._id
+                break
+            }
+            case 'REPLY_TOPIC':
+            case 'EDIT_REPLY':
+            {
+                pathname = '/discuss/topic/' + this.props.content.topicId
+                type = 'REPLY'
+                break
+            }
+            case 'CREATE_TASK':
+            case 'CREATE_CHECK_ITEM':
+            case 'COPY_TASK':
+            case 'MOVE_TASK':
+            {
+                pathname = '/todo/' + this.props.tarId
+            }
+
+        }
+
+        const location = {
+            pathname: pathname,
+            state:{
+                type: type,
+                id: this.props.tarId
+            }
+        }
+        this.props.router.push(location)
     }
 
     render() {
+        console.log(this.props.type)
         switch (this.props.type) {
             case 'CREATE_TOPIC':
             case 'REPLY_TOPIC':
@@ -48,77 +104,41 @@ class SearchResultItem extends React.PureComponent{
                         <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
                         <img src={this.props.creator.headImg} alt="" className="head-img" />
 
-                        <div className="result-con">
+                        <div className="result-con" onClick={this.toOriginHandle}>
                             <div className="des-line">
                                 <span className="type">{this.typeMap[this.props.type]}</span>
                                 <span className="topic">{this.props.content.title}</span>
                             </div>
                             <div className="content">
                                 <span className="name">{this.props.creator.name}</span>-
-                                <span className="content">{this.props.content.content}</span>
+                                <span className="content" dangerouslySetInnerHTML={{__html: this.props.content.content}}>{}</span>
                             </div>
                         </div>
                     </div>
                 )
                 break;
-            // case 'REPLY_TOPIC':
-            //     return (
-            //         <div className='search-result-item-wrap'>
-            //             <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
-            //             <img src={this.props.creator.headImg} alt="" className="head-img" />
+            case 'CREATE_TASK':
+            case 'CREATE_CHECK_ITEM':
+            case 'COPY_TASK':
+            case 'MOVE_TASK':
+                return(
+                    <div className='search-result-item-wrap'>
+                        <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
+                        <img src={this.props.creator.headImg} alt="" className="head-img" />
 
-            //             <div className="result-con">
-            //                 <div className="des-line">
-            //                     <span className="type">{this.typeMap[this.props.type]}</span>
-            //                     <span className="topic">{this.props.content.title}</span>
-            //                 </div>
-
-            //                 <div className="content">
-            //                     <span className="name">{this.props.creator.name}</span>-
-            //                     <span className="content">{this.props.content.content}</span>
-            //                 </div>
-            //             </div>
-            //         </div>
-            //     )
-            //     break;
-            // case 'UPLOAD_FILE':
-            //     return (
-            //         <div className='search-result-item-wrap'>
-            //             <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
-            //             <img src={this.props.creator.headImg} alt="" className="file-catagory-img" />
-
-            //             <div className="result-con">
-            //                 <div className="des-line">
-            //                     <span className="type">{this.typeMap[this.props.type]}</span>
-            //                     <span className="topic">{this.props.content.title}</span>
-            //                 </div>
-
-            //                 <div className="content">
-            //                     <span className="name">{this.props.creator.name}</span>-
-            //                     <span className="content">{this.props.content.content}</span>
-            //                 </div>
-            //             </div>
-            //         </div>
-            //     )
-            //     break;
-            // case 'RELEASE_TASK':
-            //     return(
-            //         <div className='search-result-item-wrap'>
-            //             <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
-            //             <img src={this.props.creator.headImg} alt="" className="head-img" />
-
-            //             <div className="result-con">
-            //                 <div className="des-line">
-            //                     <span className="name">{this.props.creator.name}</span>
-            //                     <span className="type">{this.typeMap[this.props.type]}</span>
-            //                     <span className="topic">{this.props.content.title}</span>
-            //                 </div>
-
-            //                 <div className="content">{this.props.content.content}</div>
-            //             </div>
-            //         </div>
-            //     )
-            //     break;
+                        <div className="result-con" onClick={this.toOriginHandle}>
+                            <div className="des-line">
+                                <span className="type">{this.typeMap[this.props.type]}</span>
+                                <span className="topic">{this.props.content.title}</span>
+                            </div>
+                            <div className="content">
+                                <span className="name">{this.props.creator.name}</span>-
+                                <span className="content" dangerouslySetInnerHTML={{__html: this.props.content.content}}>{}</span>
+                            </div>
+                        </div>
+                    </div>
+                )
+                break;
             default:
                 return ''
         }
@@ -128,7 +148,17 @@ class SearchResultItem extends React.PureComponent{
 export default class SearchResult extends React.Component{
     componentDidMount = async() => {
         var queryText = this.props.location.query.text
+
         if (queryText){
+            console.log(queryText.length)
+            console.log(queryText.length >42)
+            
+            if (queryText.length > 42)
+                this.props.location.query.text = queryText.substring(0,42)
+
+            this.setState({
+                title: '搜索 - ' + this.props.location.query.text + ' - IHCI'
+            })
             await this.initSearchResultData()
         }
         else {
@@ -234,7 +264,7 @@ export default class SearchResult extends React.Component{
         path += (!(typeof(teamId) == 'undefined')) ? (teamId == '' ? '': ('&teamId=' + teamId)) : (queryTeamId ? ('&teamId=' + queryTeamId) :'')
         path += (!(typeof(type) == 'undefined')) ? (type == '' ? '': ('&type=' + type)) : (queryType ? ('&type=' + queryType) :'')
         location.href = path
-
+    
     }
 
     typeMap = {
@@ -244,9 +274,11 @@ export default class SearchResult extends React.Component{
         'RELEASE_TASK': '任务',
         'TOPIC': '讨论',
         'REPLY': '回复',
+        'TASK': '任务'
     }
 
     state = {
+        title: '搜索 - IHCI',
         resultList: [],
         showList: {
             keyList : [],
@@ -302,7 +334,7 @@ export default class SearchResult extends React.Component{
     render() {
         var showList = this.state.showList
         return (
-            <Page title='搜索 - IHCI'  className="result-page">
+            <Page title={this.state.title}  className="result-page">
                 
                 {
                     this.state.showTeamFilter && <div className="team-list" onMouseLeave={this.teamFilterHandle}>
@@ -342,6 +374,9 @@ export default class SearchResult extends React.Component{
                         </div>
                         <div className="admin-type-item" onClick={this.filterHandle.bind(this, {type:'REPLY'})}>
                             <div className='type-name'>{this.typeMap.REPLY_TOPIC}</div>
+                        </div>
+                        <div className="admin-type-item" onClick={this.filterHandle.bind(this, {type:'TASK'})}>
+                            <div className='type-name'>{this.typeMap.TASK}</div>
                         </div>
                     </div>
                 }
@@ -389,7 +424,7 @@ export default class SearchResult extends React.Component{
                                                     <div className="group-line">{showList[timeKey][teamKey].teamName}</div>
                                                     {
                                                         showList[timeKey][teamKey].resultList.map((item) => {
-                                                            return <SearchResultItem key={'search-' + item._id} {...item}/>
+                                                            return <SearchResultItem key={'search-' + item._id} router={this.props.router} {...item}/>
                                                         })
                                                     }
                                                 </div>

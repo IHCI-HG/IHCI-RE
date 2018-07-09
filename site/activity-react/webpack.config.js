@@ -27,6 +27,14 @@ const config = {
         publicPath: '/activity-react/',
         devtool: 'inline-source-map',
     },
+    test: {
+        cssName: '[name].[contenthash].css',
+        jsName: '[name].[chunkhash].js',
+        publicPath: '/activity-react/',
+        devtool: false,
+        assetsReceiver: 'http://receiver.dev1.qlchat.com/receiver',
+        assetsToDir: '/data/nodeapp/resources/rs'
+    },
     prod: {
         cssName: '[name].[contenthash].css',
         jsName: '[name].[chunkhash].js',
@@ -207,6 +215,10 @@ module.exports = {
     resolve: {
         extensions: ['.web.tsx', '.web.ts', '.web.jsx', '.web.js', '.js', '.jsx', '.ts', '.tsx'], // require 无需后缀
         modules: ['node_modules'],
+        alias: {
+            // '@': `${__dirname}site/activity-react`,
+            '@': path.resolve(__dirname, 'site')
+        }
     },
     devtool: config[MODE].devtool,
     plugins: plugins,

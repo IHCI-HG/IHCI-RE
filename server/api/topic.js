@@ -4,7 +4,7 @@ var _ = require('underscore'),
     conf = require('../conf');
 
 import apiAuth from '../components/auth/api-auth'
-
+import {notificationMail} from '../components/mail/notificationMail'
 import {
     createTopicTemplate,
     replyTopicTemplate
@@ -18,10 +18,12 @@ var topicDB = mongoose.model('topic')
 var discussDB = mongoose.model('discuss')
 var timelineDB = mongoose.model('timeline')
 
+
 const createTopic = async (req, res, next) => {
     const teamId = req.body.teamId
     const topicName = req.body.name
     const topicContent = req.body.content
+    const topicFileList = req.body.fileList
     const informList = req.body.informList
     const userId = req.rSession.userId
 
@@ -36,7 +38,7 @@ const createTopic = async (req, res, next) => {
 
     try {
         const userObj = await userDB.baseInfoById(userId)
-        const result = await topicDB.createTopic(topicName, topicContent, userObj, teamId)
+        const result = await topicDB.createTopic(topicName, topicFileList, topicContent, userObj, teamId)
         await teamDB.addTopic(teamId, result)
         const teamObj = await teamDB.findByTeamId(teamId)
         await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'CREATE_TOPIC', result._id, result.title, result)
@@ -61,6 +63,7 @@ const createTopic = async (req, res, next) => {
             console.log('\n\n')
             console.log(userObj.noticeList)
             console.log('\n\n')
+            notificationMail(informList, result, "创建了讨论")
         }
 
         resProcessor.jsonp(req, res, {
@@ -96,9 +99,10 @@ const editTopic = async (req, res, next) => {
 
     try {
         let topicObj = await topicDB.findByTopicId(topicId)
-        // if(informList && informList.length) {
-        //   todo 走微信模板消息下发流程
-        // }
+          //   todo 走微信模板消息下发流程
+         if(informList && informList.length) {
+           // notificationMail(informList, result, "编辑了讨论")
+         }
         if(!topicObj) {
             resProcessor.jsonp(req, res, {
                 state: { code: 1, msg: "话题不存在" },
@@ -140,9 +144,7 @@ const createDiscuss = async (req, res, next) => {
 
     // todo 回复可以添加附件，这里留着
     const fileList = req.body.fileList || []
-
     const userId = req.rSession.userId
-
     // todo 各种权限判断
 
     if(!teamId || !topicId || !content) {
@@ -152,8 +154,6 @@ const createDiscuss = async (req, res, next) => {
         });
         return
     }
-
-
 
     try {
         const userObj = await userDB.baseInfoById(userId)
@@ -174,6 +174,7 @@ const createDiscuss = async (req, res, next) => {
             informList.map((item) => {
                 userDB.addReplyNotice(item, result, teamObj.name)
             })
+            notificationMail(informList, result, "回复了讨论")
 
         }
 
@@ -196,7 +197,6 @@ const editDiscuss = async (req, res, next) => {
     const discussId = req.body.discussId
     const content = req.body.content
     const informList = req.body.informList || []
-
     // todo 回复可以添加附件，这里留着
     const fileList = req.body.fileList || []
 
@@ -214,8 +214,8 @@ const editDiscuss = async (req, res, next) => {
 
     if(informList && informList.length) {
         //todo 走微信模板消息下发流程
+       // notificationMail(informList, result, "编辑了回复")
     }
-
     try {
 
         const result = await discussDB.updateDiscuss(discussId, {content: content})
@@ -321,8 +321,140 @@ const readingNotice = async (req, res, next) => {
 
 }
 
+
+
+const getMoreTopic = async (req,res,next) =>{
+    const teamId = req.query.teamId;
+    const currentPage = req.query.currentPage;
+
+    //test
+    console.log("/api/topic/251");
+    console.log(req.query);
+
+    if(!teamId || currentPage <= 0) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: "参数不正确" },
+            data: {}
+        });
+        return
+    }
+
+    try {
+
+        const topicObj = await topicDB.getByPage(teamId,currentPage);
+
+        resProcessor.jsonp(req, res, {
+            state: { code: 0, msg: '请求成功' },
+            data: topicObj
+        });
+    } catch (error) {
+        console.error(error);
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: '操作失败' },
+            data: {}
+        });
+    }
+
+
+}
+//6.28
+const delTopic = async (req,res,next) =>{
+    const topicId = req.body.topicId;
+
+
+    if(!topicId) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: "参数不正确" },
+            data: {}
+        });
+        return
+    }
+
+    try {
+        const topicObj = await topicDB.findByTopicId(topicId);
+        const teamId = topicObj.team;
+
+        const discussList = topicObj.discussList;
+
+
+        for(var x in discussList){
+            discussDB.delDiscussById(discussList[x]._id)
+        }
+
+        await teamDB.delTopic(teamId,topicId)
+        const result = await topicDB.delTopicById(topicId);
+
+        //创建动态6.28
+        const baseInfoObj = await userDB.baseInfoById(userId)
+        const teamObj = await teamDB.findByTeamId(teamId)
+        await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'DELETE_TOPIC', topicObj._id, topicObj.title, topicObj)
+
+
+
+        resProcessor.jsonp(req, res, {
+            state: { code: 0, msg: '请求成功' },
+            data: result
+        });
+    } catch (error) {
+        console.error(error);
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: '操作失败' },
+            data: {}
+        });
+    }
+
+
+}
+
+    //6.28
+const delDiscuss = async (req,res,next)=>{
+    const discussId = req.body.discussId;
+    const userId = req.rSession.userId;
+
+
+    if(!discussId) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: "参数不正确" },
+            data: {}
+        });
+        return
+    }
+
+    try {
+        const result = await discussDB.findDiscussById(discussId);
+        const teamId = result.teamId;
+        const topicId = result.topicId;
+
+
+        await topicDB.delDiscuss(topicId,discussId);
+        await discussDB.delDiscussById(discussId);
+
+        //创建动态6.28
+        const baseInfoObj = await userDB.baseInfoById(userId)
+        const teamObj = await teamDB.findByTeamId(teamId)
+        await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'DELETE_TOPIC_REPLY', result._id, result.title, result);
+
+
+
+        resProcessor.jsonp(req, res, {
+            state: { code: 0, msg: '请求成功' },
+
+            //需要修改
+            data: result
+        });
+    } catch (error) {
+        console.error(error);
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: '操作失败' },
+            data: {}
+        });
+    }
+}
+
 module.exports = [
     ['GET', '/api/topic/get', apiAuth, topicInfo],
+    //6.22
+    ['GET','/api/topic/getMoreTopic', apiAuth,getMoreTopic],
 
     ['POST', '/api/topic/createTopic', apiAuth, createTopic],
     ['POST', '/api/topic/editTopic', apiAuth, editTopic],
@@ -330,4 +462,9 @@ module.exports = [
     ['POST', '/api/topic/editDiscuss', apiAuth, editDiscuss],
 
     ['POST', '/api/topic/readingNotice', apiAuth,readingNotice],
+
+    //6.28
+    ['POST','/api/topic/delTopic',apiAuth,delTopic],
+    ['POST','/api/topic/delDiscuss',apiAuth,delDiscuss],
+
 ];

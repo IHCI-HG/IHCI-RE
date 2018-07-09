@@ -6,64 +6,88 @@ import { timeParse, formatDate } from '../../../utils/util'
 import Page from '../../../components/page'
 
 
-export default class News extends React.Component{
+export default class Members extends React.Component{
     componentDidMount = async() => {
-        console.log(INIT_DATA);
-
+        if (this.props.personInfo.teamList.length != 0){
+            this.setState({
+                teamList: this.props.personInfo && this.props.personInfo.teamList || [],
+            })
+        }
+        else this.initTeamList()
+        this.initMemberList()
     }
-    starHandle = async (id) => {
-        const result = await api('/api/base/sys-time', {
-            method: 'GET',
-            body: {}
+
+    initMemberList = async (id) => {
+        const result = await api('/api/member', {
+            method: 'POST',
+            body: id ? {
+                teamId : id
+            }:{}
+        })                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+        this.setState({ 
+            memberList: result.data
+        })
+    }
+
+    loadMoreHandle = () => { 
+        this.setState({ 
+            index: this.state.index + 10
+        })
+    }
+
+    showMemberList = () => {
+        if (this.state.index == 0){
+            return this.state.memberList.slice(0,this.state.memberList.length >= 10 ? 10 : this.state.memberList.length)
+        }
+        else if (this.state.memberList.length - this.state.index > 10 ){
+            return this.state.memberList.slice(0,this.state.index)
+        }
+        else return this.state.memberList
+    }
+
+    initTeamList = async () => {
+        const result = await api('/api/getMyInfo')
+        if(result.data) {
+            this.setState({
+                teamList: result.data.teamList,
+            })
+        }
+    }
+
+    toTimeLineHandle = (memberId , event) => {
+        const query = {userId:memberId,}
+        const location = {pathname:'/timeline', query:query}
+        this.props.activeTagHandle('/timeline')
+        this.props.router.push(location)
+    }
+
+    toTeamHandle = (teamId, teamName) => {
+        if (teamId){
+            this.initMemberList(teamId)
+            if (!teamName){
+                const teamList = this.props.personInfo.teamList
+                for(var i in teamList)
+                {
+                    if(teamList[i].teamId == teamId)
+                        teamName = teamList[i].teamName
+                }
+            }
+        }
+        else this.initMemberList()
+        this.setState({
+            activeTag: teamName == null ? 'all' : teamName,
+            index: 0
         })
     }
 
     state = {
-        teamList: [
-            {
-                teamName: 'xx团队1',
-                memberList: [],
-            }
-        ],
+        activeTag: 'all',
 
-        memberList: [
-            {
-                id: 1,
-                name: '阿鲁巴大将军',
-                headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                role: 'creator',
-                phone: '17728282828',
-                mail: 'ada@qq.com',
-                showAdmin: false,
-            },
-            {
-                id: 2,
-                name: '阿鲁巴上校',
-                headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                role: 'admin',
-                phone: '17728282828',
-                mail: 'ada@qq.com',
-                showAdmin: false,
-            },
-            {
-                id: 3,
-                name: '阿鲁巴上尉',
-                headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                role: 'admin',
-                phone: '17728282828',
-                mail: 'ada@qq.com',
-                showAdmin: false,
-            },
-            {
-                id: 4,
-                name: '阿鲁巴上士',
-                headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
-                role: 'member',
-                phone: '17728282828',
-                mail: 'ada@qq.com',
-                showAdmin: false,
-            },
-        ],
+        teamList: [],
+
+        index: 0,
+
+        memberList: [],
 
     }
 
@@ -72,34 +96,37 @@ export default class News extends React.Component{
             <Page title={"成员 - IHCI"} className="member-page">
                 <div className="page-wrap">
                     <div className="teamList">
-                        <div className="act team-tag-item">全部</div>
-                        <div className="team-tag-item">xx组1</div>
-                        <div className="team-tag-item">xx组2</div>
-                        <div className="team-tag-item">xx组3</div>
-                        <div className="team-tag-item">xx组4</div>
-                        <div className="team-tag-item">xx组4</div>
-                        <div className="team-tag-item">xx组4</div>
-                        <div className="team-tag-item">xx组4</div>
-                        <div className="team-tag-item">xx组4</div>
-                        <div className="team-tag-item">xx组4</div>
-                        <div className="team-tag-item">xx组4</div>
-                        <div className="team-tag-item">xx组4</div>
+                        <div className={this.state.activeTag == "all" ? "act team-tag-item" : "team-tag-item"} onClick={this.toTeamHandle.bind(this, null,null)}>全部</div>
+                        { 
+                            this.state.teamList.map((item) => {
+                                return(
+                                    <div className={this.state.activeTag == item.teamName ? "act team-tag-item" : "team-tag-item"} key={'teamId-' + item.teamId} onClick={this.toTeamHandle.bind(this,item.teamId,item.teamName)}>{item.teamName}</div>
+                                )
+                            })
+                        }
+                    </div>
+
+                    <div className="team-name">
+                    <h1>{this.state.activeTag == "all" ? "所有成员" : this.state.activeTag}</h1><h2>{"( " + this.state.memberList.length + "人 )"}</h2>
                     </div>
 
                     <div className="member-list">
                     {
-                        this.state.memberList.map((item) => {
+                        this.showMemberList().map((item) => {
                             return(
-                                <div className="member-item" key={'member-item-' + item.id}>
-                                    <img src={item.headImg} alt="" className="head-img"/>
-                                    <span className="name">{item.name}</span>
-                                    <span className="phone">{item.phone}</span>
-                                    <span className="mail">{item.mail}</span>
+                                <div className="member-item" key={'member-item-' + item._id}>
+                                    <img src={item.personInfo.headImg} onClick={this.toTimeLineHandle.bind(this, item._id)}  alt="" className="head-img"/>
+                                    <span className="name">{item.personInfo.name}</span>
+                                    <span className="phone">{item.personInfo.phone}</span>
+                                    <span className="mail">{item.personInfo.mail}</span>
                                 </div>
                             )
                         })
                     }
                     </div>
+
+                    <div className="load-more" style={{display: this.state.memberList.length > (this.state.index + 10) ? 'block' : 'none'}} onClick={this.loadMoreHandle}>加载更多</div>
+                    <div className="no-more" style={{display: this.state.memberList.length > (this.state.index + 10) ? 'none' : 'block'}}>无更多成员</div>
 
 
                 </div>

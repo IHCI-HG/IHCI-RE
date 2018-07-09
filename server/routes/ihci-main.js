@@ -20,9 +20,17 @@ var TestDB = mongoose.model('test')
 var UserDB = mongoose.model('user')
 var TeamDB = mongoose.model('team')
 
-// 路由前判定是否已经登录
+// 路由前判定是否已经登录或信息填写完全
 const routerAuthJudge = async (req, res, next) => {
-    if(req.rSession.userId) {
+    const userId = req.rSession.userId
+    if(userId) {
+        const user = await UserDB.findByUserId(userId)
+
+        if (req.url != '/person' &&  user.personInfo==null)
+        {
+            res.redirect('/person')
+            return
+        }
     } else {
         res.redirect('/')
         return
@@ -141,13 +149,18 @@ module.exports = [
     // 主页
     ['GET', '/', clientParams(), mainPage],
 
+    ['GET', '/activate', clientParams(), pageHandle()],
+
     ['GET', '/auth', clientParams(), wxAuthCodeHandle , mainPage],
 
     ['GET', '/team', clientParams(), routerAuthJudge, pageHandle() ],
+    ['GET', '/files/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/sign', clientParams(), routerAuthJudge, pageHandle() ],
 
     ['GET', '/test', clientParams(), routerAuthJudge, pageHandle() ],
-
+    ['GET', '/test-editor', clientParams(), routerAuthJudge, pageHandle() ],
+    ['GET', '/team/:id', clientParams(), routerAuthJudge, pageHandle() ],
+    ['GET', '/todo/:id', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/team-edit/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/team-admin/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/team-join/:teamId', clientParams(), joinTeam, pageHandle() ],
