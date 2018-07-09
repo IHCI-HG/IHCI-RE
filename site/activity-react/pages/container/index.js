@@ -109,15 +109,24 @@ class App extends React.Component{
         if(/team/.test(url)) {
             this.setState({activeTag: 'team'})
         }
-        if(/discuss/.test(url)) {
+        else if(/discuss/.test(url)) {
             this.setState({activeTag: 'team'})
         }
-        if(/member/.test(url)) {
+        else if(/member/.test(url)) {
             this.setState({activeTag: 'member'})
         }
-        if(/timeline/.test(url)) {
+        else if(/timeline/.test(url)) {
             this.setState({activeTag: 'timeline'})
         }
+        else{
+            this.setState({activeTag: ''})
+        }
+        // if(/inform/.test(url)) {
+        //     this.setState({activeTag: ''})
+        // }
+        // if(/person/.test(url)) {
+        //     this.setState({active})
+        // }
     }
 
     render() {
