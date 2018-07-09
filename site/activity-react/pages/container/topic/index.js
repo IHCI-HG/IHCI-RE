@@ -17,7 +17,7 @@ class TopicDiscussItem extends React.Component {
         content: '',
         editState: false,
         enableHighlight: false,
-        discussAttachments:[],
+        discussAttachments:this.props.fileList,
     }
 
     editInputHandle = (e) => {
@@ -32,7 +32,7 @@ class TopicDiscussItem extends React.Component {
         })
     }
     discussFileUploadHandle = async (e) => {
-        var ossKey = this.teamId + '/' + Date.now() + '/' + e.target.files[0].name
+        var ossKey = this.props.teamId + '/' + Date.now() + '/' + e.target.files[0].name
         const resp = await fileUploader(e.target.files[0], ossKey)
         let discussAttachments = this.state.discussAttachments;
         discussAttachments = [...discussAttachments, resp]
@@ -66,7 +66,7 @@ class TopicDiscussItem extends React.Component {
                             handleFileUpload={this.discussFileUploadHandle.bind(this)}
                             content={this.state.content}
                             deleteFile={this.deleteDiscussFile.bind(this)}
-                            attachments={this.props.fileList}>
+                            attachments={this.state.discussAttachments}>
                         </Editor>
                         <div className="button-warp">
                             <div className="save-btn" onClick={() => { saveEditHandle(_id, this.state.content,this.state.discussAttachments); this.setState({ editState: false }) }}>保存</div>
@@ -95,7 +95,7 @@ class TopicDiscussItem extends React.Component {
                         <div className="file-list">
                             {
                                 this.props.fileList && this.props.fileList.map((item) => {
-                                    return ( <div className="file-item" key={Math.random()}>{item.name}</div> )
+                                    return ( <div className="file-item" key={Math.random()}>{item.name.split("/")[2]}</div> )
                                 })
                             }
                         </div>
@@ -196,7 +196,7 @@ export default class Topic extends React.Component{
             topicContentInput: topicObj.content,
             discussList: result.data.discussList,
             memberList: memberList
-        },console.log("discuss",result))
+        })
     }
 
     topicContentHandle = (content) => {
@@ -439,7 +439,7 @@ export default class Topic extends React.Component{
                         <div className="file-list">
                             {
                                 this.state.topicObj.fileList && this.state.topicObj.fileList.map((item) => {
-                                    return ( <div className="file-item" key={Math.random()}>{item.name}</div> )
+                                    return ( <div className="file-item" key={Math.random()}>{item.name.split("/")[2]}</div> )
                                 })
                             }
                         </div>
@@ -458,7 +458,7 @@ export default class Topic extends React.Component{
                                     highlight={!!this.props.location.state && this.props.location.state.id == item._id? true : false} 
                                     allowEdit={this.props.personInfo._id == item.creator._id} {...item} 
                                     saveEditHandle = {this.saveDiscussEditHandle}
-                                    />
+                                />
                             )
                         })
                     }
