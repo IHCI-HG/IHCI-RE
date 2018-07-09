@@ -19,6 +19,7 @@ import {
 
 var mongoose = require('mongoose')
 var UserDB = mongoose.model('user')
+var followerDB = mongoose.model('follower')
 
 var sysTime = function(req, res, next) {
     resProcessor.jsonp(req, res, {
@@ -157,6 +158,18 @@ const setUserInfo = async (req, res, next) => {
     }
 }
 
+const IfBeforeSub = async function(userId, unionid){
+    const result = await followerDB.findByUnionId(unionid)
+    if(result){
+       const userObj = await UserDB.updateUser(userId, {
+            openid: result.openid,
+            subState: true
+        })
+      return true
+    }
+}
+
+
 const wxLogin = async (req, res, next) => {
     const code = lo.get(req, 'query.code')
     const state = lo.get(req, 'query.state')
@@ -179,13 +192,15 @@ const wxLogin = async (req, res, next) => {
                     unionid: result.unionid,
                     wxUserInfo: userInfo,
                 })
+                //检查是否已经关注服务号
+                const flag = await IfBeforeSub(userId, result.unionid)
                 res.redirect('/person');
             } else {
                 // 由于某些原因绑定失败
                 res.redirect('/person?fail=true');
             }
         }
-
+    
         if(state == 'auth') {
             if(result.unionid) {
                 const userObj = await UserDB.findByUnionId(result.unionid)
@@ -200,6 +215,7 @@ const wxLogin = async (req, res, next) => {
                 res.redirect('/?fail=true');
             }
         }
+   
 
     } catch (error) {
         console.error(error);
@@ -281,7 +297,6 @@ module.exports = [
     ['GET', '/wxLogin', wxLogin],
 
     ['POST', '/api/logout', apiAuth, logout],
-
     ['POST', '/api/unbindWechat', apiAuth, unbindWechat],
 
     ['POST', '/api/signUp', signUp],
