@@ -78,22 +78,13 @@ timelineSchema.statics = {
         return this.find({teamId: teamId}).sort({create_time: -1}).exec()
     },
 
-    findByTeamIdList: async function(teamIdList,currentPage) {
-
-        var pageSize = 20;
-        var sortFunc = {create_time:-1};
-        var skipNumber = (currentPage - 1) * pageSize;
-
-        console.log("...........................")
-        console.log(currentPage);
-
+    findByTeamIdList: function(teamIdList) {
         const queryList = []
         teamIdList.map((item) => {
             queryList.push({teamId: item})
         })
         if(queryList && queryList.length) {
-            var result = await this.find({$or: queryList}).skip(skipNumber).limit(pageSize).sort(sortFunc).exec();
-            return result;
+            return this.find({$or: queryList}).sort({create_time: -1}).exec()
         } else {
             return []
         }
