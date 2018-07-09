@@ -429,7 +429,7 @@ export default class Task extends React.Component{
     }
 
     discussFileUploadHandle = async (e) => {
-        var ossKey = this.teamId + '/' + Date.now() + '/' + e.target.files[0].name
+        var ossKey = this.state.todo.teamId + '/' + Date.now() + '/' + e.target.files[0].name
         const resp = await fileUploader(e.target.files[0], ossKey)
         let discussAttachments = this.state.discussAttachments;
         discussAttachments = [...discussAttachments, resp]
