@@ -148,9 +148,9 @@ class App extends React.Component{
                                 <input className='searchInput' ref={(input) => { this.searchInputr = input; }} type="text" onChange={this.handleSearchTextChange} placeholder="搜索"/>
                             </form>
                         </div>
-                        <Link className='nav-item' activeClassName='nav-item active' to="/person">
+                        <div className='nav-item' onClick={this.routerHandle.bind(this, '/person')}>
                             <img className="head-img" src={this.state.headImg} />
-                        </Link>
+                        </div>
                         <div className='remind'>
                             <span className='iconfont icon-remind' onClick={this.routerHandle.bind(this, '/inform')}></span>
                         </div>
