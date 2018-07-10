@@ -116,14 +116,12 @@ class Modal extends React.Component {
     }
 
     render() {
-        console.log(this.state.fileList)
-        console.log(this.state.dirList)
         return (
             <div className="window" >
                 <div className="outerBox">
                     <Page className="move-File">
-                        <div className="file-con">
-                        <div> 移动到： </div>
+                        <div className="move-file-con">
+                        <div className="head-info"> 移动到： </div>
                             <div className="file-dir">
                                 {
                                     this.state.dirList.length ?
@@ -153,8 +151,8 @@ class Modal extends React.Component {
                                     })
                                 }
                             </div>
-                            <div className="btn" onClick={this.confirm}> confirm </div>
-                            <div className="btn" onClick={this.closeWindow}> close </div>
+                            <div className="btn" onClick={this.confirm}> 确定 </div>
+                            <div className="btn" onClick={this.closeWindow}> 取消 </div>
                         </div>
                     </Page>
                 </div>

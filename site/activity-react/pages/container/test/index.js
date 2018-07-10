@@ -1,6 +1,5 @@
 import * as React from 'react';
 var ReactDOM = require('react-dom')
-import Modal from '../../../components/modal';
 import Page from '../../../components/page'
 import api from '../../../utils/api';
 import './style.scss'
