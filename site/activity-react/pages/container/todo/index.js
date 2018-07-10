@@ -90,7 +90,6 @@ class TopicItem extends React.Component{
                             <p dangerouslySetInnerHTML={createMarkup(this.props.content)}></p>
                             <div className="file-list">
                             {
-                    
                                 this.props.fileList && this.props.fileList.map((item) => {
                                     return ( <div className="file-item" key={Math.random()}>{item.name.split("/")[2]}</div> )
                                 })
@@ -666,7 +665,8 @@ export default class Task extends React.Component{
             body: {
                 todoId,
                 checkitemId,
-                editCheckitem
+                editCheckitem,
+                teamId:this.state.todo.teamId,
             }
         })
         if (resp.state.code === 0) {
@@ -691,7 +691,8 @@ export default class Task extends React.Component{
             body: {
                 todoId,
                 checkitemId,
-                editCheckitem
+                editCheckitem,
+                teamId:this.state.todo.teamId,
             }
         })
         if (resp.state.code === 0) {
@@ -761,6 +762,7 @@ export default class Task extends React.Component{
             body: {
                 todoId,
                 checkitemId,
+                teamId:this.state.todo.teamId,
             }
         })
 
