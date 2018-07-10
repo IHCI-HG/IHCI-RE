@@ -28,6 +28,7 @@ class TeamChoseItem extends React.PureComponent{
 
 
 class SearchResultItem extends React.PureComponent{
+
     typeMap = {
         'CREATE_TOPIC': '讨论：',
         'REPLY_TOPIC': '回复：',
@@ -52,10 +53,11 @@ class SearchResultItem extends React.PureComponent{
 
         'COPY_TASK': '复制了任务：',
         'MOVE_TASK': '移动了任务：',
+        'FILE': '文件：',
+        'FOLDER': '文件夹：',
     }
 
     toOriginHandle = () => {
-        console.log(this)
         const pathname = ''
         const type = 'TOPIC'
         switch(this.props.type){
@@ -77,8 +79,19 @@ class SearchResultItem extends React.PureComponent{
             case 'COPY_TASK':
             case 'MOVE_TASK':
             {
+                type = 'TASK'
                 pathname = '/todo/' + this.props.tarId
+                break
             }
+            case 'FOLDER':
+            case 'FILE':
+            {
+                type = 'FILE'
+                pathname = '/files/' + this.props.team
+                break
+            }
+            default:
+                
 
         }
 
@@ -87,13 +100,19 @@ class SearchResultItem extends React.PureComponent{
             state:{
                 type: type,
                 id: this.props.tarId
+            },
+            query:this.props.folderName? {
+                dir: this.props.path
             }
+            :this.props.dir ?{
+                 dir: this.props.dir,
+            } :{}
         }
         this.props.router.push(location)
     }
 
     render() {
-        console.log(this.props.type)
+        console.log(this)
         switch (this.props.type) {
             case 'CREATE_TOPIC':
             case 'REPLY_TOPIC':
@@ -139,64 +158,44 @@ class SearchResultItem extends React.PureComponent{
                     </div>
                 )
                 break;
-            // case 'REPLY_TOPIC':
-            //     return (
-            //         <div className='search-result-item-wrap'>
-            //             <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
-            //             <img src={this.props.creator.headImg} alt="" className="head-img" />
+            case 'FILE':
+                return (
+                    <div className='search-result-item-wrap'>
+                        <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
+                        <div className="icon iconfont icon-document head-img" />
 
-            //             <div className="result-con">
-            //                 <div className="des-line">
-            //                     <span className="type">{this.typeMap[this.props.type]}</span>
-            //                     <span className="topic">{this.props.content.title}</span>
-            //                 </div>
+                        <div className="result-con" onClick={this.toOriginHandle}>
+                            <div className="des-line">
+                                <span className="type">{this.typeMap[this.props.type]}</span>
+                                <span className="topic">{this.props.fileName}</span>
+                            </div>
+                            <div className="content">
+                                <span className="name">所在目录</span>-
+                                <span className="content" >{this.props.dir}</span>
+                            </div>
+                        </div>
+                    </div>
+                )
+                break;
+            case 'FOLDER':
+                return (
+                    <div className='search-result-item-wrap'>
+                        <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
+                        <div className="icon iconfont icon-tasklist head-img" />
 
-            //                 <div className="content">
-            //                     <span className="name">{this.props.creator.name}</span>-
-            //                     <span className="content">{this.props.content.content}</span>
-            //                 </div>
-            //             </div>
-            //         </div>
-            //     )
-            //     break;
-            // case 'UPLOAD_FILE':
-            //     return (
-            //         <div className='search-result-item-wrap'>
-            //             <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
-            //             <img src={this.props.creator.headImg} alt="" className="file-catagory-img" />
-
-            //             <div className="result-con">
-            //                 <div className="des-line">
-            //                     <span className="type">{this.typeMap[this.props.type]}</span>
-            //                     <span className="topic">{this.props.content.title}</span>
-            //                 </div>
-
-            //                 <div className="content">
-            //                     <span className="name">{this.props.creator.name}</span>-
-            //                     <span className="content">{this.props.content.content}</span>
-            //                 </div>
-            //             </div>
-            //         </div>
-            //     )
-            //     break;
-            // case 'RELEASE_TASK':
-            //     return(
-            //         <div className='search-result-item-wrap'>
-            //             <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
-            //             <img src={this.props.creator.headImg} alt="" className="head-img" />
-
-            //             <div className="result-con">
-            //                 <div className="des-line">
-            //                     <span className="name">{this.props.creator.name}</span>
-            //                     <span className="type">{this.typeMap[this.props.type]}</span>
-            //                     <span className="topic">{this.props.content.title}</span>
-            //                 </div>
-
-            //                 <div className="content">{this.props.content.content}</div>
-            //             </div>
-            //         </div>
-            //     )
-            //     break;
+                        <div className="result-con" onClick={this.toOriginHandle}>
+                            <div className="des-line">
+                                <span className="type">{this.typeMap[this.props.type]}</span>
+                                <span className="topic">{this.props.folderName}</span>
+                            </div>
+                            <div className="content">
+                                <span className="name">所在目录</span>-
+                                <span className="content" >{this.props.dir}</span>
+                            </div>
+                        </div>
+                    </div>
+                )
+                break;
             default:
                 return ''
         }
@@ -208,8 +207,8 @@ export default class SearchResult extends React.Component{
         var queryText = this.props.location.query.text
 
         if (queryText){
-            console.log(queryText.length)
-            console.log(queryText.length >42)
+            // console.log(queryText.length)
+            // console.log(queryText.length >42)
             
             if (queryText.length > 42)
                 this.props.location.query.text = queryText.substring(0,42)
@@ -322,17 +321,6 @@ export default class SearchResult extends React.Component{
         path += (!(typeof(teamId) == 'undefined')) ? (teamId == '' ? '': ('&teamId=' + teamId)) : (queryTeamId ? ('&teamId=' + queryTeamId) :'')
         path += (!(typeof(type) == 'undefined')) ? (type == '' ? '': ('&type=' + type)) : (queryType ? ('&type=' + queryType) :'')
         location.href = path
-
-        // const query = {
-        //     text: queryText,
-        //     teamId: (!(typeof(teamId) == 'undefined')) ? (teamId == '' ? '': (teamId)) : (queryTeamId ? (queryTeamId) :''),
-        //     type: (!(typeof(type) == 'undefined')) ? (type == '' ? '': (type)) : (queryType ? (queryType) :''),
-        // }
-        // const location = {pathname: '/search', query: query}
-        // console.log(this.props);
-        // this.props.router.push('/')
-        // this.props.router.push(location)
-        // this.props.router.forceUpdate()
     
     }
 
@@ -343,6 +331,8 @@ export default class SearchResult extends React.Component{
         'RELEASE_TASK': '任务',
         'TOPIC': '讨论',
         'REPLY': '回复',
+        'TASK': '任务',
+        'FILE': '文件',
     }
 
     state = {
@@ -442,6 +432,12 @@ export default class SearchResult extends React.Component{
                         </div>
                         <div className="admin-type-item" onClick={this.filterHandle.bind(this, {type:'REPLY'})}>
                             <div className='type-name'>{this.typeMap.REPLY_TOPIC}</div>
+                        </div>
+                        <div className="admin-type-item" onClick={this.filterHandle.bind(this, {type:'TASK'})}>
+                            <div className='type-name'>{this.typeMap.TASK}</div>
+                        </div>
+                        <div className="admin-type-item" onClick={this.filterHandle.bind(this, {type:'FILE'})}>
+                            <div className='type-name'>{this.typeMap.FILE}</div>
                         </div>
                     </div>
                 }

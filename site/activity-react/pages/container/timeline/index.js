@@ -22,6 +22,56 @@ class TeamChoseItem extends React.PureComponent{
 
 
 class TimelineItem extends React.PureComponent{
+
+    toOriginHandle = () => {
+        // console.log(this)
+        const pathname = ''
+        const type = 'TOPIC'
+        switch(this.props.type){
+            case 'CREATE_TOPIC':
+            case 'EDIT_TOPIC':
+            {
+                pathname = '/discuss/topic/' + this.props.content._id
+                break
+            }
+            case 'REPLY_TOPIC':
+            case 'EDIT_REPLY':
+            {
+                pathname = '/discuss/topic/' + this.props.content.topicId
+                type = 'REPLY'
+                break
+            }
+            case 'CREATE_TASK':
+            case 'CREATE_CHECK_ITEM':
+            case 'COPY_TASK':
+            case 'MOVE_TASK':
+            case 'DELETE_TASK':
+            case 'FINISH_TASK':
+
+            case 'REPLY_TASK':
+            case 'DELETE_TASK_REPLY':
+
+            case 'DELETE_CHECK_ITEM':
+            case 'FINISH_CHECITEM_ITEM':
+            case 'COPY_TASK':
+            case 'MOVE_TASK':
+            {
+                pathname = '/todo/' + this.props.tarId
+            }
+
+        }
+
+        const location = {
+            pathname: pathname,
+            state:{
+                type: type,
+                id: this.props.tarId
+            }
+        }
+        this.props.router.push(location)
+    }
+
+
     typeMap = {
         'CREATE_TOPIC': '创建了讨论：',
         'REPLY_TOPIC': '回复了讨论：',
@@ -132,7 +182,7 @@ export default class News extends React.Component{
             newsList: result.data,
             memberJumped: !!queryPerson ? !!queryPerson : false,
         }, () => {
-            console.log(this.state.newsList)
+            // console.log(this.state.newsList)
              this.appendToShowList(this.state.newsList)
         })
         // if(result.data.length == 0){
@@ -152,7 +202,7 @@ export default class News extends React.Component{
             shownTeam: this.props.personInfo && this.props.personInfo.teamList || [],
         })
     }
-    
+
     getMoreTimelineData = async () => {
         const queryTeamId = this.props.location.query.teamId
         const queryPerson = this.props.location.query.userId
@@ -167,11 +217,13 @@ export default class News extends React.Component{
             }
         })
 
+        // console.log(result)
         this.setState({
             newsList: result.data
         }, () => {
             this.appendToShowList(this.state.newsList)
         })
+        // console.log(result)
         if(result.data.length<moreTimeLineItemNum){
             this.setState({
                 noMoreResult: true,
@@ -213,6 +265,7 @@ export default class News extends React.Component{
                 noMoreResult: true,
             })
         }
+        // console.log(showList)
     }
 
    
@@ -225,7 +278,7 @@ export default class News extends React.Component{
         // showList: {
         //     timeKeyList: ['20170101', '20170102'],
         //     '20170101': {
-        //         'teamKeyList': ['teamId1','teamId2']                
+        //         'teamKeyList': ['teamId1','teamId2']
         //         'teamId1' : {
         //             teamName: '这是团队名称111',
         //             newsList: []
@@ -270,7 +323,7 @@ export default class News extends React.Component{
             this.props.personInfo.teamList.map((item) => {
                 if(partten.test(item.teamName)) {
                     teamList.push(item)
-                } 
+                }
             })
             this.setState({
                 teamList: teamList
@@ -286,7 +339,7 @@ export default class News extends React.Component{
         const showList = this.state.showList
         return (
             <Page title='动态 - IHCI' className="news-page">
-                
+
                 {
                     this.state.showTeamFilter && <div className="team-list" onMouseLeave={this.teamFilterHandle}>
                         <input type="text" className="search" onChange={this.searchInputHandle} />
@@ -313,7 +366,6 @@ export default class News extends React.Component{
                         }
                     </div>
                 }
-                
 
                 <div className="news-list page-wrap">
                     {
@@ -333,7 +385,7 @@ export default class News extends React.Component{
                         </div>
                     }
 
-                    
+
                     {
                         showList.keyList.map((timeKey) => {
                             return (
@@ -343,12 +395,12 @@ export default class News extends React.Component{
                                     {
                                         showList[timeKey].teamKeyList.map((teamKey) => {
                                             return (
-                                                <div key={'group-line-' + timeKey + teamKey}> 
+                                                <div key={'group-line-' + timeKey + teamKey}>
                                                     {/* 分组线 */}
                                                     <div className="group-line">{showList[timeKey][teamKey].teamName}</div>
                                                     {
                                                         showList[timeKey][teamKey].newsList.map((item) => {
-                                                            return <TimelineItem key={'timeline-' + item._id} {...item}/>
+                                                            return <TimelineItem key={'timeline-' + item._id} router={this.props.router}  {...item}/>
                                                         })
                                                     }
                                                 </div>
@@ -358,7 +410,7 @@ export default class News extends React.Component{
                                 </div>
                             )
                         })
-                    } 
+                    }
 
                     {this.state.noResult && <div className='null-info'>无动态</div>}
                     <div className='load-more-bar'>
@@ -369,10 +421,8 @@ export default class News extends React.Component{
                     </div>
                 </div>
 
-                
+
             </Page>
         )
     }
 }
-
-

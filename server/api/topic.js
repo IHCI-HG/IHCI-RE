@@ -5,7 +5,7 @@ var _ = require('underscore'),
 
 import apiAuth from '../components/auth/api-auth'
 import {notificationMail} from '../components/mail/notificationMail'
-import { 
+import {
     createTopicTemplate,
     replyTopicTemplate
 } from '../components/wx-utils/wx-utils'
@@ -25,7 +25,8 @@ const createTopic = async (req, res, next) => {
     const topicContent = req.body.content
     const topicFileList = req.body.fileList
     const informList = req.body.informList
-    const userId = req.rSession.userId 
+    const userId = req.rSession.userId
+
 
     if(!topicName || !topicContent) {
         resProcessor.jsonp(req, res, {
@@ -43,14 +44,31 @@ const createTopic = async (req, res, next) => {
         await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'CREATE_TOPIC', result._id, result.title, result)
 
         //如果有需要通知的人，则走微信模板消息下发流程
+        console.log(informList)
         if(informList && informList.length) {
             createTopicTemplate(informList, result)
-            notificationMail(informList, result, "创建了讨论")
 
+            //添加通知\
+            await Promise.all(informList.map(async (item) => {
+                await userDB.addCreateNotice(item, result, teamObj.name)
+              }));
+
+            // informList.map((item) => {
+            //     const reader = userDB.findByUserId(item)
+            //     userDB.addCreateNotice(reader, result)
+
+            // })
+            console.log('\n\n')
+            console.log(userObj.teamList)
+            console.log('\n\n')
+            console.log(userObj.noticeList)
+            console.log('\n\n')
+            notificationMail(informList, result, "创建了讨论")
         }
+
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
-            data: result
+            data: result,
         });
     } catch (error) {
         console.error(error);
@@ -62,13 +80,14 @@ const createTopic = async (req, res, next) => {
 }
 
 
+
 const editTopic = async (req, res, next) => {
     const teamId = req.body.teamId
     const topicId = req.body.topicId
     const editTopic = req.body.editTopic
     const informList = req.body.informList
 
-    const userId = req.rSession.userId 
+    const userId = req.rSession.userId
 
     if(!teamId || !topicId || !editTopic) {
         resProcessor.jsonp(req, res, {
@@ -81,7 +100,7 @@ const editTopic = async (req, res, next) => {
     try {
         let topicObj = await topicDB.findByTopicId(topicId)
           //   todo 走微信模板消息下发流程
-         if(informList && informList.length) { 
+         if(informList && informList.length) {
            // notificationMail(informList, result, "编辑了讨论")
          }
         if(!topicObj) {
@@ -122,10 +141,10 @@ const createDiscuss = async (req, res, next) => {
     const topicId = req.body.topicId
     const content = req.body.content
     const informList = req.body.informList || []
-    
+
     // todo 回复可以添加附件，这里留着
     const fileList = req.body.fileList || []
-    const userId = req.rSession.userId 
+    const userId = req.rSession.userId
     // todo 各种权限判断
 
     if(!teamId || !topicId || !content) {
@@ -135,14 +154,14 @@ const createDiscuss = async (req, res, next) => {
         });
         return
     }
-    
+
     try {
         const userObj = await userDB.baseInfoById(userId)
         const topicObj = await topicDB.findByTopicId(topicId)
         const result = await discussDB.createDiscuss(teamId, topicId, topicObj.title, content, userObj, fileList)
 
         await topicDB.addDiscuss(topicId, result)
-        
+
         const teamObj = await teamDB.findByTeamId(teamId)
 
         await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'REPLY_TOPIC', result._id, topicObj.title, result)
@@ -150,7 +169,13 @@ const createDiscuss = async (req, res, next) => {
         //如果有需要通知的人，则走微信模板消息下发流程
         if(informList && informList.length) {
             replyTopicTemplate(informList, result)
+
+            //添加通知
+            informList.map((item) => {
+                userDB.addReplyNotice(item, result, teamObj.name)
+            })
             notificationMail(informList, result, "回复了讨论")
+
         }
 
         resProcessor.jsonp(req, res, {
@@ -171,11 +196,11 @@ const editDiscuss = async (req, res, next) => {
     const topicId = req.body.topicId
     const discussId = req.body.discussId
     const content = req.body.content
-    const informList = req.body.informList || []  
+    const informList = req.body.informList || []
     // todo 回复可以添加附件，这里留着
     const fileList = req.body.fileList || []
 
-    const userId = req.rSession.userId 
+    const userId = req.rSession.userId
 
     // todo 各种权限判断
 
@@ -186,7 +211,7 @@ const editDiscuss = async (req, res, next) => {
         });
         return
     }
-  
+
     if(informList && informList.length) {
         //todo 走微信模板消息下发流程
        // notificationMail(informList, result, "编辑了回复")
@@ -223,7 +248,7 @@ const editDiscuss = async (req, res, next) => {
 
 const topicInfo = async (req, res, next) => {
     const topicId = req.query.topicId
-    const userId = req.rSession.userId 
+    const userId = req.rSession.userId
 
     if(!topicId) {
         resProcessor.jsonp(req, res, {
@@ -235,7 +260,7 @@ const topicInfo = async (req, res, next) => {
 
     try {
         const topicObj = await topicDB.findByTopicId(topicId)
-    
+
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
             data: topicObj
@@ -249,7 +274,59 @@ const topicInfo = async (req, res, next) => {
     }
 }
 
-//6.22
+//设置Topic已读
+const readingNotice = async (req, res, next) => {
+    const noticeId = req.body.noticeId
+    const readerId = req.rSession.userId
+
+    if(!noticeId == undefined) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: "参数不全" },
+            data: {}
+        });
+        return
+    }
+
+    try {
+        let topicObj = await topicDB.findByTopicId(noticeId)
+        if(!topicObj) {
+            resProcessor.jsonp(req, res, {
+                state: { code: 1, msg: '话题不存在'},
+                data: {}
+            });
+            return
+        }
+        let userObj = await userDB.findByUserId(readerId)
+        if(!userObj) {
+            resProcessor.jsonp(req, res, {
+                state: { code: 1, msg: '用户不存在'},
+                data: {}
+            });
+            return
+        }
+
+        const result = await userDB.readNotice(readerId, noticeId)
+
+        resProcessor.jsonp(req, res, {
+            state: { code: 0, msg: '已将消息设置为已读' },
+            data: result
+        });
+
+
+        } catch (error) {
+            console.error(error);
+            resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: '操作失败' },
+            data: {}
+        });
+    }
+
+
+
+}
+
+
+
 const getMoreTopic = async (req,res,next) =>{
     const teamId = req.query.teamId;
     const currentPage = req.query.currentPage;
@@ -267,6 +344,7 @@ const getMoreTopic = async (req,res,next) =>{
     }
 
     try {
+
         const topicObj = await topicDB.getByPage(teamId,currentPage);
 
         resProcessor.jsonp(req, res, {
@@ -306,7 +384,7 @@ const delTopic = async (req,res,next) =>{
         for(var x in discussList){
             discussDB.delDiscussById(discussList[x]._id)
         }
-        
+
         await teamDB.delTopic(teamId,topicId)
         const result = await topicDB.delTopicById(topicId);
 
@@ -314,7 +392,7 @@ const delTopic = async (req,res,next) =>{
         const baseInfoObj = await userDB.baseInfoById(userId)
         const teamObj = await teamDB.findByTeamId(teamId)
         await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'DELETE_TOPIC', topicObj._id, topicObj.title, topicObj)
-        
+
 
 
         resProcessor.jsonp(req, res, {
@@ -351,7 +429,7 @@ const delDiscuss = async (req,res,next)=>{
         const teamId = result.teamId;
         const topicId = result.topicId;
 
-        
+
         await topicDB.delDiscuss(topicId,discussId);
         await discussDB.delDiscussById(discussId);
 
@@ -359,7 +437,7 @@ const delDiscuss = async (req,res,next)=>{
         const baseInfoObj = await userDB.baseInfoById(userId)
         const teamObj = await teamDB.findByTeamId(teamId)
         await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'DELETE_TOPIC_REPLY', result._id, result.title, result);
-        
+
 
 
         resProcessor.jsonp(req, res, {
@@ -386,6 +464,8 @@ module.exports = [
     ['POST', '/api/topic/editTopic', apiAuth, editTopic],
     ['POST', '/api/topic/createDiscuss', apiAuth, createDiscuss],
     ['POST', '/api/topic/editDiscuss', apiAuth, editDiscuss],
+
+    ['POST', '/api/topic/readingNotice', apiAuth,readingNotice],
 
     //6.28
     ['POST','/api/topic/delTopic',apiAuth,delTopic],

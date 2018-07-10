@@ -7,8 +7,8 @@ const Schema = mongoose.Schema
     文件对象
 */
 const fileSchema = new Schema({
-    create_time: { type: String, default : Date.now()},
-    last_modify_time: { type: String, default : Date.now()},
+    create_time: { type: String, default : Date.now},
+    last_modify_time: { type: String, default : Date.now},
     ossKey:String,
     fileName: String,
     team: {type: Schema.Types.ObjectId, ref: 'team', index: true},
@@ -25,8 +25,8 @@ const fileSchema = new Schema({
     path为/aaa
 */
 const folderSchema = new Schema({
-    create_time: { type: String, default : Date.now()},
-    last_modify_time: { type: String, default : Date.now()},
+    create_time: { type: String, default : Date.now},
+    last_modify_time: { type: String, default : Date.now},
     fileList: [{
         fileType: {type: String, enum: ['file', 'folder']},
         _id: {type: Schema.Types.ObjectId}, // 根据fileType字段，可能是file对象也可能是folder对象
@@ -92,6 +92,24 @@ fileSchema.statics = {
         },{
             fileName: tarFileName,
             last_modify_time: Date.now(),
+        }).exec()
+    },   
+    findByTeamIdList: function(teamIdList) {
+        const queryList = []
+        teamIdList.map((item) => {
+            queryList.push({team: item})
+        })
+        if(queryList && queryList.length) {
+            return this.find({$or: queryList}).sort({create_time: -1}).exec()
+        } else {
+            return []
+        }
+    },
+    updateFilePath: function(id, dir) {
+        return this.update({
+            _id: mongoose.Types.ObjectId(id),
+        },{
+            dir: dir,
         }).exec()
     },
 }
@@ -200,6 +218,29 @@ folderSchema.statics = {
             folderName: tarName,
             last_modify_time: Date.now(),
         }).exec()
+    },
+    updateFolderPath: function(id, dir, folderName) {
+        var path;
+        if(dir == '/') path = dir+folderName;
+        else path = dir+'/'+folderName;
+ 
+        return this.update({
+            _id: mongoose.Types.ObjectId(id),
+        },{
+            dir: dir,
+            path: path,
+        }).exec()
+    },
+    findByTeamIdList: function(teamIdList) {
+        const queryList = []
+        teamIdList.map((item) => {
+            queryList.push({team: item})
+        })
+        if(queryList && queryList.length) {
+            return this.find({$or: queryList}).sort({create_time: -1}).exec()
+        } else {
+            return []
+        }
     },
 }
 
@@ -437,8 +478,6 @@ const moveFile = async function(teamId, dir, fileName, tarDir) {
  */
 const moveFolder = async function(teamId, dir, folderName, tarDir) {
 
-    //TODO: fix bugs here
- 
     const tarDirFileNameExist = await dirFileExist(teamId, tarDir, folderName)
     if(tarDirFileNameExist) {
         throw '目标目录存在同名文件'
@@ -482,7 +521,6 @@ const moveFolder = async function(teamId, dir, folderName, tarDir) {
         }
     })
 
-    console.log(folderName)
     await folderDB.dropFile(teamId, dir, folderName)
     await folderDB.delFolderByDir(teamId, dir, folderName)
 
@@ -528,6 +566,7 @@ const delFolder = async function(teamId, dir, folderName) {
  * @param {any} tarName
  */
 const updateFileName = async function(teamId, dir, fileName, tarName) {
+    if(fileName == tarName) return
     const tarDirFileNameExist = await dirFileExist(teamId, dir, tarName)
     if(tarDirFileNameExist) {
         throw '目标目录存在同名文件'
@@ -538,7 +577,6 @@ const updateFileName = async function(teamId, dir, fileName, tarName) {
         dir: dir,
         fileName: fileName,
     })
-    console.log(fileObj)
     if(!fileObj) {
         throw '文件不存在'
     }
@@ -558,6 +596,25 @@ const updateFileName = async function(teamId, dir, fileName, tarName) {
     await folderDB.appendFile(teamId, dir, fileObj)
 }
 
+const updateFolderPath = async function(id, dir) {
+    var folderObj = await folderDB.findOne({
+        _id: mongoose.Types.ObjectId(id),
+    })
+    if(!folderObj) {
+        throw '文件夹不存在'
+    }
+
+    await folderDB.updateFolderPath(id, dir, folderObj.folderName) 
+    
+    folderObj.fileList.map((item) => {
+        if(item.fileType == 'file') {
+            fileDB.updateFilePath(item._id,folderObj.path)
+        } else {
+            updateFolderPath(item._id, folderObj.path)
+        }
+    })
+}
+
 /**
  * Change folder name to tarName
  * 
@@ -567,6 +624,7 @@ const updateFileName = async function(teamId, dir, fileName, tarName) {
  * @param {any} tarName
  */
 const updateFolderName = async function(teamId, dir, folderName, tarName) {
+    if(folderName == tarName) return
     const tarDirFileNameExist = await dirFileExist(teamId, dir, tarName)
     if(tarDirFileNameExist) {
         throw '目标目录存在同名文件'
@@ -579,6 +637,53 @@ const updateFolderName = async function(teamId, dir, folderName, tarName) {
     })
     if(!folderObj) {
         throw '文件夹不存在'
+    }
+    if(tarName.length == 0) {
+        throw '文件夹名不能为空'
+    }
+
+    if(tarName.length > 255) {
+        throw '文件夹名不能超过255个字符'
+    }
+
+    if(tarName.indexOf('\\') != -1) {
+        throw '文件夹名中不能含有\'\\\''
+    }
+
+    if(tarName.indexOf('?') != -1) {
+        throw '文件夹名中不能含有\'?\''
+    }
+
+    if(tarName.indexOf('/') != -1) {
+        throw '文件夹名中不能含有\'/\''
+    }
+    
+    if(tarName.indexOf('<') != -1) {
+        throw '文件夹名中不能含有\'<\''
+    }
+    
+    if(tarName.indexOf('>') != -1) {
+        throw '文件夹名中不能含有\'>\''
+    }
+    
+    if(tarName.indexOf('|') != -1) {
+        throw '文件夹名中不能含有\'|\''
+    }
+
+    if(tarName.indexOf('*') != -1) {
+        throw '文件夹名中不能含有\'*\''
+    }
+
+    if(tarName.indexOf('、') != -1) {
+        throw '文件夹名中不能含有\'、\''
+    }
+
+    if(tarName.indexOf(' ') != -1) {
+        throw '文件夹名中不能含有空格'
+    }
+
+    if(tarName.indexOf(';') != -1) {
+        throw '文件夹名中不能含有\';\''
     }
 
     await folderDB.dropFile(teamId, dir, folderName)
@@ -593,7 +698,25 @@ const updateFolderName = async function(teamId, dir, folderName, tarName) {
         throw '修改后文件夹不存在'
     }
 
+    folderObj.fileList.map((item) => {
+        if(item.fileType == 'file') {
+            fileDB.updateFilePath(item._id,folderObj.path)
+        } else {
+            updateFolderPath(item._id, folderObj.path)
+        }
+
+    })
+       
     await folderDB.appendFolder(teamId, dir, folderObj)
+}
+
+const findFileByTeamIdList  = async function(teamIdList){
+    const allFile = await fileDB.findByTeamIdList(teamIdList)
+    return allFile
+}
+const findFolderByTeamIdList  = async function(teamIdList){
+    const allFolder = await folderDB.findByTeamIdList(teamIdList)
+    return allFolder
 }
 
 exports.createFile = createFile;
@@ -605,3 +728,5 @@ exports.delFile = delFile;
 exports.delFolder = delFolder;
 exports.updateFileName = updateFileName;
 exports.updateFolderName = updateFolderName;
+exports.findFileByTeamIdList = findFileByTeamIdList;
+exports.findFolderByTeamIdList = findFolderByTeamIdList;

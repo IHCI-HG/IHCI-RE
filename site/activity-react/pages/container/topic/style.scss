@@ -35,6 +35,8 @@
 
         .topic-subject-con {
             transition: all 1.2s;
+            -webkit-transition: all 1.2s;
+            -moz-transition: all 1.2s;
 
             &.discuss-con {
                 padding-right: 100px;
@@ -42,6 +44,8 @@
             }
             &.highlight{
                 transition: all 1.2s;
+                -webkit-transition: all 1.2s;
+                -moz-transition: all 1.2s;
                 padding: 15px;
                 padding-right: 95px;
                 background-color: #FFEECC;
@@ -101,6 +105,8 @@
             padding: 30px;
             margin-bottom: 40px;
             transition: all 1.2s;
+            -webkit-transition: all 1.2s;
+            -moz-transition: all 1.2s;
 
             &.no-pading {
                 padding: 0;
@@ -108,6 +114,8 @@
 
             &.highlight{
                 transition: all 1.2s;
+                -webkit-transition: all 1.2s;
+                -moz-transition: all 1.2s;
                 padding: 15px;
                 background-color: #FFEECC;
                 box-shadow: 5px 5px 5px #888888;
