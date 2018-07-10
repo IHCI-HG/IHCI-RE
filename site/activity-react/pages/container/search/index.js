@@ -54,6 +54,7 @@ class SearchResultItem extends React.PureComponent{
         'COPY_TASK': '复制了任务：',
         'MOVE_TASK': '移动了任务：',
         'FILE': '文件：',
+        'FOLDER': '文件夹：',
     }
 
     toOriginHandle = () => {
@@ -82,6 +83,7 @@ class SearchResultItem extends React.PureComponent{
                 pathname = '/todo/' + this.props.tarId
                 break
             }
+            case 'FOLDER':
             case 'FILE':
             {
                 type = 'FILE'
@@ -99,15 +101,18 @@ class SearchResultItem extends React.PureComponent{
                 type: type,
                 id: this.props.tarId
             },
-            query:this.props.dir ?{
+            query:this.props.folderName? {
+                dir: '/'+this.props.folderName
+            }
+            :this.props.dir ?{
                  dir: this.props.dir,
-            } : {}
+            } :{}
         }
         this.props.router.push(location)
     }
 
     render() {
-        // console.log(this)
+        console.log(this)
         switch (this.props.type) {
             case 'CREATE_TOPIC':
             case 'REPLY_TOPIC':
@@ -167,6 +172,25 @@ class SearchResultItem extends React.PureComponent{
                             <div className="content">
                                 <span className="name">所在目录</span>-
                                 <span className="content" >{this.props.dir}</span>
+                            </div>
+                        </div>
+                    </div>
+                )
+                break;
+            case 'FOLDER':
+                return (
+                    <div className='search-result-item-wrap'>
+                        <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
+                        <div className="icon iconfont icon-tasklist head-img" />
+
+                        <div className="result-con" onClick={this.toOriginHandle}>
+                            <div className="des-line">
+                                <span className="type">{this.typeMap[this.props.type]}</span>
+                                <span className="topic">{this.props.folderName}</span>
+                            </div>
+                            <div className="content">
+                                <span className="name">包含文件</span>-
+                                <span className="content" >{this.props.fileList.length}个</span>
                             </div>
                         </div>
                     </div>
@@ -307,7 +331,8 @@ export default class SearchResult extends React.Component{
         'RELEASE_TASK': '任务',
         'TOPIC': '讨论',
         'REPLY': '回复',
-        'TASK': '任务'
+        'TASK': '任务',
+        'FILE': '文件',
     }
 
     state = {
