@@ -26,7 +26,7 @@ const routerAuthJudge = async (req, res, next) => {
     if(userId) {
         const user = await UserDB.findByUserId(userId)
 
-        if (req.url != '/person' &&  user.personInfo==null)
+        if (!/person/.test(req.url)  &&  user.personInfo==null)
         {
             res.redirect('/person')
             return

@@ -57,9 +57,9 @@ class App extends React.Component{
                 }
             })
         }
-        if (!(/team-join/.test(this.props.location.pathname)) && !this.infoAllFilled()){
-            window.toast("请先完成资料填写")
-        }
+        // if (!(/team-join/.test(this.props.location.pathname)) && !this.infoAllFilled()){
+        //     window.toast("请先完成资料填写")
+        // }
     }
 
     infoAllFilled = () => {
