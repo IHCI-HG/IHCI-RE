@@ -7,8 +7,8 @@ const Schema = mongoose.Schema
     文件对象
 */
 const fileSchema = new Schema({
-    create_time: { type: String, default : Date.now()},
-    last_modify_time: { type: String, default : Date.now()},
+    create_time: { type: String, default : Date.now},
+    last_modify_time: { type: String, default : Date.now},
     ossKey:String,
     fileName: String,
     team: {type: Schema.Types.ObjectId, ref: 'team', index: true},
@@ -25,8 +25,8 @@ const fileSchema = new Schema({
     path为/aaa
 */
 const folderSchema = new Schema({
-    create_time: { type: String, default : Date.now()},
-    last_modify_time: { type: String, default : Date.now()},
+    create_time: { type: String, default : Date.now},
+    last_modify_time: { type: String, default : Date.now},
     fileList: [{
         fileType: {type: String, enum: ['file', 'folder']},
         _id: {type: Schema.Types.ObjectId}, // 根据fileType字段，可能是file对象也可能是folder对象
