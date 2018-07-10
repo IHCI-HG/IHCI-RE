@@ -61,6 +61,12 @@ class TopicItem extends React.Component{
             discussAttachments,
         })
     }
+
+    downloadHandle = (ossKey) => {
+        console.log(ossKey)
+        window.open(window.location.origin + '/static/' + ossKey)
+    }
+
     render() {
         return(
             <div className="topic-item" onMouseOver={() => this.setState({showEdit:true})} onMouseLeave={() => this.setState({showEdit:false})}>
@@ -84,17 +90,20 @@ class TopicItem extends React.Component{
                         }
                     </div>
                     <div className="main">
-                        <div className="topic-title">{this.props.title}</div>
+                        {/* <div className="topic-title">{this.props.title}</div> */}
                         {/* {this.state.showButton&&<div className="topic-content">{this.props.content}</div>} */}
                         {this.state.showButton&&<div>
                             <p dangerouslySetInnerHTML={createMarkup(this.props.content)}></p>
                             <div className="file-list">
-                            {
-                                this.props.fileList && this.props.fileList.map((item) => {
-                                    return ( <div className="file-item" key={Math.random()}>{item.name.split("/")[2]}</div> )
-                                })
-                            }
-                        </div>
+                                {
+                                    this.props.fileList && this.props.fileList.map((item) => {
+                                        return ( 
+                                        <div className="file-item" key={'file-item=' + item.name} onClick={this.downloadHandle.bind(this,item.name)}>
+                                            {item.name.split("/")[2]}
+                                        </div> )
+                                    })
+                                }
+                            </div>
                         </div>}
                         {this.state.showCreateTopic&&<div className="create-area">
                             <Editor handleContentChange={this.props.updateTopicInputHandle.bind(this)}//props.discussContentHandle
@@ -799,7 +808,8 @@ export default class Task extends React.Component{
                          handleDateChange={this.handleDateChange}
                          handleTodoModify={this.handleTodoModify}
                          handleTodoCheck={this.handleTodoCheck}
-                         handleTodoDelete={this.handleTodoDelete}/>
+                         handleTodoDelete={this.handleTodoDelete}
+                         teamId={this.state.todo.teamId}/>
 
                      <div className="checkitem-list">
                          {

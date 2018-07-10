@@ -95,7 +95,7 @@ class TopicDiscussItem extends React.Component {
                         <div className="file-list">
                             {
                                 this.props.fileList && this.props.fileList.map((item) => {
-                                    return ( <div className="file-item" key={Math.random()}>{item.name.split("/")[2]}</div> )
+                                    return ( <div className="file-item" key={Math.random()} onClick={this.props.downloadHandle.bind(this, item.name)}>{item.name.split("/")[2]}</div> )
                                 })
                             }
                         </div>
@@ -344,13 +344,13 @@ export default class Topic extends React.Component{
                 fileList:fileList
             }
         })
-
+        console.log(result)
         if(result && result.state.code == 0) {
             const discussList = this.state.discussList
             discussList.map((item, idx) => {
                 if(item._id == _id) {
                     discussList[idx].content = content
-                    discussList[idx].discussAttachments=this.state.discussAttachments
+                    discussList[idx].fileList=result.data.fileList
                 }
             })
             this.setState({
@@ -452,6 +452,10 @@ export default class Topic extends React.Component{
         })
     }
 
+    downloadHandle = (ossKey) => {
+        window.open(window.location.origin + '/static/' + ossKey)
+    }
+
     render() {
         return (
             <Page className="topic-page">
@@ -507,7 +511,7 @@ export default class Topic extends React.Component{
                         <div className="file-list">
                             {
                                 this.state.topicObj.fileList && this.state.topicObj.fileList.map((item) => {
-                                    return ( <div className="file-item" key={Math.random()}>{item.name.split("/")[2]}</div> )
+                                    return ( <div className="file-item" key={Math.random()} onClick={this.downloadHandle.bind(this, item.name)}>{item.name.split("/")[2]}</div> )
                                 })
                             }
                         </div>
@@ -526,6 +530,7 @@ export default class Topic extends React.Component{
                                     highlight={!!this.props.location.state && this.props.location.state.id == item._id? true : false} 
                                     allowEdit={this.props.personInfo._id == item.creator._id} {...item} 
                                     saveEditHandle = {this.saveDiscussEditHandle}
+                                    downloadHandle = {this.downloadHandle}
                                 />
                             )
                         })

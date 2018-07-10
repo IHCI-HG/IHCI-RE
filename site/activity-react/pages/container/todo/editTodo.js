@@ -33,7 +33,8 @@ class EditTodo extends React.Component {
     }
 
     fileUploadHandle = async (e) => {
-        const resp = await fileUploader('teamId', '', e.target.files[0])
+        var ossKey = this.props.teamId + '/' + Date.now() + '/' + e.target.files[0].name
+        const resp = await fileUploader( e.target.files[0],ossKey)
         let todoAttachments = this.state.todoAttachments
         todoAttachments = [...todoAttachments, resp]
         this.setState({

@@ -87,6 +87,7 @@ class TodoItem extends React.Component {
                         value={_props.name}
                         memberList={_props.memberList}
                         detail={_props.detail}
+                        teamId={_props.teamId}
                         desc={_props.desc}
                         confirmLabel="保存"
                         attachments={_props.fileList}
@@ -166,7 +167,7 @@ class TodoItem extends React.Component {
                             <div className="file-list">
                                 {
                                     _props.fileList && _props.fileList.map((item) => {
-                                        return( <div className="file-item" key={Math.random()}>{item.name}</div> )
+                                        return( <div className="file-item" key={Math.random()} onClick={()=>{window.open(window.location.origin + '/static/' + item.name)}}>{item.name.split("/")[2]}</div> )
                                     })
                                 }
                             </div>
