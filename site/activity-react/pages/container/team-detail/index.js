@@ -194,7 +194,7 @@ export default class Team extends React.Component {
             method: 'POST',
             body: { userList: memberIDList }
         })
-        console.log('result.data.topicList', result.data.topicList)
+        // console.log('result.data.topicList', result.data.topicList)
         memberResult.data.map((item, idx) => {
             memberList.push({
                 ...item,
