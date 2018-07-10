@@ -198,7 +198,7 @@ const editDiscuss = async (req, res, next) => {
         discussObj.fileList = fileList || discussObj.fileList;
 
         const result = await discussDB.updateDiscuss(discussId, discussObj)
-        await topicDB.updateDiscuss(topicId, discussId, content)
+        await topicDB.updateDiscuss(topicId, discussId, content,discussObj.fileList)
 
         const userObj = await userDB.baseInfoById(userId)
         const topicObj = await topicDB.findByTopicId(topicId)
