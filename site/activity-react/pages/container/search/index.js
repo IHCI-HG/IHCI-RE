@@ -107,7 +107,7 @@ class SearchResultItem extends React.PureComponent{
     }
 
     render() {
-        console.log(this)
+        // console.log(this)
         switch (this.props.type) {
             case 'CREATE_TOPIC':
             case 'REPLY_TOPIC':
@@ -183,8 +183,8 @@ export default class SearchResult extends React.Component{
         var queryText = this.props.location.query.text
 
         if (queryText){
-            console.log(queryText.length)
-            console.log(queryText.length >42)
+            // console.log(queryText.length)
+            // console.log(queryText.length >42)
             
             if (queryText.length > 42)
                 this.props.location.query.text = queryText.substring(0,42)

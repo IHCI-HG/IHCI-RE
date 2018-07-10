@@ -24,7 +24,7 @@ class TeamChoseItem extends React.PureComponent{
 class TimelineItem extends React.PureComponent{
 
     toOriginHandle = () => {
-        console.log(this)
+        // console.log(this)
         const pathname = ''
         const type = 'TOPIC'
         switch(this.props.type){
@@ -157,7 +157,7 @@ export default class News extends React.Component{
             newsList: result.data,
             memberJumped: !!queryPerson ? !!queryPerson : false,
         }, () => {
-            console.log(this.state.newsList)
+            // console.log(this.state.newsList)
              this.appendToShowList(this.state.newsList)
         })
         // if(result.data.length == 0){
@@ -192,13 +192,13 @@ export default class News extends React.Component{
             }
         })
 
-        console.log(result)
+        // console.log(result)
         this.setState({
             newsList: result.data
         }, () => {
             this.appendToShowList(this.state.newsList)
         })
-        console.log(result)
+        // console.log(result)
         if(result.data.length<moreTimeLineItemNum){
             this.setState({
                 noMoreResult: true,
@@ -240,7 +240,7 @@ export default class News extends React.Component{
                 noMoreResult: true,
             })
         }
-        console.log(showList)
+        // console.log(showList)
     }
 
     typeMap = {
