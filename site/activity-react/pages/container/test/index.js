@@ -118,7 +118,7 @@ class Window extends React.Component {
                 <div className="outerBox">
                     <Page className="move-File">
                         <div className="file-con">
-                        <div> 当前路径： </div>
+                        <div> 移动到： </div>
                             <div className="file-dir">
                                 {
                                     this.state.dirList.length ?
