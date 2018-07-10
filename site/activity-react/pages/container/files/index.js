@@ -128,11 +128,11 @@ class Modal extends React.Component {
                                         <div>
                                             {
                                                 this.state.dirList.map((item, idx) => (
-                                                    <span key={"dir-list-" + idx} onClick={() => { this.headDirClickHandle(item.dir) }}>{item.name} {idx == this.state.dirList.length - 1 ? '' : '>'} </span>
+                                                    <span key={"dir-list-" + idx} onClick={() => { this.headDirClickHandle(item.dir) }}> <span className="blue"> {item.name} </span> {idx == this.state.dirList.length - 1 ? '' : '>'} </span>
                                                 ))
                                             }
                                         </div>
-                                        : '根目录'
+                                        : <span className="blue"> 根目录 </span>
                                 }
                             </div>
                             <div className="file-list">
@@ -529,17 +529,18 @@ export default class Files extends React.Component {
                         {this.state.teamInfo.name}的文件
                     </div>
 
+                    <div className="file-dir"> 当前位置：</div>
                     <div className="file-dir">
                         {
                             this.state.dirList.length ?
                                 <div>
                                     {
                                         this.state.dirList.map((item, idx) => (
-                                            <span key={"dir-list-" + idx} onClick={() => { this.headDirClickHandle(item.dir) }}>{item.name} {idx == this.state.dirList.length - 1 ? '' : '>'} </span>
+                                            <span key={"dir-list-" + idx} onClick={() => { this.headDirClickHandle(item.dir) }}> <span className="blue">{item.name}</span> {idx == this.state.dirList.length - 1 ? '' : '>'} </span>
                                         ))
                                     }
                                 </div>
-                                : ''
+                                : <span className="blue"> 根目录 </span>
                         }
                     </div>
 

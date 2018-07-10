@@ -616,6 +616,53 @@ const updateFolderName = async function(teamId, dir, folderName, tarName) {
     if(!folderObj) {
         throw '文件夹不存在'
     }
+    if(tarName.length == 0) {
+        throw '文件夹名不能为空'
+    }
+
+    if(tarName.length > 255) {
+        throw '文件夹名不能超过255个字符'
+    }
+
+    if(tarName.indexOf('\\') != -1) {
+        throw '文件夹名中不能含有\'\\\''
+    }
+
+    if(tarName.indexOf('?') != -1) {
+        throw '文件夹名中不能含有\'?\''
+    }
+
+    if(tarName.indexOf('/') != -1) {
+        throw '文件夹名中不能含有\'/\''
+    }
+    
+    if(tarName.indexOf('<') != -1) {
+        throw '文件夹名中不能含有\'<\''
+    }
+    
+    if(tarName.indexOf('>') != -1) {
+        throw '文件夹名中不能含有\'>\''
+    }
+    
+    if(tarName.indexOf('|') != -1) {
+        throw '文件夹名中不能含有\'|\''
+    }
+
+    if(tarName.indexOf('*') != -1) {
+        throw '文件夹名中不能含有\'*\''
+    }
+
+    if(tarName.indexOf('、') != -1) {
+        throw '文件夹名中不能含有\'、\''
+    }
+
+    if(tarName.indexOf(' ') != -1) {
+        throw '文件夹名中不能含有空格'
+    }
+
+    if(tarName.indexOf(';') != -1) {
+        throw '文件夹名中不能含有\';\''
+    }
 
     await folderDB.dropFile(teamId, dir, folderName)
     await folderDB.updateName(teamId, dir, folderName, tarName)
