@@ -94,8 +94,20 @@ class TopicDiscussItem extends React.Component {
                         </div>
                         <div className="file-list">
                             {
-                                this.props.fileList && this.props.fileList.map((item) => {
+                                this.props.imgList.map((item) => {
+                                    return (
+                                        <div className="file-pic-item" key={Math.random()} onClick={this.props.downloadHandle.bind(this, item.name)}>
+                                            <img className="file-pic" src={window.location.origin + '/static/' + item.name}></img>
+                                            <div className="file-name">{item.name.split("/")[2]}</div>
+                                        </div>
+                                    )
+                                })
+                            }
+                            {
+                            this.props.fileList.map((item) => {
+                                if(!(item.name.endsWith(".jpg")||item.name.endsWith(".jpeg")||item.name.endsWith(".png")||item.name.endsWith(".bmp")||item.name.endsWith(".gif"))){
                                     return ( <div className="file-item" key={Math.random()} onClick={this.props.downloadHandle.bind(this, item.name)}>{item.name.split("/")[2]}</div> )
+                                }
                                 })
                             }
                         </div>
@@ -192,8 +204,15 @@ export default class Topic extends React.Component{
                 chosen: false,
             })
         ])
-
-        this.state.topicAttachments = topicObj.fileList;
+        const discussList = result.data.discussList
+        discussList.map((item)=>{
+            item.imgList = []
+            item.fileList.map((fileItem,index)=>{
+                if(fileItem.name.endsWith(".jpg")||fileItem.name.endsWith(".jpeg")||fileItem.name.endsWith(".png")||fileItem.name.endsWith(".bmp")||fileItem.name.endsWith(".gif")){
+                    item.imgList.push(fileItem)
+                }
+            })
+        })
         this.setState({
             topicObj: {
                 ...topicObj,
@@ -201,7 +220,8 @@ export default class Topic extends React.Component{
             },
             topicNameInput: topicObj.title,
             topicContentInput: topicObj.content,
-            discussList: result.data.discussList,
+            topicAttachments: topicObj.fileList,
+            discussList: discussList,
             memberList: memberList
         })
     }
@@ -348,12 +368,19 @@ export default class Topic extends React.Component{
             }
         })
         console.log(result)
-        if(result && result.state.code == 0) {
+        if(result.state.code == 0) {
+            const imgList=[]
+            fileList.map((fileItem,index)=>{
+                if(fileItem.name.endsWith(".jpg")||fileItem.name.endsWith(".jpeg")||fileItem.name.endsWith(".png")||fileItem.name.endsWith(".bmp")||fileItem.name.endsWith(".gif")){
+                    imgList.push(fileItem)
+                }
+            })
             const discussList = this.state.discussList
             discussList.map((item, idx) => {
                 if(item._id == _id) {
                     discussList[idx].content = content
-                    discussList[idx].fileList=result.data.fileList
+                    discussList[idx].fileList = fileList
+                    discussList[idx].imgList = imgList
                 }
             })
             this.setState({
