@@ -111,7 +111,7 @@ export default class Team extends React.Component {
                 teamId: this.teamId
             }
         })
-        console.log('resp', resp)
+        // console.log('resp', resp)
         let todoListArr = this.state.todoListArr
         let unclassifiedList = []
         let unclassified = {}

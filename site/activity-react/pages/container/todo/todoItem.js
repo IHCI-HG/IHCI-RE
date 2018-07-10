@@ -74,8 +74,8 @@ class TodoItem extends React.Component {
 
     render() {
         const _props = this.props
-        console.log('todoitem渲染', _props.id)
-        console.log('_props', _props)
+        // console.log('todoitem渲染', _props.id)
+        // console.log('_props', _props)
 
         if (this.state.mode === 'edit') {
             return (

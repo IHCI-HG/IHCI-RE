@@ -1,5 +1,11 @@
-var OSSW = require('ali-oss').Wrapper;
+
+// var OSSW = require('ali-oss').Wrapper;
+// 阿里云sdk太大了，700多k严重影响云上网页的访问速度，所以改成从cdn直接加载这个sdk
+
 import api from './api'
+if(window.OSS) {
+    var OSSW = OSS.Wrapper;
+}
 
 // 上传
 // try {
@@ -60,6 +66,13 @@ const getOssClient = async () => {
     const token = result.data
     console.log('token', token);
 
+    if(!OSSW) {
+        if(window.toast) {
+            window.toast("网络错误")
+        }
+        return
+    }
+
     const client = new OSSW({
         region: token.region,
         accessKeyId: token.AccessKeyId,
@@ -68,16 +81,16 @@ const getOssClient = async () => {
         stsToken: token.SecurityToken,
         bucket: token.bucket,
     });
+
+    console.log(client);
+    
     return client
 }
 
 // dir 必须以 '/' 开头 或者为 ''（空字符串,表示根目录）
 const fileUploader = async (file, ossKey) => {
-
     const client = await getOssClient()
-
     var result = await client.put(ossKey, file);
-
     return result
 }   
 

@@ -69,6 +69,7 @@ private/logs/
 
 # Server files #
 ################
+analyse.json
 
 # lint files #
 ################

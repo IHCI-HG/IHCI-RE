@@ -32,16 +32,16 @@ const config = {
         jsName: '[name].[chunkhash].js',
         publicPath: '/activity-react/',
         devtool: false,
-        assetsReceiver: 'http://receiver.dev1.qlchat.com/receiver',
-        assetsToDir: '/data/nodeapp/resources/rs'
+        // assetsReceiver: 'http://receiver.dev1.qlchat.com/receiver',
+        // assetsToDir: '/data/nodeapp/resources/rs'
     },
     prod: {
         cssName: '[name].[contenthash].css',
         jsName: '[name].[chunkhash].js',
         publicPath: '/activity-react/',
         devtool: false,
-        assetsReceiver: 'http://127.0.0.1:5001/receiver',
-        assetsToDir: '/data/res/activity/rs'
+        // assetsReceiver: 'http://127.0.0.1:5001/receiver',
+        // assetsToDir: '/data/res/activity/rs'
     }
 }
 
