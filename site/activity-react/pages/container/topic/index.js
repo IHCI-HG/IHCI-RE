@@ -95,7 +95,7 @@ class TopicDiscussItem extends React.Component {
                         <div className="file-list">
                             {
                                 this.props.fileList && this.props.fileList.map((item) => {
-                                    return ( <div className="file-item" key={Math.random()}>{item.name}</div> )
+                                    return ( <div className="file-item" key={Math.random()}>{item.name.split("/")[2]}</div> )
                                 })
                             }
                         </div>
@@ -504,7 +504,7 @@ export default class Topic extends React.Component{
                         <div className="file-list">
                             {
                                 this.state.topicObj.fileList && this.state.topicObj.fileList.map((item) => {
-                                    return ( <div className="file-item" key={Math.random()}>{item.name}</div> )
+                                    return ( <div className="file-item" key={Math.random()}>{item.name.split("/")[2]}</div> )
                                 })
                             }
                         </div>

@@ -313,6 +313,7 @@ export default class Task extends React.Component{
             topic.creator = resp.data.creator
             topic.time = resp.data.create_time
             topic.content = resp.data.content
+            topic.fileList = resp.data.fileList
             topicList.unshift(topic)
             this.setState({
                 topicListArr:topicList,
@@ -320,7 +321,6 @@ export default class Task extends React.Component{
                 createTopicContent:"",
              })
         }
-        console.log(this.state.replyCount)
         return resp
     }
 
@@ -766,7 +766,7 @@ export default class Task extends React.Component{
         let actionList = this.state.actionList || []
         let moveExpanded = this.state.moveExpanded
         let copyExpanded = this.state.copyExpanded
-
+        console.log(this.state.topicListArr)
         return (
             <Page title={"任务详情"} className="discuss-page">
                  <div className="return" onClick={()=>{this.locationTo('/team/'+this.state.todo.teamId)}}>
