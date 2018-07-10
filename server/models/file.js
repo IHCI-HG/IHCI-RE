@@ -7,8 +7,8 @@ const Schema = mongoose.Schema
     文件对象
 */
 const fileSchema = new Schema({
-    create_time: { type: String, default : Date.now()},
-    last_modify_time: { type: String, default : Date.now()},
+    create_time: { type: String, default : Date.now},
+    last_modify_time: { type: String, default : Date.now},
     ossKey:String,
     fileName: String,
     team: {type: Schema.Types.ObjectId, ref: 'team', index: true},
@@ -25,8 +25,8 @@ const fileSchema = new Schema({
     path为/aaa
 */
 const folderSchema = new Schema({
-    create_time: { type: String, default : Date.now()},
-    last_modify_time: { type: String, default : Date.now()},
+    create_time: { type: String, default : Date.now},
+    last_modify_time: { type: String, default : Date.now},
     fileList: [{
         fileType: {type: String, enum: ['file', 'folder']},
         _id: {type: Schema.Types.ObjectId}, // 根据fileType字段，可能是file对象也可能是folder对象
@@ -93,7 +93,19 @@ fileSchema.statics = {
             fileName: tarFileName,
             last_modify_time: Date.now(),
         }).exec()
+    },   
+    findByTeamIdList: function(teamIdList) {
+        const queryList = []
+        teamIdList.map((item) => {
+            queryList.push({team: item})
+        })
+        if(queryList && queryList.length) {
+            return this.find({$or: queryList}).sort({create_time: -1}).exec()
+        } else {
+            return []
+        }
     },
+    
 }
 folderSchema.statics = {
     modifyDir: function(teamId, dir, folderName, tarDir) {
@@ -200,6 +212,17 @@ folderSchema.statics = {
             folderName: tarName,
             last_modify_time: Date.now(),
         }).exec()
+    },
+    findByTeamIdList: function(teamIdList) {
+        const queryList = []
+        teamIdList.map((item) => {
+            queryList.push({team: item})
+        })
+        if(queryList && queryList.length) {
+            return this.find({$or: queryList}).sort({create_time: -1}).exec()
+        } else {
+            return []
+        }
     },
 }
 
@@ -596,6 +619,15 @@ const updateFolderName = async function(teamId, dir, folderName, tarName) {
     await folderDB.appendFolder(teamId, dir, folderObj)
 }
 
+const findFileByTeamIdList  = async function(teamIdList){
+    const allFile = await fileDB.findByTeamIdList(teamIdList)
+    return allFile
+}
+const findFolderByTeamIdList  = async function(teamIdList){
+    const allFolder = await folderDB.findByTeamIdList(teamIdList)
+    return allFolder
+}
+
 exports.createFile = createFile;
 exports.createFolder = createFolder;
 exports.getDirFileList = getDirFileList;
@@ -605,3 +637,5 @@ exports.delFile = delFile;
 exports.delFolder = delFolder;
 exports.updateFileName = updateFileName;
 exports.updateFolderName = updateFolderName;
+exports.findFileByTeamIdList = findFileByTeamIdList;
+exports.findFolderByTeamIdList = findFolderByTeamIdList;

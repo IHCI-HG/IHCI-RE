@@ -84,7 +84,7 @@ class TopicDiscussItem extends React.Component {
                                     </div>
                                     {
                                         allowEdit && <div className="right">
-                                            <span className="edit" onClick={() => { this.setState({ editState: true }) }}>编辑</span>
+                                            <span className="edit" onClick={() => { this.props.onBlur(), this.setState({ editState: true }) }}>编辑</span>
                                         </div>
                                     }
                                 </div>
@@ -169,6 +169,9 @@ export default class Topic extends React.Component{
         })
 
         const topicObj = result.data
+
+        console.log(result)
+
         this.teamId = result.data.team
 
         const memberResult = await api('/api/team/memberList', {

@@ -1,9 +1,106 @@
 .join-team {
-    padding: 30px 0;
-
-    .btn {
+    .max-w-con {
+        max-width: 960px;
         margin: auto;
-        height: 40px;
-        width: 200px;
+    }
+
+
+    .nav {
+        height: 80px;
+        background-color: #fff;
+        .nav-con {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 80px;
+        }
+    }
+
+    .banner {
+        padding: 80px 0;
+        min-height: 600px;
+        align-items: center;
+
+        .h1 {
+            color: #204056;
+            font-size: 40px;
+            margin: auto;
+            text-align: center; 
+            font-weight: 100;
+        }
+            
+        .reg-box{
+            align-items: center;
+            margin: auto;
+            margin-top: 100px;
+        }
+
+        .join-box{
+            align-items: center;
+            margin: auto;
+            margin-top: 160px;
+
+            .team-img{
+                display: block;
+                align-items: center;
+                text-align: center;
+                margin: auto;
+                margin-bottom: 42px;
+                height: 90px;
+                width: 160px;
+                background-color: #888;
+            }
+
+            .team-name{
+                display: block;
+                margin: auto;
+                align-items: center;
+                text-align: center;
+                font-size: 28px;
+
+            }
+
+            .join-btn {
+                cursor: pointer;
+                display: flex;
+                margin: auto;
+                text-align: center;
+                align-items: center;
+                justify-content: center;
+                height: 50px;
+                width: 290px;
+                background-color: #ff9900d4;
+
+                font-size: 16px;
+                font-weight: bold;
+                color: #fff;
+                border-radius: 2px;
+
+                &:hover {
+                    box-shadow: 1px 2px 6px #a2a2a2;
+                }
+            }
+        }
+    }
+
+    .footer {
+        background-color: #fff;
+        padding: 60px 0 ;
+        .footer-list {
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-start;
+        }
+        line-height: 1.6;
+        .foot-item {
+            margin-right: 100px;
+            font-size: 20px;
+        }
+        .foot-item-title {
+            font-size: 26px;
+            font-weight: bold;
+        }
     }
 }
+
+

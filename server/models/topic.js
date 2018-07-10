@@ -34,7 +34,6 @@ topicSchema.statics = {
     findByTopicId: function(topicId) {
         return this.findById(topicId)
     },
-    
 
     addDiscuss: async function(topicId, discussObj) {
         return this.update(

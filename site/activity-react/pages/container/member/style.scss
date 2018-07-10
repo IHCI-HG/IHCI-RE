@@ -20,10 +20,17 @@
             margin-right: 40px;
             margin-bottom: 30px;
             font-size: 20px; 
+            transition: background-color 0.5s;
+            -webkit-transition: background-color 0.5s;
+            -moz-transition: background-color 0.5s;
+
             &.act {
                 background-color: rgb(255, 170, 43);
                 color: #fff;
                 font-weight: bold;
+                transition: background-color 0.3s;
+                -webkit-transition: background-color 0.3s;
+                -moz-transition: background-color 0.3s;
             }
         }
 

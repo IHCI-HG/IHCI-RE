@@ -1,5 +1,10 @@
 import * as React from 'react';
+
+import api, { authApi } from '../../utils/api';
+
 import './style.scss'
+
+import WxLoginDialog from '../../components/wx-login-dialog'
 
 export class LoginView extends React.Component {
     state = {
@@ -61,7 +66,10 @@ export class LoginView extends React.Component {
         const result = await authApi(this.state.username, this.state.password)
         if(result.state.code === 0) {
             window.toast("登录成功")
-            window.location.href = '/team'
+            if (this.props.join)
+                window.location.href = window.location.href
+            else
+                window.location.href = '/team'
         } else {
             window.toast(result.state.msg || "登录失败")
         }

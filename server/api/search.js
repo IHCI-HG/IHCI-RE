@@ -2,7 +2,8 @@ var _ = require('underscore'),
     resProcessor = require('../components/res-processor/res-processor'),
     proxy = require('../components/proxy/proxy'),
     conf = require('../conf');
-   
+
+var file = require('../models/file');  
 import fetch from 'isomorphic-fetch';
 import lo from 'lodash';
 import apiAuth from '../components/auth/api-auth'
@@ -19,6 +20,10 @@ var userDB = mongoose.model('user')
 var topicDB = mongoose.model('topic')
 var discussDB = mongoose.model('discuss')
 var timelineDB = mongoose.model('timeline')
+
+const sortByCreateTime = function(a,b){  
+    return b.create_time-a.create_time  
+ }
 const search = async (req, res, next) => {
     const keyWord = req.body.keyWord
     const teamId = req.body.teamId
@@ -36,30 +41,60 @@ const search = async (req, res, next) => {
             })
         }
         const allTimeline = await timelineDB.findByTeamIdList(teamIdList)
+        const allFolder = await file.findFolderByTeamIdList(teamIdList)
+        const allFile = await file.findFileByTeamIdList(teamIdList)
         const key = keyWord.replace(/([\^\$\(\)\*\+\?\.\\\|\[\]\{\}])/g, "\\$1");
-        const  str = new RegExp(key)
+        const str = new RegExp(key)
         const searchResult =[]
         allTimeline.map((item)=> {
              if(str.test(item.title)||str.test(item.content.content)){
                 searchResult.push(item)
              }
          })
+         allFolder.map((item)=> {
+            if(str.test(item.folderName)){
+               item = {...item._doc,type: 'FOLDER'}
+               searchResult.push(item)
+            }
+        })
+        allFile.map((item)=> {
+            if(str.test(item.fileName)){
+               item = {...item._doc,type: 'FILE'}
+               searchResult.push(item)
+            }
+        })
+        searchResult.sort(sortByCreateTime)
         const result = []
         if(type){
-            const flag = (type=="TOPIC")
-            searchResult.map((item) => {    
-                if(flag){
+            if(type=="TOPIC"){
+                searchResult.map((item) => {    
                     if((item.type=="CREATE_TOPIC")||(item.type=="EDIT_TOPIC")){
                         if(str.test(item.title)||str.test(item.content.content)){                    
                         result.push(item)
                         }
-                     }  
-                     
-                 }
-                else if((item.type=="REPLY_TOPIC")||(item.type=="EDIT_REPLY")&&str.test(item.content.content)){
-                       result.push(item)
-                     }                 
-            })
+                     }                              
+                })
+            }else if(type=="REPLY"){
+                searchResult.map((item) => {
+                    if((item.type=="REPLY_TOPIC")||(item.type=="EDIT_REPLY")&&str.test(item.content.content)){
+                        result.push(item)
+                      } 
+                 })               
+            }else if(type=="TASK"){
+                searchResult.map((item) => {
+                    if((item.type=="CREATE_TASK")||(item.type=="CREATE_CHECK_ITEM")||(item.type=="COPY_TASK")||(item.type=="MOVE_TASK")){
+                        result.push(item)
+                      } 
+                 })  
+            }else if(type=="FILE"){
+                searchResult.map((item) => {
+                    if((item.type=="FILE")||(item.type=="FOLDER")){
+                        result.push(item)
+                      } 
+                 })  
+
+            }
+            
         }else{
             searchResult.map((item) => {
                 result.push(item)           
