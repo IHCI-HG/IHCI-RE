@@ -177,7 +177,6 @@ const routeConfig = [
             { path: 'team', component: Team },
             { path: 'team/:id', component: TeamDetail },
             { path: 'team-admin/:id', component: TeamAdmin },
-            { path: 'team-join/:id', component: TeamJoin },
             { path: 'team-create', component: TeamCreate },
 
             { path: 'files/:id', component: Files },
@@ -195,7 +194,11 @@ const routeConfig = [
     {
         path: '/activate',
         component: ActivateMail,
-    }
+    },
+    {
+        path: 'team-join/:id',
+        component: TeamJoin 
+    },
 ]
 
 
