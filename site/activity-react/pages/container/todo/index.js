@@ -29,7 +29,7 @@ class TopicItem extends React.Component{
         showEdit: false,
         showCreateTopic: false,
         showButton: true,
-        discussAttachments:this.props.discussAttachments,
+        discussAttachments:this.props.fileList,
     }
     
     deleteTopicHandle = () => {
@@ -37,19 +37,29 @@ class TopicItem extends React.Component{
     }
 
     updateTopicHandle = () => {
-        this.props.updateTopicHandle(this.props.id)
+        this.props.updateTopicHandle(this.props.id,this.state.discussAttachments)
     }
     sendContent = () => {
         this.props.sendContent(this.props.content)
     }
 
+    discussFileUploadHandle = async (e) => {
+        var ossKey = this.props.teamId + '/' + Date.now() + '/' + e.target.files[0].name
+        const resp = await fileUploader(e.target.files[0], ossKey)
+        let discussAttachments = this.state.discussAttachments;
+        discussAttachments = [...discussAttachments, resp]
+        this.setState({
+            discussAttachments,
+        })
+    }
+
     deleteDiscussFile = async (e, index) => {
-        let discussAttachments = this.props.discussAttachments
+        console.log("del")
+        let discussAttachments = this.state.discussAttachments
         discussAttachments.splice(index,1);
         this.setState({
             discussAttachments,
         })
-        console.log(this.props.discussAttachments)
     }
     render() {
         return(
@@ -68,7 +78,7 @@ class TopicItem extends React.Component{
                             this.state.showEdit&&<div className="topic-actions-wrap">
                                 <div className="topic-actions">
                                     <i className="icon iconfont" onClick={this.deleteTopicHandle}>&#xe70b;</i>
-                                    <i className="icon iconfont" onClick={() => {this.sendContent();this.setState({showCreateTopic: true,showButton:false})}}> &#xe6ec;</i>
+                                    <i className="icon iconfont" onClick={() => {this.props.updateTopicInputHandle(this.props.content);this.setState({showCreateTopic: true,showButton:false})}}> &#xe6ec;</i>
                                 </div>
                             </div>
                         }
@@ -76,30 +86,31 @@ class TopicItem extends React.Component{
                     <div className="main">
                         <div className="topic-title">{this.props.title}</div>
                         {/* {this.state.showButton&&<div className="topic-content">{this.props.content}</div>} */}
-                        {this.state.showButton&&<p dangerouslySetInnerHTML={createMarkup(this.props.content)}></p>}
+                        {this.state.showButton&&<div>
+                            <p dangerouslySetInnerHTML={createMarkup(this.props.content)}></p>
+                            <div className="file-list">
+                            {
+                    
+                                this.props.fileList && this.props.fileList.map((item) => {
+                                    return ( <div className="file-item" key={Math.random()}>{item.name.split("/")[2]}</div> )
+                                })
+                            }
+                        </div>
+                        </div>}
                         {this.state.showCreateTopic&&<div className="create-area">
-                            {/* <textarea className="topic-content" onChange={this.props.updateTopicInputHandle} value={this.props.updateTopicContent} placeholder="说点什么" autoFocus></textarea> */}
                             <Editor handleContentChange={this.props.updateTopicInputHandle.bind(this)}//props.discussContentHandle
-                                handleFileUpload={this.discussFileUploadHandle}
+                                handleFileUpload={this.discussFileUploadHandle.bind(this)}
                                 content={this.props.updateTopicContent}
-                                deleteFile={this.deleteDiscussFile}
+                                deleteFile={this.deleteDiscussFile.bind(this)}
                                 attachments={this.state.discussAttachments}>
                             </Editor>
-                            <div className="infrom">请选择要通知的人：</div>
-                            <MemberChosenList choseHandle={this.props.memberChoseHandle} memberList={this.props.memberList}/>
+                            {/* <div className="infrom">请选择要通知的人：</div>
+                            <MemberChosenList choseHandle={this.props.memberChoseHandle} memberList={this.props.memberList}/> */}
                             <div className="btn-con">
                                 <div className="create-btn" onClick={()=>{this.updateTopicHandle();this.setState({showCreateTopic: false,showButton:true})}}>发起讨论</div>
                                 <div className="cancle" onClick={() => {this.setState({showCreateTopic: false,showButton:true})}}>取消</div>
                             </div>
                         </div>}
-                        <div className="file-list">
-                            {
-                    
-                                this.props.discussAttachments && this.props.discussAttachments.map((item) => {
-                                    return ( <div className="file-item" key={Math.random()}>{item.name}</div> )
-                                })
-                            }
-                        </div>
                     </div>
                 </div>
             </div>
@@ -280,6 +291,7 @@ export default class Task extends React.Component{
                 topic.time = item.create_time
                 topic.content = item.content
                 topic.fileList = item.fileList
+                topic.teamId = item.teamId
                 topicListArr.push(topic)
             })
             this.setState({ topicListArr })
@@ -314,6 +326,7 @@ export default class Task extends React.Component{
             topic.time = resp.data.create_time
             topic.content = resp.data.content
             topic.fileList = resp.data.fileList
+            topic.teamId = resp.data.teamId
             topicList.unshift(topic)
             this.setState({
                 topicListArr:topicList,
@@ -324,7 +337,8 @@ export default class Task extends React.Component{
         return resp
     }
 
-    updateTopicHandle= async (id) =>{
+    updateTopicHandle= async (id,fileList) =>{
+        console.log(this.state.updateTopicContent)
         const informList = []
         this.state.memberList.map((item) => {
             if(item.chosen) {
@@ -340,6 +354,7 @@ export default class Task extends React.Component{
                 content: this.state.updateTopicContent,
                 informList: informList,
                 discussId:id,
+                fileList: fileList,
             }
         })
         console.log(id)
@@ -350,6 +365,7 @@ export default class Task extends React.Component{
                 if(item.id===id){
                     item.content = resp.data.content
                     item.time = resp.data.create_time
+                    item.fileList = resp.data.fileList
                 }
             })
             this.setState({ topicListArr })
@@ -766,7 +782,6 @@ export default class Task extends React.Component{
         let actionList = this.state.actionList || []
         let moveExpanded = this.state.moveExpanded
         let copyExpanded = this.state.copyExpanded
-        console.log(this.state.topicListArr)
         return (
             <Page title={"任务详情"} className="discuss-page">
                  <div className="return" onClick={()=>{this.locationTo('/team/'+this.state.todo.teamId)}}>

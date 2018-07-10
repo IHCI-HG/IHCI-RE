@@ -267,23 +267,26 @@ export default class Topic extends React.Component{
                 content: this.state.topicContentInput,
                 fileList: this.state.topicAttachments,
         }
-        const result1 = await api('/api/file/createFile', {
-            method: 'POST',
-            body: {
-                fileInfo: {
-                    teamId: this.teamId,
-                    size: this.state.topicAttachmentsArg.size,
-                    dir: '/',
-                    fileName: this.state.topicAttachmentsArg.name,
-                    ossKey: this.state.topicOssKeyArg,
+        if(this.state.topicOssKeyArg!=="")
+        {
+            const result1 = await api('/api/file/createFile', {
+                method: 'POST',
+                body: {
+                    fileInfo: {
+                        teamId: this.teamId,
+                        size: this.state.topicAttachmentsArg.size,
+                        dir: '/',
+                        fileName: this.state.topicAttachmentsArg.name,
+                        ossKey: this.state.topicOssKeyArg,
+                    }
                 }
+            })
+            console.log(result1);
+            if (result1.state.code === 0) {
+                window.toast("上传文件成功")
+            } else {
+                window.toast(result1.state.msg)
             }
-        })
-        console.log(result1);
-        if (result1.state.code === 0) {
-            window.toast("上传文件成功")
-        } else {
-            window.toast(result1.state.msg)
         }
         const result = await api('/api/topic/editTopic', {
             method: 'POST',
@@ -295,8 +298,6 @@ export default class Topic extends React.Component{
                 fileList:this.state.topicAttachments
             }
         })
-        console.log(editTopic)
-        console.log('result', result);
 
         if (result) {
             this.setState({
@@ -312,23 +313,25 @@ export default class Topic extends React.Component{
     }
 
     saveDiscussEditHandle = async (_id, content,fileList) => {
-        const result1 = await api('/api/file/createFile', {
-            method: 'POST',
-            body: {
-                fileInfo: {
-                    teamId: this.teamId,
-                    size: this.state.discussAttachmentsArg.size,
-                    dir: '/',
-                    fileName: this.state.discussAttachmentsArg.name,
-                    ossKey: this.state.discussOssKeyArg,
+        if(fileList!==[]){
+            const result1 = await api('/api/file/createFile', {
+                method: 'POST',
+                body: {
+                    fileInfo: {
+                        teamId: this.teamId,
+                        size: this.state.discussAttachmentsArg.size,
+                        dir: '/',
+                        fileName: this.state.discussAttachmentsArg.name,
+                        ossKey: this.state.discussOssKeyArg,
+                    }
                 }
+            })
+            console.log(result1);
+            if (result1.state.code === 0) {
+                window.toast("上传文件成功")
+            } else {
+                window.toast(result1.state.msg)
             }
-        })
-        console.log(result1);
-        if (result1.state.code === 0) {
-            window.toast("上传文件成功")
-        } else {
-            window.toast(result1.state.msg)
         }
         const result = await api('/api/topic/editDiscuss', {
             method: 'POST',
@@ -382,24 +385,26 @@ export default class Topic extends React.Component{
         //         informList.push(item._id)
         //     }
         // })
-        const result1 = await api('/api/file/createFile', {
-            method: 'POST',
-            body: {
-                fileInfo: {
-                    teamId: this.teamId,
-                    size: this.state.discussAttachmentsArg.size,
-                    dir: '/',
-                    fileName: this.state.discussAttachmentsArg.name,
-                    ossKey: this.state.discussOssKeyArg,
+        if(this.state.discussOssKeyArg!==""){
+            const result1 = await api('/api/file/createFile', {
+                method: 'POST',
+                body: {
+                    fileInfo: {
+                        teamId: this.teamId,
+                        size: this.state.discussAttachmentsArg.size,
+                        dir: '/',
+                        fileName: this.state.discussAttachmentsArg.name,
+                        ossKey: this.state.discussOssKeyArg,
+                    }
                 }
+            })
+            if (result1.state.code === 0) {
+                window.toast("上传文件成功")
+            } else {
+                window.toast(result1.state.msg)
             }
-        })
-        console.log(result1);
-        if (result1.state.code === 0) {
-            window.toast("上传文件成功")
-        } else {
-            window.toast(result1.state.msg)
         }
+        
         const result = await api('/api/topic/createDiscuss', {
             method: 'POST',
             body: {
@@ -420,8 +425,6 @@ export default class Topic extends React.Component{
                 createDiscussChosen: false,
                 discussAttachments:[],
             })
-                        // this.deleteDiscussFile()
-            console.log(this.state.discussAttachments)
             
         } else {
             window.toast(result.state.msg)
