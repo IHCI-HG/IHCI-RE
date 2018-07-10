@@ -5,8 +5,8 @@ import api from '../../../utils/api';
 import { timeParse, formatDate } from '../../../utils/util'
 import Page from '../../../components/page'
 
-const newInformItemNum = 20
-const moreInformItemNum = 10
+const newInformItemNum = 5
+const moreInformItemNum = 3
 //import { Router, Route, Link, browserHistory } from 'react-router'
 //import routerConf from '../router'
 //import Test from '../../test'
@@ -111,17 +111,16 @@ export default class Infs extends React.Component{
                 timeStamp: lastStamp? lastStamp: '',
             }
       })
+      const unreadlist = result.data
       this.setState({
-        showList: {
-            keyList : [],
-        },
-          unreadList: result.data
+          unreadList: unreadlist
         }, () =>{
-          this.appendToShowList(this.state.unreadList)
+          this.appendToShowList(unreadlist)
         })
         if(result.data.length<moreInformItemNum){
           this.setState({
             noMoreResult: true
+            
           })
         }
       }
@@ -136,12 +135,9 @@ export default class Infs extends React.Component{
         })
         const readlist = result.data
         this.setState({
-          showList: {
-              keyList : [],
-          },
             isreadList: readlist
         }, () =>{
-            this.appendToShowList(this.state.isreadList)
+            this.appendToShowList(readlist)
         })
         if(result.data.length<moreInformItemNum){
           this.setState({
@@ -221,6 +217,7 @@ export default class Infs extends React.Component{
    //    }
 
       initIsreadList = async () => {
+
               const result = await api('/api/user/showReadList', {
                   method: 'POST',
                   body:{}

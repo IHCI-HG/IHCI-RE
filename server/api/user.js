@@ -20,7 +20,9 @@ import {
 var mongoose = require('mongoose')
 var UserDB = mongoose.model('user')
 var followerDB = mongoose.model('follower')
-
+const sortByCreateTime = function(a,b){
+    return b.create_time-a.create_time
+ }
 var sysTime = function(req, res, next) {
     resProcessor.jsonp(req, res, {
         state: { code: 0 },
@@ -45,7 +47,7 @@ const signUp = async (req, res, next) => {
         userInfo.username,
         userInfo.password,
         userInfo,
-        
+
     )
     if(!result) {
         resProcessor.jsonp(req, res, {
@@ -200,7 +202,7 @@ const wxLogin = async (req, res, next) => {
                 res.redirect('/person?fail=true');
             }
         }
-    
+
         if(state == 'auth') {
             if(result.unionid) {
                 const userObj = await UserDB.findByUnionId(result.unionid)
@@ -215,7 +217,7 @@ const wxLogin = async (req, res, next) => {
                 res.redirect('/?fail=true');
             }
         }
-   
+
 
     } catch (error) {
         console.error(error);
@@ -335,6 +337,7 @@ const showReadList = async (req, res, next) => {
             result.push(item)
         }
     })
+    result.sort(sortByCreateTime)
 
     const Result = []
 
@@ -364,6 +367,7 @@ const showUnreadList = async (req, res, next) => {
     const timeStamp = req.body.timeStamp
     const result = []
 
+
     const userObj = await UserDB.findById(userId)
 
     // const result = await UserDB.findUnreadNotice(userId)
@@ -373,7 +377,9 @@ const showUnreadList = async (req, res, next) => {
             result.push(item)
         }
     })
-
+  //  result = db.result1.find().sort({create_time: -1}
+    result.sort(sortByCreateTime)
+    console.log(result);
     const Result = []
 
     if(!timeStamp){
