@@ -1149,7 +1149,12 @@ const editDiscuss = async (req, res, next) => {
 
     try {
 
-        const result = await discussDB.updateDiscuss(discussId, { content: content })
+        var discussObj = (await discussDB.findTaskDiscuss(discussId)).toObject();
+        delete discussObj._id;
+        discussObj.content = content;
+        discussObj.fileList = fileList || discussObj.fileList;
+
+        const result = await discussDB.updateDiscuss(discussId, discussObj);
 
         //todo 还要在timeline表中增加项目
 
