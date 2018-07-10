@@ -28,6 +28,7 @@ class TeamChoseItem extends React.PureComponent{
 
 
 class SearchResultItem extends React.PureComponent{
+
     typeMap = {
         'CREATE_TOPIC': '讨论：',
         'REPLY_TOPIC': '回复：',
@@ -52,10 +53,10 @@ class SearchResultItem extends React.PureComponent{
 
         'COPY_TASK': '复制了任务：',
         'MOVE_TASK': '移动了任务：',
+        'FILE': '文件：',
     }
 
     toOriginHandle = () => {
-        console.log(this)
         const pathname = ''
         const type = 'TOPIC'
         switch(this.props.type){
@@ -77,8 +78,18 @@ class SearchResultItem extends React.PureComponent{
             case 'COPY_TASK':
             case 'MOVE_TASK':
             {
+                type = 'TASK'
                 pathname = '/todo/' + this.props.tarId
+                break
             }
+            case 'FILE':
+            {
+                type = 'FILE'
+                pathname = '/files/' + this.props.team
+                break
+            }
+            default:
+                
 
         }
 
@@ -87,13 +98,16 @@ class SearchResultItem extends React.PureComponent{
             state:{
                 type: type,
                 id: this.props.tarId
-            }
+            },
+            query:this.props.dir ?{
+                 dir: this.props.dir,
+            } : {}
         }
         this.props.router.push(location)
     }
 
     render() {
-        console.log(this.props.type)
+        // console.log(this)
         switch (this.props.type) {
             case 'CREATE_TOPIC':
             case 'REPLY_TOPIC':
@@ -139,6 +153,25 @@ class SearchResultItem extends React.PureComponent{
                     </div>
                 )
                 break;
+            case 'FILE':
+                return (
+                    <div className='search-result-item-wrap'>
+                        <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
+                        <div className="icon iconfont icon-document head-img" />
+
+                        <div className="result-con" onClick={this.toOriginHandle}>
+                            <div className="des-line">
+                                <span className="type">{this.typeMap[this.props.type]}</span>
+                                <span className="topic">{this.props.fileName}</span>
+                            </div>
+                            <div className="content">
+                                <span className="name">所在目录</span>-
+                                <span className="content" >{this.props.dir}</span>
+                            </div>
+                        </div>
+                    </div>
+                )
+                break;
             default:
                 return ''
         }
@@ -150,8 +183,8 @@ export default class SearchResult extends React.Component{
         var queryText = this.props.location.query.text
 
         if (queryText){
-            console.log(queryText.length)
-            console.log(queryText.length >42)
+            // console.log(queryText.length)
+            // console.log(queryText.length >42)
             
             if (queryText.length > 42)
                 this.props.location.query.text = queryText.substring(0,42)
@@ -377,6 +410,9 @@ export default class SearchResult extends React.Component{
                         </div>
                         <div className="admin-type-item" onClick={this.filterHandle.bind(this, {type:'TASK'})}>
                             <div className='type-name'>{this.typeMap.TASK}</div>
+                        </div>
+                        <div className="admin-type-item" onClick={this.filterHandle.bind(this, {type:'FILE'})}>
+                            <div className='type-name'>{this.typeMap.FILE}</div>
                         </div>
                     </div>
                 }

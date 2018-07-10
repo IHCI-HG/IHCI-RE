@@ -29,7 +29,7 @@ class InformItem extends React.PureComponent{
                   //userId: queryUserId? queryUserId: ''
                 }
             })
-            console.log(result)
+            // console.log(result)
             this.setState( () => {
               if (this.props.type == 'CREATE_TOPIC')
                 this.props.locationTo('/discuss/topic/' + this.props.noticeId)
@@ -58,7 +58,7 @@ class InformItem extends React.PureComponent{
                           <span className="topic">{this.props.noticeTitle}</span>
                       </div>
 
-                      <div className="content">{this.props.noticeContent}</div>
+                      <div className="content"  dangerouslySetInnerHTML={{__html: this.props.noticeContent}}>{}</div>
                   </div>
 
 
@@ -77,7 +77,7 @@ class InformItem extends React.PureComponent{
                             <span className="topic">{this.props.noticeTitle}</span>
                         </div>
 
-                        <div className="content">{this.props.noticeContent}</div>
+                        <div className="content" dangerouslySetInnerHTML={{__html: this.props.noticeContent}}>{}</div>
                     </div>
 
 
@@ -96,7 +96,6 @@ export default class Infs extends React.Component{
       componentDidMount = async() => {
 
         await this.initUnreadList()
-        console.log(this.state.unreadList)
       }
 
       locationTo = (url) => {
@@ -178,7 +177,7 @@ export default class Infs extends React.Component{
             noMoreResult: true,
           })
         }
-          console.log(showList)
+        //   console.log(showList)
 
       }
       typeMap = {
@@ -239,7 +238,7 @@ export default class Infs extends React.Component{
             //       noResult: true
             //     })
             //   }
-              console.log(result)
+            //   console.log(result)
           }
 
 
@@ -299,7 +298,7 @@ export default class Infs extends React.Component{
         const showList = this.state.showList
         const userId = this.props.personInfo._id
 
-        console.log(this.state)
+        // console.log(this.state)
           return (
             <Page className="infs-page">
             <div className='page-wrap'>
@@ -314,14 +313,14 @@ export default class Infs extends React.Component{
                                     <div className="infs-day" key={'time-group-' + timeKey}>
                                         {
                                             showList[timeKey].teamKeyList.map((teamKey) => {
-                                                console.log(showList[timeKey][teamKey].teamName)
+                                                // console.log(showList[timeKey][teamKey].teamName)
                                                 return (
                                                     <div key={'group-line-' + timeKey + teamKey}>
                                                         {/* 分组线 */}
                                                         <div className="group-line">{showList[timeKey][teamKey].teamName}</div>
                                                         {
                                                             showList[timeKey][teamKey].infsList.map((item) => {
-                                                                console.log(item)
+                                                                // console.log(item)
                                                                 return (
 
                                                                     <InformItem locationTo={this.locationTo} key={'inform-' + item.noticeId} {...item} onClick={() => {}}/>
