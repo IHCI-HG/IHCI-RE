@@ -17,7 +17,7 @@ class TopicDiscussItem extends React.Component {
         content: '',
         editState: false,
         enableHighlight: false,
-        discussAttachments:[],
+        discussAttachments:this.props.fileList,
     }
 
     editInputHandle = (e) => {
@@ -32,7 +32,7 @@ class TopicDiscussItem extends React.Component {
         })
     }
     discussFileUploadHandle = async (e) => {
-        var ossKey = this.teamId + '/' + Date.now() + '/' + e.target.files[0].name
+        var ossKey = this.props.teamId + '/' + Date.now() + '/' + e.target.files[0].name
         const resp = await fileUploader(e.target.files[0], ossKey)
         let discussAttachments = this.state.discussAttachments;
         discussAttachments = [...discussAttachments, resp]
@@ -66,7 +66,7 @@ class TopicDiscussItem extends React.Component {
                             handleFileUpload={this.discussFileUploadHandle.bind(this)}
                             content={this.state.content}
                             deleteFile={this.deleteDiscussFile.bind(this)}
-                            attachments={this.props.fileList}>
+                            attachments={this.state.discussAttachments}>
                         </Editor>
                         <div className="button-warp">
                             <div className="save-btn" onClick={() => { saveEditHandle(_id, this.state.content,this.state.discussAttachments); this.setState({ editState: false }) }}>保存</div>
@@ -142,6 +142,10 @@ export default class Topic extends React.Component{
         createDiscussContent: '',
 
         enableHighlight: false,
+        topicAttachmentsArg:{},
+        topicOssKeyArg:"",
+        discussAttachmentsArg:{},
+        discussOssKeyArg:"",
     }
 
     componentDidMount = async() => {
@@ -212,6 +216,10 @@ export default class Topic extends React.Component{
 
     topicFileUploadHandle = async (e) => {
         var ossKey = this.teamId + '/' + Date.now() + '/' + e.target.files[0].name
+        this.setState({
+            topicAttachmentsArg:e.target.files[0],
+            topicOssKeyArg:ossKey
+        })
         const resp = await fileUploader(e.target.files[0], ossKey)
         let topicAttachments = this.state.topicAttachments;
         topicAttachments = [...topicAttachments, resp]
@@ -221,6 +229,10 @@ export default class Topic extends React.Component{
     }
     discussFileUploadHandle = async (e) => {
         var ossKey = this.teamId + '/' + Date.now() + '/' + e.target.files[0].name
+        this.setState({
+            discussAttachmentsArg:e.target.files[0],
+            discussOssKeyArg:ossKey
+        })
         const resp = await fileUploader(e.target.files[0], ossKey)
         let discussAttachments = this.state.discussAttachments;
         discussAttachments = [...discussAttachments, resp]
@@ -255,6 +267,24 @@ export default class Topic extends React.Component{
                 content: this.state.topicContentInput,
                 fileList: this.state.topicAttachments,
         }
+        const result1 = await api('/api/file/createFile', {
+            method: 'POST',
+            body: {
+                fileInfo: {
+                    teamId: this.teamId,
+                    size: this.state.topicAttachmentsArg.size,
+                    dir: '/',
+                    fileName: this.state.topicAttachmentsArg.name,
+                    ossKey: this.state.topicOssKeyArg,
+                }
+            }
+        })
+        console.log(result1);
+        if (result1.state.code === 0) {
+            window.toast("上传文件成功")
+        } else {
+            window.toast(result1.state.msg)
+        }
         const result = await api('/api/topic/editTopic', {
             method: 'POST',
             body: {
@@ -282,6 +312,24 @@ export default class Topic extends React.Component{
     }
 
     saveDiscussEditHandle = async (_id, content,fileList) => {
+        const result1 = await api('/api/file/createFile', {
+            method: 'POST',
+            body: {
+                fileInfo: {
+                    teamId: this.teamId,
+                    size: this.state.discussAttachmentsArg.size,
+                    dir: '/',
+                    fileName: this.state.discussAttachmentsArg.name,
+                    ossKey: this.state.discussOssKeyArg,
+                }
+            }
+        })
+        console.log(result1);
+        if (result1.state.code === 0) {
+            window.toast("上传文件成功")
+        } else {
+            window.toast(result1.state.msg)
+        }
         const result = await api('/api/topic/editDiscuss', {
             method: 'POST',
             body: {
@@ -334,7 +382,24 @@ export default class Topic extends React.Component{
         //         informList.push(item._id)
         //     }
         // })
-
+        const result1 = await api('/api/file/createFile', {
+            method: 'POST',
+            body: {
+                fileInfo: {
+                    teamId: this.teamId,
+                    size: this.state.discussAttachmentsArg.size,
+                    dir: '/',
+                    fileName: this.state.discussAttachmentsArg.name,
+                    ossKey: this.state.discussOssKeyArg,
+                }
+            }
+        })
+        console.log(result1);
+        if (result1.state.code === 0) {
+            window.toast("上传文件成功")
+        } else {
+            window.toast(result1.state.msg)
+        }
         const result = await api('/api/topic/createDiscuss', {
             method: 'POST',
             body: {
