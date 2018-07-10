@@ -41,7 +41,8 @@ const search = async (req, res, next) => {
             })
         }
         const allTimeline = await timelineDB.findByTeamIdList(teamIdList)
-        const allFile = await file.findByTeamIdList(teamIdList)
+        const allFolder = await file.findFolderByTeamIdList(teamIdList)
+        const allFile = await file.findFileByTeamIdList(teamIdList)
         const key = keyWord.replace(/([\^\$\(\)\*\+\?\.\\\|\[\]\{\}])/g, "\\$1");
         const str = new RegExp(key)
         const searchResult =[]
@@ -50,9 +51,15 @@ const search = async (req, res, next) => {
                 searchResult.push(item)
              }
          })
+         allFolder.map((item)=> {
+            if(str.test(item.folderName)){
+               item = {...item._doc,type: 'FOLDER'}
+               searchResult.push(item)
+            }
+        })
         allFile.map((item)=> {
-            if(str.test(item.fileName) || str.test(item.dir)){
-                item  = {...item._doc, type: 'FILE'}
+            if(str.test(item.fileName)){
+               item = {...item._doc,type: 'FILE'}
                searchResult.push(item)
             }
         })
@@ -81,7 +88,7 @@ const search = async (req, res, next) => {
                  })  
             }else if(type=="FILE"){
                 searchResult.map((item) => {
-                    if(item.type==null){
+                    if((item.type=="FILE")||(item.type=="FOLDER")){
                         result.push(item)
                       } 
                  })  
