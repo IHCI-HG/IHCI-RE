@@ -90,7 +90,9 @@ export class LoginView extends React.Component {
         if(result.state.code === 0) {
             window.toast("注册成功")
             setTimeout(() => {
-                location.href = '/person'
+                if (this.props.join)
+                    location.href = location.href
+                else location.href = '/person'
             }, 300);
         }
         else{

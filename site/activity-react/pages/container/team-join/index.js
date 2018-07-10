@@ -4,7 +4,7 @@ import api from '../../../utils/api';
 import Page from '../../../components/page'
 
 import api, { authApi } from '../../utils/api';
-import WxLoginDialog from '../../components/wx-login-dialog'
+import WxLoginDialog from '../../../components/wx-login-dialog'
 import { LoginView } from '../../../components/login-view';
 
 export default class TeamAdmin extends React.Component{
@@ -31,6 +31,14 @@ export default class TeamAdmin extends React.Component{
     state = {
         login: false,
         teamObj: {},
+
+        showWxDialog: false,
+    }
+
+    hideWxDialogHandle = () => {
+        this.setState({
+            showWxDialog: false
+        })
     }
 
     joinBtnHandle = async () => {
@@ -54,6 +62,10 @@ export default class TeamAdmin extends React.Component{
         console.log(this)
         return(
             <Page title='加入团队 - IHCI' className="join-team">
+            
+            {
+                this.state.showWxDialog && <WxLoginDialog state="auth" closeHandle={this.hideWxDialogHandle}/>
+            }
                 <div className="nav">
                     <div className="max-w-con nav-con">
                         <div className="logo">IHCI(换成图)</div>
