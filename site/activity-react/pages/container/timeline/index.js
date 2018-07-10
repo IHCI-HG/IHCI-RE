@@ -103,6 +103,8 @@ class TimelineItem extends React.PureComponent{
         'CHANGE_CHECKITEM_DDL':'更改了检查项',
         'REOPEN_TASK':'重新打开了任务',
         'REOPEN_CHECKITEM':'重新打开了检查项',
+        'EDIT_TASK':'编辑了任务',
+        'EDIT_CHECK_ITEM':'编辑了检查项',
     }
 
     render() {
