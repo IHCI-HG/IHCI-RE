@@ -10,6 +10,7 @@ export default class Person extends React.Component{
     componentDidMount = async() => {
         this.personInfo = {}
         if(INIT_DATA.userObj) {
+            
             this.setState({
                 userObj: INIT_DATA.userObj,
                 personInfo: INIT_DATA.userObj.personInfo || {
@@ -35,13 +36,34 @@ export default class Person extends React.Component{
             window.toast("该微信号已经绑定")
             history.pushState({}, {}, '/person')
         }
+        // else if (!this.initdataAllFilled()){
+        //     window.toast("请先完成资料填写")
+        // }
 
-        if(INIT_DATA.userObj.personInfo.mail.length>0)
-        {
-            this.setState({
-                hasMail: true,
-            })
+        if(!!INIT_DATA.userObj.personInfo)
+            if(INIT_DATA.userObj.personInfo.mail.length>0)
+            {
+                this.setState({
+                    hasMail: true,
+                })
+            }
+
+    }
+
+    initdataAllFilled = () => {
+        if (!INIT_DATA.userObj.personInfo){
+            return false
         }
+        if (INIT_DATA.userObj.personInfo.name){
+            return false
+        }
+        if (INIT_DATA.userObj.personInfo.mail){
+            return false
+        }
+        if (INIT_DATA.userObj.personInfo.phone){
+            return false
+        }
+        return true
     }
     
     starHandle = async (id) => {
@@ -380,10 +402,12 @@ export default class Person extends React.Component{
                             <div className="bind-wx">未绑定</div>  
                     }
                     {
+
                         !!this.state.userObj.unionid ? 
-                            <div className="band" onClick={this.unbindHandle}>解绑</div>
-                            :
-                            <div className="band" onClick={this.openWxLoginHandle}>绑定</div>
+                        <div className="band" onClick={this.unbindHandle}>解绑</div>
+                        :
+                        <div className="band" onClick={this.openWxLoginHandle}>绑定</div>
+                    
                     }
                 </div>
 
@@ -391,8 +415,9 @@ export default class Person extends React.Component{
                     <div className="before">服务号</div>
 
                     { !!this.state.userObj.subState ? <div className="bind-wx act">已关注</div> : <div className="bind-wx">未关注</div> }
-                
-                    { !!!this.state.userObj.subState && <div className='after'>需要<div className='follow-btn' onClick={this.openFollowDialogHandle}>关注服务号</div>才能接受讨论消息提醒</div>}
+
+                    {!!!this.state.userObj.subState && <div className='after'>需要<div className='follow-btn' onClick={this.openFollowDialogHandle}>关注服务号</div>才能接受讨论消息提醒</div>}
+
 
 
                 </div>

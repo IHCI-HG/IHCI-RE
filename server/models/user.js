@@ -9,7 +9,7 @@ const conf = require('../conf')
 */
 
 /*
-wxUserInfo 
+wxUserInfo
 {
     "openid": "oAX1fwRD4MfWXbsP5NJdUX4l2kGU",
     "nickname": "Arluber",
@@ -38,7 +38,8 @@ const userSchema = new mongoose.Schema({
     wxUserInfo: mongoose.Schema.Types.Mixed,
     mailCode :String,
     mailLimitTime :String,
-    isLive : { type: Boolean, default: false} 
+    isLive : { type: Boolean, default: false},
+    noticeList: [mongoose.Schema.Types.Mixed],
 })
 
 userSchema.statics = {
@@ -51,9 +52,6 @@ userSchema.statics = {
                 ...userInfo,
                 username: username,
                 password: crypto.createHmac('sha1', conf.salt).update(password).digest('hex'),
-                personInfo: {
-
-                }
             })
         }
     },
@@ -71,18 +69,8 @@ userSchema.statics = {
     },
     baseInfoById: async function(userId) {
         const result = await this.findById(userId)
-        if(result.personInfo) {
-            result.personInfo._id = result._id
-            return result.personInfo
-        } else {
-            return {
-                "headImg": "",
-                "name": "未设置姓名用户",
-                "phone": "未设置",
-                "mail": "未设置"
-            }
-        }
-
+        result.personInfo._id = result._id
+        return result.personInfo
     },
     findByUnionId: async function(unionid) {
         const result = await this.findOne({unionid: unionid}).exec()
@@ -125,7 +113,7 @@ userSchema.statics = {
         } else {
             return []
         }
-    }, 
+    },
 
 
     // team 操作相关
@@ -192,7 +180,82 @@ userSchema.statics = {
             {_id: userId, "teamList.teamId": teamId},
             {$set: { "teamList.$.role": role}},
         ).exec()
-    }
+    },
+
+
+    //topic相关
+    addCreateNotice: async function(userId, topicObj, teamName) {
+        return this.update(
+            { _id: userId },
+            {
+                $addToSet: {
+                    noticeList: {
+                        create_time: topicObj.create_time,
+                        noticeId: topicObj._id,
+                        teamId: topicObj.team,
+                        teamName: teamName,
+                        creator: topicObj.creator,
+                        noticeTitle: topicObj.title,
+                        noticeContent: topicObj.content,
+                        type: "CREATE_TOPIC",
+                        readState: false,
+                    }
+                }
+            }
+        ).exec()
+    },
+
+    addReplyNotice: async function(userId, discussObj, teamName) {
+        return this.update(
+            { _id: userId },
+            {
+                $addToSet: {
+                    noticeList: {
+                        create_time: discussObj.create_time,
+                        noticeId: discussObj._id,
+                        teamId: discussObj.teamId,
+                        teamName: teamName,
+                        topicId: discussObj.topicId,
+                        creator: discussObj.creator,
+                        noticeTitle: discussObj.title,
+                        noticeContent: discussObj.content,
+                        type: "REPLY_TOPIC",
+                        readState: false,
+                    }
+                }
+            }
+        ).exec()
+    },
+    readNotice: async function(userId, noticeId, readState) {
+        const notice = mongoose.Types.ObjectId(noticeId)
+        return this.update(
+            {_id: userId, "noticeList.noticeId": notice},
+            {$set: {"noticeList.$.readState": readState}},
+            {new: true}
+        ).exec()
+    },
+
+    // findNotice: async function(userId, noticeId){
+    // ß
+    //   const user = await this.find({$and:[{_id: userId}, {"noticeList.noticeId": notice}]}).exec()
+    //   console.log(user);
+    //   return user
+    // }
+
+    // findReadNotice: function(userId) {
+    //     const user = this.find({userId: userId})
+    //     return user.noticeList.find({readState: true}).sort({create_time: -1}).exec()
+    // },
+
+    // findUnreadNotice: function(userId) {
+    //     const user = this.find({userId: userId})
+    //     return user.noticeList.find({readState: false}).sort({create_time: -1}).exec()
+    // },
+
+    // findUnreadNotice: function(userId) {
+    //     const user = this.find({userId: userId})
+    //     return user.noticeList.find({readState: false}).sort({create_time: -1}).exec()
+    // },
 
 }
 

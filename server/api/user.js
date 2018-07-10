@@ -20,7 +20,9 @@ import {
 var mongoose = require('mongoose')
 var UserDB = mongoose.model('user')
 var followerDB = mongoose.model('follower')
-
+const sortByCreateTime = function(a,b){
+    return b.create_time-a.create_time
+ }
 var sysTime = function(req, res, next) {
     resProcessor.jsonp(req, res, {
         state: { code: 0 },
@@ -45,7 +47,7 @@ const signUp = async (req, res, next) => {
         userInfo.username,
         userInfo.password,
         userInfo,
-        
+
     )
     if(!result) {
         resProcessor.jsonp(req, res, {
@@ -200,7 +202,7 @@ const wxLogin = async (req, res, next) => {
                 res.redirect('/person?fail=true');
             }
         }
-    
+
         if(state == 'auth') {
             if(result.unionid) {
                 const userObj = await UserDB.findByUnionId(result.unionid)
@@ -215,7 +217,7 @@ const wxLogin = async (req, res, next) => {
                 res.redirect('/?fail=true');
             }
         }
-   
+
 
     } catch (error) {
         console.error(error);
@@ -287,6 +289,134 @@ const userInfoList = async (req, res, next) => {
 }
 
 
+// const showNoticeList = async (req, res, next) => {
+
+//     const topicIdList = req.body.topicIdList
+
+//     if(!topicIdList || !topicIdList.length) {
+//         resProcessor.jsonp(req, res, {
+//             state: { code: 1, msg: "参数不全" },
+//             data: {}
+//         });
+//         return
+//     }
+
+//     try {
+//         const promiseList = []
+//         topicIdList.map((item) => {
+//             if(item)
+//             promiseList.push(topicDB.findByTopicId(item))
+//         })
+//         const result = await Promise.all(promiseList)
+//         resProcessor.jsonp(req, res, {
+//             state: { code: 0, msg: '请求成功' },
+//             data: result
+//         });
+//     } catch (error) {
+//         console.error(error);
+//         resProcessor.jsonp(req, res, {
+//             state: { code: 1, msg: '操作失败' },
+//             data: {}
+//         });
+//     }
+//
+//}
+
+
+const showReadList = async (req, res, next) => {
+    const userId = req.rSession.userId
+    const timeStamp = req.body.timeStamp
+    const result = []
+
+    const userObj = await UserDB.findById(userId)
+
+    // const result = await UserDB.findReadNotice(userObj)
+
+    userObj.noticeList.map((item)=>{
+        if(item.readState){
+            result.push(item)
+        }
+    })
+    result.sort(sortByCreateTime)
+
+    const Result = []
+
+    if(!timeStamp){
+        result.map((item, index)=>{
+            if(index<20){
+                Result.push(item)
+            }
+        })
+    }else{
+        result.map((item)=>{
+            if(Result.length<10&&item.create_time<timeStamp){
+                Result.push(item)
+            }
+        })
+    }
+    resProcessor.jsonp(req, res, {
+        state: { code: 0 },
+        data: Result
+    });
+
+}
+
+
+const showUnreadList = async (req, res, next) => {
+    const userId = req.rSession.userId
+    const timeStamp = req.body.timeStamp
+    const result = []
+
+
+    const userObj = await UserDB.findById(userId)
+
+    // const result = await UserDB.findUnreadNotice(userId)
+
+    userObj.noticeList.map((item)=>{
+        if(!item.readState){
+            result.push(item)
+        }
+    })
+  //  result = db.result1.find().sort({create_time: -1}
+    result.sort(sortByCreateTime)
+    console.log(result);
+    const Result = []
+
+    if(!timeStamp){
+        result.map((item, index)=>{
+            if(index<20){
+                Result.push(item)
+            }
+        })
+    }else{
+        result.map((item)=>{
+            if(Result.length<10&&item.create_time<timeStamp){
+                Result.push(item)
+            }
+        })
+    }
+    resProcessor.jsonp(req, res, {
+        state: { code: 0 },
+        data: Result
+    });
+
+}
+const readNotice = async (req, res, next) => {
+    const userId = req.rSession.userId
+    const noticeId = req.body.noticeId
+    const readState = req.body.readState
+
+    const result = await UserDB.readNotice(userId, noticeId, readState)
+    console.log("dwdwwdw",result);
+
+  //  const Result = await UserDB.findNotice( userId,noticeId)
+
+    resProcessor.jsonp(req, res, {
+        state: { code: 0 },
+        data: {}
+    });
+}
+
 module.exports = [
     ['GET', '/api/base/sys-time', sysTime],
 
@@ -302,4 +432,10 @@ module.exports = [
     ['POST', '/api/signUp', signUp],
     ['POST', '/api/setUserInfo', apiAuth, setUserInfo],
 
+
+    ['POST', '/api/user/showReadList', apiAuth, showReadList],
+    ['POST', '/api/user/showUnreadList', apiAuth, showUnreadList],
+
+    ['POST', '/api/user/readNotice', apiAuth, readNotice],
+    //['POST', '/api/user/getUserId', apiAuth, getUserId],
 ];

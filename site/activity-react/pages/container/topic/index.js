@@ -169,6 +169,9 @@ export default class Topic extends React.Component{
         })
 
         const topicObj = result.data
+
+        console.log(result)
+
         this.teamId = result.data.team
 
         const memberResult = await api('/api/team/memberList', {

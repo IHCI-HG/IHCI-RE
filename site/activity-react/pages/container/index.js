@@ -26,18 +26,20 @@ import TaskDetail from './todo'
 import Files from './files'
 import SearchResult from './search'
 import ActivateMail from './activate-mail'
+import Inform from './inform'
+import SearchResult from './search'
 
 class App extends React.Component{
     state = {
         activeTag : '',
         headImg: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnregyyDrMvhEDpfC4wFetzykulWRVMGF-jp7RXIIqZ5ffEdawIA',
+        infoImg: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1529474819406&di=267791f485fba8aa30e0adc8f0eede6b&imgtype=0&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimgad%2Fpic%2Fitem%2Fb8014a90f603738d6c070f19b81bb051f819ecb8.jpg',
         personInfo: {
             teamList: []
         },
-        searchText : '',
     }
-    
-    componentWillMount = async() => { 
+
+    componentWillMount = async() => {
         this.setHeadImg()
     }
     componentDidMount = async() => {
@@ -85,7 +87,7 @@ class App extends React.Component{
     }
 
     handleSearchRequest = (e) => {
-        location.href = '/search' + (this.state.searchText? '?text=' + this.state.searchText : '') 
+        location.href = '/search' + (this.state.searchText? '?text=' + this.state.searchText : '')
         e.preventDefault();
     }
 
@@ -99,7 +101,7 @@ class App extends React.Component{
             this.props.router.push('/person')
             window.toast("请先完成资料填写")
         }
-        
+
     }
 
     // 处理路由变化的时候高亮的tag
@@ -107,18 +109,24 @@ class App extends React.Component{
         if(/team/.test(url)) {
             this.setState({activeTag: 'team'})
         }
-        if(/discuss/.test(url)) {
+        else if(/discuss/.test(url)) {
             this.setState({activeTag: 'team'})
         }
-        if(/member/.test(url)) {
+        else if(/member/.test(url)) {
             this.setState({activeTag: 'member'})
         }
-        if(/timeline/.test(url)) {
+        else if(/timeline/.test(url)) {
             this.setState({activeTag: 'timeline'})
         }
-        if(/search/.test(url)) {
-            this.setState({activeTag: 'search'})
+        else{
+            this.setState({activeTag: ''})
         }
+        // if(/inform/.test(url)) {
+        //     this.setState({activeTag: ''})
+        // }
+        // if(/person/.test(url)) {
+        //     this.setState({active})
+        // }
     }
 
     render() {
@@ -143,7 +151,11 @@ class App extends React.Component{
                         <Link className='nav-item' activeClassName='nav-item active' to="/person">
                             <img className="head-img" src={this.state.headImg} />
                         </Link>
+                        <div className='remind'>
+                            <span className='iconfont icon-remind' onClick={this.routerHandle.bind(this, '/inform')}></span>
+                        </div>
                     </div>
+
                 </div>
                 { this.props.children && React.cloneElement(this.props.children, {personInfo: this.state.personInfo, activeTagHandle: this.activeTagHandle.bind(this)}) }
             </div>
@@ -160,6 +172,7 @@ const routeConfig = [
             { path: 'search', component: SearchResult },
             { path: 'timeline', component: Timeline },
             { path: 'member', component: Member },
+            { path: 'inform', component: Inform },
 
             { path: 'team', component: Team },
             { path: 'team/:id', component: TeamDetail },
@@ -174,7 +187,7 @@ const routeConfig = [
             { path: 'person', component: Person },
 
             { path: 'sign', component: Sign },
-            
+
             { path: 'test', component: Test },
             { path: 'test-editor', component: TestEditor },
         ]
