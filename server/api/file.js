@@ -173,7 +173,6 @@ const downloadFile = async (req, res, next) => {
 
 const moveFile = async (req, res, next) => {
     const fileInfo = req.body.fileInfo || {} 
-    const userId = req.rSession.userId
 
     try {
         await file.moveFile(fileInfo.teamId,fileInfo.dir,fileInfo.fileName,fileInfo.tarDir)
@@ -194,6 +193,7 @@ const moveFile = async (req, res, next) => {
 
 const moveFolder = async (req, res, next) => {
     const folderInfo = req.body.folderInfo || {} 
+    console.log(folderInfo)
 
     try {
         await file.moveFolder(folderInfo.teamId, folderInfo.dir, folderInfo.folderName,folderInfo.tarDir)
@@ -255,8 +255,6 @@ const delFolder = async (req, res, next) => {
 const updateFileName = async (req, res, next) => {
     const fileInfo = req.body.fileInfo
     const tarName = req.body.tarName
-
-    console.log(fileInfo)
 
     try {
         await file.updateFileName(fileInfo.teamId, fileInfo.dir, fileInfo.fileName, tarName)

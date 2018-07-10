@@ -1,3 +1,123 @@
-.test-page {
+.window{
     
+    background-color: rgba(0,0,0,0.5);
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .outerBox {
+        background-color: #e6e6e6;
+        margin: auto;
+        height: 35%;
+        width: 50%;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border: 1px solid #e6e6e6; /*no*/
+        border-radius: 8px;
+    }
+  
 }
+.move-File {
+    .file-con {
+        margin-top: 40px;
+        padding-left: 10px;
+    }
+
+    .file-dir {
+        margin-bottom: 15px;
+    }
+
+    .create-btn {
+        display: inline-block;
+        font-size: 16px;
+        padding: 10px;
+        width: 100px;
+        border: 1px solid #e6e6e6; /*no*/
+        border-radius: 4px;
+        margin-right: 30px;
+        cursor: pointer;
+        &:hover {
+            background-color: #e6e6e646;
+        }
+    }
+
+    .head-info {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .file-list {
+        .file-line {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #e6e6e6; /*no*/
+
+            &.files {
+                font-size: 14px;
+                line-height: 50px; 
+            }
+            &.header {
+                font-size: 12px;
+                line-height: 50px;
+                color: #999;
+            }
+        }
+        .folder-name {
+            display: block;
+            border: none;
+            flex-grow: 1;
+            height: 50px;
+            font-size: 14px;
+            line-height: 50px;
+        }
+
+        div {
+            flex-grow: 0;
+            flex-shrink: 0;
+            overflow: hidden;
+            text-overflow:ellipsis;
+            white-space: nowrap;
+        }
+        .name {
+            width: 50%;
+        }
+        .size {
+            width: 15%;
+        }
+        .last-modify {
+            width: 15%;
+        }
+        .tools {
+            width: 20%;
+            span {
+                margin-right: 10px;
+            }
+        } 
+        .show-all-file {
+            margin-top: 16px;
+        }
+    }
+
+}
+
+.btn {
+        display: inline-block;
+        font-size: 16px;
+        padding: 10px;
+        width: 100px;
+        border: 1px solid #e6e6e6; /*no*/
+        border-radius: 4px;
+        margin-right: 30px;
+        cursor: pointer;
+        &:hover {
+            background-color: #e6e6e646;
+        }
+    }
