@@ -152,7 +152,7 @@
         margin-right: 30px;
         cursor: pointer;
         &:hover {
-            background-color: #635f5f46;
+            background-color: #4e4d4d;
         }
     }
 
@@ -166,7 +166,7 @@
         .file-line {
             display: flex;
             align-items: center;
-            border-bottom: 1px solid #b1acac5d; /*no*/
+            border-bottom: 1px solid #4e4d4d; /*no*/
 
             &.files {
                 font-size: 14px;
