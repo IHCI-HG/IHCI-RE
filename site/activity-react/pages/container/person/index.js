@@ -36,9 +36,9 @@ export default class Person extends React.Component{
             window.toast("该微信号已经绑定")
             history.pushState({}, {}, '/person')
         }
-        else if (!this.initdataAllFilled()){
-            window.toast("请先完成资料填写")
-        }
+        // else if (!this.initdataAllFilled()){
+        //     window.toast("请先完成资料填写")
+        // }
 
         if(!!INIT_DATA.userObj.personInfo)
             if(INIT_DATA.userObj.personInfo.mail.length>0)

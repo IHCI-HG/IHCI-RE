@@ -102,7 +102,7 @@ class SearchResultItem extends React.PureComponent{
                 id: this.props.tarId
             },
             query:this.props.folderName? {
-                dir: '/'+this.props.folderName
+                dir: this.props.path
             }
             :this.props.dir ?{
                  dir: this.props.dir,
@@ -189,8 +189,8 @@ class SearchResultItem extends React.PureComponent{
                                 <span className="topic">{this.props.folderName}</span>
                             </div>
                             <div className="content">
-                                <span className="name">包含文件</span>-
-                                <span className="content" >{this.props.fileList.length}个</span>
+                                <span className="name">所在目录</span>-
+                                <span className="content" >{this.props.dir}</span>
                             </div>
                         </div>
                     </div>
