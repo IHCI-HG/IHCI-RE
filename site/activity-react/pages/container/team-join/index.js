@@ -48,6 +48,8 @@ export default class TeamAdmin extends React.Component{
                         <div className='btn' onClick={this.joinBtnHandle}> 点击加入团队{this.state.teamObj.name} </div> 
                     : 
                         <div> 请先注册或登录 </div>
+                       
+                        
                 }
 
             </Page>
