@@ -136,6 +136,10 @@ class Modal extends React.Component {
                                 }
                             </div>
                             <div className="file-list">
+                                <div className="file-line header">
+                                    <div className="name">文件夹名称</div>
+                                </div>
+
                                 {
                                     this.state.fileList.map((item, idx) => {
 
@@ -151,8 +155,8 @@ class Modal extends React.Component {
                                     })
                                 }
                             </div>
-                            <div className="btn" onClick={this.confirm}> 确定 </div>
-                            <div className="btn" onClick={this.closeWindow}> 取消 </div>
+                            <div className="btn-confirm" onClick={this.confirm}> 确定 </div>
+                            <div className="btn-cancle" onClick={this.closeWindow}> 取消 </div>
                         </div>
                     </Page>
                 </div>
@@ -169,7 +173,7 @@ export default class Files extends React.Component {
         this.initTeamFile()
     }
     state = {
-        teamInfo : {},
+        teamInfo: {},
         fileList: [],
 
         showCreateFolder: false,
@@ -184,10 +188,10 @@ export default class Files extends React.Component {
     }
 
     initDirList = () => {
-        if(!this.curDir) {
+        if (!this.curDir) {
             this.curDir = this.props.location.query.dir || '/'
         }
-        if(this.curDir == '/') { 
+        if (this.curDir == '/') {
             this.setState({
                 dirList: []
             })
@@ -196,7 +200,7 @@ export default class Files extends React.Component {
         let splitDir = this.curDir.split('/')
         let totalDirList = []
         splitDir.map((item, idx) => {
-            if(idx == 0) {
+            if (idx == 0) {
                 totalDirList.push({
                     name: '根目录',
                     dir: ''
@@ -205,7 +209,7 @@ export default class Files extends React.Component {
                 totalDirList.push({
                     name: item,
                     dir: totalDirList[idx - 1].dir + '/' + item
-                }) 
+                })
             }
         })
         totalDirList[0].dir = '/'
@@ -221,7 +225,7 @@ export default class Files extends React.Component {
                 teamId: this.teamId
             }
         })
-        if(result.data) {
+        if (result.data) {
             this.setState({
                 teamInfo: result.data
             })
@@ -283,21 +287,20 @@ export default class Files extends React.Component {
     openFileInput = () => {
         this.fileInput.click()
     }
-    
+
     viewHandle = async (file) => {
-        if(file.fileType == 'folder') 
-        {
+        if (file.fileType == 'folder') {
             var path;
-            if(this.state.dir == '/') path = this.state.dir+file.name;
-            else path = this.state.dir+'/'+file.name;
+            if (this.state.dir == '/') path = this.state.dir + file.name;
+            else path = this.state.dir + '/' + file.name;
             this.state.dir = path;
         }
         this.getDirFileListHandle()
     }
 
-    moveHandle = async (item,tarDir) => {
+    moveHandle = async (item, tarDir) => {
         console.log(this.state.moveItem)
-        if(item.fileType == 'file') {
+        if (item.fileType == 'file') {
             const result = await api('/api/file/moveFile', {
                 method: 'POST',
                 body: {
@@ -307,10 +310,10 @@ export default class Files extends React.Component {
                         fileName: this.state.moveItem.name,
                         tarDir: tarDir,
                     }
-                }   
+                }
             })
-            
-            if(result.state.code == 0) {
+
+            if (result.state.code == 0) {
                 window.toast("移动文件成功")
             } else {
                 window.toast(result.state.msg)
@@ -328,8 +331,8 @@ export default class Files extends React.Component {
                     }
                 }
             })
- 
-            if(result.state.code == 0) {
+
+            if (result.state.code == 0) {
                 window.toast("移动文件夹成功")
             } else {
                 window.toast(result.state.msg)
@@ -339,8 +342,8 @@ export default class Files extends React.Component {
     }
 
     onChildChanged = (moveTarDir) => {
-        if(moveTarDir != '') {
-            this.moveHandle(this.state.moveItem,moveTarDir)
+        if (moveTarDir != '') {
+            this.moveHandle(this.state.moveItem, moveTarDir)
         }
         document.getElementById('app').removeChild(this.state.modal)
         this.state.moveItem = ''
@@ -358,35 +361,35 @@ export default class Files extends React.Component {
             chosenFile: file
         })
 
-        var ossKey = this.teamId+'/'+Date.now()+'/'+file.name
-        
+        var ossKey = this.teamId + '/' + Date.now() + '/' + file.name
+
         var succeeded;
         const uploadResult = fileUploader(file, ossKey)
-        await uploadResult.then(function(val) {
+        await uploadResult.then(function (val) {
             succeeded = 1
-        }).catch(function(reason){
+        }).catch(function (reason) {
             console.log(reason)
             succeeded = 0
         })
 
-        if(succeeded === 0) {
+        if (succeeded === 0) {
             window.toast("上传文件失败")
             return
-        } 
+        }
 
         const result = await api('/api/file/createFile', {
             method: 'POST',
             body: {
                 fileInfo: {
-                   teamId: this.teamId,
-                   size: file.size,
-                   dir: this.curDir,
-                   fileName: file.name,
-                   ossKey: ossKey
+                    teamId: this.teamId,
+                    size: file.size,
+                    dir: this.curDir,
+                    fileName: file.name,
+                    ossKey: ossKey
                 }
             }
         })
-        if(result.state.code === 0) {
+        if (result.state.code === 0) {
             window.toast("上传文件成功")
         } else {
             window.toast(result.state.msg)
@@ -427,7 +430,7 @@ export default class Files extends React.Component {
     }
 
     headDirClickHandle = (dir) => {
-        if(dir == '/') {
+        if (dir == '/') {
             this.curDir = '/'
             this.initDirList()
             this.initTeamFile()
@@ -473,13 +476,13 @@ export default class Files extends React.Component {
                     fileInfo: {
                         teamId: this.teamId,
                         dir: this.curDir,
-                        fileName: item.name, 
+                        fileName: item.name,
                     },
                     tarName: this.state.renameName,
                 }
             })
 
-            if(result.state.code == 0) {
+            if (result.state.code == 0) {
                 window.toast("修改文件名称成功")
                 this.setState({
                     renameName: '',
@@ -502,7 +505,7 @@ export default class Files extends React.Component {
                 }
             })
 
-            if(result.state.code == 0) {
+            if (result.state.code == 0) {
                 window.toast("修改文件夹名称成功")
                 this.setState({
                     renameName: '',
@@ -528,15 +531,15 @@ export default class Files extends React.Component {
 
                     <div className="file-dir">
                         {
-                            this.state.dirList.length ? 
-                            <div> 
-                                {
-                                    this.state.dirList.map((item, idx) => (
-                                        <span key={"dir-list-" + idx} onClick={() => {this.headDirClickHandle(item.dir)} }>{item.name} {idx == this.state.dirList.length - 1 ? '' : '>'} </span>
-                                    ))
-                                }
-                            </div> 
-                            :  ''
+                            this.state.dirList.length ?
+                                <div>
+                                    {
+                                        this.state.dirList.map((item, idx) => (
+                                            <span key={"dir-list-" + idx} onClick={() => { this.headDirClickHandle(item.dir) }}>{item.name} {idx == this.state.dirList.length - 1 ? '' : '>'} </span>
+                                        ))
+                                    }
+                                </div>
+                                : ''
                         }
                     </div>
 
@@ -588,8 +591,8 @@ export default class Files extends React.Component {
                                                 <div className="size">-</div>
                                                 <div className="last-modify">{formatDate(item.last_modify_time)}</div>
                                                 <div className="tools">
-                                                    <span onClick={() => { this.openMoveModalHandle(item)}}>移动</span>
-                                                    <span onClick={() => { this.renameHandle(item)}}> 重命名 </span> 
+                                                    <span onClick={() => { this.openMoveModalHandle(item) }}>移动</span>
+                                                    <span onClick={() => { this.renameHandle(item) }}> 重命名 </span>
                                                     <span onClick={() => { this.deleteHandle('folder', item.name) }}>删除</span>
                                                 </div>
                                             </div>
@@ -603,8 +606,8 @@ export default class Files extends React.Component {
                                                 <div className="last-modify">{formatDate(item.last_modify_time)}</div>
                                                 <div className="tools">
                                                     <span onClick={() => { this.downloadHandle(item.ossKey) }}>下载</span>
-                                                    <span onClick={() => { this.openMoveModalHandle(item)}}>移动</span>
-                                                    <span onClick={() => { this.renameHandle(item)}}> 重命名 </span> 
+                                                    <span onClick={() => { this.openMoveModalHandle(item) }}>移动</span>
+                                                    <span onClick={() => { this.renameHandle(item) }}> 重命名 </span>
                                                     <span onClick={() => { this.deleteHandle('file', item.name) }}>删除</span>
                                                 </div>
                                             </div>
