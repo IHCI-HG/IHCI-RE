@@ -52,6 +52,10 @@ const timelineSchema = new mongoose.Schema({
         REOPEN_TASK
         REOPEN_CHECKITEM
 
+        //7.10
+        EDIT_TASK
+        EDIT_CHECK_ITEM
+
 
 
 

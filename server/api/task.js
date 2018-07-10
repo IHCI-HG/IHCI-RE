@@ -505,6 +505,12 @@ const editTask = async (req, res, next) => {
             await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'CHANGE_TASK_DDL', taskObj._id, taskObj.title, task);
         }
 
+        //7.10
+        if(editTask.desc)
+        {
+            await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'EDIT_TASK', taskObj._id, taskObj.title, task);
+        }
+
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
             data: task
@@ -913,6 +919,13 @@ const editCheckitem = async (req, res, next) => {
         if(checkitemObj.completed_time) {
             const date = new Date(checkitemObj.completed_time)
             checkitemObj.completed_time = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
+        }
+
+        //7.10
+        if(editCheckitem.name){
+            const teamObj = await teamDB.findByTeamId(teamId);
+            const baseInfoObj = await userDB.baseInfoById(userId);
+            await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'EDIT_CHECK_ITEM', checkitemObj._id, checkitemObj.title, checkitemObj);
         }
 
         //7.9

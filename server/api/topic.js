@@ -192,8 +192,12 @@ const editDiscuss = async (req, res, next) => {
        // notificationMail(informList, result, "编辑了回复")
     }
     try {
+        var discussObj = (await discussDB.findTaskDiscuss(discussId)).toObject();
+        delete discussObj._id;
+        discussObj.content = content;
+        discussObj.fileList = fileList || discussObj.fileList;
 
-        const result = await discussDB.updateDiscuss(discussId, {content: content})
+        const result = await discussDB.updateDiscuss(discussId, discussObj)
         await topicDB.updateDiscuss(topicId, discussId, content)
 
         const userObj = await userDB.baseInfoById(userId)
