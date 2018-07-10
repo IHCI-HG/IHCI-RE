@@ -245,6 +245,14 @@
             margin-right: 20px;
         }
 
+        .icon{
+            text-align: center;
+            font-size: 72px;
+            margin-left: 10px 0;
+            color:#333;
+        }
+
+
         .des-line {
             font-size: 22px; 
             margin-bottom: 20px;
@@ -260,6 +268,7 @@
             // -webkit-box-orient: vertical;
             -webkit-line-clamp: 3;
             overflow: hidden;
+            margin-left: 10px;
         }
     }
 

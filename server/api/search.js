@@ -51,7 +51,8 @@ const search = async (req, res, next) => {
              }
          })
         allFile.map((item)=> {
-            if(str.test(item.fileName)){
+            if(str.test(item.fileName) || str.test(item.dir)){
+                item  = {...item._doc, type: 'FILE'}
                searchResult.push(item)
             }
         })
