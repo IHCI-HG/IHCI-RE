@@ -25,8 +25,8 @@ class TimelineItem extends React.PureComponent{
 
     toOriginHandle = () => {
         // console.log(this)
-        const pathname = ''
-        const type = 'TOPIC'
+        var pathname = ''
+        var type = 'TOPIC'
         switch(this.props.type){
             case 'CREATE_TOPIC':
             case 'EDIT_TOPIC':

@@ -100,4 +100,4 @@ const fileUploader = async (file, ossKey) => {
     return result
 }   
 
-export default fileUploader = fileUploader
+export default fileUploader

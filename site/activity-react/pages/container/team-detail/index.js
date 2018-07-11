@@ -481,7 +481,7 @@ export default class TeamDetail extends React.Component {
 
     // todoList
     handleTodoListCreate = async (info) => {
-        const listExist = false
+        var listExist = false
         this.state.todoListArr.map((item) => {
             if (item.name === info.name) {
                 alert("清单已存在")

@@ -16,6 +16,7 @@ let MODE = process.env.BUILD_MODE || 'dev';
 
 const entrys = {};
 const htmlPlugins = [];
+const optimization = {};
 const pages = fs.readdirSync(path.join(__dirname, './pages'));
 const PUBLIC_PATH = path.join(__dirname, '../../public/activity-react');
 
@@ -91,6 +92,11 @@ entrys.braft_editor_vendor = ['braft-editor'];
 
 console.log('entrys', entrys);
 
+// optimization 配置
+optimization.splitChunks = {
+    
+}
+
 // -------------------- 构建plugins
 let plugins = [
     // 样式独立配置
@@ -112,13 +118,17 @@ let plugins = [
             }
          }
     }),
+
     // 公共库会被抽离到vendor.js里
-    new webpack.optimize.CommonsChunkPlugin({
-        names: ['braft_editor_vendor', 'vendor'],
-        deepChildren: true,
-        async: true,
-        minChunks: Infinity,
-    }),
+    // 升级webpack后就不能用CommonsChunkPlugin了，被config.optimization.splitChunks所替代
+    // new webpack.optimize.CommonsChunkPlugin({
+    //     names: ['braft_editor_vendor', 'vendor'],
+    //     deepChildren: true,
+    //     async: true,
+    //     minChunks: Infinity,
+    // }),
+
+
     ...htmlPlugins
 ];
 
@@ -221,6 +231,7 @@ module.exports = {
 
         ]
     },
+    optimization: optimization,
     resolve: {
         extensions: ['.web.tsx', '.web.ts', '.web.jsx', '.web.js', '.js', '.jsx', '.ts', '.tsx'], // require 无需后缀
         modules: ['node_modules'],
