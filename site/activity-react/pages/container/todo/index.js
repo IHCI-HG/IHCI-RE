@@ -1,6 +1,6 @@
 import * as React from 'react';
 import './style.scss'
-import mock from '../../../mock';
+// import mock from '../../../mock';
 import api from '../../../utils/api';
 import { timeBefore, sortByCreateTime } from '../../../utils/util'
 import Page from '../../../components/page'
@@ -562,8 +562,8 @@ export default class Task extends React.Component{
                 }
             })
     
-            console.log('assigneeId', todoInfo.assigneeId)
-            console.log('resp', resp)
+            // console.log('assigneeId', todoInfo.assigneeId)
+            // console.log('resp', resp)
     
             if (resp.state.code === 0) {
                 const todo = this.state.todo
@@ -669,7 +669,7 @@ export default class Task extends React.Component{
                 teamId: this.state.todo.teamId,
             }
         })
-        console.log('resp', resp);
+        // console.log('resp', resp);
         if (resp.state.code === 0) {
             const todo = this.state.todo
             const rHasDone = resp.data.state

@@ -30,7 +30,7 @@
             }
         }
         &:hover {
-            background-color: #e6e6e646;
+            background-color: #e6e6e6;
         }
     }
 }
@@ -181,6 +181,9 @@
         }
         .name {
             width: 50%;
+            &:hover {
+                cursor: pointer;
+            }
         }
         .size {
             width: 15%;
@@ -192,6 +195,11 @@
             width: 20%;
             span {
                 margin-right: 10px;
+                &:hover {
+                    cursor: pointer;
+                    text-decoration: underline;
+                }
+  
             }
         } 
         .show-all-file {

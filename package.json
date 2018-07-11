@@ -6,10 +6,11 @@
     "dev": "pm2 start server/startup.js --watch server/ --name activity -- -m dev1 -l 2000000179700023 -p 5001",
     "activity-react:dev": "./node_modules/.bin/webpack --config ./site/activity-react/webpack.config.js --progress --colors --display-error-details --watch",
     "activity-react:test": "export BUILD_MODE=test && ./node_modules/.bin/webpack --config ./site/activity-react/webpack.config.js --progress --colors --display-error-details",
-    "activity-react": "export BUILD_MODE=prod && ./node_modules/.bin/webpack --config ./site/activity-react/webpack.config.js --progress --colors --display-error-details"
+    "activity-react": "export BUILD_MODE=prod && ./node_modules/.bin/webpack --config ./site/activity-react/webpack.config.js --progress --colors --display-error-details",
+    "analyse": "export BUILD_MODE=prod && ./node_modules/.bin/webpack --config ./site/activity-react/webpack.config.js --progress --colors --display-error-details --display-modules --sort-modules-by size",
+    "state": "export BUILD_MODE=prod && ./node_modules/.bin/webpack --config ./site/activity-react/webpack.config.js --progress --colors --display-error-details --profile --json > stats.json"
   },
   "dependencies": {
-    "@types/braft-editor": "^1.9.0",
     "ali-oss": "^5.2.0",
     "apollo-local-query": "^0.3.0",
     "apollo-server-express": "^1.1.2",
@@ -156,6 +157,7 @@
     "vconsole": "^2.5.2",
     "vinyl-named": "^1.1.0",
     "webpack": "^3.0.0",
+    "webpack-bundle-analyzer": "^2.13.1",
     "webpack-livereload-plugin": "^0.8.2",
     "webpack-stream": "^4.0.0",
     "webpack-upload": "^1.1.1"

@@ -1,8 +1,10 @@
 import * as React from 'react';
 import './style.scss'
 import api from '../../../utils/api';
+var ReactDOM = require('react-dom')
 import { timeBefore, sortByCreateTime, createMarkup, formatDate } from '../../../utils/util'
 import Page from '../../../components/page'
+import Modal from '../../../components/modal'
 import MemberChosenList from '../../../components/member-chose-list'
 import Editor from '../../../components/editor'
 import EditTodoList from '../todo/todolist/editTodoList'
@@ -39,7 +41,6 @@ class TopicItem extends React.PureComponent {
     }
 }
 
-
 function getUpdateItem(arr, id) {
     let item = null
     let index = null
@@ -52,7 +53,7 @@ function getUpdateItem(arr, id) {
     return [item, index]
 }
 
-export default class Team extends React.Component {
+export default class TeamDetail extends React.Component {
     state = {
         showCreateTopic: false,
         showCreateTodo: false,
@@ -73,6 +74,9 @@ export default class Team extends React.Component {
         fileList: [],
         showCreateFolder: false,
         createFolderName: '新建文件夹',
+        
+        modal: document.createElement('div'),
+        moveItem: '',
     }
 
     componentDidMount = async () => {
@@ -107,7 +111,7 @@ export default class Team extends React.Component {
                 teamId: this.teamId
             }
         })
-        console.log('resp', resp)
+        // console.log('resp', resp)
         let todoListArr = this.state.todoListArr
         let unclassifiedList = []
         let unclassified = {}
@@ -190,7 +194,7 @@ export default class Team extends React.Component {
             method: 'POST',
             body: { userList: memberIDList }
         })
-        console.log('result.data.topicList', result.data.topicList)
+        // console.log('result.data.topicList', result.data.topicList)
         memberResult.data.map((item, idx) => {
             memberList.push({
                 ...item,
@@ -672,6 +676,62 @@ export default class Team extends React.Component {
     folderClickHandle = (dir) => {
         location.href = '/files/' + this.teamId + '?dir=/' + dir
     }
+    
+    moveHandle = async (item, tarDir) => {
+        if (item.fileType == 'file') {
+            const result = await api('/api/file/moveFile', {
+                method: 'POST',
+                body: {
+                    fileInfo: {
+                        teamId: this.teamId,
+                        dir: '/',
+                        fileName: this.state.moveItem.name,
+                        tarDir: tarDir,
+                    }
+                }
+            })
+
+            if (result.state.code == 0) {
+                window.toast("移动文件成功")
+            } else {
+                window.toast(result.state.msg)
+            }
+        }
+        else {
+            const result = await api('/api/file/moveFolder', {
+                method: 'POST',
+                body: {
+                    folderInfo: {
+                        teamId: this.teamId,
+                        dir: '/',
+                        folderName: this.state.moveItem.name,
+                        tarDir: tarDir,
+                    }
+                }
+            })
+
+            if (result.state.code == 0) {
+                window.toast("移动文件夹成功")
+            } else {
+                window.toast(result.state.msg)
+            }
+        }
+        this.initTeamFile()
+    }
+
+    onChildChanged = (moveTarDir) => {
+        if (moveTarDir != '') {
+            this.moveHandle(this.state.moveItem, moveTarDir)
+        }
+        document.getElementById('app').removeChild(this.state.modal)
+        this.state.moveItem = ''
+    }
+
+    openMoveModalHandle = (item) => {
+        this.state.moveItem = item
+        ReactDOM.render(<Modal teamId={this.teamId} folderId={item._id} callbackParent={this.onChildChanged} />, this.state.modal)
+        document.getElementById('app').appendChild(this.state.modal)
+    }
 
     renameHandle = (item) => {
         this.state.renameId = item._id
@@ -955,7 +1015,7 @@ export default class Team extends React.Component {
                                                     <div className="size">-</div>
                                                     <div className="last-modify">{formatDate(item.last_modify_time)}</div>
                                                     <div className="tools">
-                                                        <span>移动</span>
+                                                        <span onClick={() => { this.openMoveModalHandle(item) }}>移动</span>
                                                         <span onClick={() => { this.renameHandle(item) }}> 重命名 </span>
                                                         <span onClick={() => { this.deleteHandle('folder', item.name) }}>删除</span>
                                                     </div>
@@ -970,7 +1030,7 @@ export default class Team extends React.Component {
                                                     <div className="last-modify">{formatDate(item.last_modify_time)}</div>
                                                     <div className="tools">
                                                         <span onClick={() => { this.downloadHandle(item.ossKey) }}>下载</span>
-                                                        <span>移动</span>
+                                                        <span onClick={() => { this.openMoveModalHandle(item) }}>移动</span>
                                                         <span onClick={() => { this.renameHandle(item) }}> 重命名 </span>
                                                         <span onClick={() => { this.deleteHandle('file', item.name) }}>删除</span>
                                                     </div>

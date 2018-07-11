@@ -2,7 +2,7 @@ import * as React from 'react';
 import './style.scss'
 
 import api from '../../../utils/api';
-import Page from '../../../components/page'
+import Page from '../../../components/page';
 
 class TeamItem extends React.PureComponent{
     render() {

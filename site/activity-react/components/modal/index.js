@@ -1,14 +1,14 @@
 import * as React from 'react';
-var ReactDOM = require('react-dom')
-import Page from '../../../components/page'
-import api from '../../../utils/api';
 import './style.scss'
+import api from '../../utils/api';
+import Page from '../page'
+var ReactDOM = require('react-dom')
 
-const root = document.getElementById('app')
 
-class Window extends React.Component {
+export default class Modal extends React.Component {
     componentDidMount = async () => {
         this.teamId = this.props.teamId
+        this.folderId = this.props.folderId
         this.initDirList()
         this.initTeamInfo()
         this.initTeamFile()
@@ -110,32 +110,34 @@ class Window extends React.Component {
     }
 
     render() {
-        console.log(this.state.fileList)
-        console.log(this.state.dirList)
         return (
             <div className="window" >
                 <div className="outerBox">
                     <Page className="move-File">
-                        <div className="file-con">
-                        <div> 移动到： </div>
+                        <div className="move-file-con">
+                        <div className="head-info"> 移动到： </div>
                             <div className="file-dir">
                                 {
                                     this.state.dirList.length ?
                                         <div>
                                             {
                                                 this.state.dirList.map((item, idx) => (
-                                                    <span key={"dir-list-" + idx} onClick={() => { this.headDirClickHandle(item.dir) }}>{item.name} {idx == this.state.dirList.length - 1 ? '' : '>'} </span>
+                                                    <span key={"dir-list-" + idx} onClick={() => { this.headDirClickHandle(item.dir) }}> <span className="blue"> {item.name} </span> {idx == this.state.dirList.length - 1 ? '' : '>'} </span>
                                                 ))
                                             }
                                         </div>
-                                        : '根目录'
+                                        : <span className="blue"> 根目录 </span>
                                 }
                             </div>
                             <div className="file-list">
+                                <div className="file-line header">
+                                    <div className="name">文件夹名称</div>
+                                </div>
+
                                 {
                                     this.state.fileList.map((item, idx) => {
 
-                                        if (item.fileType == 'folder') {
+                                        if (item.fileType == 'folder' && item._id != this.folderId) {
                                             return (
                                                 <div className="file-line files" key={item.fileType + '-' + item._id}>
                                                     <div className="name" onClick={() => { this.folderClickHandle(item.name) }}>{item.name}</div>
@@ -147,46 +149,12 @@ class Window extends React.Component {
                                     })
                                 }
                             </div>
-                            <div className="btn" onClick={this.confirm}> confirm </div>
-                            <div className="btn" onClick={this.closeWindow}> close </div>
+                            <div className="btn-confirm" onClick={this.confirm}> 确定 </div>
+                            <div className="btn-cancle" onClick={this.closeWindow}> 取消 </div>
                         </div>
                     </Page>
                 </div>
             </div>
-        )
-    }
-}
-
-
-export default class Hello extends React.Component {
-
-    state = {
-        ele: document.createElement('div'),
-        teamId: '5b42c9daba146414dad18a85'
-    }
-
-    constructor() {
-        ReactDOM.render(<Window teamId={this.state.teamId} callbackParent={this.onChildChanged} />, this.state.ele)
-    }
-
-    onChildChanged = (moveTarDir) => {
-        if (moveTarDir) { console.log(moveTarDir) }
-        this.close()
-    }
-
-    close = () => {
-        document.getElementById('app').removeChild(this.state.ele)
-    }
-
-    open = () => {
-        document.getElementById('app').appendChild(this.state.ele)
-    }
-
-    render() {
-        return (
-            <Page title="测试移动功能">
-                <div className='btn' onClick={this.open}> Click Me! </div>
-            </Page>
         )
     }
 }

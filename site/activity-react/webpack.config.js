@@ -12,7 +12,7 @@ const LiveReloadPlugin = require('webpack-livereload-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 let MODE = process.env.BUILD_MODE || 'dev';
-console.log('-----------------当前模式：', `${MODE}`);
+// console.log('-----------------当前模式：', `${MODE}`);
 
 const entrys = {};
 const htmlPlugins = [];
@@ -24,6 +24,7 @@ const config = {
     dev: {
         cssName: '[name].css',
         jsName: '[name].js',
+        chunkFilename: '[name].[chunkhash:5].chunk.js',
         publicPath: '/activity-react/',
         devtool: 'inline-source-map',
     },
@@ -32,16 +33,17 @@ const config = {
         jsName: '[name].[chunkhash].js',
         publicPath: '/activity-react/',
         devtool: false,
-        assetsReceiver: 'http://receiver.dev1.qlchat.com/receiver',
-        assetsToDir: '/data/nodeapp/resources/rs'
+        // assetsReceiver: 'http://receiver.dev1.qlchat.com/receiver',
+        // assetsToDir: '/data/nodeapp/resources/rs'
     },
     prod: {
         cssName: '[name].[contenthash].css',
         jsName: '[name].[chunkhash].js',
+        chunkFilename: '[name].[chunkhash:5].chunk.js',
         publicPath: '/activity-react/',
         devtool: false,
-        assetsReceiver: 'http://127.0.0.1:5001/receiver',
-        assetsToDir: '/data/res/activity/rs'
+        // assetsReceiver: 'http://127.0.0.1:5001/receiver',
+        // assetsToDir: '/data/res/activity/rs'
     }
 }
 
@@ -85,6 +87,9 @@ pages.forEach(item => {
 })
 // vendor配置
 entrys.vendor = ['babel-polyfill', 'react-dom'];
+entrys.braft_editor_vendor = ['braft-editor'];
+
+console.log('entrys', entrys);
 
 // -------------------- 构建plugins
 let plugins = [
@@ -109,7 +114,10 @@ let plugins = [
     }),
     // 公共库会被抽离到vendor.js里
     new webpack.optimize.CommonsChunkPlugin({
-        names: ['vendor'],
+        names: ['braft_editor_vendor', 'vendor'],
+        deepChildren: true,
+        async: true,
+        minChunks: Infinity,
     }),
     ...htmlPlugins
 ];
@@ -166,6 +174,7 @@ module.exports = {
     output: {
         path: PUBLIC_PATH,
         filename: config[MODE].jsName,
+        chunkFilename: config[MODE].chunkFilename,
         publicPath: config[MODE].publicPath,
     },
     module: {

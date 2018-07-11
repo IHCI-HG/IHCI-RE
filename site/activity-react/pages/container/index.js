@@ -7,27 +7,9 @@ import api from '../../utils/api';
 import routerConf from './router'
 import './style.scss'
 import '../../commen/style.scss'
-
-import Test from './test'
-import TestEditor from './test-editor'
-
 import Team from './team'
-import TeamAdmin from './team-admin'
-import TeamJoin from './team-join'
-import TeamCreate from './team-create'
-import Person from './person'
-
-import TeamDetail from './team-detail'
-import Topic from './topic'
-import Timeline from './timeline'  
-import Member from './member'  
-import Sign from './sign'
-import TaskDetail from './todo'
-import Files from './files'
-import SearchResult from './search'
 import ActivateMail from './activate-mail'
-import Inform from './inform'
-import SearchResult from './search'
+import TeamJoin from './team-join'
 
 class App extends React.Component{
     state = {
@@ -168,38 +150,15 @@ const routeConfig = [
         path: '/',
         component: App,
         indexRoute: { component: Team },
-        childRoutes: [
-            { path: 'search', component: SearchResult },
-            { path: 'timeline', component: Timeline },
-            { path: 'member', component: Member },
-            { path: 'inform', component: Inform },
-
-            { path: 'team', component: Team },
-            { path: 'team/:id', component: TeamDetail },
-            { path: 'team-admin/:id', component: TeamAdmin },
-            { path: 'team-create', component: TeamCreate },
-
-            { path: 'files/:id', component: Files },
-            { path: 'discuss/topic/:id', component: Topic },
-            { path: 'todo/:id', component: TaskDetail },
-
-            { path: 'person', component: Person },
-
-            { path: 'sign', component: Sign },
-
-            { path: 'test', component: Test },
-            { path: 'test-editor', component: TestEditor },
-        ]
-    },
-    {
+        childRoutes: routerConf
+    },{
         path: '/activate',
         component: ActivateMail,
     },
     {
-        path: 'team-join/:id',
+        path: '/team-join/:id',
         component: TeamJoin 
     },
 ]
-
 
 render(<Router routes={routeConfig} history={browserHistory}/>, document.getElementById('app'));

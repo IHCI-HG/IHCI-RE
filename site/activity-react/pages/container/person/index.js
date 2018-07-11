@@ -301,6 +301,7 @@ export default class Person extends React.Component{
         var arr = file.name.split('.')
 
         var type = arr.pop()
+        type = type.toLowerCase()
         if(type != 'jpg' && type != 'jpeg' && type != 'png') {
             window.toast("文件格式必须是JPG，JPEG或PNG")
             return 

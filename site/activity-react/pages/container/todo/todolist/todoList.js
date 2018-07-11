@@ -52,8 +52,8 @@ class TodoList extends React.Component {
         const todoList = _props.list.filter((todo) => {
             return todo.hasDone === false
         })
-        console.log('todolist渲染', _props.id)
-        console.log('list', _props.list)
+        // console.log('todolist渲染', _props.id)
+        // console.log('list', _props.list)
 
         return (
             <div className="todolist">
