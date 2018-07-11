@@ -85,13 +85,6 @@ const routerConf = [{
             });
         }
     }, {
-        path: 'team-join/:id',
-        getComponent: function (nextState, callback) {
-            require.ensure([], (require) => {
-                callback(null, require('./team-join').default);
-            });
-        }
-    }, {
         path: 'team-create',
         getComponent: function (nextState, callback) {
             require.ensure([], (require) => {

@@ -9,6 +9,7 @@ import './style.scss'
 import '../../commen/style.scss'
 import Team from './team'
 import ActivateMail from './activate-mail'
+import TeamJoin from './team-join'
 
 class App extends React.Component{
     state = {
@@ -129,9 +130,9 @@ class App extends React.Component{
                                 <input className='searchInput' ref={(input) => { this.searchInputr = input; }} type="text" onChange={this.handleSearchTextChange} placeholder="搜索"/>
                             </form>
                         </div>
-                        <Link className='nav-item' activeClassName='nav-item active' to="/person">
+                        <div className='nav-item' onClick={this.routerHandle.bind(this, '/person')}>
                             <img className="head-img" src={this.state.headImg} />
-                        </Link>
+                        </div>
                         <div className='remind'>
                             <span className='iconfont icon-remind' onClick={this.routerHandle.bind(this, '/inform')}></span>
                         </div>
@@ -153,7 +154,11 @@ const routeConfig = [
     },{
         path: '/activate',
         component: ActivateMail,
-    }
+    },
+    {
+        path: '/team-join/:id',
+        component: TeamJoin 
+    },
 ]
 
 render(<Router routes={routeConfig} history={browserHistory}/>, document.getElementById('app'));

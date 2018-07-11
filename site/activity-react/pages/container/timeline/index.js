@@ -24,7 +24,6 @@ class TeamChoseItem extends React.PureComponent{
 class TimelineItem extends React.PureComponent{
 
     toOriginHandle = () => {
-        // console.log(this)
         const pathname = ''
         const type = 'TOPIC'
         switch(this.props.type){
@@ -45,19 +44,20 @@ class TimelineItem extends React.PureComponent{
             case 'CREATE_CHECK_ITEM':
             case 'COPY_TASK':
             case 'MOVE_TASK':
-            case 'DELETE_TASK':
-            case 'FINISH_TASK':
-
-            case 'REPLY_TASK':
-            case 'DELETE_TASK_REPLY':
-
-            case 'DELETE_CHECK_ITEM':
-            case 'FINISH_CHECITEM_ITEM':
-            case 'COPY_TASK':
-            case 'MOVE_TASK':
             {
+                type = 'TASK'
                 pathname = '/todo/' + this.props.tarId
+                break
             }
+            case 'FOLDER':
+            case 'FILE':
+            {
+                type = 'FILE'
+                pathname = '/files/' + this.props.team
+                break
+            }
+            default:
+                
 
         }
 
@@ -66,7 +66,13 @@ class TimelineItem extends React.PureComponent{
             state:{
                 type: type,
                 id: this.props.tarId
+            },
+            query:this.props.folderName? {
+                dir: this.props.path
             }
+            :this.props.dir ?{
+                 dir: this.props.dir,
+            } :{}
         }
         this.props.router.push(location)
     }
