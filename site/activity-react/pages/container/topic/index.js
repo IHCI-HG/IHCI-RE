@@ -410,11 +410,11 @@ export default class Topic extends React.Component{
 
     createDiscussHandle = async () => {
         const informList = []
-        // this.state.memberList.map((item) => {
-        //     if(item.chosen) {
-        //         informList.push(item._id)
-        //     }
-        // })
+        this.state.memberList.map((item) => {
+            if(item.chosen) {
+                informList.push(item._id)
+            }
+        })
         if(this.state.discussOssKeyArg!==""){
             const result1 = await api('/api/file/createFile', {
                 method: 'POST',
@@ -445,9 +445,15 @@ export default class Topic extends React.Component{
                 // informList: informList
             }
         })
-
+        console.log(result)
         if(result && result.state.code == 0) {
             const discussList = this.state.discussList
+            result.data.imgList=[]
+            result.data.fileList.map((fileItem,index)=>{
+                if(fileItem.name.endsWith(".jpg")||fileItem.name.endsWith(".jpeg")||fileItem.name.endsWith(".png")||fileItem.name.endsWith(".bmp")||fileItem.name.endsWith(".gif")){
+                    result.data.imgList.push(fileItem)
+                }
+            })
             discussList.push(result.data)
             this.setState({
                 discussList: discussList,
@@ -580,8 +586,8 @@ export default class Topic extends React.Component{
                                                 attachments={this.state.discussAttachments}>
                                             </Editor>
                                             {/* <textarea autoFocus className='discuss-content' value={this.state.createDiscussContent} onChange={this.createDiscussInputHandle}></textarea> */}
-                                            {/* <div className="infrom">请选择要通知的人：</div>
-                                            <MemberChosenList choseHandle={this.memberChoseHandle} memberList={this.state.memberList}/> */}
+                                            <div className="infrom">请选择要通知的人：</div>
+                                            <MemberChosenList choseHandle={this.memberChoseHandle} memberList={this.state.memberList}/>
                                             <div className="button-warp" >
                                                 <div className="save-btn" onClick={this.createDiscussHandle}>发表</div>
                                                 <div className="cancel-btn" onClick={() => { this.setState({ createDiscussContent: '',createDiscussChosen: false }) }}>取消</div>
