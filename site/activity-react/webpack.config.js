@@ -112,7 +112,11 @@ let plugins = [
     // 公共库会被抽离到vendor.js里
     new webpack.optimize.CommonsChunkPlugin({
         names: ['vendor'],
+        children: true,
+        async: true,
+        minChunks: 2
     }),
+
     ...htmlPlugins
 ];
 
