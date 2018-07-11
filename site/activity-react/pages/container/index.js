@@ -156,5 +156,4 @@ const routeConfig = [
     }
 ]
 
-
 render(<Router routes={routeConfig} history={browserHistory}/>, document.getElementById('app'));

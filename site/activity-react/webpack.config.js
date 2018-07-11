@@ -12,7 +12,7 @@ const LiveReloadPlugin = require('webpack-livereload-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 let MODE = process.env.BUILD_MODE || 'dev';
-console.log('-----------------当前模式：', `${MODE}`);
+// console.log('-----------------当前模式：', `${MODE}`);
 
 const entrys = {};
 const htmlPlugins = [];
@@ -87,6 +87,9 @@ pages.forEach(item => {
 })
 // vendor配置
 entrys.vendor = ['babel-polyfill', 'react-dom'];
+entrys.braft_editor_vendor = ['braft-editor'];
+
+console.log('entrys', entrys);
 
 // -------------------- 构建plugins
 let plugins = [
@@ -111,12 +114,11 @@ let plugins = [
     }),
     // 公共库会被抽离到vendor.js里
     new webpack.optimize.CommonsChunkPlugin({
-        names: ['vendor'],
-        children: true,
+        names: ['braft_editor_vendor', 'vendor'],
+        deepChildren: true,
         async: true,
-        minChunks: 2
+        minChunks: Infinity,
     }),
-
     ...htmlPlugins
 ];
 
