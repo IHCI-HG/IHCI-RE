@@ -3,7 +3,7 @@ import './style.scss'
 import api from '../../../utils/api';
 import Page from '../../../components/page'
 
-export default class TeamAdmin extends React.Component{
+export default class TeamJoin extends React.Component{
     componentDidMount = async() => {
         if(INIT_DATA.login) {
             this.setState({

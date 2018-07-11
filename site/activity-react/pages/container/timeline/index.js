@@ -137,7 +137,7 @@ class TimelineItem extends React.PureComponent{
     }
 }
 
-export default class News extends React.Component{
+export default class Timeline extends React.Component{
     componentDidMount = async() => {
         await this.loadTimelineData()
         this.initTeamList()

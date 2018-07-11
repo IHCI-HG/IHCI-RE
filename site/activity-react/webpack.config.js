@@ -24,6 +24,7 @@ const config = {
     dev: {
         cssName: '[name].css',
         jsName: '[name].js',
+        chunkFilename: '[name].[chunkhash:5].chunk.js',
         publicPath: '/activity-react/',
         devtool: 'inline-source-map',
     },
@@ -38,6 +39,7 @@ const config = {
     prod: {
         cssName: '[name].[contenthash].css',
         jsName: '[name].[chunkhash].js',
+        chunkFilename: '[name].[chunkhash:5].chunk.js',
         publicPath: '/activity-react/',
         devtool: false,
         // assetsReceiver: 'http://127.0.0.1:5001/receiver',
@@ -166,6 +168,7 @@ module.exports = {
     output: {
         path: PUBLIC_PATH,
         filename: config[MODE].jsName,
+        chunkFilename: config[MODE].chunkFilename,
         publicPath: config[MODE].publicPath,
     },
     module: {

@@ -53,7 +53,7 @@ function getUpdateItem(arr, id) {
     return [item, index]
 }
 
-export default class Team extends React.Component {
+export default class TeamDetail extends React.Component {
     state = {
         showCreateTopic: false,
         showCreateTodo: false,

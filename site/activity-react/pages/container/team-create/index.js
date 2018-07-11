@@ -4,7 +4,7 @@ import api from '../../../utils/api';
 import Page from '../../../components/page'
 import fileUploader from '../../../utils/file-uploader';
 
-export default class TeamAdmin extends React.Component{
+export default class TeamCreate extends React.Component{
     componentDidMount = async() => {
         
     }
