@@ -30,6 +30,8 @@ class TopicItem extends React.Component{
         showCreateTopic: false,
         showButton: true,
         discussAttachments:this.props.fileList,
+        disAttachmentsArr:[],
+        disOssKeyArr:[]
     }
     
     deleteTopicHandle = () => {
@@ -37,7 +39,7 @@ class TopicItem extends React.Component{
     }
 
     updateTopicHandle = () => {
-        this.props.updateTopicHandle(this.props.id,this.state.discussAttachments)
+        this.props.updateTopicHandle(this.props.id,this.state.discussAttachments,this.state.disAttachmentsArr,this.state.disOssKeyArr)
     }
     sendContent = () => {
         this.props.sendContent(this.props.content)
@@ -45,6 +47,14 @@ class TopicItem extends React.Component{
 
     discussFileUploadHandle = async (e) => {
         var ossKey = this.props.teamId + '/' + Date.now() + '/' + e.target.files[0].name
+        const disAttachmentsArr = this.state.disAttachmentsArr
+        const disOssKeyArr = this.state.disOssKeyArr
+        disAttachmentsArr.push(e.target.files[0])
+        disOssKeyArr.push(ossKey)
+        this.setState({
+            disAttachmentsArr,
+            disOssKeyArr
+        })
         const resp = await fileUploader(e.target.files[0], ossKey)
         let discussAttachments = this.state.discussAttachments;
         discussAttachments = [...discussAttachments, resp]
@@ -163,8 +173,10 @@ export default class Task extends React.Component{
         // replyCount:0
         teamName:"",
         discussAttachments:[],
-        attachmentsArg:{},
-        ossKeyArg:"",
+        attachmentsArr:[],
+        ossKeyArr:[],
+        todoAttachmentsArr:[],
+        todoOssKeyArr:[],
     }
 
     componentDidMount = async() => {
@@ -336,25 +348,26 @@ export default class Task extends React.Component{
                 informList.push(item._id)
             }
         })
-        if(this.state.ossKeyArg!==""){
-            const result1 = await api('/api/file/createFile', {
-                method: 'POST',
-                body: {
-                    fileInfo: {
-                        teamId: this.teamId,
-                        size: this.state.attachmentsArg.size,
-                        dir: '/',
-                        fileName: this.state.attachmentsArg.name,
-                        ossKey: this.state.ossKeyArg,
+        if(this.state.attachmentsArr!==[]){
+            this.state.attachmentsArr.map(async(item,index)=>{
+                const result1 = await api('/api/file/createFile', {
+                    method: 'POST',
+                    body: {
+                        fileInfo: {
+                            teamId: this.state.todo.teamId,
+                            size: item.size,
+                            dir: '/',
+                            fileName: item.name,
+                            ossKey: this.state.ossKeyArr[index],
+                        }
                     }
+                })
+                if (result1.state.code === 0) {
+                    window.toast("上传文件成功")
+                } else {
+                    window.toast(result1.state.msg)
                 }
             })
-            console.log(result1)
-            if (result1.state.code === 0) {
-                window.toast("上传文件成功")
-            } else {
-                window.toast(result1.state.msg)
-            }
         }
         const resp = await api('/api/task/createDiscuss', {
             method:"POST",
@@ -392,7 +405,7 @@ export default class Task extends React.Component{
         return resp
     }
 
-    updateTopicHandle= async (id,fileList) =>{
+    updateTopicHandle= async (id,fileList,attArr,ossArr) =>{
         console.log(this.state.updateTopicContent)
         const informList = []
         this.state.memberList.map((item) => {
@@ -400,7 +413,27 @@ export default class Task extends React.Component{
                 informList.push(item._id)
             }
         })
-        console.log("update")
+        if(attArr!==[]){
+            attArr.map(async(item,index)=>{
+                const result1 = await api('/api/file/createFile', {
+                    method: 'POST',
+                    body: {
+                        fileInfo: {
+                            teamId: this.state.todo.teamId,
+                            size: item.size,
+                            dir: '/',
+                            fileName: item.name,
+                            ossKey: ossArr[index],
+                        }
+                    }
+                })
+                if (result1.state.code === 0) {
+                    window.toast("上传文件成功")
+                } else {
+                    window.toast(result1.state.msg)
+                }
+            })
+        }
         const resp = await api('/api/task/editDiscuss', {
             method:"POST",
             body:{
@@ -507,9 +540,13 @@ export default class Task extends React.Component{
 
     discussFileUploadHandle = async (e) => {
         var ossKey = this.state.todo.teamId + '/' + Date.now() + '/' + e.target.files[0].name
+        const attachmentsArr = this.state.attachmentsArr
+        const ossKeyArr = this.state.ossKeyArr
+        attachmentsArr.push(e.target.files[0])
+        ossKeyArr.push(ossKey)
         this.setState({
-            attachmentsArg:e.target.files[0],
-            ossKeyArg:ossKey
+            attachmentsArr,
+            ossKeyArr
         })
         const resp = await fileUploader(e.target.files[0], ossKey)
         let discussAttachments = this.state.discussAttachments;
@@ -595,6 +632,27 @@ export default class Task extends React.Component{
 
     handleTodoModify = async(todoInfo) => {
         console.log(todoInfo)
+        if(todoInfo.attachmentsArr!==[]){
+            todoInfo.attachmentsArr.map(async(item,index)=>{
+                const result1 = await api('/api/file/createFile', {
+                    method: 'POST',
+                    body: {
+                        fileInfo: {
+                            teamId: this.state.todo.teamId,
+                            size: item.size,
+                            dir: '/',
+                            fileName: item.name,
+                            ossKey: todoInfo.ossKeyArr[index],
+                        }
+                    }
+                })
+                if (result1.state.code === 0) {
+                    window.toast("上传文件成功")
+                } else {
+                    window.toast(result1.state.msg)
+                }
+            })
+        }
         const taskId = this.props.params.id;
         const editTask = {};
         editTask.name = todoInfo.name
@@ -602,7 +660,6 @@ export default class Task extends React.Component{
         editTask.desc = todoInfo.desc
         editTask.fileList = todoInfo.fileList
         editTask.assigneeId = todoInfo.assigneeId
-        console.log('editTask', editTask);
         const resp = await api('/api/task/edit', {
             method: 'POST',
             body: {
@@ -611,7 +668,6 @@ export default class Task extends React.Component{
                 editTask
             }
         })
-        console.log('handleTodoModify resp', resp)
         if (resp.state.code === 0) {
             const todo = this.state.todo
             todo.imgList = []
