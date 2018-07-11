@@ -101,6 +101,7 @@ teamSchema.statics = {
             { _id: teamId, "taskList._id": mongoose.Types.ObjectId(taskId) },
             {
                 $set: {
+                    "taskList.$.title": editTask.title,
                     "taskList.$.header": editTask.header,
                     "taskList.$.content": editTask.content,
                     "taskList.$.deadline": editTask.deadline,

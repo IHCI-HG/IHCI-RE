@@ -64,9 +64,9 @@
 
     .actions-wrap {
         position: absolute;
-        left: -1rem;
+        left: -1.5rem;
         top: 2px;
-        width: 80px;
+        width: 100px;
         margin-right:10px;
         > * {
             float: right;
@@ -286,7 +286,7 @@
         padding: 20px 30px 40px 30px;
         .detail-actions{
             position: absolute;
-            top: 20px;
+            top: 100px;
             right: 5px;
             padding: 10px 0 10px 10px;
             margin-top: 42px;
@@ -643,7 +643,7 @@
         border-bottom: 0 !important;
         margin-top:20px;
         height: auto !important;
-        cursor: default !important;
+        cursor: auto !important;
         .imgInfo{
             display: inline-block;
             flex-shrink: 2;
@@ -794,5 +794,27 @@
         -webkit-line-clamp: 1;
     }
 }
-
+.file-list {
+    margin: 10px 100px 0px;
+    padding: 14px;
+    .file-pic-item {
+        display: inline-block;
+        margin-right:40px;
+        margin-top:20px;
+        color: #6a6f7b;
+        text-align: center;
+        .file-pic{
+            width:140px;
+            text-align: center;
+        }
+        .file-name{
+            text-align: center;
+            margin-top: 20px;
+        }
+    }
+    .file-item {
+        margin-top:20px;
+        color: #6a6f7b;
+    }
+}
 

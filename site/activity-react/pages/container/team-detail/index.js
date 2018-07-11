@@ -69,8 +69,8 @@ export default class TeamDetail extends React.Component {
         topicList: [],
         memberList: [],
         todoListArr: [],
-
-
+        attachmentsArg:{},
+        ossKeyArg:"",
         fileList: [],
         showCreateFolder: false,
         createFolderName: '新建文件夹',
@@ -228,7 +228,24 @@ export default class TeamDetail extends React.Component {
                 informList.push(item._id)
             }
         })
-
+        const result1 = await api('/api/file/createFile', {
+            method: 'POST',
+            body: {
+                fileInfo: {
+                    teamId: this.teamId,
+                    size: this.state.attachmentsArg.size,
+                    dir: '/',
+                    fileName: this.state.attachmentsArg.name,
+                    ossKey: this.state.ossKeyArg,
+                }
+            }
+        })
+        console.log(result1);
+        if (result1.state.code === 0) {
+            window.toast("上传文件成功")
+        } else {
+            window.toast(result1.state.msg)
+        }
         const result = await api('/api/topic/createTopic', {
             method: 'POST',
             body: {
@@ -257,10 +274,13 @@ export default class TeamDetail extends React.Component {
                 showCreateTopic: false,
                 topicName: '',
                 topicContent: '',
+                topicAttachments:[],
             })
         } else {
             window.toast(result.state.msg)
         }
+        
+        this.initTeamFile()
     }
 
 
@@ -285,7 +305,12 @@ export default class TeamDetail extends React.Component {
     }
 
     topicFileUploadHandle = async (e) => {
-        const resp = await fileUploader('teamId', '', e.target.files[0])
+        var ossKey = this.teamId + '/' + Date.now() + '/' + e.target.files[0].name
+        this.setState({
+            attachmentsArg:e.target.files[0],
+            ossKeyArg:ossKey
+        })
+        const resp = await fileUploader(e.target.files[0], ossKey)
         let topicAttachments = this.state.topicAttachments
         topicAttachments = [...topicAttachments, resp]
         this.setState({
@@ -364,6 +389,7 @@ export default class TeamDetail extends React.Component {
                 editTask: editTask,
             }
         })
+        console.log(resp)
         if (resp.state.code === 0) {
             const todoListArr = this.state.todoListArr
             const todolist = todoListArr[lIndex]
@@ -445,7 +471,7 @@ export default class TeamDetail extends React.Component {
                 editTask: editTask,
             }
         })
-        console.log(resp)
+        console.log("date",resp)
         if (resp.state.code === 0) {
             const todoListArr = this.state.todoListArr
             const todolist = todoListArr[lIndex]
@@ -918,6 +944,7 @@ export default class TeamDetail extends React.Component {
                             <TodoList
                                 listType="unclassified"
                                 showCreateTodo={this.state.showCreateTodo}
+                                createInput="任务名"
                                 handlecloseEditTodo={this.handlecloseEditTodo.bind(this)}
                                 {...unclassified}
                                 memberList={this.state.memberList}
@@ -949,6 +976,7 @@ export default class TeamDetail extends React.Component {
                                 <TodoList
                                     key={todoList.id}
                                     {...todoList}
+                                    createInput="任务名"
                                     memberList={this.state.memberList}
                                     handleTodoCreate={this.handleTodoCreate.bind(this, index, todoList.id)}
                                     handleTodoCheck={this.handleTodoCheck.bind(this, index, todoList.id)}
