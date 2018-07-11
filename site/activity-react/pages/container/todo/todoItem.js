@@ -166,8 +166,20 @@ class TodoItem extends React.Component {
                         {
                             <div className="file-list">
                                 {
-                                    _props.fileList && _props.fileList.map((item) => {
-                                        return( <div className="file-item" key={Math.random()} onClick={()=>{window.open(window.location.origin + '/static/' + item.name)}}>{item.name.split("/")[2]}</div> )
+                                    _props.imgList&&_props.imgList.map((item) => {
+                                        return (
+                                            <div className="file-pic-item" key={Math.random()} onClick={()=>{window.open(window.location.origin + '/static/' + item.name)}}>
+                                                <img className="file-pic" src={window.location.origin + '/static/' + item.name}></img>
+                                                <div className="file-name">{item.name.split("/")[2]}</div>
+                                            </div>
+                                        )
+                                    })
+                                }
+                                {
+                                    _props.fileList&&_props.fileList.map((item) => {
+                                        if(!(item.name.endsWith(".jpg")||item.name.endsWith(".jpeg")||item.name.endsWith(".png")||item.name.endsWith(".bmp")||item.name.endsWith(".gif"))){
+                                            return ( <div className="file-item" key={Math.random()} onClick={()=>{window.open(window.location.origin + '/static/' + item.name)}}>{item.name.split("/")[2]}</div> )
+                                        }
                                     })
                                 }
                             </div>

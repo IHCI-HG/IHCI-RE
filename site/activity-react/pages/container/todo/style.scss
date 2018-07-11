@@ -797,8 +797,23 @@
 .file-list {
     margin: 10px 100px 0px;
     padding: 14px;
+    .file-pic-item {
+        display: inline-block;
+        margin-right:40px;
+        margin-top:20px;
+        color: #6a6f7b;
+        text-align: center;
+        .file-pic{
+            width:140px;
+            text-align: center;
+        }
+        .file-name{
+            text-align: center;
+            margin-top: 20px;
+        }
+    }
     .file-item {
-        margin: 8px 0;
+        margin-top:20px;
         color: #6a6f7b;
     }
 }

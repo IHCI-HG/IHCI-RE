@@ -95,12 +95,21 @@ class TopicItem extends React.Component{
                         {this.state.showButton&&<div>
                             <p dangerouslySetInnerHTML={createMarkup(this.props.content)}></p>
                             <div className="file-list">
+                            {
+                                this.props.imgList.map((item) => {
+                                    return (
+                                        <div className="file-pic-item" key={Math.random()} onClick={this.downloadHandle.bind(this, item.name)}>
+                                            <img className="file-pic" src={window.location.origin + '/static/' + item.name}></img>
+                                            <div className="file-name">{item.name.split("/")[2]}</div>
+                                        </div>
+                                    )
+                                })
+                            }
                                 {
-                                    this.props.fileList && this.props.fileList.map((item) => {
-                                        return ( 
-                                        <div className="file-item" key={'file-item=' + item.name} onClick={this.downloadHandle.bind(this,item.name)}>
-                                            {item.name.split("/")[2]}
-                                        </div> )
+                                     this.props.fileList.map((item) => {
+                                        if(!(item.name.endsWith(".jpg")||item.name.endsWith(".jpeg")||item.name.endsWith(".png")||item.name.endsWith(".bmp")||item.name.endsWith(".gif"))){
+                                            return ( <div className="file-item" key={Math.random()} onClick={this.downloadHandle.bind(this, item.name)}>{item.name.split("/")[2]}</div> )
+                                        }
                                     })
                                 }
                             </div>
@@ -154,6 +163,8 @@ export default class Task extends React.Component{
         // replyCount:0
         teamName:"",
         discussAttachments:[],
+        attachmentsArg:{},
+        ossKeyArg:"",
     }
 
     componentDidMount = async() => {
@@ -253,6 +264,12 @@ export default class Task extends React.Component{
         // 后端数据接口适配
         console.log('checkitemList', resp.data)
         const todo = {}
+        todo.imgList = []
+        resp.data.fileList.map((fileItem,index)=>{
+            if(fileItem.name.endsWith(".jpg")||fileItem.name.endsWith(".jpeg")||fileItem.name.endsWith(".png")||fileItem.name.endsWith(".bmp")||fileItem.name.endsWith(".gif")){
+                todo.imgList.push(fileItem)
+            }
+        })
         todo.id = resp.data._id
         todo.hasDone = resp.data.state
         todo.desc = resp.data.content
@@ -294,6 +311,12 @@ export default class Task extends React.Component{
             const topicListArr = this.state.topicListArr 
             resp.data.map((item)=>{
                 const topic = {}
+                topic.imgList = []
+                item.fileList.map((fileItem,index)=>{
+                    if(fileItem.name.endsWith(".jpg")||fileItem.name.endsWith(".jpeg")||fileItem.name.endsWith(".png")||fileItem.name.endsWith(".bmp")||fileItem.name.endsWith(".gif")){
+                        topic.imgList.push(fileItem)
+                    }
+                })
                 topic.id = item._id
                 topic.creator = item.creator
                 topic.time = item.create_time
@@ -307,15 +330,32 @@ export default class Task extends React.Component{
     }
 
     createTopicHandle = async () => {
-        // this.setState({
-        //     replyCount:this.state.replyCount+1
-        // })
         const informList = []
         this.state.memberList.map((item) => {
             if(item.chosen) {
                 informList.push(item._id)
             }
         })
+        if(this.state.ossKeyArg!==""){
+            const result1 = await api('/api/file/createFile', {
+                method: 'POST',
+                body: {
+                    fileInfo: {
+                        teamId: this.teamId,
+                        size: this.state.attachmentsArg.size,
+                        dir: '/',
+                        fileName: this.state.attachmentsArg.name,
+                        ossKey: this.state.ossKeyArg,
+                    }
+                }
+            })
+            console.log(result1)
+            if (result1.state.code === 0) {
+                window.toast("上传文件成功")
+            } else {
+                window.toast(result1.state.msg)
+            }
+        }
         const resp = await api('/api/task/createDiscuss', {
             method:"POST",
             body:{
@@ -329,6 +369,12 @@ export default class Task extends React.Component{
         if (resp.state.code === 0) {
             const topicList = this.state.topicListArr
             let topic = {}
+            topic.imgList = []
+            resp.data.fileList.map((fileItem,index)=>{
+                if(fileItem.name.endsWith(".jpg")||fileItem.name.endsWith(".jpeg")||fileItem.name.endsWith(".png")||fileItem.name.endsWith(".bmp")||fileItem.name.endsWith(".gif")){
+                    topic.imgList.push(fileItem)
+                }
+            })
             topic.id = resp.data._id
             topic.creator = resp.data.creator
             topic.time = resp.data.create_time
@@ -340,6 +386,7 @@ export default class Task extends React.Component{
                 topicListArr:topicList,
                 createTopicName:"",
                 createTopicContent:"",
+                discussAttachments:[],
              })
         }
         return resp
@@ -371,6 +418,12 @@ export default class Task extends React.Component{
             const topicListArr = this.state.topicListArr
             topicListArr.map((item,index)=>{
                 if(item.id===id){
+                    item.imgList = []
+                    resp.data.fileList.map((fileItem,index)=>{
+                        if(fileItem.name.endsWith(".jpg")||fileItem.name.endsWith(".jpeg")||fileItem.name.endsWith(".png")||fileItem.name.endsWith(".bmp")||fileItem.name.endsWith(".gif")){
+                            item.imgList.push(fileItem)
+                        }
+                    })
                     item.content = resp.data.content
                     item.time = resp.data.create_time
                     item.fileList = resp.data.fileList
@@ -454,6 +507,10 @@ export default class Task extends React.Component{
 
     discussFileUploadHandle = async (e) => {
         var ossKey = this.state.todo.teamId + '/' + Date.now() + '/' + e.target.files[0].name
+        this.setState({
+            attachmentsArg:e.target.files[0],
+            ossKeyArg:ossKey
+        })
         const resp = await fileUploader(e.target.files[0], ossKey)
         let discussAttachments = this.state.discussAttachments;
         discussAttachments = [...discussAttachments, resp]
@@ -557,6 +614,12 @@ export default class Task extends React.Component{
         console.log('handleTodoModify resp', resp)
         if (resp.state.code === 0) {
             const todo = this.state.todo
+            todo.imgList = []
+            resp.data.fileList.map((fileItem,index)=>{
+                if(fileItem.name.endsWith(".jpg")||fileItem.name.endsWith(".jpeg")||fileItem.name.endsWith(".png")||fileItem.name.endsWith(".bmp")||fileItem.name.endsWith(".gif")){
+                    todo.imgList.push(fileItem)
+                }
+            })
             const rAssignee = {}
             rAssignee.id = resp.data.header
             todo.name = resp.data.title
@@ -849,25 +912,15 @@ export default class Task extends React.Component{
                              添加检查项
                          </div>
                      }
-                    {/* {this.state.showCreateDetail?
-                         <NewCheck
-                             memberList={this.state.memberList}
-                             confirmLabel="保存"
-                             handleConfirm={this.handleCheckCreate}
-                             handleClose={() => {
-                                 this.setState({ showCreateCheck: false})
-                             }}
-                         />: */}
-                         {(this.state.todo.desc===""||this.state.todo.desc==="<p></p>")&&
-                         <div className="new-check"
-                             onClick={() => {
-                                 this.setEdit()
-                            }}>
-                             <i className="icon iconfont">&#xe6e0;</i>
-                             添加任务描述
-                         </div>
-                         }
-                     {/* } */}
+                    {(this.state.todo.desc===""||this.state.todo.desc==="<p></p>")&&
+                    <div className="new-check"
+                        onClick={() => {
+                            this.setEdit()
+                    }}>
+                        <i className="icon iconfont">&#xe6e0;</i>
+                        添加任务描述
+                    </div>
+                    }
 
                     <div className="detail-actions">
                         <div className={"item "+((copyExpanded)?"expanded":"")}>
