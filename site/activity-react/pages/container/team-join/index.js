@@ -15,6 +15,9 @@ export default class TeamAdmin extends React.Component{
                 login: true
             })
         }
+        else{
+            window.toast("请先登录或注册")
+        }
         if(INIT_DATA.teamObj) {
             this.setState({
                 teamObj: INIT_DATA.teamObj
@@ -79,12 +82,15 @@ export default class TeamAdmin extends React.Component{
                         <div className='join-box'>
                             <img className='team-img' src={this.state.teamObj.teamImg}></img>
                             <div className='team-name'>{this.state.teamObj.name}</div>
-                            <div className='join-btn' onClick={this.joinBtnHandle}>点击加入团队 </div> 
+                            <div className='join-btn' onClick={this.joinBtnHandle}>点击加入团队</div> 
                         </div>
                         : 
                         <div className='reg-box'>
-                            <div> 请先注册或登录 </div>
-                            <LoginView  join={true} showWxDialogHandle={this.showWxDialogHandle}/>
+                            <span className='reg-msg'>您尚未登录</span>
+                            <div className='reg-item'>
+                                
+                                <LoginView  join={true} showWxDialogHandle={this.showWxDialogHandle}/>
+                            </div>
                         </div>
                     }
                     </div>

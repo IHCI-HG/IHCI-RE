@@ -31,8 +31,27 @@
             
         .reg-box{
             align-items: center;
+            text-align: center;
+            display: block;
             margin: auto;
-            margin-top: 100px;
+            margin-top: 42px;
+            .reg-msg{
+                display: flex;
+                float: left;
+                align-items: center;
+                text-align: center;
+                font-size: 20px;
+                margin-left: 240px;
+                margin-top: 260px;
+                // color: white;
+            }
+            .reg-item{
+                display: flex;
+                float: right;
+                margin-right: 42px;
+                align-items: center;
+                text-align: center;
+            }
         }
 
         .join-box{
@@ -57,6 +76,7 @@
                 align-items: center;
                 text-align: center;
                 font-size: 28px;
+                margin-bottom: 10px;
 
             }
 
