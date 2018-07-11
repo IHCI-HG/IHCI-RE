@@ -78,7 +78,7 @@ pages.forEach(item => {
             new HtmlWebpackPlugin({
                 filename: `${item}.html`,
                 template: path.join(__dirname, `./pages/${item}/index.html`),
-                chunks: ['vendor', item]
+                chunks: [item, 'vendor']
             })
         );
     } else {
@@ -86,7 +86,7 @@ pages.forEach(item => {
             new HtmlWebpackPlugin({
                 filename: `${item}.html`,
                 template: path.join(__dirname, './template.html'),
-                chunks: ['vendor', item]
+                chunks: [item, 'vendor']
             })
         );
     }
@@ -201,7 +201,8 @@ module.exports = {
                 use: {
                     loader: 'babel-loader',
                     options: {
-                        presets: ["es2015", 'stage-0', 'stage-1', 'stage-2', 'stage-3', 'react']
+                        presets: ["es2015", 'stage-0', 'stage-1', 'stage-2', 'stage-3', 'react'],
+                        plugins: ["transform-async-to-generator", 'transform-runtime']
                     }
                 }
             },
@@ -216,8 +217,19 @@ module.exports = {
                 use: [{
                     loader: "style-loader" // 将 JS 字符串生成为 style 节点
                 }, {
-                    loader: "css-loader" // 将 CSS 转化成 CommonJS 模块
+                    loader: "css-loader?-autoprefixer" // 将 CSS 转化成 CommonJS 模块
                 }, {
+                    loader: 'postcss-loader',
+                    options: {
+                        plugins: () => [
+                            require('autoprefixer')({
+                            browsers: ['> 1%', 'Android >= 2.1', 'ios 7', 'firefox >= 15'],
+                        }),
+                        px2rem({
+                            remUnit: 75,
+                        }),
+                    ]}
+                },{
                     loader: "sass-loader" // 将 Sass 编译成 CSS
                 }]
             },
@@ -268,8 +280,6 @@ module.exports = {
             '@': path.resolve(__dirname, 'site')
         }
     },
-
-
 }
 
 // module.exports = {
