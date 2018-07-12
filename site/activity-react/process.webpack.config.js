@@ -125,7 +125,7 @@ module.exports = {
                     loader: 'babel-loader?cacheDirectory',
                     options: {
                         presets: ["es2015", 'stage-0', 'stage-1', 'stage-2', 'stage-3', 'react'],
-                        plugins: ["transform-async-to-generator", 'transform-runtime']
+                        // plugins: ['transform-runtime']
                     }
                 }
             },
@@ -135,7 +135,7 @@ module.exports = {
                 use: 'ts-loader',
             },
             {
-                test: /\.scss$/,
+                test: /\.s?css$/,
                 exclude: /node_modules/,
                 use: [{
                     loader: MiniCssExtractPlugin.loader,
@@ -157,19 +157,6 @@ module.exports = {
                         loader: "sass-loader" // 将 Sass 编译成 CSS
                 }]
             },
-            // {
-            //     test: /\.scss$/,
-            //     exclude: /node_modules/,
-            //     use: extractSass.extract({
-            //         use: [{
-            //             loader: "css-loader"
-            //         }, {
-            //             loader: "sass-loader"
-            //         }],
-            //         // 在开发环境使用 style-loader
-            //         fallback: "style-loader"
-            //     })  
-            // },
             {
                 test: /\.(png|jpg|gif|ico|svg)$/,
                 exclude: /node_modules/,
@@ -187,11 +174,6 @@ module.exports = {
                     loader: 'file-loader',
                     options: {}
                 }]
-            },
-            {
-                test: /\.css$/,
-                exclude: /node_modules/,
-                use: 'css-loader'
             }
         ]
     },
