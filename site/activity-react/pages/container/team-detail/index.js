@@ -759,7 +759,7 @@ export default class Team extends React.Component {
                 body: {
                     fileInfo: {
                         teamId: this.teamId,
-                        dir: this.curDir,
+                        dir: '/',
                         fileName: item.name,
                     },
                     tarName: this.state.renameName,
@@ -782,7 +782,7 @@ export default class Team extends React.Component {
                 body: {
                     folderInfo: {
                         teamId: this.teamId,
-                        dir: this.curDir,
+                        dir: '/',
                         folderName: item.name,
                     },
                     tarName: this.state.renameName,
