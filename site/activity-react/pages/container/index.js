@@ -77,7 +77,12 @@ class App extends React.Component{
         if (this.infoAllFilled())
         {
             this.activeTagHandle(toUrl)
-            this.props.router.push(toUrl)
+                // if (this.props.router.)
+            if (this.props.location.pathname == toUrl && (this.props.location.query ||this.props.location.state)){
+                location.href = toUrl
+            }
+            else
+                this.props.router.push(toUrl)
         }
         else{
             this.props.router.push('/person')
