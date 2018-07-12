@@ -1,15 +1,12 @@
 import * as React from 'react';
 import { render } from 'react-dom';
-import { autobind } from 'core-decorators';
 
 import Page from '../../components/page';
 
 import api, { authApi } from '../../utils/api';
-import * as ui from '../../utils/ui';
 
 import './style.scss'
 import '../../commen/style.scss'
-import { loading } from '../../utils/ui';
 
 import WxLoginDialog from '../../components/wx-login-dialog'
 
@@ -24,7 +21,6 @@ export default class MainPage extends React.Component {
 
         createUsername: '',
         createPassword: '',
-
 
         showWxDialog: false,
     }
@@ -114,6 +110,9 @@ export default class MainPage extends React.Component {
         })
     }
 
+    // render() {
+    //     <div> sssss </div>
+    // }
 
     render () {
         return <Page title='IHCI' className="main-page">

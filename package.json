@@ -9,7 +9,10 @@
     "activity-react": "export BUILD_MODE=prod && ./node_modules/.bin/webpack --config ./site/activity-react/webpack.config.js --progress --colors --display-error-details",
     "analyse": "export BUILD_MODE=prod && ./node_modules/.bin/webpack --config ./site/activity-react/webpack.config.js --progress --colors --display-error-details --display-modules --sort-modules-by size",
     "state": "export BUILD_MODE=prod && ./node_modules/.bin/webpack --config ./site/activity-react/webpack.config.js --progress --colors --display-error-details --profile --json > stats.json",
-    "test": "export BUILD_MODE=prod && ./node_modules/.bin/webpack --config ./site/activity-react/process.webpack.config.js --progress --colors --display-error-details"
+    "test": "export BUILD_MODE=prod && ./node_modules/.bin/webpack --config ./site/activity-react/process.webpack.config.js --progress --colors --display-error-details",
+    "test:dev": "export BUILD_MODE=dev && ./node_modules/.bin/webpack --config ./site/activity-react/process.dev.webpack.config.js --progress --colors --display-error-details  --watch",
+    "test-state": "export BUILD_MODE=prod && ./node_modules/.bin/webpack --config ./site/activity-react/process.webpack.config.js --progress --colors --display-error-details --profile --json > stats.json",
+    "test-analyse": "export BUILD_MODE=prod && ./node_modules/.bin/webpack --config ./site/activity-react/process.webpack.config.js --progress --colors --display-error-details --display-modules --sort-modules-by size"
   },
   "dependencies": {
     "ali-oss": "^5.2.0",
@@ -30,6 +33,7 @@
     "cookie-parser": "1.3.4",
     "cookie-signature": "1.0.6",
     "core-decorators": "^0.17.0",
+    "crypto-js": "^3.1.9-1",
     "dateformat": "1.0.11",
     "deepcopy": "^0.6.3",
     "errorhandler": "1.3.5",
