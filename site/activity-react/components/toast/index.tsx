@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { createPortal } from 'react-dom';
-import { autobind } from 'core-decorators'
 
 import './toast.scss'
 
@@ -9,7 +8,6 @@ interface IState {
     content: string
 }
 
-@autobind
 class Toast extends React.Component<{}, IState> {
 
     state = {
@@ -21,7 +19,6 @@ class Toast extends React.Component<{}, IState> {
         if (this.state.show) {
             return;
         }
-
         this.setState({
             show: true,
             content: msg

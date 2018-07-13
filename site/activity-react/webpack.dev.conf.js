@@ -96,8 +96,8 @@ pages.forEach(item => {
 
 // vendor配置
 // entrys.vendor = ['babel-polyfill', 'react-dom'];
-entrys.vendor = ['react-dom', 'core-decorators', 'react-router', 'react'];
-entrys.braft_editor_vendor = ['braft-editor'];
+entrys.vendor = ['react-dom'];
+// entrys.braft_editor_vendor = ['braft-editor'];
 
 // console.log('entrys', entrys);
 

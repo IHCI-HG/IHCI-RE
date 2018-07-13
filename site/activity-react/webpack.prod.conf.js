@@ -8,8 +8,8 @@ const autoprefixer = require('autoprefixer');
 const webpackStream = require('webpack-stream');
 const WebpackUploadPlugin = require('webpack-upload');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const LiveReloadPlugin = require('webpack-livereload-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const htmlAdditionalChunksPlugin = require('./html-additional-chunks-plugin')
 
 // 将样式表抽离成专门的单独文件。这样，样式表将不再依赖于 JavaScript：
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
@@ -31,8 +31,8 @@ const config = {
     dev: {
         cssName: '[name].css',
         jsName: '[name].js',
-        chunkFilename: '[name].[chunkhash:5].chunk.js',
-        chunkCssname: '[name].[chunkhash:5].chunk.css',
+        chunkFilename: '[name].[chunkhash].chunk.js',
+        chunkCssname: '[name].[contenthash].chunk.css',
         publicPath: '/activity-react/',
         devtool: 'inline-source-map',
     },
@@ -47,12 +47,13 @@ const config = {
     prod: {
         cssName: '[name].[contenthash].css',
         jsName: '[name].[chunkhash].js',
-        chunkFilename: '[name].[chunkhash:5].chunk.js',
-        chunkCssname: '[name].[chunkhash:5].chunk.css',
+        chunkFilename: '[name].[chunkhash].chunk.js',
+        chunkCssname: '[name].[contenthash].chunk.css',
+        // publicPath: '/activity-react/',
         publicPath: '/activity-react/',
         devtool: false,
         // assetsReceiver: 'http://127.0.0.1:5001/receiver',
-        // assetsToDir: '/data/res/activity/rs'
+        assetsToDir: '/rs'
     }
 }
 
@@ -92,8 +93,11 @@ const constructPageEntry = (item, chunks) => {
     }
 }
 
-constructPageEntry('container', ['vendors~container~main', 'vendors~container'])
-constructPageEntry('main', ['vendors~container~main'])
+// entrys.vendor = ['react-dom'];
+constructPageEntry('container', ['commons', 'vendors~container~main'])
+constructPageEntry('main', ['commons', 'vendors~container~main'])
+// constructPageEntry('container', ['react-dom', 'vendors~container~main', 'vendors~container'])
+// constructPageEntry('main', ['react-dom', 'vendors~container~main'])
 
 // -------------------- 构建plugins
 let plugins = [
@@ -103,7 +107,8 @@ let plugins = [
         filename: config[MODE].cssName,
         chunkFilename: config[MODE].chunkCssname,
     }),
-    ...htmlPlugins
+    ...htmlPlugins,
+    // new htmlAdditionalChunksPlugin(),
 ]
 
 
@@ -196,9 +201,14 @@ module.exports = {
             automaticNameDelimiter: '~',
             name: true,
             cacheGroups: {
+                commons: {
+                    test: /react-dom/,
+                    name: "commons",
+                },
                 vendors: {
                     test: /[\\/]node_modules[\\/]/,
-                    priority: -10
+                    priority: -10,
+                    reuseExistingChunk: true,
                 },
                 default: {
                     minChunks: 2,
