@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
-const crypto = require('crypto');
-const sha256 = require('crypto-js/SHA256')
+const crypto = require('crypto-js');
 const conf = require('../conf')
 
 /*
@@ -47,7 +46,7 @@ userSchema.statics = {
                 ...userInfo,
                 username: username,
                 // password: crypto.createHmac('sha1', conf.salt).update(password).digest('hex'),
-                password: sha256(password).toString()
+                password: crypto.SHA256(password).toString()
             })
         }
     },
