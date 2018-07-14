@@ -21,9 +21,11 @@ var ossFileProcessor = async (req, res, next) => {
             region: conf.ossConf.region
         });
         var result = await client.get(ossKey);
+
         res.send(result.res.data)
     } catch (error) {
-        res.send(404)
+        console.log(error);
+        res.sendStatus(404)
     }
 }
 
@@ -52,7 +54,7 @@ var ossImgProcessor = async (req, res, next) => {
         var result = await client.get(ossKey, {process: `image/crop,w_${width},h_${height},g_center`});
         res.send(result.res.data)
     } catch (error) {
-        res.send(404)
+        res.sendStatus(404)
     }
 }
 

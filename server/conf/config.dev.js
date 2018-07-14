@@ -39,7 +39,16 @@ var config = {
         'bucket': 'arluber',
     },
 
-    mail: 'http://localhost:5000',
+    // mail: 'http://localhost:5000',
+    mailOrigin: 'http://localhost:5000',
+    mail: {
+        host: 'smtp.163.com', 
+        port: 25,
+        auth: {
+            user: '13416363790@163.com', //注册的邮箱账号
+            pass: 'zcc163mail'  //邮箱的授权码，不是注册时的密码
+        }
+    },
 
     db: 'mongodb://127.0.0.1:27017/ihci',
 
