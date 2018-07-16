@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build:dev": "export BUILD_MODE=dev &&./node_modules/.bin/webpack --config ./site/activity-react/webpack.dev.conf.js --progress --colors --display-error-details --watch",
+    "build:dev": "./node_modules/.bin/webpack --config ./site/activity-react/webpack.dev.conf.js --progress --colors --display-error-details --watch",
     "build": "export BUILD_MODE=prod && ./node_modules/.bin/webpack --config ./site/activity-react/webpack.prod.conf.js --progress --colors --display-error-details",
     "analyse": "export BUILD_MODE=prod && ./node_modules/.bin/webpack --config ./site/activity-react/webpack.prod.conf.js --progress --colors --display-error-details --display-modules --sort-modules-by size",
     "state": "export BUILD_MODE=prod && ./node_modules/.bin/webpack --config ./site/activity-react/webpack.prod.conf.js --progress --colors --display-error-details --profile --json > stats.json"
