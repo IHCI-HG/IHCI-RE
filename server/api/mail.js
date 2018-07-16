@@ -25,12 +25,12 @@ const activation = async (req, res, next) => {
     const result = await UserDB.findByIdAndUpdate({_id: userId}, {mailCode: mailCode, mailLimitTime: Date.now()+600*1000 }, {new: true})
     var mail = {
         // 发件人
-        from: 'ICHI <13416363790@163.com>',
+        from: 'ICHI <' + conf.mail.auth.user + '>',
         // 主题
-        subject: '激活账号',
+        subject: '激活您在IHCI平台上的账号',
         // 收件人
         to: mailAccount, //发送给注册时填写的邮箱
-        text: '点击激活：<a href="'+conf.mailOrigin+'/activate?userId='+ userId +'&mailCode='+ mailCode + '"></a>'
+        text: '请勿回复 , 进入这个链接激活你的邮件 ：' + conf.mailOrigin+'/activate?userId='+ userId +'&mailCode='+ mailCode
     };
        const sendFlag = await sendMail(mail)
        if(sendFlag){
