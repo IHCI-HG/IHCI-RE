@@ -3,7 +3,6 @@ import './style.scss'
 import api from '../../../utils/api';
 import Page from '../../../components/page'
 
-import api, { authApi } from '../../utils/api';
 import WxLoginDialog from '../../../components/wx-login-dialog'
 import { LoginView } from '../../../components/login-view';
 

@@ -2,7 +2,6 @@ import * as React from 'react';
 import './style.scss'
 // import mock from '../../../mock';
 import api from '../../../utils/api';
-import { timeBefore, sortByCreateTime } from '../../../utils/util'
 import Page from '../../../components/page'
 import TodoItem from './todoItem'
 import NewCheck from './editTodo'
