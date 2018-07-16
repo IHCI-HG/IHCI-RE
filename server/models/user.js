@@ -1,12 +1,6 @@
 const mongoose = require('mongoose')
-const crypto = require('crypto');
+const crypto = require('crypto-js');
 const conf = require('../conf')
-
-/*
-    密码不存明文
-    库里存sha1 hash过的密码 （key 在conf.salt里)
-    认证的时候传入hash过的密码
-*/
 
 /*
 wxUserInfo
@@ -51,7 +45,8 @@ userSchema.statics = {
             return this.create({
                 ...userInfo,
                 username: username,
-                password: crypto.createHmac('sha1', conf.salt).update(password).digest('hex'),
+                // password: crypto.createHmac('sha1', conf.salt).update(password).digest('hex'),
+                password: crypto.SHA256(password).toString()
             })
         }
     },

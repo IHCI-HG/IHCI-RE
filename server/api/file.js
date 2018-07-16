@@ -10,7 +10,6 @@ import apiAuth from '../components/auth/api-auth'
 
 var OSSW = require('ali-oss').Wrapper;
 var mongoose = require('mongoose')
-var conf = require('../conf')
 
 var file = require('../models/file');
 

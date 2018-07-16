@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { createPortal } from 'react-dom';
-import { autobind } from 'core-decorators'
 
 let loadingGif = require('./loading.gif');
 
@@ -11,7 +10,6 @@ interface IState {
     show: boolean
 }
 
-@autobind
 export default class Loading extends React.Component<{}, IState> {
 
     state = {

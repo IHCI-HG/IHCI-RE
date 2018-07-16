@@ -46,7 +46,7 @@ export const notificationMail = async function(userIdList, topicObj, type) {
         if(item.personInfo.mail&&item.isLive) {
             var mail = {
                 // 发件人
-                from: 'ICHI <13416363790@163.com>',
+                from: 'ICHI <' + conf.mail.auth.user + '>',
                 // 主题
                 subject: '消息提醒',
                 // 收件人

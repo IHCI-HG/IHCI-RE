@@ -1,15 +1,12 @@
 import * as React from 'react';
 import { render } from 'react-dom';
-import { autobind } from 'core-decorators';
 
 import Page from '../../components/page';
 
 import api, { authApi } from '../../utils/api';
-import * as ui from '../../utils/ui';
 
 import './style.scss'
 import '../../commen/style.scss'
-import { loading } from '../../utils/ui';
 
 import WxLoginDialog from '../../components/wx-login-dialog'
 import { LoginView } from '../../components/login-view';
@@ -17,6 +14,15 @@ import { LoginView } from '../../components/login-view';
 export default class MainPage extends React.Component {
     
     state = {
+        //loginBlock: signUp || login
+        loginBlock: "login",
+
+        username: '',
+        password: '',
+
+        createUsername: '',
+        createPassword: '',
+
         showWxDialog: false,
     }
     data = {

@@ -66,6 +66,7 @@ public/
 # Log files #
 ##############
 private/logs/
+nohup.out
 
 # Server files #
 ################

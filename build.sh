@@ -9,7 +9,7 @@ rm -rf /dest
 gulp
 
 # 编译前端代码
-npm run activity-react
+npm run build
 
 # 复制文件到执行目录
 cp -r public/ dest/public

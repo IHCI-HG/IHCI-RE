@@ -1,6 +1,5 @@
 import * as React from 'react'
 import Detect from '../../utils/detect'
-import { autobind } from 'core-decorators'
 
 // component
 import Toast from '../toast'
@@ -30,7 +29,6 @@ interface IState {
     }
 }
 
-@autobind
 class Page extends React.Component<IPageProps, IState> {
 
     /** Toast 组件 */
@@ -52,10 +50,8 @@ class Page extends React.Component<IPageProps, IState> {
 
     componentDidMount() {
         this.setTitle(this.props.title);
-
-        (window as any).toast = this.toast.show;
-
-        (window as any).loading = this.loading.show;
+        (window as any).toast = this.toast.show.bind(this.toast);
+        (window as any).loading = this.loading.show.bind(this.loading);
     }
 
     componentWillReceiveProps(nextProps: Readonly<IPageProps>) {

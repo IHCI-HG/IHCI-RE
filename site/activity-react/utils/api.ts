@@ -1,7 +1,5 @@
 import { stringify } from 'querystring';
-import 'whatwg-fetch';
-
-const crypto = require('crypto');
+const sha256 = require('crypto-js/SHA256')
 
 export interface IApiOptions {
     /** 请求的方法 */
@@ -30,7 +28,6 @@ export default function api(url: string, options: IApiOptions = {
     body: {}
 }): Promise<IApiResult> {
     url = options.method === 'GET' ? `${url}?${stringify(options.body)}` : url;
-
     return fetch(url, {
         method: options.method,
         credentials: 'include',
@@ -44,10 +41,10 @@ export default function api(url: string, options: IApiOptions = {
 
 // 这是登录专用的 api
 export function authApi(un: string, pw: string): any {
-    const hpw = crypto.createHmac('sha1', '7e1977739c748beac0c0fd14fd26a544').update(pw).digest('hex');
-    console.log({
-        username: un,
-        password: hpw})
+    // const hpw = crypto.createHmac('sha1', '7e1977739c748beac0c0fd14fd26a544').update(pw).digest('hex');
+
+    const hpw = sha256(pw).toString();
+
     const result = api('/api/login', {
         method: 'POST',
         body: {
