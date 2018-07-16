@@ -8,9 +8,8 @@ var transporter = nodemailer.createTransport(conf.mail);
 module.exports = async function (mail){
     try{
         const result = await transporter.sendMail(mail)
-        console.log(result);
     }catch(error){
-        console.log(error);
+        console.error(error);
         return false
     }
     return true      
