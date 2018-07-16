@@ -13,12 +13,15 @@ const htmlAdditionalChunksPlugin = require('./html-additional-chunks-plugin')
 
 // 将样式表抽离成专门的单独文件。这样，样式表将不再依赖于 JavaScript：
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+
+let MODE = process.env.BUILD_MODE || 'prod';
+
 const extractSass = new ExtractTextPlugin({
     filename: "[name].[contenthash].css",
-    disable: process.env.BUILD_MODE === 'dev'
+    disable: MODE === 'dev'
 });
 
-let MODE = process.env.BUILD_MODE || 'dev';
+
 // console.log('-----------------当前模式：', `${MODE}`);
 
 const entrys = {};
