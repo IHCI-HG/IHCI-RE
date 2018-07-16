@@ -16,6 +16,7 @@ export class LoginView extends React.Component {
 
         createUsername: '',
         createPassword: '',
+        createConfirmPassword:''
     }
 
     setToSignUpHandle = () =>  {
@@ -37,6 +38,11 @@ export class LoginView extends React.Component {
     createPasswordHandle = (e) => {
         this.setState({
             createPassword: e.target.value
+        })
+    }
+    createConfirmPasswordHandle = (e) =>{
+        this.setState({
+            createConfirmPassword:e.target.value
         })
     }
 
@@ -77,6 +83,10 @@ export class LoginView extends React.Component {
 
     signHandle = async () => {
         // todo 检验账号密码是否可用
+        if(this.state.createPassword !== this.state.createConfirmPassword){
+            window.toast("两次输入密码不同")
+            return
+        }
         const result = await api('/api/signUp', {
             method: 'POST',
             body: {
@@ -121,7 +131,8 @@ export class LoginView extends React.Component {
 
                                     <div className="auth-desc">Your password</div>
                                     <input className="auth-input" type="password" value={this.state.createPassword} onChange={this.createPasswordHandle}></input>
-
+                                    <div className="auth-desc">Confirm Password</div>
+                                    <input className="auth-input" type="password" value={this.state.createConfirmPassword} onChange={this.createConfirmPasswordHandle}></input>
                                     <div className="submit-btn" onClick={this.signHandle}>CREATE ACCOUNT</div>
                                 </div>
                             : ""
@@ -133,9 +144,7 @@ export class LoginView extends React.Component {
                                 <input className="auth-input" value={this.state.username} onChange={this.usernameHandle}></input>
                                 <div className="auth-desc">Choose a password</div>
                                 <input className="auth-input" type="password" value={this.state.password} onChange={this.passwordHandle}></input>
-
                                     <div className="submit-btn" onClick={this.loginHandle}>LOG IN</div>
-
                                     <div className="submit-btn" onClick={this.props.showWxDialogHandle}>微信登录</div>
                                 </div>
                             : ""
