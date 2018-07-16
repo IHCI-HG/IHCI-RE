@@ -30,7 +30,7 @@ const activation = async (req, res, next) => {
         subject: '激活账号',
         // 收件人
         to: mailAccount, //发送给注册时填写的邮箱
-        text: '点击激活：<a href="'+conf.mail+'/activate?userId='+ userId +'&mailCode='+ mailCode + '"></a>'
+        text: '点击激活：<a href="'+conf.mailOrigin+'/activate?userId='+ userId +'&mailCode='+ mailCode + '"></a>'
     };
        const sendFlag = await sendMail(mail)
        if(sendFlag){
