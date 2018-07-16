@@ -2,7 +2,7 @@ import * as React from 'react';
 import './style.scss'
 
 import api from '../../../utils/api';
-import { timeParse, formatDate } from '../../../utils/util'
+import { timeParse, formatDate, createMarkup } from '../../../utils/util'
 import Page from '../../../components/page'
 
 const newTimeLineItemNum = 20
@@ -24,9 +24,10 @@ class TeamChoseItem extends React.PureComponent{
 class TimelineItem extends React.PureComponent{
 
     toOriginHandle = () => {
-        // console.log(this)
+
         var pathname = ''
         var type = 'TOPIC'
+
         switch(this.props.type){
             case 'CREATE_TOPIC':
             case 'EDIT_TOPIC':
@@ -45,19 +46,20 @@ class TimelineItem extends React.PureComponent{
             case 'CREATE_CHECK_ITEM':
             case 'COPY_TASK':
             case 'MOVE_TASK':
-            case 'DELETE_TASK':
-            case 'FINISH_TASK':
-
-            case 'REPLY_TASK':
-            case 'DELETE_TASK_REPLY':
-
-            case 'DELETE_CHECK_ITEM':
-            case 'FINISH_CHECITEM_ITEM':
-            case 'COPY_TASK':
-            case 'MOVE_TASK':
             {
+                type = 'TASK'
                 pathname = '/todo/' + this.props.tarId
+                break
             }
+            case 'FOLDER':
+            case 'FILE':
+            {
+                type = 'FILE'
+                pathname = '/files/' + this.props.team
+                break
+            }
+            default:
+                
 
         }
 
@@ -66,7 +68,13 @@ class TimelineItem extends React.PureComponent{
             state:{
                 type: type,
                 id: this.props.tarId
+            },
+            query:this.props.folderName? {
+                dir: this.props.path
             }
+            :this.props.dir ?{
+                 dir: this.props.dir,
+            } :{}
         }
         this.props.router.push(location)
     }
@@ -92,48 +100,75 @@ class TimelineItem extends React.PureComponent{
 
         'COPY_TASK': '复制了任务',
         'MOVE_TASK': '移动了任务',
-        'EDIT_TOPIC': '编辑了讨论：',
-        'EDIT_REPLY': '编辑了回复：',
+        'EDIT_TOPIC': '编辑了回复：',
+        'EDIT_REPLY': '编辑了话题：',
+        'CREATE_TASKLIST':'创建了清单',
+        'DELETE_TASKLIST':'删除了清单',
+
+        'CHANGE_TASK_HEADER':'将任务',
+        'CHANGE_CHECKITEM_HEADER':'将检查项',
+        'CHANGE_TASK_DDL':'更改了任务',
+        'CHANGE_CHECKITEM_DDL':'更改了检查项',
+        'REOPEN_TASK':'重新打开了任务',
+        'REOPEN_CHECKITEM':'重新打开了检查项',
+        'EDIT_TASK':'编辑了任务',
+        'EDIT_CHECK_ITEM':'编辑了检查项',
     }
 
     render() {
-        return(
-            <div className='news-item-wrap'>
-                <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
-                <img src={this.props.creator.headImg} alt="" className="head-img" />
+        switch(this.props.type){
+            case 'CHANGE_TASK_DDL': case 'CHANGE_CHECKITEM_DDL':
+                return(
+                    <div className='news-item-wrap'>
+                        <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
+                        <img src={this.props.creator.headImg} alt="" className="head-img" />
 
-                <div className="news-con" onClick={this.toOriginHandle}>
-                    <div className="des-line">
-                        <span className="name">{this.props.creator.name}</span>
-                        <span className="type">{this.typeMap[this.props.type]}</span>
-                        <span className="topic">{this.props.content.title}</span>
+                        <div className="news-con">
+                            <div className="des-line">
+                                <span className="name">{this.props.creator.name}</span>
+                                <span className="type">{this.typeMap[this.props.type]}</span>
+                                <span className="topic">{this.props.content.title}的完成时间</span>
+                            </div>
+
+                            <div className="content">{this.props.content.deadline}</div>
+                        </div>
                     </div>
+                )
+            case 'CHANGE_TASK_HEADER': case 'CHANGE_CHECKITEM_HEADER':
+                return(
+                    <div className='news-item-wrap'>
+                        <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
+                        <img src={this.props.creator.headImg} alt="" className="head-img" />
 
-                    <div className="content" dangerouslySetInnerHTML={{__html: this.props.content.content}}>{}</div>
-                </div>
-            </div>
-        )
-            // case 'REPLY_TOPIC':
-            //     return (
-            //         <div className='news-item-wrap'>
-            //             <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
-            //             <img src={this.props.creator.headImg} alt="" className="head-img" />
+                        <div className="news-con">
+                            <div className="des-line">
+                                <span className="name">{this.props.creator.name}</span>
+                                <span className="type">{this.typeMap[this.props.type]}</span>
+                                <span className="topic">{this.props.content.title}指派给了</span>
+                            </div>
 
-            //             <div className="news-con">
-            //                 <div className="des-line">
-            //                     <span className="name">{this.props.creator.name}</span>
-            //                     <span className="type">{this.typeMap[this.props.type]}</span>
-            //                     <span className="topic">{this.props.content.title}</span>
-            //                 </div>
-
-            //                 <div className="content">{this.props.content.content}</div>
-            //             </div>
-            //         </div>
-            //     )
-            //     break;
-            // default:
-            //     return ''
-        // }
+                            <div className="content">{this.props.content.header}</div>
+                        </div>
+                    </div>
+                )
+            default:
+                return(
+                    <div className='news-item-wrap'>
+                        <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
+                        <img src={this.props.creator.headImg} alt="" className="head-img" />
+        
+                        <div className="news-con">
+                            <div className="des-line">
+                                <span className="name">{this.props.creator.name}</span>
+                                <span className="type">{this.typeMap[this.props.type]}</span>
+                                <span className="topic">{this.props.content.title}</span>
+                            </div>
+        
+                            <div className="content" dangerouslySetInnerHTML={{__html: this.props.content.content}}>{}</div>
+                        </div>
+                    </div>
+                )
+        }
     }
 }
 
@@ -243,29 +278,7 @@ export default class Timeline extends React.Component{
         // console.log(showList)
     }
 
-    typeMap = {
-        'CREATE_TOPIC': '创建了讨论：',
-        'REPLY_TOPIC': '回复了讨论：',
-        'DELETE_TOPIC': '删除了讨论',
-
-        'DELETE_TOPIC_REPLY': '删除了讨论回复',
-
-        'CREATE_TASK': '创建了任务',
-        'DELETE_TASK': '删除了任务',
-        'FINISH_TASK': '完成了任务',
-
-        'REPLY_TASK': '回复了任务',
-        'DELETE_TASK_REPLY': '删除了任务回复',
-
-        'CREATE_CHECK_ITEM': '创建了检查项',
-        'DELETE_CHECK_ITEM': '删除了检查项',
-        'FINISH_CHECITEM_ITEM': '完成了检查项',
-
-        'COPY_TASK': '复制了任务',
-        'MOVE_TASK': '移动了任务',
-        'EDIT_TOPIC': '编辑了回复：',
-        'EDIT_REPLY': '编辑了话题：',
-    }
+   
 
     state = {
         // type: create, reply

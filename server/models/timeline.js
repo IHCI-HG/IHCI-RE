@@ -18,6 +18,47 @@ const timelineSchema = new mongoose.Schema({
     type:  
         CREATE_TOPIC
         REPLY_TOPIC
+
+        //6.28
+        CREATE_TOPIC
+        DELETE_TOPIC
+
+        REPLY_TOPIC
+        DELETE_TOPIC_REPLY
+
+        CREATE_TASK
+        DELETE_TASK
+        FINISH_TASK
+
+        REPLY_TASK
+        DELETE_TASK_REPLY
+
+        CREATE_CHECK_ITEM
+        DELETE_CHECK_ITEM
+        FINISH_CHECITEM_ITEM
+
+        COPY_TASK
+        MOVE_TASK
+
+        //7.5
+        CREATE_TASKLIST
+        DELETE_TASKLIST
+
+        //7.6  
+        CHANGE_TASK_HEADER
+        CHANGE_CHECKITEM_HEADER
+        CHANGE_TASK_DDL
+        CHANGE_CHECKITEM_DDL
+        REOPEN_TASK
+        REOPEN_CHECKITEM
+
+        //7.10
+        EDIT_TASK
+        EDIT_CHECK_ITEM
+
+
+
+
 */
 
 timelineSchema.statics = {

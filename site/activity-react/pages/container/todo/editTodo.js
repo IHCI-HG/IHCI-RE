@@ -11,6 +11,8 @@ class EditTodo extends React.Component {
         date: this.props.date || null,
         todoDesc: this.props.desc || '',
         todoAttachments: this.props.attachments,
+        attachmentsArr:[],
+        ossKeyArr:[],
     }
 
     static defaultProps = {
@@ -33,7 +35,16 @@ class EditTodo extends React.Component {
     }
 
     fileUploadHandle = async (e) => {
-        const resp = await fileUploader('teamId', '', e.target.files[0])
+        var ossKey = this.props.teamId + '/' + Date.now() + '/' + e.target.files[0].name
+        const attachmentsArr = this.state.attachmentsArr
+        const ossKeyArr = this.state.ossKeyArr
+        attachmentsArr.push(e.target.files[0])
+        ossKeyArr.push(ossKey)
+        this.setState({
+            attachmentsArr,
+            ossKeyArr
+        })
+        const resp = await fileUploader( e.target.files[0],ossKey)
         let todoAttachments = this.state.todoAttachments
         todoAttachments = [...todoAttachments, resp]
         this.setState({
@@ -56,6 +67,8 @@ class EditTodo extends React.Component {
             params.id = this.props.id
         }
         params.name = this.refs.name.value
+        params.ossKeyArr = this.state.ossKeyArr
+        params.attachmentsArr = this.state.attachmentsArr
         if (this.props.detail === 'detail') {
             params.desc =  this.state.todoDesc
             params.fileList =  this.state.todoAttachments
@@ -104,7 +117,7 @@ class EditTodo extends React.Component {
                 <div className="todo-wrap">
                     <input ref="name"
                            className="dashed-input"
-                           placeholder="任务名"
+                           placeholder={_props.createInput}
                            defaultValue={_props.value?_props.value:''}>
                     </input>
                     <ItemLabel assigneeId = {this.state.assigneeId}

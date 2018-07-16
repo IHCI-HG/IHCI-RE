@@ -6,7 +6,10 @@ import { timeBefore, sortByCreateTime } from '../../../utils/util'
 import Page from '../../../components/page'
 import TodoItem from './todoItem'
 import NewCheck from './editTodo'
+import Editor from '../../../components/editor'
+import fileUploader from '../../../utils/file-uploader'
 
+import { timeBefore, sortByCreateTime, createMarkup } from '../../../utils/util'
 import MemberChosenList from '../../../components/member-chose-list'
 
 function getUpdateItem(arr, id) {
@@ -26,18 +29,54 @@ class TopicItem extends React.Component{
         showEdit: false,
         showCreateTopic: false,
         showButton: true,
-        createTopicContent:this.props.content,
+        discussAttachments:this.props.fileList,
+        disAttachmentsArr:[],
+        disOssKeyArr:[]
     }
+    
     deleteTopicHandle = () => {
         this.props.deleteTopicHandle(this.props.id)
     }
 
     updateTopicHandle = () => {
-        this.props.updateTopicHandle(this.props.id)
+        this.props.updateTopicHandle(this.props.id,this.state.discussAttachments,this.state.disAttachmentsArr,this.state.disOssKeyArr)
     }
     sendContent = () => {
         this.props.sendContent(this.props.content)
     }
+
+    discussFileUploadHandle = async (e) => {
+        var ossKey = this.props.teamId + '/' + Date.now() + '/' + e.target.files[0].name
+        const disAttachmentsArr = this.state.disAttachmentsArr
+        const disOssKeyArr = this.state.disOssKeyArr
+        disAttachmentsArr.push(e.target.files[0])
+        disOssKeyArr.push(ossKey)
+        this.setState({
+            disAttachmentsArr,
+            disOssKeyArr
+        })
+        const resp = await fileUploader(e.target.files[0], ossKey)
+        let discussAttachments = this.state.discussAttachments;
+        discussAttachments = [...discussAttachments, resp]
+        this.setState({
+            discussAttachments,
+        })
+    }
+
+    deleteDiscussFile = async (e, index) => {
+        console.log("del")
+        let discussAttachments = this.state.discussAttachments
+        discussAttachments.splice(index,1);
+        this.setState({
+            discussAttachments,
+        })
+    }
+
+    downloadHandle = (ossKey) => {
+        console.log(ossKey)
+        window.open(window.location.origin + '/static/' + ossKey)
+    }
+
     render() {
         return(
             <div className="topic-item" onMouseOver={() => this.setState({showEdit:true})} onMouseLeave={() => this.setState({showEdit:false})}>
@@ -48,22 +87,52 @@ class TopicItem extends React.Component{
                     <div className="send">
                         <div className="name">{this.props.creator.name}</div>
                         <div className="time">{timeBefore(this.props.time)}</div>
+                        {this.props.fileList.length > 0 &&
+                            <i className="icon iconfont time">&#xe6dd;</i>
+                        }
                         {
                             this.state.showEdit&&<div className="topic-actions-wrap">
                                 <div className="topic-actions">
                                     <i className="icon iconfont" onClick={this.deleteTopicHandle}>&#xe70b;</i>
-                                    <i className="icon iconfont" onClick={() => {this.sendContent();this.setState({showCreateTopic: true,showButton:false})}}> &#xe6ec;</i>
+                                    <i className="icon iconfont" onClick={() => {this.props.updateTopicInputHandle(this.props.content);this.setState({showCreateTopic: true,showButton:false})}}> &#xe6ec;</i>
                                 </div>
                             </div>
                         }
                     </div>
                     <div className="main">
-                        <div className="topic-title">{this.props.title}</div>
-                        {this.state.showButton&&<div className="topic-content">{this.props.content}</div>}
+                        {/* <div className="topic-title">{this.props.title}</div> */}
+                        {/* {this.state.showButton&&<div className="topic-content">{this.props.content}</div>} */}
+                        {this.state.showButton&&<div>
+                            <p dangerouslySetInnerHTML={createMarkup(this.props.content)}></p>
+                            <div className="file-list">
+                            {
+                                this.props.imgList.map((item) => {
+                                    return (
+                                        <div className="file-pic-item" key={Math.random()} onClick={this.downloadHandle.bind(this, item.name)}>
+                                            <img className="file-pic" src={window.location.origin + '/static/' + item.name}></img>
+                                            <div className="file-name">{item.name.split("/")[2]}</div>
+                                        </div>
+                                    )
+                                })
+                            }
+                                {
+                                     this.props.fileList.map((item) => {
+                                        if(!(item.name.endsWith(".jpg")||item.name.endsWith(".jpeg")||item.name.endsWith(".png")||item.name.endsWith(".bmp")||item.name.endsWith(".gif"))){
+                                            return ( <div className="file-item" key={Math.random()} onClick={this.downloadHandle.bind(this, item.name)}>{item.name.split("/")[2]}</div> )
+                                        }
+                                    })
+                                }
+                            </div>
+                        </div>}
                         {this.state.showCreateTopic&&<div className="create-area">
-                            <textarea className="topic-content" onChange={this.props.updateTopicInputHandle} value={this.props.updateTopicContent} placeholder="说点什么" autoFocus></textarea>
-                            <div className="infrom">请选择要通知的人：</div>
-                            <MemberChosenList choseHandle={this.props.memberChoseHandle} memberList={this.props.memberList}/>
+                            <Editor handleContentChange={this.props.updateTopicInputHandle.bind(this)}//props.discussContentHandle
+                                handleFileUpload={this.discussFileUploadHandle.bind(this)}
+                                content={this.props.updateTopicContent}
+                                deleteFile={this.deleteDiscussFile.bind(this)}
+                                attachments={this.state.discussAttachments}>
+                            </Editor>
+                            {/* <div className="infrom">请选择要通知的人：</div>
+                            <MemberChosenList choseHandle={this.props.memberChoseHandle} memberList={this.props.memberList}/> */}
                             <div className="btn-con">
                                 <div className="create-btn" onClick={()=>{this.updateTopicHandle();this.setState({showCreateTopic: false,showButton:true})}}>发起讨论</div>
                                 <div className="cancle" onClick={() => {this.setState({showCreateTopic: false,showButton:true})}}>取消</div>
@@ -102,7 +171,12 @@ export default class Task extends React.Component{
         moveTeamList:[],
         loadMoreCount:1,
         // replyCount:0
-        teamName:""
+        teamName:"",
+        discussAttachments:[],
+        attachmentsArr:[],
+        ossKeyArr:[],
+        todoAttachmentsArr:[],
+        todoOssKeyArr:[],
     }
 
     componentDidMount = async() => {
@@ -202,6 +276,12 @@ export default class Task extends React.Component{
         // 后端数据接口适配
         console.log('checkitemList', resp.data)
         const todo = {}
+        todo.imgList = []
+        resp.data.fileList.map((fileItem,index)=>{
+            if(fileItem.name.endsWith(".jpg")||fileItem.name.endsWith(".jpeg")||fileItem.name.endsWith(".png")||fileItem.name.endsWith(".bmp")||fileItem.name.endsWith(".gif")){
+                todo.imgList.push(fileItem)
+            }
+        })
         todo.id = resp.data._id
         todo.hasDone = resp.data.state
         todo.desc = resp.data.content
@@ -239,13 +319,22 @@ export default class Task extends React.Component{
             }
         })
         if (resp.state.code === 0) {
+            console.log(resp)
             const topicListArr = this.state.topicListArr 
             resp.data.map((item)=>{
                 const topic = {}
+                topic.imgList = []
+                item.fileList.map((fileItem,index)=>{
+                    if(fileItem.name.endsWith(".jpg")||fileItem.name.endsWith(".jpeg")||fileItem.name.endsWith(".png")||fileItem.name.endsWith(".bmp")||fileItem.name.endsWith(".gif")){
+                        topic.imgList.push(fileItem)
+                    }
+                })
                 topic.id = item._id
                 topic.creator = item.creator
                 topic.time = item.create_time
                 topic.content = item.content
+                topic.fileList = item.fileList
+                topic.teamId = item.teamId
                 topicListArr.push(topic)
             })
             this.setState({ topicListArr })
@@ -253,15 +342,33 @@ export default class Task extends React.Component{
     }
 
     createTopicHandle = async () => {
-        // this.setState({
-        //     replyCount:this.state.replyCount+1
-        // })
         const informList = []
         this.state.memberList.map((item) => {
             if(item.chosen) {
                 informList.push(item._id)
             }
         })
+        if(this.state.attachmentsArr!==[]){
+            this.state.attachmentsArr.map(async(item,index)=>{
+                const result1 = await api('/api/file/createFile', {
+                    method: 'POST',
+                    body: {
+                        fileInfo: {
+                            teamId: this.state.todo.teamId,
+                            size: item.size,
+                            dir: '/',
+                            fileName: item.name,
+                            ossKey: this.state.ossKeyArr[index],
+                        }
+                    }
+                })
+                if (result1.state.code === 0) {
+                    window.toast("上传文件成功")
+                } else {
+                    window.toast(result1.state.msg)
+                }
+            })
+        }
         const resp = await api('/api/task/createDiscuss', {
             method:"POST",
             body:{
@@ -269,33 +376,64 @@ export default class Task extends React.Component{
                 taskId: this.props.params.id,
                 content: this.state.createTopicContent,
                 informList: informList,
+                fileList:this.state.discussAttachments
             }
         })
         if (resp.state.code === 0) {
             const topicList = this.state.topicListArr
             let topic = {}
+            topic.imgList = []
+            resp.data.fileList.map((fileItem,index)=>{
+                if(fileItem.name.endsWith(".jpg")||fileItem.name.endsWith(".jpeg")||fileItem.name.endsWith(".png")||fileItem.name.endsWith(".bmp")||fileItem.name.endsWith(".gif")){
+                    topic.imgList.push(fileItem)
+                }
+            })
             topic.id = resp.data._id
             topic.creator = resp.data.creator
             topic.time = resp.data.create_time
             topic.content = resp.data.content
+            topic.fileList = resp.data.fileList
+            topic.teamId = resp.data.teamId
             topicList.unshift(topic)
             this.setState({
                 topicListArr:topicList,
                 createTopicName:"",
                 createTopicContent:"",
+                discussAttachments:[],
              })
         }
-        console.log(this.state.replyCount)
         return resp
     }
 
-    updateTopicHandle= async (id) =>{
+    updateTopicHandle= async (id,fileList,attArr,ossArr) =>{
+        console.log(this.state.updateTopicContent)
         const informList = []
         this.state.memberList.map((item) => {
             if(item.chosen) {
                 informList.push(item._id)
             }
         })
+        if(attArr!==[]){
+            attArr.map(async(item,index)=>{
+                const result1 = await api('/api/file/createFile', {
+                    method: 'POST',
+                    body: {
+                        fileInfo: {
+                            teamId: this.state.todo.teamId,
+                            size: item.size,
+                            dir: '/',
+                            fileName: item.name,
+                            ossKey: ossArr[index],
+                        }
+                    }
+                })
+                if (result1.state.code === 0) {
+                    window.toast("上传文件成功")
+                } else {
+                    window.toast(result1.state.msg)
+                }
+            })
+        }
         const resp = await api('/api/task/editDiscuss', {
             method:"POST",
             body:{
@@ -304,6 +442,7 @@ export default class Task extends React.Component{
                 content: this.state.updateTopicContent,
                 informList: informList,
                 discussId:id,
+                fileList: fileList,
             }
         })
         console.log(id)
@@ -312,8 +451,15 @@ export default class Task extends React.Component{
             const topicListArr = this.state.topicListArr
             topicListArr.map((item,index)=>{
                 if(item.id===id){
+                    item.imgList = []
+                    resp.data.fileList.map((fileItem,index)=>{
+                        if(fileItem.name.endsWith(".jpg")||fileItem.name.endsWith(".jpeg")||fileItem.name.endsWith(".png")||fileItem.name.endsWith(".bmp")||fileItem.name.endsWith(".gif")){
+                            item.imgList.push(fileItem)
+                        }
+                    })
                     item.content = resp.data.content
                     item.time = resp.data.create_time
+                    item.fileList = resp.data.fileList
                 }
             })
             this.setState({ topicListArr })
@@ -386,15 +532,42 @@ export default class Task extends React.Component{
         }
     }
 
-    topicContentInputHandle = (e) => {
+    discussContentHandle = (content) => {
         this.setState({
-            createTopicContent: e.target.value
+            createTopicContent: content
         })
     }
 
-    updateTopicInputHandle = (e) => {
+    discussFileUploadHandle = async (e) => {
+        var ossKey = this.state.todo.teamId + '/' + Date.now() + '/' + e.target.files[0].name
+        const attachmentsArr = this.state.attachmentsArr
+        const ossKeyArr = this.state.ossKeyArr
+        attachmentsArr.push(e.target.files[0])
+        ossKeyArr.push(ossKey)
         this.setState({
-            updateTopicContent: e.target.value
+            attachmentsArr,
+            ossKeyArr
+        })
+        const resp = await fileUploader(e.target.files[0], ossKey)
+        let discussAttachments = this.state.discussAttachments;
+        discussAttachments = [...discussAttachments, resp]
+        this.setState({
+            discussAttachments,
+        })
+        console.log(this.state.discussAttachments)
+    }
+
+    deleteDiscussFile = async (e, index) => {
+        let discussAttachments = this.state.discussAttachments
+        discussAttachments.splice(index,1);
+        this.setState({
+            discussAttachments,
+        })
+    }
+
+    updateTopicInputHandle = (content) => {
+        this.setState({
+            updateTopicContent: content
         })
     }
 
@@ -458,7 +631,28 @@ export default class Task extends React.Component{
     }
 
     handleTodoModify = async(todoInfo) => {
-        console.log('content', todoInfo.content)
+        console.log(todoInfo)
+        if(todoInfo.attachmentsArr!==[]){
+            todoInfo.attachmentsArr.map(async(item,index)=>{
+                const result1 = await api('/api/file/createFile', {
+                    method: 'POST',
+                    body: {
+                        fileInfo: {
+                            teamId: this.state.todo.teamId,
+                            size: item.size,
+                            dir: '/',
+                            fileName: item.name,
+                            ossKey: todoInfo.ossKeyArr[index],
+                        }
+                    }
+                })
+                if (result1.state.code === 0) {
+                    window.toast("上传文件成功")
+                } else {
+                    window.toast(result1.state.msg)
+                }
+            })
+        }
         const taskId = this.props.params.id;
         const editTask = {};
         editTask.name = todoInfo.name
@@ -466,17 +660,22 @@ export default class Task extends React.Component{
         editTask.desc = todoInfo.desc
         editTask.fileList = todoInfo.fileList
         editTask.assigneeId = todoInfo.assigneeId
-        console.log('editTask', editTask);
         const resp = await api('/api/task/edit', {
             method: 'POST',
             body: {
+                teamId:this.state.todo.teamId,
                 taskId,
                 editTask
             }
         })
-        console.log('handleTodoModify resp', resp)
         if (resp.state.code === 0) {
             const todo = this.state.todo
+            todo.imgList = []
+            resp.data.fileList.map((fileItem,index)=>{
+                if(fileItem.name.endsWith(".jpg")||fileItem.name.endsWith(".jpeg")||fileItem.name.endsWith(".png")||fileItem.name.endsWith(".bmp")||fileItem.name.endsWith(".gif")){
+                    todo.imgList.push(fileItem)
+                }
+            })
             const rAssignee = {}
             rAssignee.id = resp.data.header
             todo.name = resp.data.title
@@ -594,7 +793,8 @@ export default class Task extends React.Component{
             body: {
                 todoId,
                 checkitemId,
-                editCheckitem
+                editCheckitem,
+                teamId:this.state.todo.teamId,
             }
         })
         if (resp.state.code === 0) {
@@ -619,7 +819,8 @@ export default class Task extends React.Component{
             body: {
                 todoId,
                 checkitemId,
-                editCheckitem
+                editCheckitem,
+                teamId:this.state.todo.teamId,
             }
         })
         if (resp.state.code === 0) {
@@ -642,7 +843,8 @@ export default class Task extends React.Component{
             body: {
                 todoId,
                 checkitemId,
-                editCheckitem
+                editCheckitem,
+                teamId:this.state.todo.teamId,
             }
         })
         if (resp.state.code === 0) {
@@ -688,6 +890,7 @@ export default class Task extends React.Component{
             body: {
                 todoId,
                 checkitemId,
+                teamId:this.state.todo.teamId,
             }
         })
 
@@ -709,7 +912,6 @@ export default class Task extends React.Component{
         let actionList = this.state.actionList || []
         let moveExpanded = this.state.moveExpanded
         let copyExpanded = this.state.copyExpanded
-
         return (
             <Page title={"任务详情"} className="discuss-page">
                  <div className="return" onClick={()=>{this.locationTo('/team/'+this.state.todo.teamId)}}>
@@ -725,7 +927,8 @@ export default class Task extends React.Component{
                          handleDateChange={this.handleDateChange}
                          handleTodoModify={this.handleTodoModify}
                          handleTodoCheck={this.handleTodoCheck}
-                         handleTodoDelete={this.handleTodoDelete}/>
+                         handleTodoDelete={this.handleTodoDelete}
+                         teamId={this.state.todo.teamId}/>
 
                      <div className="checkitem-list">
                          {
@@ -750,6 +953,7 @@ export default class Task extends React.Component{
                      {this.state.showCreateCheck?
                          <NewCheck
                              memberList={this.state.memberList}
+                             createInput="检查项名"
                              confirmLabel="保存"
                              handleConfirm={this.handleCheckCreate}
                              handleClose={() => {
@@ -764,25 +968,15 @@ export default class Task extends React.Component{
                              添加检查项
                          </div>
                      }
-                    {/* {this.state.showCreateDetail?
-                         <NewCheck
-                             memberList={this.state.memberList}
-                             confirmLabel="保存"
-                             handleConfirm={this.handleCheckCreate}
-                             handleClose={() => {
-                                 this.setState({ showCreateCheck: false})
-                             }}
-                         />: */}
-                         {(this.state.todo.desc==="")&&
-                         <div className="new-check"
-                             onClick={() => {
-                                 this.setEdit()
-                            }}>
-                             <i className="icon iconfont">&#xe6e0;</i>
-                             添加任务描述
-                         </div>
-                         }
-                     {/* } */}
+                    {(this.state.todo.desc===""||this.state.todo.desc==="<p></p>")&&
+                    <div className="new-check"
+                        onClick={() => {
+                            this.setEdit()
+                    }}>
+                        <i className="icon iconfont">&#xe6e0;</i>
+                        添加任务描述
+                    </div>
+                    }
 
                     <div className="detail-actions">
                         <div className={"item "+((copyExpanded)?"expanded":"")}>
@@ -810,6 +1004,7 @@ export default class Task extends React.Component{
                         <div className={"item "+((moveExpanded)?"expanded":"")} >
                             {!moveExpanded&&<a onClick={() => {this.setState({moveExpanded: true,copyExpanded: false})}}>移动</a>}
                             {moveExpanded&&<div className="confirm">
+                                <form>
                                     <p className="title">移动任务到小组</p>
                                     <div className="simple-select select-choose-projects require-select" >
                                         <select onChange={this.moveSelectedHandle} value={this.state.teamToMove} className="select-list">
@@ -826,7 +1021,7 @@ export default class Task extends React.Component{
                                     </div>
                                     <button className="act" onClick={this.moveToTeamHandle}>移动</button>
                                     <div type="button" className="cancel" onClick={() => {this.setState({moveExpanded: false})}}>取消</div>
-
+                                </form>
                             </div>}
                         </div>
                     </div>
@@ -873,11 +1068,16 @@ export default class Task extends React.Component{
                         this.state.showButton && <input type="text" onClick={() => {this.setState({showCreateTopic: true,showButton:false})}} className="topic-name" placeholder="点击发表评论" /> }
                             {
                                 this.state.showCreateTopic && <div className="create-area">
-                                    <textarea className="topic-content" onChange={this.topicContentInputHandle} value={this.state.createTopicContent} placeholder="说点什么" autoFocus></textarea>
-                                    <div className="infrom">请选择要通知的人：</div>
-                                    <MemberChosenList choseHandle={this.memberChoseHandle} memberList={this.state.memberList}/>
+                                    <Editor handleContentChange={this.discussContentHandle.bind(this)}
+                                                handleFileUpload={this.discussFileUploadHandle.bind(this)}
+                                                content={this.state.createTopicContent}
+                                                deleteFile={this.deleteDiscussFile.bind(this)}
+                                                attachments={this.state.discussAttachments}>
+                                    </Editor>
+                                    {/* <div className="infrom">请选择要通知的人：</div>
+                                    <MemberChosenList choseHandle={this.memberChoseHandle} memberList={this.state.memberList}/> */}
                                     <div className="btn-con">
-                                        <div className="create-btn" onClick={()=>{this.createTopicHandle();this.setState({showCreateTopic: false,showButton:true})}}>发起讨论</div>
+                                        <div className="create-btn" onClick={()=>{this.createTopicHandle();this.setState({showCreateTopic: false,showButton:true})}}>发表评论</div>
                                         <div className="cancle" onClick={() => {this.setState({showCreateTopic: false,showButton:true})}}>取消</div>
                                     </div>
                                 </div>

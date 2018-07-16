@@ -50,25 +50,37 @@ const checkCode = async (req, res, next) => {
     const userId = req.body.userId;
     const mailCode = req.body.mailCode;
     const user = await UserDB.findByUserId(userId)
+
     if (user.mailCode === mailCode && (user.mailLimitTime - Date.now()) > 0){
-        const result = await UserDB.findByIdAndUpdate({_id: userId}, {isLive: true}, {new: true})
-        if(result){
-            resProcessor.jsonp(req, res, {
-                state: { code: 0, msg:"激活成功"},
-                data: {}
-                       });         
+        if(user.isLive==false){
+            const result = await UserDB.findByIdAndUpdate({_id: userId}, {isLive: true}, {new: true})
+            if(result){
+                resProcessor.jsonp(req, res, {
+                    state: { code: 0, msg:"激活成功"},
+                    data: {}
+                           });         
+            }else{
+                resProcessor.jsonp(req, res, {
+                    state: { code: 1, msg:"激活失败"},
+                    data: {}
+                           });
+            }
+
         }else{
             resProcessor.jsonp(req, res, {
-                state: { code: 1, msg:"激活失败"},
+                state: { code: 3, msg:"该邮箱已经激活"},
                 data: {}
                        });
         }
-}else{
-    resProcessor.jsonp(req, res, {
-        state: { code: 2, msg:"激活失败,链接过期"},
-        data: {}
-               });
-}
+
+    }else{
+        resProcessor.jsonp(req, res, {
+            state: { code: 2, msg:"激活失败,链接过期"},
+            data: {}
+                   });
+    }
+
+        
 }
 
 module.exports = [
