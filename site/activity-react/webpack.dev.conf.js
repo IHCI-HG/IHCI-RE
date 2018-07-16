@@ -17,7 +17,7 @@ let MODE = process.env.BUILD_MODE || 'dev';
 
 const extractSass = new ExtractTextPlugin({
     filename: "[name].[contenthash].css",
-    disable: process.env.BUILD_MODE === 'dev'
+    disable: MODE === 'dev'
 });
 
 
