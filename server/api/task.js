@@ -530,6 +530,7 @@ const changeTaskDir = async (req, res, next) => {
     const teamId = req.body.teamId;
     const fileName = req.body.fileName
     //fileName是osskey形式
+    const tasklistId = req.body.listId;
     const newDir = req.body.newDir
 
     const userId = req.rSession.userId;

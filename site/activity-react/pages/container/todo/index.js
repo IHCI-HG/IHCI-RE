@@ -634,7 +634,6 @@ export default class Task extends React.Component{
     }
 
     handleTodoModify = async(todoInfo) => {
-        console.log(todoInfo)
         if(todoInfo.attachmentsArr!==[]){
             todoInfo.attachmentsArr.map(async(item,index)=>{
                 const result1 = await api('/api/file/createFile', {
@@ -931,40 +930,42 @@ export default class Task extends React.Component{
             body: {
                 fileInfo: {
                     teamId: this.state.todo.teamId,
-                    dir: this.state.moveItem.dir,
-                    fileName: this.state.moveItem.name.split("/")[2],
+                    dir: item.dir,
+                    fileName: item.name.split("/")[2],
                     tarDir: tarDir,
                 }
             }
         })
-        const result1 = await api('/api/task/changeDir', {
-            method: 'POST',
-            body: {
-                teamId: this.state.todo.teamId,
-                taskId: this.state.todo.id,
-                fileName: item.name,
-                newDir: tarDir
+        if(result.state.code === 0){
+            const result1 = await api('/api/task/changeDir', {
+                method: 'POST',
+                body: {
+                    teamId: this.state.todo.teamId,
+                    taskId: this.state.todo.id,
+                    fileName: item.name,
+                    newDir: tarDir,
+                    listId: this.state.todo.listId
+                }
+            })
+    
+            if (result.state.code == 0 && result1.state.code == 0) {
+                const todo = this.state.todo 
+                todo.fileList.map((fileItem)=>{
+                    if(fileItem.name===item.name){
+                        fileItem.dir = tarDir
+                    }
+                })
+                todo.imgList.map((fileItem)=>{
+                    if(fileItem.name===item.name){
+                        fileItem.dir = tarDir
+                    }
+                })
+                this.setState({todo})
+                window.toast("移动文件成功")
+            } else {
+                window.toast("移动文件失败")
             }
-        })
-        console.log(result1)
-        if (result.state.code == 0 && result1.state.code == 0) {
-            const todo = this.state.todo 
-            todo.fileList.map((fileItem)=>{
-                if(fileItem.name===item.name){
-                    fileItem.dir = tarDir
-                }
-            })
-            todo.imgList.map((fileItem)=>{
-                if(fileItem.name===item.name){
-                    fileItem.dir = tarDir
-                }
-            })
-            this.setState({todo})
-            window.toast("移动文件成功")
-        } else {
-            window.toast("移动文件失败")
         }
-        
     }
 
     render() {

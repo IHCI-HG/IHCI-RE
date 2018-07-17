@@ -257,7 +257,7 @@ export default class Person extends React.Component{
         if(result.state.code === 0) {
             window.toast("设置成功")
             setTimeout(() => {
-                location.href = location.href
+                location.href = '/team/'
             }, 300);
         } else {
             window.toast("设置失败，请稍后再试")
