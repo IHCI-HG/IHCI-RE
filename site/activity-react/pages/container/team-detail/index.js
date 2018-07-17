@@ -211,24 +211,26 @@ export default class TeamDetail extends React.Component {
                 informList.push(item._id)
             }
         })
-        const result1 = await api('/api/file/createFile', {
-            method: 'POST',
-            body: {
-                fileInfo: {
-                    teamId: this.teamId,
-                    size: this.state.attachmentsArg.size,
-                    dir: '/',
-                    fileName: this.state.attachmentsArg.name,
-                    ossKey: this.state.ossKeyArg,
+        if(JSON.stringify(this.state.attachmentsArg )!== "{}"){
+            const result1 = await api('/api/file/createFile', {
+                method: 'POST',
+                body: {
+                    fileInfo: {
+                        teamId: this.teamId,
+                        size: this.state.attachmentsArg.size,
+                        dir: '/',
+                        fileName: this.state.attachmentsArg.name,
+                        ossKey: this.state.ossKeyArg,
+                    }
                 }
+            })
+            if (result1.state.code === 0) {
+                window.toast("上传文件成功")
+            } else {
+                window.toast(result1.state.msg)
             }
-        })
-        console.log(result1);
-        if (result1.state.code === 0) {
-            window.toast("上传文件成功")
-        } else {
-            window.toast(result1.state.msg)
         }
+        
         const result = await api('/api/topic/createTopic', {
             method: 'POST',
             body: {

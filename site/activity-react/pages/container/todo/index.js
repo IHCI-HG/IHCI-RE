@@ -46,7 +46,9 @@ class TopicItem extends React.Component{
     }
 
     discussFileUploadHandle = async (e) => {
-        var ossKey = this.props.teamId + '/' + Date.now() + '/' + e.target.files[0].name
+        var fileName = e.target.files[0].name
+        var fileSize = e.target.files[0].size
+        var ossKey = this.props.teamId + '/' + Date.now() + '/' + fileName
         const disAttachmentsArr = this.state.disAttachmentsArr
         const disOssKeyArr = this.state.disOssKeyArr
         disAttachmentsArr.push(e.target.files[0])
@@ -56,6 +58,11 @@ class TopicItem extends React.Component{
             disOssKeyArr
         })
         const resp = await fileUploader(e.target.files[0], ossKey)
+        resp.teamId = this.props.teamId
+        resp.size = fileSize
+        resp.dir = '/'
+        resp.fileName = fileName
+        resp.ossKey = ossKey
         let discussAttachments = this.state.discussAttachments;
         discussAttachments = [...discussAttachments, resp]
         this.setState({
@@ -111,6 +118,7 @@ class TopicItem extends React.Component{
                                         <div className="file-pic-item" key={Math.random()} onClick={this.downloadHandle.bind(this, item.name)}>
                                             <img className="file-pic" src={window.location.origin + '/static/' + item.name}></img>
                                             <div className="file-name">{item.name.split("/")[2]}</div>
+                                            <span onClick={() => { this.props.openMoveModalHandle(item) }}>移动</span>
                                         </div>
                                     )
                                 })
@@ -118,7 +126,12 @@ class TopicItem extends React.Component{
                                 {
                                      this.props.fileList.map((item) => {
                                         if(!(item.name.endsWith(".jpg")||item.name.endsWith(".jpeg")||item.name.endsWith(".png")||item.name.endsWith(".bmp")||item.name.endsWith(".gif"))){
-                                            return ( <div className="file-item" key={Math.random()} onClick={this.downloadHandle.bind(this, item.name)}>{item.name.split("/")[2]}</div> )
+                                            return ( 
+                                                <div key={Math.random()}>
+                                                    <div className="file-item" onClick={this.downloadHandle.bind(this, item.name)}>{item.name.split("/")[2]}</div> 
+                                                    <span onClick={() => { this.props.openMoveModalHandle(item) }}>移动</span>
+                                                </div>
+                                        )
                                         }
                                     })
                                 }
@@ -1113,7 +1126,8 @@ export default class Task extends React.Component{
                                     updateTopicInputHandle={this.updateTopicInputHandle}
                                     updateTopicContent={this.state.updateTopicContent}
                                     updateTopicHandle={this.updateTopicHandle}
-                                    sendContent={this.sendContent}/>
+                                    sendContent={this.sendContent}
+                                    openMoveModalHandle={this.openMoveModalHandle}/>
                                 )
                             })
                         }
