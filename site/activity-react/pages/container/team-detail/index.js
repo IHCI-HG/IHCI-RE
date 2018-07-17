@@ -210,23 +210,26 @@ export default class TeamDetail extends React.Component {
                 informList.push(item._id)
             }
         })
-        const result1 = await api('/api/file/createFile', {
-            method: 'POST',
-            body: {
-                fileInfo: {
-                    teamId: this.teamId,
-                    size: this.state.attachmentsArg.size,
-                    dir: '/',
-                    fileName: this.state.attachmentsArg.name,
-                    ossKey: this.state.ossKeyArg,
+        if(JSON.stringify(this.state.attachmentsArg )!== "{}"){
+            const result1 = await api('/api/file/createFile', {
+                method: 'POST',
+                body: {
+                    fileInfo: {
+                        teamId: this.teamId,
+                        size: this.state.attachmentsArg.size,
+                        dir: '/',
+                        fileName: this.state.attachmentsArg.name,
+                        ossKey: this.state.ossKeyArg,
+                    }
                 }
+            })
+            if (result1.state.code === 0) {
+                window.toast("上传文件成功")
+            } else {
+                window.toast(result1.state.msg)
             }
-        })
-        if (result1.state.code === 0) {
-            window.toast("上传文件成功")
-        } else {
-            window.toast(result1.state.msg)
         }
+        
         const result = await api('/api/topic/createTopic', {
             method: 'POST',
             body: {
@@ -729,8 +732,12 @@ export default class TeamDetail extends React.Component {
     }
 
     renameHandle = (item) => {
-        this.state.renameId = item._id
-        this.state.renameName = item.name
+        this.setState({
+            renameId:item._id
+        })
+        this.setState({
+            renameName:item.Name
+        })
         this.initTeamFile()
     }
 
@@ -748,13 +755,12 @@ export default class TeamDetail extends React.Component {
 
     renameComfirmHandle = async (item) => {
         if (item.fileType == 'file') {
-
             const result = await api('/api/file/updateFileName', {
                 method: 'POST',
                 body: {
                     fileInfo: {
                         teamId: this.teamId,
-                        dir: this.curDir,
+                        dir: '/',
                         fileName: item.name,
                     },
                     tarName: this.state.renameName,
@@ -777,7 +783,7 @@ export default class TeamDetail extends React.Component {
                 body: {
                     folderInfo: {
                         teamId: this.teamId,
-                        dir: this.curDir,
+                        dir: '/',
                         folderName: item.name,
                     },
                     tarName: this.state.renameName,
@@ -991,7 +997,7 @@ export default class TeamDetail extends React.Component {
                                     }
                                     if (item._id == this.state.renameId) {
                                         return (
-                                            <div className="file-line files">
+                                            <div className="file-line files" key={Math.random()}>
                                                 <div className="name">
                                                     <input autoFocus="autofocus" type="text" className="folder-name" onChange={this.renameNameInputHandle} value={this.state.renameName} />
                                                 </div>

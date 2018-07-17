@@ -525,6 +525,66 @@ const editTask = async (req, res, next) => {
     }
 }
 
+const changeTaskDir = async (req, res, next) => {
+    const taskId = req.body.taskId;
+    const teamId = req.body.teamId;
+    const fileName = req.body.fileName
+    //fileName是osskey形式
+    const tasklistId = req.body.listId;
+    const newDir = req.body.newDir
+
+    const userId = req.rSession.userId;
+    if (!taskId || !fileName ||!newDir) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: "参数不全" },
+            data: {}
+        });
+        return
+    }
+
+    try {
+        const taskObj = await taskDB.findByTaskId(taskId)
+
+        const baseInfoObj = await userDB.baseInfoById(userId);
+
+        if (!taskObj) {
+            resProcessor.jsonp(req, res, {
+                state: { code: 1, msg: "任务不存在" },
+                data: {}
+            })
+        }
+        taskObj.fileList.map((item)=>{
+            if(item.name===fileName){
+                item.dir = newDir
+            }
+        })
+        const task = {}
+        task.title = editTask.name || taskObj.title;
+        task.content = editTask.desc || taskObj.content;
+        task.fileList = editTask.fileList || taskObj.fileList;
+        task.deadline = editTask.ddl || taskObj.deadline;
+        if (editTask.assigneeId === undefined) {
+            task.header = taskObj.header
+        } else {
+            task.header = editTask.assigneeId
+        }
+        await taskDB.updateTask(taskId, task);
+        // if (tasklistId) {
+        //     await tasklistDB.updateTask(tasklistId, taskId, task);
+        // }
+        resProcessor.jsonp(req, res, {
+            state: { code: 0, msg: '请求成功' },
+            data: task
+        })
+
+    } catch (error) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: '操作失败' },
+            data: {}
+        });
+    }
+}
+
 const taskInfo = async (req, res, next) => {
     const taskId = req.query.taskId
     const userId = req.rSession.userId
@@ -1293,6 +1353,7 @@ module.exports = [
     ['POST', '/api/task/create', apiAuth, createTask],
     ['POST', '/api/task/delTask', apiAuth, delTask],
     ['POST', '/api/task/edit', apiAuth, editTask],
+    ['POST', '/api/task/changeDir', apiAuth, changeTaskDir],
     ['GET', '/api/task/taskInfo', apiAuth, taskInfo],
     ['POST', '/api/task/addCheckitem', apiAuth, addCheckitem],
     ['POST', '/api/task/dropCheckitem', apiAuth, dropCheckitem],
