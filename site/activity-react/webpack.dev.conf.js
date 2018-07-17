@@ -12,12 +12,15 @@ const LiveReloadPlugin = require('webpack-livereload-plugin');
 
 // 将样式表抽离成专门的单独文件。这样，样式表将不再依赖于 JavaScript：
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const extractSass = new ExtractTextPlugin({
-    filename: "[name].[contenthash].css",
-    disable: process.env.BUILD_MODE === 'dev'
-});
 
 let MODE = process.env.BUILD_MODE || 'dev';
+
+const extractSass = new ExtractTextPlugin({
+    filename: "[name].[contenthash].css",
+    disable: MODE === 'dev'
+});
+
+
 // console.log('-----------------当前模式：', `${MODE}`);
 
 const entrys = {};

@@ -146,7 +146,7 @@ export default class TeamAdmin extends React.Component{
         if(result.state.code === 0) {
             console.log(result);
             window.toast("设置成功")
-            location.href = '/team/' + this.teamId
+            setTimeout(location.href = '/team/' + this.teamId,10000)
         }
     } 
 

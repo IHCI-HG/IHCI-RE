@@ -2,14 +2,15 @@ import * as React from 'react';
 import './style.scss'
 import api from '../../../utils/api';
 var ReactDOM = require('react-dom')
-import { timeBefore, sortByCreateTime, createMarkup, formatDate } from '../../../utils/util'
+import { sortByCreateTime, formatDate } from '../../../utils/util'
 import Page from '../../../components/page'
 import Modal from '../../../components/modal'
 import MemberChosenList from '../../../components/member-chose-list'
 import Editor from '../../../components/editor'
 import EditTodoList from '../todo/todolist/editTodoList'
 import TodoList from '../todo/todolist/todoList'
-import fileUploader from '../../../utils/file-uploader';
+import fileUploader from '../../../utils/file-uploader'
+import TopicItem from '../../../components/topic-item'
 
 class TeamChoseItem extends React.PureComponent {
     render() {
@@ -18,24 +19,6 @@ class TeamChoseItem extends React.PureComponent {
                 <div className="team-img"></div>
                 <div className="team-name">{this.props.name}</div>
                 {this.props.active && <span className="check">√</span>}
-            </div>
-        )
-    }
-}
-class TopicItem extends React.PureComponent {
-    render() {
-        return (
-            <div className="topic-item" key={"topic-item-" + this.props._id} onClick={() => { this.props.locationTo('/discuss/topic/' + this.props._id) }}>
-                <img src={this.props.creator.headImg} alt="" className="head-img" />
-                <div className="name">{this.props.creator.name}</div>
-                <div className="main">
-                    <div className="topic-title">{this.props.title}</div>
-                    <p className="text-max-line-1" dangerouslySetInnerHTML={createMarkup(this.props.content)}></p>
-                </div>
-                {this.props.fileList.length > 0 &&
-                    <i className="icon iconfont time">&#xe6dd;</i>
-                }
-                <div className="time">{timeBefore(this.props.create_time)}</div>
             </div>
         )
     }
@@ -228,24 +211,26 @@ export default class TeamDetail extends React.Component {
                 informList.push(item._id)
             }
         })
-        const result1 = await api('/api/file/createFile', {
-            method: 'POST',
-            body: {
-                fileInfo: {
-                    teamId: this.teamId,
-                    size: this.state.attachmentsArg.size,
-                    dir: '/',
-                    fileName: this.state.attachmentsArg.name,
-                    ossKey: this.state.ossKeyArg,
+        if(JSON.stringify(this.state.attachmentsArg )!== "{}"){
+            const result1 = await api('/api/file/createFile', {
+                method: 'POST',
+                body: {
+                    fileInfo: {
+                        teamId: this.teamId,
+                        size: this.state.attachmentsArg.size,
+                        dir: '/',
+                        fileName: this.state.attachmentsArg.name,
+                        ossKey: this.state.ossKeyArg,
+                    }
                 }
+            })
+            if (result1.state.code === 0) {
+                window.toast("上传文件成功")
+            } else {
+                window.toast(result1.state.msg)
             }
-        })
-        console.log(result1);
-        if (result1.state.code === 0) {
-            window.toast("上传文件成功")
-        } else {
-            window.toast(result1.state.msg)
         }
+        
         const result = await api('/api/topic/createTopic', {
             method: 'POST',
             body: {
@@ -760,8 +745,12 @@ export default class TeamDetail extends React.Component {
     }
 
     renameHandle = (item) => {
-        this.state.renameId = item._id
-        this.state.renameName = item.name
+        this.setState({
+            renameId:item._id
+        })
+        this.setState({
+            renameName:item.Name
+        })
         this.initTeamFile()
     }
 
@@ -779,13 +768,12 @@ export default class TeamDetail extends React.Component {
 
     renameComfirmHandle = async (item) => {
         if (item.fileType == 'file') {
-
             const result = await api('/api/file/updateFileName', {
                 method: 'POST',
                 body: {
                     fileInfo: {
                         teamId: this.teamId,
-                        dir: this.curDir,
+                        dir: '/',
                         fileName: item.name,
                     },
                     tarName: this.state.renameName,
@@ -808,7 +796,7 @@ export default class TeamDetail extends React.Component {
                 body: {
                     folderInfo: {
                         teamId: this.teamId,
-                        dir: this.curDir,
+                        dir: '/',
                         folderName: item.name,
                     },
                     tarName: this.state.renameName,
@@ -1024,7 +1012,7 @@ export default class TeamDetail extends React.Component {
                                     }
                                     if (item._id == this.state.renameId) {
                                         return (
-                                            <div className="file-line files">
+                                            <div className="file-line files" key={Math.random()}>
                                                 <div className="name">
                                                     <input autoFocus="autofocus" type="text" className="folder-name" onChange={this.renameNameInputHandle} value={this.state.renameName} />
                                                 </div>

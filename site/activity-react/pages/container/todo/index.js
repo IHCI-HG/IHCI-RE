@@ -7,7 +7,8 @@ import TodoItem from './todoItem'
 import NewCheck from './editTodo'
 import Editor from '../../../components/editor'
 import fileUploader from '../../../utils/file-uploader'
-
+import Modal from '../../../components/modal'
+var ReactDOM = require('react-dom')
 import { timeBefore, sortByCreateTime, createMarkup } from '../../../utils/util'
 import MemberChosenList from '../../../components/member-chose-list'
 
@@ -45,7 +46,9 @@ class TopicItem extends React.Component{
     }
 
     discussFileUploadHandle = async (e) => {
-        var ossKey = this.props.teamId + '/' + Date.now() + '/' + e.target.files[0].name
+        var fileName = e.target.files[0].name
+        var fileSize = e.target.files[0].size
+        var ossKey = this.props.teamId + '/' + Date.now() + '/' + fileName
         const disAttachmentsArr = this.state.disAttachmentsArr
         const disOssKeyArr = this.state.disOssKeyArr
         disAttachmentsArr.push(e.target.files[0])
@@ -55,6 +58,11 @@ class TopicItem extends React.Component{
             disOssKeyArr
         })
         const resp = await fileUploader(e.target.files[0], ossKey)
+        resp.teamId = this.props.teamId
+        resp.size = fileSize
+        resp.dir = '/'
+        resp.fileName = fileName
+        resp.ossKey = ossKey
         let discussAttachments = this.state.discussAttachments;
         discussAttachments = [...discussAttachments, resp]
         this.setState({
@@ -110,6 +118,7 @@ class TopicItem extends React.Component{
                                         <div className="file-pic-item" key={Math.random()} onClick={this.downloadHandle.bind(this, item.name)}>
                                             <img className="file-pic" src={window.location.origin + '/static/' + item.name}></img>
                                             <div className="file-name">{item.name.split("/")[2]}</div>
+                                            <span onClick={() => { this.props.openMoveModalHandle(item) }}>移动</span>
                                         </div>
                                     )
                                 })
@@ -117,7 +126,12 @@ class TopicItem extends React.Component{
                                 {
                                      this.props.fileList.map((item) => {
                                         if(!(item.name.endsWith(".jpg")||item.name.endsWith(".jpeg")||item.name.endsWith(".png")||item.name.endsWith(".bmp")||item.name.endsWith(".gif"))){
-                                            return ( <div className="file-item" key={Math.random()} onClick={this.downloadHandle.bind(this, item.name)}>{item.name.split("/")[2]}</div> )
+                                            return ( 
+                                                <div key={Math.random()}>
+                                                    <div className="file-item" onClick={this.downloadHandle.bind(this, item.name)}>{item.name.split("/")[2]}</div> 
+                                                    <span onClick={() => { this.props.openMoveModalHandle(item) }}>移动</span>
+                                                </div>
+                                        )
                                         }
                                     })
                                 }
@@ -176,6 +190,9 @@ export default class Task extends React.Component{
         ossKeyArr:[],
         todoAttachmentsArr:[],
         todoOssKeyArr:[],
+
+        modal: document.createElement('div'),
+        moveItem: '',
     }
 
     componentDidMount = async() => {
@@ -630,7 +647,6 @@ export default class Task extends React.Component{
     }
 
     handleTodoModify = async(todoInfo) => {
-        console.log(todoInfo)
         if(todoInfo.attachmentsArr!==[]){
             todoInfo.attachmentsArr.map(async(item,index)=>{
                 const result1 = await api('/api/file/createFile', {
@@ -907,6 +923,64 @@ export default class Task extends React.Component{
         this.refs['todoItem'].setMode('edit')
     } 
 
+    openMoveModalHandle = (item) => {
+        this.setState({moveItem:item})
+        ReactDOM.render(<Modal teamId={this.state.todo.teamId} folderId={item._id} callbackParent={this.onChildChanged} />, this.state.modal)
+        document.getElementById('app').appendChild(this.state.modal)
+    }
+
+    onChildChanged = (moveTarDir) => {
+        if (moveTarDir != '') {
+            this.moveHandle(this.state.moveItem, moveTarDir)
+        }
+        document.getElementById('app').removeChild(this.state.modal)
+        this.state.moveItem = ''
+    }
+
+    moveHandle = async (item, tarDir) => {
+        const result = await api('/api/file/moveFile', {
+            method: 'POST',
+            body: {
+                fileInfo: {
+                    teamId: this.state.todo.teamId,
+                    dir: item.dir,
+                    fileName: item.name.split("/")[2],
+                    tarDir: tarDir,
+                }
+            }
+        })
+        if(result.state.code === 0){
+            const result1 = await api('/api/task/changeDir', {
+                method: 'POST',
+                body: {
+                    teamId: this.state.todo.teamId,
+                    taskId: this.state.todo.id,
+                    fileName: item.name,
+                    newDir: tarDir,
+                    listId: this.state.todo.listId
+                }
+            })
+    
+            if (result.state.code == 0 && result1.state.code == 0) {
+                const todo = this.state.todo 
+                todo.fileList.map((fileItem)=>{
+                    if(fileItem.name===item.name){
+                        fileItem.dir = tarDir
+                    }
+                })
+                todo.imgList.map((fileItem)=>{
+                    if(fileItem.name===item.name){
+                        fileItem.dir = tarDir
+                    }
+                })
+                this.setState({todo})
+                window.toast("移动文件成功")
+            } else {
+                window.toast("移动文件失败")
+            }
+        }
+    }
+
     render() {
         let actionList = this.state.actionList || []
         let moveExpanded = this.state.moveExpanded
@@ -927,7 +1001,9 @@ export default class Task extends React.Component{
                          handleTodoModify={this.handleTodoModify}
                          handleTodoCheck={this.handleTodoCheck}
                          handleTodoDelete={this.handleTodoDelete}
-                         teamId={this.state.todo.teamId}/>
+                         openMoveModalHandle={this.openMoveModalHandle}
+                         teamId={this.state.todo.teamId}
+                         />
 
                      <div className="checkitem-list">
                          {
@@ -1050,7 +1126,8 @@ export default class Task extends React.Component{
                                     updateTopicInputHandle={this.updateTopicInputHandle}
                                     updateTopicContent={this.state.updateTopicContent}
                                     updateTopicHandle={this.updateTopicHandle}
-                                    sendContent={this.sendContent}/>
+                                    sendContent={this.sendContent}
+                                    openMoveModalHandle={this.openMoveModalHandle}/>
                                 )
                             })
                         }
