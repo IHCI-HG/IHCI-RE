@@ -760,8 +760,12 @@ export default class TeamDetail extends React.Component {
     }
 
     renameHandle = (item) => {
-        this.state.renameId = item._id
-        this.state.renameName = item.name
+        this.setState({
+            renameId:item._id
+        })
+        this.setState({
+            renameName:item.Name
+        })
         this.initTeamFile()
     }
 
@@ -779,13 +783,12 @@ export default class TeamDetail extends React.Component {
 
     renameComfirmHandle = async (item) => {
         if (item.fileType == 'file') {
-
             const result = await api('/api/file/updateFileName', {
                 method: 'POST',
                 body: {
                     fileInfo: {
                         teamId: this.teamId,
-                        dir: this.curDir,
+                        dir: '/',
                         fileName: item.name,
                     },
                     tarName: this.state.renameName,
@@ -808,7 +811,7 @@ export default class TeamDetail extends React.Component {
                 body: {
                     folderInfo: {
                         teamId: this.teamId,
-                        dir: this.curDir,
+                        dir: '/',
                         folderName: item.name,
                     },
                     tarName: this.state.renameName,
@@ -1024,7 +1027,7 @@ export default class TeamDetail extends React.Component {
                                     }
                                     if (item._id == this.state.renameId) {
                                         return (
-                                            <div className="file-line files">
+                                            <div className="file-line files" key={Math.random()}>
                                                 <div className="name">
                                                     <input autoFocus="autofocus" type="text" className="folder-name" onChange={this.renameNameInputHandle} value={this.state.renameName} />
                                                 </div>
