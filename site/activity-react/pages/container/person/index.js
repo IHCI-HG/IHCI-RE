@@ -138,7 +138,7 @@ export default class Person extends React.Component{
     }
 
     isPhoneNumber = (phoneNumber) => {
-        const reg = /^0?(1[0-9][0-9]|15[012356789]|17[013678]|18[0-9]|14[57])[0-9]{8}$/;
+        const reg = /^0?(13[0-9]|15[0-3,5-9]|17[0,3,5-8]|18[0-9]|14[57]|19[89])[0-9]{8}$/;
         return reg.test(phoneNumber);
     }
 
@@ -253,11 +253,10 @@ export default class Person extends React.Component{
                 ...this.state.personInfo
             }
         })
-
         if(result.state.code === 0) {
             window.toast("设置成功")
             setTimeout(() => {
-                location.href = '/team/'
+                location.href = '/team'
             }, 300);
         } else {
             window.toast("设置失败，请稍后再试")
