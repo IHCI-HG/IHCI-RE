@@ -5,6 +5,7 @@ import Page from '../../../components/page'
 
 import WxLoginDialog from '../../../components/wx-login-dialog'
 import { LoginView } from '../../../components/login-view';
+import { TeamLoginView } from '../../../components/team-login-view';
 
 export default class TeamAdmin extends React.Component{
     componentDidMount = async() => {
@@ -70,11 +71,11 @@ export default class TeamAdmin extends React.Component{
             }
                 <div className="nav">
                     <div className="max-w-con nav-con">
-                        <div className="logo">IHCI(换成图)</div>
+                        <div className="logo">换成logo</div>
                     </div>
                 </div>
                 <div className="banner">
-                    <div className='h1'>All for the valuable code.</div>
+                    {/* <div className='h1'>加入{this.state.teamObj.name}</div> */}
                     <div className="banner-con max-w-con">
                     {
                         this.state.login ? 
@@ -85,10 +86,11 @@ export default class TeamAdmin extends React.Component{
                         </div>
                         : 
                         <div className='reg-box'>
-                            <span className='reg-msg'>您尚未登录</span>
+                            {/* <span className='reg-msg'>您尚未登录</span> */}
                             <div className='reg-item'>
-                                
-                                <LoginView  join={true} showWxDialogHandle={this.showWxDialogHandle}/>
+                                {/* <div className='reg-inner-item'> */}
+                                <TeamLoginView  join={true} showWxDialogHandle={this.showWxDialogHandle} teamName={this.state.teamObj.name} teamName={this.state.teamObj.name } />
+                                {/* </div> */}
                             </div>
                         </div>
                     }
@@ -96,7 +98,7 @@ export default class TeamAdmin extends React.Component{
                     
                 </div>
         
-                <div className="footer">
+                {/* <div className="footer">
                     <div className="footer-list max-w-con">
                         <div className="foot-item">
                             <div className="foot-item-title">IHCI</div>
@@ -119,7 +121,7 @@ export default class TeamAdmin extends React.Component{
                             <div href="">参考链接</div>
                         </div>
                     </div>
-                </div>
+                </div> */}
             </Page>)
     }
 }
