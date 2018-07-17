@@ -71,7 +71,6 @@ class TopicItem extends React.Component{
     }
 
     deleteDiscussFile = async (e, index) => {
-        console.log("del")
         let discussAttachments = this.state.discussAttachments
         discussAttachments.splice(index,1);
         this.setState({
@@ -80,7 +79,6 @@ class TopicItem extends React.Component{
     }
 
     downloadHandle = (ossKey) => {
-        console.log(ossKey)
         window.open(window.location.origin + '/static/' + ossKey)
     }
 
@@ -127,7 +125,7 @@ class TopicItem extends React.Component{
                                      this.props.fileList.map((item) => {
                                         if(!(item.name.endsWith(".jpg")||item.name.endsWith(".jpeg")||item.name.endsWith(".png")||item.name.endsWith(".bmp")||item.name.endsWith(".gif"))){
                                             return ( 
-                                                <div key={Math.random()}>
+                                                <div key={"file"+item.id}>
                                                     <div className="file-item" onClick={this.downloadHandle.bind(this, item.name)}>{item.name.split("/")[2]}</div> 
                                                     <span onClick={() => { this.props.openMoveModalHandle(item) }}>移动</span>
                                                 </div>
@@ -555,6 +553,8 @@ export default class Task extends React.Component{
     }
 
     discussFileUploadHandle = async (e) => {
+        var fileName = e.target.files[0].name
+        var fileSize = e.target.files[0].size
         var ossKey = this.state.todo.teamId + '/' + Date.now() + '/' + e.target.files[0].name
         const attachmentsArr = this.state.attachmentsArr
         const ossKeyArr = this.state.ossKeyArr
@@ -565,6 +565,11 @@ export default class Task extends React.Component{
             ossKeyArr
         })
         const resp = await fileUploader(e.target.files[0], ossKey)
+        resp.teamId = this.state.todo.teamId
+        resp.size = fileSize
+        resp.dir = '/'
+        resp.fileName = fileName
+        resp.ossKey = ossKey
         let discussAttachments = this.state.discussAttachments;
         discussAttachments = [...discussAttachments, resp]
         this.setState({
@@ -982,6 +987,7 @@ export default class Task extends React.Component{
     }
 
     render() {
+        console.log(this.state.topicListArr)
         let actionList = this.state.actionList || []
         let moveExpanded = this.state.moveExpanded
         let copyExpanded = this.state.copyExpanded
