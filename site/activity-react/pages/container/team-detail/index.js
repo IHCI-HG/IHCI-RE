@@ -210,7 +210,7 @@ export default class TeamDetail extends React.Component {
                 informList.push(item._id)
             }
         })
-        if(JSON.stringify(this.state.attachmentsArg )!== "{}"){
+        if(this.state.attachmentsArg.name){
             const result1 = await api('/api/file/createFile', {
                 method: 'POST',
                 body: {
