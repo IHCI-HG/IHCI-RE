@@ -652,61 +652,66 @@ export default class Task extends React.Component{
     }
 
     handleTodoModify = async(todoInfo) => {
-        if(todoInfo.attachmentsArr!==[]){
-            todoInfo.attachmentsArr.map(async(item,index)=>{
-                const result1 = await api('/api/file/createFile', {
-                    method: 'POST',
-                    body: {
-                        fileInfo: {
-                            teamId: this.state.todo.teamId,
-                            size: item.size,
-                            dir: '/',
-                            fileName: item.name,
-                            ossKey: todoInfo.ossKeyArr[index],
+        if(!todoInfo.name.trim()){
+            alert("任务名不能为空")
+        }
+        else{
+            if(todoInfo.attachmentsArr!==[]){
+                todoInfo.attachmentsArr.map(async(item,index)=>{
+                    const result1 = await api('/api/file/createFile', {
+                        method: 'POST',
+                        body: {
+                            fileInfo: {
+                                teamId: this.state.todo.teamId,
+                                size: item.size,
+                                dir: '/',
+                                fileName: item.name,
+                                ossKey: todoInfo.ossKeyArr[index],
+                            }
                         }
+                    })
+                    if (result1.state.code === 0) {
+                        window.toast("上传文件成功")
+                    } else {
+                        window.toast(result1.state.msg)
                     }
                 })
-                if (result1.state.code === 0) {
-                    window.toast("上传文件成功")
-                } else {
-                    window.toast(result1.state.msg)
-                }
-            })
-        }
-        const taskId = this.props.params.id;
-        const editTask = {};
-        editTask.name = todoInfo.name
-        editTask.ddl = todoInfo.date
-        editTask.desc = todoInfo.desc
-        editTask.fileList = todoInfo.fileList
-        editTask.assigneeId = todoInfo.assigneeId
-        const resp = await api('/api/task/edit', {
-            method: 'POST',
-            body: {
-                teamId:this.state.todo.teamId,
-                taskId,
-                editTask
             }
-        })
-        if (resp.state.code === 0) {
-            const todo = this.state.todo
-            todo.imgList = []
-            resp.data.fileList.map((fileItem,index)=>{
-                if(fileItem.name.endsWith(".jpg")||fileItem.name.endsWith(".jpeg")||fileItem.name.endsWith(".png")||fileItem.name.endsWith(".bmp")||fileItem.name.endsWith(".gif")){
-                    todo.imgList.push(fileItem)
+            const taskId = this.props.params.id;
+            const editTask = {};
+            editTask.name = todoInfo.name
+            editTask.ddl = todoInfo.date
+            editTask.desc = todoInfo.desc
+            editTask.fileList = todoInfo.fileList
+            editTask.assigneeId = todoInfo.assigneeId
+            const resp = await api('/api/task/edit', {
+                method: 'POST',
+                body: {
+                    teamId:this.state.todo.teamId,
+                    taskId,
+                    editTask
                 }
             })
-            const rAssignee = {}
-            rAssignee.id = resp.data.header
-            todo.name = resp.data.title
-            todo.ddl = resp.data.deadline
-            todo.desc = resp.data.content
-            todo.assignee = rAssignee
-            todo.fileList = resp.data.fileList
-            console.log('handleTodoModify', todo)
-            this.setState({ todo })
+            if (resp.state.code === 0) {
+                const todo = this.state.todo
+                todo.imgList = []
+                resp.data.fileList.map((fileItem,index)=>{
+                    if(fileItem.name.endsWith(".jpg")||fileItem.name.endsWith(".jpeg")||fileItem.name.endsWith(".png")||fileItem.name.endsWith(".bmp")||fileItem.name.endsWith(".gif")){
+                        todo.imgList.push(fileItem)
+                    }
+                })
+                const rAssignee = {}
+                rAssignee.id = resp.data.header
+                todo.name = resp.data.title
+                todo.ddl = resp.data.deadline
+                todo.desc = resp.data.content
+                todo.assignee = rAssignee
+                todo.fileList = resp.data.fileList
+                console.log('handleTodoModify', todo)
+                this.setState({ todo })
+            }
+            return resp
         }
-        return resp
     }
 
     handleAssigneeChange = async(e) => {
@@ -766,8 +771,8 @@ export default class Task extends React.Component{
 
     // check create 需要返回
     handleCheckCreate = async(todoInfo) => {
-        if(!todoInfo.name){
-            alert("请输入检查项名")
+        if(!todoInfo.name.trim()){
+            alert("检查项名不能为空")
         }
         else{
             const resp = await api('/api/task/addCheckitem', {
@@ -801,32 +806,37 @@ export default class Task extends React.Component{
     }
 
     handleCheckModify = async(index, id, checkItemInfo) => {
-        const todoId = this.props.params.id
-        const checkitemId = id
-        const editCheckitem = {}
-        editCheckitem.name = checkItemInfo.name
-        editCheckitem.ddl = checkItemInfo.date
-        editCheckitem.assigneeId = checkItemInfo.assigneeId
-
-        const resp = await api('/api/task/editCheckitem', {
-            method: 'POST',
-            body: {
-                todoId,
-                checkitemId,
-                editCheckitem,
-                teamId:this.state.todo.teamId,
-            }
-        })
-        if (resp.state.code === 0) {
-            const todo = this.state.todo
-            const rAssignee = {}
-            rAssignee.id = resp.data.header
-            todo.list[index].name = resp.data.content
-            todo.list[index].ddl = resp.data.deadline
-            todo.list[index].assignee = rAssignee
-            this.setState({ todo })
+        if(!todoInfo.name.trim()){
+            alert("检查项名不能为空")
         }
-        return resp
+        else{
+            const todoId = this.props.params.id
+            const checkitemId = id
+            const editCheckitem = {}
+            editCheckitem.name = checkItemInfo.name
+            editCheckitem.ddl = checkItemInfo.date
+            editCheckitem.assigneeId = checkItemInfo.assigneeId
+    
+            const resp = await api('/api/task/editCheckitem', {
+                method: 'POST',
+                body: {
+                    todoId,
+                    checkitemId,
+                    editCheckitem,
+                    teamId:this.state.todo.teamId,
+                }
+            })
+            if (resp.state.code === 0) {
+                const todo = this.state.todo
+                const rAssignee = {}
+                rAssignee.id = resp.data.header
+                todo.list[index].name = resp.data.content
+                todo.list[index].ddl = resp.data.deadline
+                todo.list[index].assignee = rAssignee
+                this.setState({ todo })
+            }
+            return resp
+        }
     }
 
     handleCheckAssigneeChange = async(index, id, e) => {
