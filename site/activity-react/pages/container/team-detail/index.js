@@ -321,68 +321,79 @@ export default class TeamDetail extends React.Component {
     }
 
     handleTodoCreate = async (lIndex, id, todoInfo) => {
-        const result = await api('/api/task/create', {
-            method: 'POST',
-            body: {
-                teamId: this.teamId,
-                listId: id,
-                name: todoInfo.name,
-                ddl: todoInfo.date,
-                assigneeId: todoInfo.assigneeId,
-            }
-        })
-        // 返回用户名的显示依赖assigneeId
-        if (result.state.code === 0) {
-            let todo = {
-                listId: result.data.listId,
-                id: result.data.id,
-                name: result.data.title,
-                desc: result.data.content,
-                assignee: {
-                    id: result.data.header,
-                },
-                ddl: result.data.deadline,
-                checkItemDoneNum: 0,
-                // checkItemNum: 0,
-                hasDone: false,
-            }
-            const todoListArr = this.state.todoListArr
-            const todolist = todoListArr[lIndex]
-            if (!todolist.list) {
-                todolist.list = []
-            }
-            todolist.list = [...todolist.list, todo]
-            this.setState({ todoListArr })
+        if(!todoInfo.name.trim()){
+            alert("任务名不能为空")
         }
-        return result
+        else{
+            const result = await api('/api/task/create', {
+                method: 'POST',
+                body: {
+                    teamId: this.teamId,
+                    listId: id,
+                    name: todoInfo.name,
+                    ddl: todoInfo.date,
+                    assigneeId: todoInfo.assigneeId,
+                }
+            })
+            // 返回用户名的显示依赖assigneeId
+            if (result.state.code === 0) {
+                let todo = {
+                    listId: result.data.listId,
+                    id: result.data.id,
+                    name: result.data.title,
+                    desc: result.data.content,
+                    assignee: {
+                        id: result.data.header,
+                    },
+                    ddl: result.data.deadline,
+                    checkItemDoneNum: 0,
+                    // checkItemNum: 0,
+                    hasDone: false,
+                }
+                const todoListArr = this.state.todoListArr
+                const todolist = todoListArr[lIndex]
+                if (!todolist.list) {
+                    todolist.list = []
+                }
+                todolist.list = [...todolist.list, todo]
+                this.setState({ todoListArr })
+            }
+            return result
+        }
+        
     }
 
     handleTodoModify = async (lIndex, lId, id, todoInfo) => {
         let editTask = {}
-        editTask.name = todoInfo.name
-        editTask.ddl = todoInfo.date
-        editTask.assigneeId = todoInfo.assigneeId
-        const resp = await api('/api/task/edit', {
-            method: 'POST',
-            body: {
-                listId: lId,
-                taskId: todoInfo.id,
-                teamId: this.teamId,
-                editTask: editTask,
-            }
-        })
-        if (resp.state.code === 0) {
-            const todoListArr = this.state.todoListArr
-            const todolist = todoListArr[lIndex]
-            const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
-            todoItem.name = resp.data.title
-            todoItem.ddl = resp.data.deadline
-            todoItem.assignee.id = resp.data.header
-            todolist.list[itemIndex] = todoItem
-            todolist.list = todolist.list.slice()
-            this.setState({ todoListArr })
+        if(!todoInfo.name.trim()){
+            alert("任务名不能为空")
         }
-        return resp
+        else{
+            editTask.name = todoInfo.name
+            editTask.ddl = todoInfo.date
+            editTask.assigneeId = todoInfo.assigneeId
+            const resp = await api('/api/task/edit', {
+                method: 'POST',
+                body: {
+                    listId: lId,
+                    taskId: todoInfo.id,
+                    teamId: this.teamId,
+                    editTask: editTask,
+                }
+            })
+            if (resp.state.code === 0) {
+                const todoListArr = this.state.todoListArr
+                const todolist = todoListArr[lIndex]
+                const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
+                todoItem.name = resp.data.title
+                todoItem.ddl = resp.data.deadline
+                todoItem.assignee.id = resp.data.header
+                todolist.list[itemIndex] = todoItem
+                todolist.list = todolist.list.slice()
+                this.setState({ todoListArr })
+            }
+            return resp
+        }
     }
 
     handleTodoCheck = async (lIndex, lId, id, hasDone) => {
