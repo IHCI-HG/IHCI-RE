@@ -1,6 +1,31 @@
 .file-page {
-    .file-con {
+    .return{
+        cursor: pointer;
+        margin-left:0.25rem;
         margin-top: 40px;
+        display: block;
+        padding: 10px 0 10px 0;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        width: 16.566667rem;
+        height:45px;
+        font-size: 25px;
+        color: #888888;
+        background: #f9f9f9;
+        border: 1px solid #e6e6e6;
+        border-bottom: none;
+        -webkit-border-radius: 0.026667rem;
+        border-radius: 0.026667rem;
+        .teamName{
+            margin-left:20px;
+        }
+        &:hover{
+            background-color: #fff;
+        }
+    }
+    .file-con {
+        margin-top: 0!important;
         padding: 20px 30px 40px 30px;
     }
 

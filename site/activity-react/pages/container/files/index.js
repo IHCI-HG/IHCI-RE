@@ -370,6 +370,9 @@ export default class Files extends React.Component {
     render() {
         return (
             <Page title="文件" className="file-page">
+                <div className="return" onClick={()=>{location.href = '/team/'+this.teamId}}>
+                        <div className="teamName">{this.state.teamInfo.name}</div>
+                </div>
                 <input className='file-input-hidden' type="file" ref={(fileInput) => this.fileInput = fileInput} onChange={this.uploadFileHandle}></input>
 
                 <div className="file-con page-wrap">

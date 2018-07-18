@@ -20,6 +20,7 @@ export default class Topic extends React.Component{
             create_time: '',
             todoDesc: '',
         },
+        teamInfo:{},
         discussObj: {
             editStatus: false,
             topicId: 1,
@@ -65,6 +66,20 @@ export default class Topic extends React.Component{
             }
         }catch(error)
         {}
+    }
+
+    initTeamInfo = async () => {
+        const result = await api('/api/team/info', {
+            method: 'POST',
+            body: {
+                teamId: this.teamId
+            }
+        })
+        if (result.data) {
+            this.setState({
+                teamInfo: result.data
+            })
+        }
     }
 
     initPageInfo = async () => {
@@ -114,6 +129,7 @@ export default class Topic extends React.Component{
             discussList: discussList,
             memberList: memberList
         })
+        this.initTeamInfo()
     }
 
     topicContentHandle = (content) => {
@@ -399,14 +415,16 @@ export default class Topic extends React.Component{
     render() {
         return (
             <Page className="topic-page">
-                <div className="sp-nav">
+                {/* <div className="sp-nav">
                     <span className='to-team' onClick={() => { this.props.router.push('/team') }} >团队列表</span>
                     <span className="iconfont icon-enter"></span>
                     <span className='pre-tag' onClick={() => {this.props.router.push('/team/' + this.teamId)}}>{"团队主页"}</span>
                     <span className="iconfont icon-enter"></span>
                     <span>讨论</span>
+                </div> */}
+                <div className="return" onClick={()=>{location.href = '/team/'+this.teamId}}>
+                        <div className="teamName">{this.state.teamInfo.name}</div>
                 </div>
-
                 <div className="topic-con">
                     {
                         this.state.topicObj.editStatus ? <div className="topic-subject-edit">
