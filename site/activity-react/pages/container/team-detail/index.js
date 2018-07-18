@@ -397,6 +397,7 @@ export default class TeamDetail extends React.Component {
                 editTask: editTask,
             }
         })
+        console.log(resp)
         if (resp.state.code === 0) {
             // 更新 todolist
             const todoListArr = this.state.todoListArr
