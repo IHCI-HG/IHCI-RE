@@ -201,7 +201,6 @@ export default class TeamDetail extends React.Component {
         this.setState({
             topicContent: content
         })
-        console.log(this.state.topicContent)
     }
 
     createTopicHandle = async () => {
@@ -211,7 +210,7 @@ export default class TeamDetail extends React.Component {
                 informList.push(item._id)
             }
         })
-        if(JSON.stringify(this.state.attachmentsArg )!== "{}"){
+        if(this.state.attachmentsArg.name){
             const result1 = await api('/api/file/createFile', {
                 method: 'POST',
                 body: {
@@ -241,7 +240,6 @@ export default class TeamDetail extends React.Component {
                 informList: informList,
             }
         })
-        console.log('createTopicHandle', result.data)
 
         if (result.state.code == 0) {
             const topicList = this.state.topicList
@@ -361,7 +359,6 @@ export default class TeamDetail extends React.Component {
 
     handleTodoModify = async (lIndex, lId, id, todoInfo) => {
         let editTask = {}
-        console.log(todoInfo)
         editTask.name = todoInfo.name
         editTask.ddl = todoInfo.date
         editTask.assigneeId = todoInfo.assigneeId
@@ -374,7 +371,6 @@ export default class TeamDetail extends React.Component {
                 editTask: editTask,
             }
         })
-        console.log(resp)
         if (resp.state.code === 0) {
             const todoListArr = this.state.todoListArr
             const todolist = todoListArr[lIndex]
@@ -401,7 +397,7 @@ export default class TeamDetail extends React.Component {
                 editTask: editTask,
             }
         })
-        console.log('handleTodoCheck', resp)
+        console.log(resp)
         if (resp.state.code === 0) {
             // 更新 todolist
             const todoListArr = this.state.todoListArr
@@ -446,7 +442,6 @@ export default class TeamDetail extends React.Component {
     handleDateChange = async (lIndex, lId, id, e) => {
         let editTask = {}
         editTask.ddl = e.target.value
-        console.log(editTask)
         const resp = await api('/api/task/edit', {
             method: 'POST',
             body: {
@@ -456,7 +451,6 @@ export default class TeamDetail extends React.Component {
                 editTask: editTask,
             }
         })
-        console.log("date",resp)
         if (resp.state.code === 0) {
             const todoListArr = this.state.todoListArr
             const todolist = todoListArr[lIndex]
@@ -469,7 +463,6 @@ export default class TeamDetail extends React.Component {
     }
 
     handleTodoDelete = async (lIndex, lId, id) => {
-        console.log(lIndex, lId, id)
         const resp = await api('/api/task/delTask', {
             method: "POST",
             body: {
@@ -478,7 +471,6 @@ export default class TeamDetail extends React.Component {
                 listId: lId,
             }
         })
-        console.log(resp)
         if (resp.state.code === 0) {
             const todoListArr = this.state.todoListArr
             const todolist = todoListArr[lIndex]
@@ -553,7 +545,6 @@ export default class TeamDetail extends React.Component {
         if (resp.state.code === 0) {
             this.setState({ todoListArr: todoListArr.slice() })
         }
-        console.log(todoListArr)
         return resp
     }
 
@@ -607,10 +598,8 @@ export default class TeamDetail extends React.Component {
         var succeeded;
         const uploadResult = fileUploader(file, ossKey)
         await uploadResult.then(function (val) {
-            console.log(val)
             succeeded = 1
         }).catch(function (reason) {
-            console.log(reason)
             succeeded = 0
         })
 
@@ -631,7 +620,6 @@ export default class TeamDetail extends React.Component {
                 }
             }
         })
-        console.log(result);
         if (result.state.code === 0) {
             window.toast("上传文件成功")
         } else {
@@ -828,8 +816,7 @@ export default class TeamDetail extends React.Component {
 
         return (
             <Page title={teamInfo.name + " - IHCI"}
-                className="discuss-page">
-                 <input className='file-input-hidden' type="file" ref={(fileInput) => this.fileInput = fileInput} onChange={this.uploadFileHandle}></input>
+                className="project-page">
                 <div className="discuss-con page-wrap">
                     <div className="team-info">
                         <div className="left">
@@ -917,7 +904,6 @@ export default class TeamDetail extends React.Component {
                                         }}>添加任务
                                 </li>
                                         <li onClick={(e) => {
-                                            console.log('添加任务')
                                             this.setState({ showCreateTodoList: true, showMenu: false })
                                             e.stopPropagation()
                                         }}>添加清单
@@ -978,7 +964,7 @@ export default class TeamDetail extends React.Component {
                             )
                         })
                         }
-
+                        <input className='file-input-hidden' type="file" ref={(fileInput) => this.fileInput = fileInput} onChange={this.uploadFileHandle}></input>
                         <div className="head">
                             <span className='head-title'>文件</span>
                             <div className="create-btn" onClick={this.openFileInput}>上传文件</div>

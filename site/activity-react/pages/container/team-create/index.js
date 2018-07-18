@@ -45,9 +45,8 @@ export default class TeamCreate extends React.Component{
         })
 
         if(result.state.code === 0) {
-            console.log(result);
             window.toast("创建成功")
-            location.href = '/team-admin/' + result.data.teamObj._id
+            location.href = '/team/'
         }
     }
     
@@ -73,7 +72,6 @@ export default class TeamCreate extends React.Component{
         await uploadResult.then(function(val) {
             succeeded = 1
         }).catch(function(reason){
-            console.log(reason)
             succeeded = 0
         })
 

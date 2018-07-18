@@ -491,8 +491,8 @@ const editTask = async (req, res, next) => {
 
 
         if (task.completed_time) {
-            const date = new Date(task.completed_time)
-            task.completed_time = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
+            // const date = new Date(task.completed_time)
+            // task.completed_time = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
         }
         if (task.deadline) {
             const date = new Date(task.deadline)
