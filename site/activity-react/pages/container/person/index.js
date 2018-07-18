@@ -469,9 +469,9 @@ export default class Person extends React.Component{
                 */}
 
 
-                <div className="sava-btn" onClick={this.saveHandle}>保存</div>
+                <div className="save-btn" onClick={this.saveHandle}>保存</div>
 
-                <div className="sava-btn" onClick={this.logOutHandle}>登出</div>
+                <div className="save-btn" onClick={this.logOutHandle}>登出</div>
                 {
                     this.state.showWxLogin && <WxLoginDialog state="bind" closeHandle={this.closeWxLoginHandle}/>
                 }
