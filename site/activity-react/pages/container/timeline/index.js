@@ -151,6 +151,23 @@ class TimelineItem extends React.PureComponent{
                         </div>
                     </div>
                 )
+            case 'CREATE_TASKLIST': case 'DELETE_TASKLIST':
+                return(
+                    <div className='news-item-wrap'>
+                        <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
+                        <img src={this.props.creator.headImg} alt="" className="head-img" />
+        
+                        <div className="news-con">
+                            <div className="des-line">
+                                <span className="name">{this.props.creator.name}</span>
+                                <span className="type">{this.typeMap[this.props.type]}</span>
+                                <span className="topic">{this.props.title}</span>
+                            </div>
+        
+                            <div className="content" dangerouslySetInnerHTML={{__html: this.props.content.content}}>{}</div>
+                        </div>
+                    </div>
+                )
             default:
                 return(
                     <div className='news-item-wrap'>
