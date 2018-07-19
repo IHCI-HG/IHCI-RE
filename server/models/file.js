@@ -84,7 +84,7 @@ fileSchema.statics = {
             last_modify_time: Date.now()
         }).exec()
     },
-    updateName: function(teamId, dir, fileName,tarFileName) {
+    updateName: function(teamId, dir, fileName,tarFileName,ossKey) {
         return this.update({
             team: mongoose.Types.ObjectId(teamId),
             dir: dir,
@@ -92,6 +92,7 @@ fileSchema.statics = {
         },{
             fileName: tarFileName,
             last_modify_time: Date.now(),
+            ossKey:ossKey,
         }).exec()
     },   
     findByTeamIdList: function(teamIdList) {
@@ -565,7 +566,7 @@ const delFolder = async function(teamId, dir, folderName) {
  * @param {any} fileName 
  * @param {any} tarName
  */
-const updateFileName = async function(teamId, dir, fileName, tarName) {
+const updateFileName = async function(teamId, dir, fileName, tarName,ossKey) {
     if(fileName == tarName) return
     const tarDirFileNameExist = await dirFileExist(teamId, dir, tarName)
     if(tarDirFileNameExist) {
@@ -582,7 +583,7 @@ const updateFileName = async function(teamId, dir, fileName, tarName) {
     }
 
     await folderDB.dropFile(teamId, dir, fileName)
-    await fileDB.updateName(teamId, dir, fileName, tarName)
+    await fileDB.updateName(teamId, dir, fileName, tarName, ossKey)
 
     fileObj = await fileDB.findOne({
         team: mongoose.Types.ObjectId(teamId),
@@ -592,7 +593,7 @@ const updateFileName = async function(teamId, dir, fileName, tarName) {
     if(!fileObj) {
         throw '修改后文件不存在'
     }
-
+    fileObj.ossKey = ossKey
     await folderDB.appendFile(teamId, dir, fileObj)
 }
 

@@ -10,6 +10,7 @@ import Editor from '../../../components/editor'
 import EditTodoList from '../todo/todolist/editTodoList'
 import TodoList from '../todo/todolist/todoList'
 import fileUploader from '../../../utils/file-uploader'
+import fileRenamer from '../../../utils/file-renamer'
 import TopicItem from '../../../components/topic-item'
 
 class TeamChoseItem extends React.PureComponent {
@@ -397,6 +398,11 @@ export default class TeamDetail extends React.Component {
     }
 
     handleTodoCheck = async (lIndex, lId, id, hasDone) => {
+        // this.state.todoListArr.map((item,index)=>{
+        //     if(id===item.id){
+                    
+        //     }
+        // })
         let editTask = {}
         editTask.hasDone = !hasDone
         const resp = await api('/api/task/edit', {
@@ -766,6 +772,9 @@ export default class TeamDetail extends React.Component {
     }
 
     renameComfirmHandle = async (item) => {
+        var ossKey = this.teamId + '/' + Date.now() + '/' + this.state.renameName
+        const result1 = await fileRenamer(item.ossKey,ossKey)
+        console.log(result1)
         if (item.fileType == 'file') {
             const result = await api('/api/file/updateFileName', {
                 method: 'POST',
@@ -776,9 +785,9 @@ export default class TeamDetail extends React.Component {
                         fileName: item.name,
                     },
                     tarName: this.state.renameName,
+                    newOssKey:ossKey
                 }
             })
-
             if (result.state.code == 0) {
                 window.toast("修改文件名称成功")
                 this.setState({

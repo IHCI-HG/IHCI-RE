@@ -114,7 +114,27 @@ class TimelineItem extends React.PureComponent{
         'EDIT_TASK':'编辑了任务：',
         'EDIT_CHECK_ITEM':'编辑了检查项：',
     }
-
+    componentDidMount = () =>{
+        if(this.props.content.header!==null){
+            this.getUserName(this.props.content.header)
+        }
+    }
+    getUserName = async(id) => {
+        const result = await api('/api/getUserInfo', {
+            method: 'POST',
+            body: {
+                userId: id,
+            }
+        })
+        if(result.state.code === 0){
+            this.setState({
+                headerName: result.data.username
+            })
+        }
+    }
+    state = {
+        headerName:""
+    }
     render() {
         switch(this.props.type){
             case 'CHANGE_TASK_DDL': case 'CHANGE_CHECKITEM_DDL':
@@ -147,7 +167,7 @@ class TimelineItem extends React.PureComponent{
                                 <span className="topic">{this.props.content.title}指派给了</span>
                             </div>
 
-                            <div className="content">{this.props.content.header}</div>
+                            <div className="content">{this.state.headerName}</div>
                         </div>
                     </div>
                 )
@@ -212,7 +232,6 @@ export default class Timeline extends React.Component{
             shownTeam: this.props.personInfo && this.props.personInfo.teamList || [],
         })
     }
-
     getMoreTimelineData = async () => {
         const queryTeamId = this.props.location.query.teamId
         const queryPerson = this.props.location.query.userId
