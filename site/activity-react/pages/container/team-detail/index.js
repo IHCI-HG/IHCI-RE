@@ -783,7 +783,7 @@ export default class TeamDetail extends React.Component {
 
     renameComfirmHandle = async (item) => {
         var ossKey = this.teamId + '/' + Date.now() + '/' + this.state.renameName
-        const result1 = await fileRenamer(item.ossKey,ossKey)
+        // const result1 = await fileRenamer(item.ossKey,ossKey)
         console.log(result1)
         if (item.fileType == 'file') {
             const result = await api('/api/file/updateFileName', {
