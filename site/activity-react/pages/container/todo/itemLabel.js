@@ -48,7 +48,6 @@ class ItemLabel extends React.Component {
                                     _props.memberList.map((item) => {
                                         return (
                                             <option value={item._id}
-                                                    // selected={(item._id === _props.assigneeId)&&'selected'}
                                                     key={item._id}>
                                                 {item.name}
                                             </option>
