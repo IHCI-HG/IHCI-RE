@@ -32,7 +32,7 @@ const creatTeam = async (req, res, next) => {
     const teamInfo = req.body.teamInfo || {}
     const userId = req.rSession.userId
 
-    if (!teamInfo.name || !teamInfo.teamImg || !teamInfo.teamDes) {
+    if (!teamInfo.name) {
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: "参数不全" },
             data: {}

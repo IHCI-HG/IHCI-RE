@@ -107,7 +107,7 @@ class TimelineItem extends React.PureComponent{
 
         'CHANGE_TASK_HEADER':'将任务',
         'CHANGE_CHECKITEM_HEADER':'将检查项',
-        'CHANGE_TASK_DDL':'更改了任务',
+        'CHANGE_TASK_DDL':'将任务',
         'CHANGE_CHECKITEM_DDL':'更改了检查项',
         'REOPEN_TASK':'重新打开了任务：',
         'REOPEN_CHECKITEM':'重新打开了检查项：',
@@ -147,10 +147,10 @@ class TimelineItem extends React.PureComponent{
                             <div className="des-line">
                                 <span className="name">{this.props.creator.name}</span>
                                 <span className="type">{this.typeMap[this.props.type]}</span>
-                                <span className="topic">{this.props.content.title}的完成时间</span>
+                                <span className="topic">&nbsp; {this.props.content.title}&nbsp; 的完成时间改为&nbsp; </span>
+                                <span className="content">{this.props.content.deadline}</span>
                             </div>
 
-                            <div className="content">{this.props.content.deadline}</div>
                         </div>
                     </div>
                 )
@@ -164,10 +164,11 @@ class TimelineItem extends React.PureComponent{
                             <div className="des-line">
                                 <span className="name">{this.props.creator.name}</span>
                                 <span className="type">{this.typeMap[this.props.type]}</span>
-                                <span className="topic">{this.props.content.title}指派给了</span>
+                                <span className="topic">&nbsp; {this.props.content.title} &nbsp;指派给了: &nbsp;</span>
+                                <span className="content">{this.state.headerName}</span>
                             </div>
 
-                            <div className="content">{this.state.headerName}</div>
+                            
                         </div>
                     </div>
                 )
