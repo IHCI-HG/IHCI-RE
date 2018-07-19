@@ -1,0 +1,99 @@
+
+// var OSSW = require('ali-oss').Wrapper;
+// 阿里云sdk太大了，700多k严重影响云上网页的访问速度，所以改成从cdn直接加载这个sdk
+
+import api from './api'
+if(window.OSS) {
+    var OSSW = OSS.Wrapper;
+}
+
+// 上传
+// try {
+//     const token = await getTempSTS('sss')
+
+//     const client = new OSSW({
+//         region: 'oss-cn-shenzhen',
+//         accessKeyId: token.AccessKeyId,
+//         secure: false,
+//         accessKeySecret: token.AccessKeySecret,
+//         stsToken: token.SecurityToken,
+//         bucket: 'arluber',
+//     });
+//     var result = await client.put('object-key-' + new Date().getTime(), '/data/logs/access.log');
+//     resProcessor.jsonp(req, res, {
+//         state: { code: 1, msg: '操作成功' },
+//         data: result
+//     });
+// } catch (error) {
+//     console.log(error);
+//     resProcessor.jsonp(req, res, {
+//         state: { code: 1, msg: '操作失败' },
+//         data: ''
+//     });
+// }
+
+// 上传文件命名
+function reName() {
+    var chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+    var res = '';
+    for (var i = 0; i < 8; i++) {
+        var id = Math.ceil(Math.random() * 35);
+        res += chars[id];
+    }
+    res += '-';
+    for (var i = 0; i < 4; i++) {
+        var id = Math.ceil(Math.random() * 35);
+        res += chars[id];
+    }
+    res += '-';
+    for (var i = 0; i < 4; i++) {
+        var id = Math.ceil(Math.random() * 35);
+        res += chars[id];
+    }
+    res += '-' + (new Date).getTime() + '-';
+    for (var i = 0; i < 12; i++) {
+        var id = Math.ceil(Math.random() * 35);
+        res += chars[id];
+    }
+    return res;
+}
+
+const getOssClient = async () => {
+    const result = await api('/api/getOssStsToken', {
+        method: 'GET',
+        body: {}
+    })
+    const token = result.data
+    console.log('token', token);
+
+    if(!OSSW) {
+        if(window.toast) {
+            window.toast("网络错误")
+        }
+        return
+    }
+
+    const client = new OSSW({
+        region: token.region,
+        accessKeyId: token.AccessKeyId,
+        secure: false,
+        accessKeySecret: token.AccessKeySecret,
+        stsToken: token.SecurityToken,
+        bucket: token.bucket,
+    });
+
+    return client
+}
+
+
+const fileRenamer = async (oldOssKey, newOssKey) => {
+    let oldKey = encodeURI(oldOssKey)
+    let newKey = encodeURI(newOssKey)
+    console.log(oldKey, newKey)
+    const client = await getOssClient()
+    var result = await client.copy(oldKey, newKey)
+    // var result1 = await client.delete(oldOssKey)
+    return result,result1
+}
+
+export default fileRenamer
