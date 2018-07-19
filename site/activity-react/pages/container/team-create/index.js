@@ -13,12 +13,26 @@ export default class TeamCreate extends React.Component{
         name: '',
         teamImg: 'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=471192784,4234473862&fm=27&gp=0.jpg',
         desc: '',
+        infoCheck:{
+            teamNameEmpty:true
+        }
        
     }
 
     teamNameInputHandle = (e) => {
+        const teamName = e.target.value
+        var teamNameEmpty = true
+        if(teamName){
+            teamNameEmpty = false
+        }else{
+            teamNameEmpty = true
+        }
         this.setState({
-            name: e.target.value
+            name: e.target.value,
+            infoCheck:{
+                ...this.state.infoCheck,
+                teamNameEmpty:teamNameEmpty
+            }
         })
     }
     teamImgChangeHandle = (e) => {
@@ -33,6 +47,10 @@ export default class TeamCreate extends React.Component{
     }
 
     createBtnHandle = async () => {
+        console.log(this.state.infoCheck.teamNameEmpty)
+        if(this.state.infoCheck.teamNameEmpty){
+            window.toast("团队名称为空")
+        }
         const result = await api('/api/team/create', {
             method: 'POST',
             body: {
@@ -103,7 +121,7 @@ export default class TeamCreate extends React.Component{
                     <img className="img-preview" src={this.state.teamImg}></img>
 
                     <div className="admin-title-sm">团队说明</div>
-                    <textarea type="text" value={this.state.desc} className="admin-tra" onChange={this.teamDescChangeHandle} />
+                    <textarea type="text" value={this.state.desc} className="admin-tra" onChange={this.teamDescChangeHandle} placeholder="（选填)" />
 
                     <div className="sava-btn" onClick={this.createBtnHandle}>创建</div>
 

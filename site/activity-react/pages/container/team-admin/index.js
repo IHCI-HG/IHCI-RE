@@ -221,7 +221,7 @@ export default class TeamAdmin extends React.Component{
                     <img className="img-preview" src={this.state.teamImg}></img>
 
                     <div className="admin-title-sm">团队说明</div>
-                    <textarea type="text" value={this.state.desc} className="admin-tra" onChange={this.teamDescChangeHandle} />
+                    <textarea type="text" value={this.state.desc} className="admin-tra" onChange={this.teamDescChangeHandle} placeholder="(选填)" />
 
                     <div className="sava-btn" onClick={this.saveBtnHandle}>保存设置</div>
 
