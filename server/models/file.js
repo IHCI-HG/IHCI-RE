@@ -310,9 +310,11 @@ const createFile = async function(teamId, dir, fileName, ossKey, size) {
 
     let exist = false
     folderObj.fileList.map((item) => {
+        if(item.fileType == "file"){
         if(item.name == fileName) {
             exist = true
         } 
+    }
     })
     if(exist) {
         throw '文件名已存在'

@@ -126,9 +126,10 @@ class TimelineItem extends React.PureComponent{
                 userId: id,
             }
         })
+        
         if(result.state.code === 0){
             this.setState({
-                headerName: result.data.username
+                headerName: result.data.personInfo.name
             })
         }
     }
