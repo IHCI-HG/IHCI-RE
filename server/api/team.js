@@ -524,8 +524,9 @@ const taskList = async (req, res, nect) => {
                 }
                 var taskListCom = ""
                 if(result.taskList[j].completed_time) {
-                    const date = result.taskList[j].completed_time
-                    taskListCom = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
+                    const date = new Date(result.taskList[j].completed_time)
+                    taskListCom = (date.getUTCFullYear()+'-'+(date.getUTCMonth()+1)+'-'+date.getUTCDate()+"T"+(date.getUTCHours()>9?"":"0")+date.getUTCHours()+':'+date.getUTCMinutes()+':'+date.getUTCSeconds()+'.'+date.getUTCMilliseconds()+'Z').replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
+                    // taskListCom = date.toUTCString()
                 }
                 var taskListDdl = ""
                 if(result.taskList[j].deadline) {

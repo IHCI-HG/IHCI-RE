@@ -407,7 +407,6 @@ const editTask = async (req, res, next) => {
         task.title = editTask.name || taskObj.title;
         task.content = editTask.desc || taskObj.content;
         task.fileList = editTask.fileList || taskObj.fileList;
-        console.log('task.fileList', task.fileList);
         task.deadline = editTask.ddl || taskObj.deadline;
         if (editTask.assigneeId === undefined) {
             task.header = taskObj.header
@@ -615,7 +614,7 @@ const taskInfo = async (req, res, next) => {
             }
             var completed_time = ""
             if (taskObj.checkitemList[i].completed_time) {
-                const date = new Date(taskObj.checkitemList[i].completed_time).get
+                const date = new Date(taskObj.checkitemList[i].completed_time)
                 // completed_time = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
             }
             var deadline = ""
@@ -638,7 +637,7 @@ const taskInfo = async (req, res, next) => {
         var taskCompleted_time = ""
         if (taskObj.completed_time) {
             const date = new Date(taskObj.completed_time)
-            taskCompleted_time = date.getDate()
+            taskCompleted_time = date
         }
         var taskDeadline = ""
         if (taskObj.deadline) {
