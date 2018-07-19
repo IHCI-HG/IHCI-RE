@@ -17,6 +17,7 @@ import {
     delCheckHeaderTemplate,
     compCheckitemTemplate
 } from '../components/wx-utils/wx-utils'
+import { dayLeft } from '../../site/activity-react/utils/util';
 
 var mongoose = require('mongoose')
 
@@ -429,8 +430,7 @@ const editTask = async (req, res, next) => {
         console.log(task)
         if (editTask.hasDone == true) {
             task.state = true;
-            task.completed_time = new Date()
-
+            task.completed_time = new Date().getTime()
             //6.28
             await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'FINISH_TASK', taskObj._id, taskObj.title, taskObj);
 
@@ -452,7 +452,6 @@ const editTask = async (req, res, next) => {
         if (tasklistId) {
             await tasklistDB.updateTask(tasklistId, taskId, task);
         } else {
-            console.log("...........")
             await teamDB.updateTask(teamId, taskId, task);
         }
 
@@ -491,8 +490,7 @@ const editTask = async (req, res, next) => {
 
 
         if (task.completed_time) {
-            // const date = new Date(task.completed_time)
-            // task.completed_time = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
+            task.completed_time = new Date(task.completed_time).getTime()
         }
         if (task.deadline) {
             const date = new Date(task.deadline)
@@ -617,8 +615,8 @@ const taskInfo = async (req, res, next) => {
             }
             var completed_time = ""
             if (taskObj.checkitemList[i].completed_time) {
-                const date = new Date(taskObj.checkitemList[i].completed_time)
-                completed_time = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
+                const date = new Date(taskObj.checkitemList[i].completed_time).get
+                // completed_time = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
             }
             var deadline = ""
             if (taskObj.checkitemList[i].deadline) {
@@ -640,7 +638,7 @@ const taskInfo = async (req, res, next) => {
         var taskCompleted_time = ""
         if (taskObj.completed_time) {
             const date = new Date(taskObj.completed_time)
-            taskCompleted_time = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
+            taskCompleted_time = date.getDate()
         }
         var taskDeadline = ""
         if (taskObj.deadline) {

@@ -484,7 +484,7 @@ const taskList = async (req, res, nect) => {
             var taskListCom = ""
             if(taskListTemp[i].completed_time) {
                 const date = new Date(taskListTemp[i].completed_time)
-                taskListCom = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
+                taskListCom = date
             }
             var taskListDdl = ""
             if(taskListTemp[i].deadline) {

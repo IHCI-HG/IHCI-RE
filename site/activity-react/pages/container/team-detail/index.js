@@ -103,12 +103,14 @@ export default class TeamDetail extends React.Component {
         if (resp.data.taskList == undefined) {
             resp.data.taskList = []
         }
+        console.log(resp.data)
         resp.data.taskList.map((item) => {
             let todoItem = {}
             todoItem.id = item.id
             todoItem.name = item.title
             todoItem.hasDone = item.state
             todoItem.ddl = item.deadline
+            todoItem.completeTime = item.completed_time
             todoItem.assignee = {
                 id: item.header.headerId
             }
@@ -141,6 +143,7 @@ export default class TeamDetail extends React.Component {
         if (resp.state.code === 0) {
             this.setState({ todoListArr })
         }
+        console.log(this.state.todoListArr)
     }
 
     initTeamInfo = async () => {
