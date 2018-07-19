@@ -88,7 +88,28 @@ const getOssClient = async () => {
 // dir 必须以 '/' 开头 或者为 ''（空字符串,表示根目录）
 const fileUploader = async (file, ossKey) => {
     const client = await getOssClient()
-    var result = await client.multipartUpload(ossKey, file);
+
+    let checkpoint, fileName, uploadId;
+    var result = await client.multipartUpload(ossKey, file, {
+        checkpoint: checkpoint,
+        progress: async function (p, cpt) {
+            // options.onProgress(p);
+            if (cpt !== undefined) {
+                checkpoint = cpt;
+                fileName = cpt.name;
+                uploadId = cpt.uploadId;
+            }
+            return Promise.resolve();
+        },
+    });
+
+    if (result.res.status == 200) { 
+        console.log("文件上传成功");
+    } else {
+        console.error(result);
+    }
+
+    return result
 
     // window.ffff = file
 
@@ -98,7 +119,7 @@ const fileUploader = async (file, ossKey) => {
     //     alert('您使用的浏览器不支持文件上传，请使用chrom浏览器或者国产浏览器的极速模式');
     // }
 
-    return result
+
 }   
 
 export default fileUploader

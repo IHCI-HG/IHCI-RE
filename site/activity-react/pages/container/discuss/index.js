@@ -7,7 +7,6 @@ import Page from '../../../components/page'
 import fileUploader from '../../../utils/file-uploader';
 
 import MemberChosenList from '../../../components/member-chose-list'
-import { DEFAULT_DEPRECATION_REASON } from 'graphql';
 
 class TeamChoseItem extends React.PureComponent{
     render() {
