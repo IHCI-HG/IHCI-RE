@@ -32,6 +32,7 @@ export default class Team extends React.Component{
             body: {}
         })
         const teamList = result.data.teamList
+        console.log(teamList)
         const teamIdList = []
         teamList.map((item) => {
             teamIdList.push(item.teamId)

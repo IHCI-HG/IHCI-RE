@@ -89,9 +89,7 @@ class EditTodo extends React.Component {
                 this.refs.name.value = ''
         }
 
-        console.log('closeAfterConfirm', this.props.closeAfterConfirm);
         if (this.props.closeAfterConfirm === false) {
-            console.log('this.props.closeAfterConfirm', this.props.closeAfterConfirm)
             this.setState({assigneeId: null})
             this.setState({date: null})
         }
