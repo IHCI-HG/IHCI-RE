@@ -150,11 +150,9 @@ export default class TeamDetail extends React.Component {
                 teamId: this.teamId
             }
         })
-
         if (!result.data) {
             window.toast('团队内容加载出错')
         }
-
         const teamInfo = {}
         teamInfo._id = result.data._id
         teamInfo.name = result.data.name
@@ -167,13 +165,15 @@ export default class TeamDetail extends React.Component {
 
         const curUserId = this.props.personInfo._id
 
-        let isCreator = false
+        let isCreator = ''
+
         result.data.memberList.map((item) => {  // 判断是否是创建者 ？
             if (item.userId == curUserId) {
-                isCreator = true
+                isCreator = item.role
             }
             memberIDList.push(item.userId)
         })
+        console.log(isCreator)
         const memberResult = await api('/api/userInfoList', {
             method: 'POST',
             body: { userList: memberIDList }
@@ -859,7 +859,7 @@ export default class TeamDetail extends React.Component {
                                 <span>成员</span>
                             </div>
                             {
-                                this.state.isCreator && <div className="admin">
+                                this.state.isCreator == 'creator' && <div className="admin">
                                     <div className="admin-con iconfont icon-setup_fill" onClick={this.toAdminHandle}></div>
                                     <span>设置</span>
                                 </div>
