@@ -763,12 +763,8 @@ export default class TeamDetail extends React.Component {
     }
 
     renameHandle = (item) => {
-        this.setState({
-            renameId:item._id
-        })
-        this.setState({
-            renameName:item.Name
-        })
+        this.state.renameId = item._id
+        this.state.renameName = item.name
         this.initTeamFile()
     }
 
@@ -787,7 +783,6 @@ export default class TeamDetail extends React.Component {
     renameComfirmHandle = async (item) => {
         var ossKey = this.teamId + '/' + Date.now() + '/' + this.state.renameName
         // const result1 = await fileRenamer(item.ossKey,ossKey)
-        console.log(result1)
         if (item.fileType == 'file') {
             const result = await api('/api/file/updateFileName', {
                 method: 'POST',
