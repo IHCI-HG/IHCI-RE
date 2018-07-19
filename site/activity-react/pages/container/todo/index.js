@@ -302,6 +302,7 @@ export default class Task extends React.Component{
         todo.ddl = resp.data.deadline
         todo.name = resp.data.title
         todo.fileList = resp.data.fileList
+        todo.completeTime = resp.data.completed_time
         todo.list = []
         todo.listId = resp.data.listId
         todo.teamId = resp.data.teamId
@@ -315,6 +316,7 @@ export default class Task extends React.Component{
             listItem.hasDone = item.state || false
             listItem.ddl = item.deadline
             listItem.assignee = {}
+            listItem.completeTime = item.completed_time
             listItem.assignee.id = item.headerId
             todo.list.push(listItem)
         })

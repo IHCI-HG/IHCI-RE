@@ -615,7 +615,8 @@ const taskInfo = async (req, res, next) => {
             var completed_time = ""
             if (taskObj.checkitemList[i].completed_time) {
                 const date = new Date(taskObj.checkitemList[i].completed_time)
-                // completed_time = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
+                completed_time = (date.getUTCFullYear()+'-'+(date.getUTCMonth()+1)+'-'+date.getUTCDate()+"T"+(date.getUTCHours()>9?"":"0")+date.getUTCHours()+':'+date.getUTCMinutes()+':'+date.getUTCSeconds()+'.'+date.getUTCMilliseconds()+'Z').replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
+                //  = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
             }
             var deadline = ""
             if (taskObj.checkitemList[i].deadline) {
