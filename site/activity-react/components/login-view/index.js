@@ -16,7 +16,14 @@ export class LoginView extends React.Component {
 
         createUsername: '',
         createPassword: '',
-        createConfirmPassword:''
+        createConfirmPassword:'',
+        infoCheck:{
+            createUsernameEmpty: true,
+            createPasswordEmpty:true,
+            createConfirmPasswordEmpty: true,
+            usernameEmpty:true,
+            passwordEmpty:true
+        },
     }
 
     setToSignUpHandle = () =>  {
@@ -30,45 +37,102 @@ export class LoginView extends React.Component {
         });
     }
 
-    createUsernameHandle = (e) => {
-        this.setState({
-            createUsername: e.target.value
-        })
-    }
-    createPasswordHandle = (e) => {
-        this.setState({
-            createPassword: e.target.value
-        })
-    }
-    createConfirmPasswordHandle = (e) =>{
-        this.setState({
-            createConfirmPassword:e.target.value
-        })
-    }
+
 
     usernameHandle = (e) => {
+        const username = e.target.value
+        var usernameEmpty = true
+        if(username){
+            usernameEmpty = false
+        }else{
+            usernameEmpty = true
+        }
         this.setState({
-            username: e.target.value
+            username: e.target.value,
+            infoCheck:{
+                ...this.state.infoCheck,
+                usernameEmpty:usernameEmpty
+            }
         })
     }
     passwordHandle = (e) => {
+        const password = e.target.value
+        var passwordEmpty = true
+        if(password){
+            passwordEmpty = false
+        }else{
+            passwordEmpty = true
+        }
         this.setState({
-            password: e.target.value
+            password: password,
+            infoCheck:{
+                ...this.state.infoCheck,
+                passwordEmpty:passwordEmpty
+            }
         })
     }
 
     createUsernameHandle = (e) => {
+        const createUsername = e.target.value
+        var createUsernameEmpty = true
+        if(createUsername){
+            createUsernameEmpty = false
+        }else{
+            createUsernameEmpty = true
+        }
         this.setState({
-            createUsername: e.target.value
+            createUsername: createUsername,
+            infoCheck:{
+                ...this.state.infoCheck,
+                createUsernameEmpty:createUsernameEmpty
+            }
         })
     }
     createPasswordHandle = (e) => {
+        const createPassword = e.target.value
+        var createPasswordEmpty = true
+        if(createPassword){
+            createPasswordEmpty = false
+        }else{
+            createPasswordEmpty = true
+        }
         this.setState({
-            createPassword: e.target.value
+            createPassword: createPassword,
+            infoCheck:{
+                ...this.state.infoCheck,
+                createPasswordEmpty:createPasswordEmpty
+            }
+            
+
+        })
+    }
+    createConfirmPasswordHandle = (e) =>{
+        const confirmPassword = e.target.value
+        var createConfirmPasswordEmpty = true
+        if(confirmPassword){
+            createConfirmPasswordEmpty = false
+        }else{
+            createConfirmPasswordEmpty = true
+        }
+        this.setState({
+            createConfirmPassword:e.target.value,
+            infoCheck:{
+                ...this.state.infoCheck,
+                createConfirmPasswordEmpty:createConfirmPasswordEmpty
+            }
         })
     }
 
     loginHandle = async () => {
+        if(this.state.infoCheck.usernameEmpty){
+            window.toast("用户名为空")
+            return
+        }
+        if(this.state.infoCheck.passwordEmpty){
+            window.toast("密码为空")
+            return
+        }
+
         const result = await authApi(this.state.username, this.state.password)
         if(result.state.code === 0) {
             window.toast("登录成功")
@@ -83,6 +147,18 @@ export class LoginView extends React.Component {
 
     signHandle = async () => {
         // todo 检验账号密码是否可用
+        if(this.state.infoCheck.createUsernameEmpty){
+            window.toast("用户名为空")
+            return
+        }
+        if(this.state.infoCheck.createPasswordEmpty){
+            window.toast("密码为空")
+            return
+        }
+        if(this.state.infoCheck.createConfirmPasswordEmpty){
+            window.toast("确认密码为空")
+            return 
+        }
         if(this.state.createPassword !== this.state.createConfirmPassword){
             window.toast("两次输入密码不同")
             return
@@ -127,12 +203,14 @@ export class LoginView extends React.Component {
                                 <div className='auth-form'>
 
                                     <div className="auth-desc">Your username</div>
-                                    <input className="auth-input" value={this.state.createUsername} onChange={this.createUsernameHandle}></input>
-
+                                    <input className="auth-input" value={this.state.createUsername} onChange={this.createUsernameHandle} onClick={this.judgeUsernameEmptyHandle}></input>
+                                    {/* {this.state.infoCheck.usernameEmpty && <div className='after error'>用户名不能为空</div>} */}
                                     <div className="auth-desc">Your password</div>
                                     <input className="auth-input" type="password" value={this.state.createPassword} onChange={this.createPasswordHandle}></input>
+                                    {/* {this.state.infoCheck.passwordEmpty && <div className='after error'>密码不能为空</div>} */}
                                     <div className="auth-desc">Confirm Password</div>
                                     <input className="auth-input" type="password" value={this.state.createConfirmPassword} onChange={this.createConfirmPasswordHandle}></input>
+                                    {/* {this.state.infoCheck.confirmPasswordEmpty && <div className='after error'>重新输入密码不能为空</div>} */}
                                     <div className="submit-btn" onClick={this.signHandle}>CREATE ACCOUNT</div>
                                 </div>
                             : ""

@@ -161,15 +161,9 @@
         font-weight: bold;
         margin-bottom: 80px;
         margin: 30px 0 80px 40px;
+
+        &:hover{
+            box-shadow: 1px 2px 6px #a2a2a2;
+        }
     }
-
-    .save-btn:hover{
-        color: #f00;
-    }
-
-    .save-btn:active{
-        color: #9e7777;
-    }
-
-
 }
