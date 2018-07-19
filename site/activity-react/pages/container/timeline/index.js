@@ -164,10 +164,11 @@ class TimelineItem extends React.PureComponent{
                             <div className="des-line">
                                 <span className="name">{this.props.creator.name}</span>
                                 <span className="type">{this.typeMap[this.props.type]}</span>
-                                <span className="topic">{this.props.content.title}指派给了</span>
+                                <span className="topic">&nbsp; {this.props.content.title} &nbsp;指派给了: &nbsp;</span>
+                                <span className="content">{this.state.headerName}</span>
                             </div>
 
-                            <div className="content">{this.state.headerName}</div>
+                            
                         </div>
                     </div>
                 )
