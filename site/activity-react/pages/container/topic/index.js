@@ -452,13 +452,11 @@ export default class Topic extends React.Component{
                                                 <span className="name">{this.state.topicObj.creator.name}</span>
                                                 <span className="time">{timeBefore(this.state.topicObj.create_time)}</span>
                                             </div>
-                                            {
-                                                this.state.topicObj.creator._id == this.props.personInfo._id &&
-                                                 <div className="right">
-                                                    <span className="edit" onClick={() => { this.setState({ topicObj: { ...this.state.topicObj, editStatus: true } }) }}>编辑</span>
-                                                     {/* <span className="edit">删除</span> */}
-                                                </div>
-                                            }
+                                                
+                                            <div className="right">
+                                                <span className="edit" onClick={() => { this.setState({ topicObj: { ...this.state.topicObj, editStatus: true } }) }}>编辑</span>
+                                                    {/* <span className="edit">删除</span> */}
+                                            </div>
                                         </div>
                                         <p dangerouslySetInnerHTML={createMarkup(this.state.topicObj.content)}></p>
                                     </div>

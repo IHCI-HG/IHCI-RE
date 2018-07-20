@@ -61,6 +61,7 @@ export default class TeamDetail extends React.Component {
         
         modal: document.createElement('div'),
         moveItem: '',
+        renderTimes: 0,
     }
 
     componentDidMount = async () => {
@@ -754,18 +755,25 @@ export default class TeamDetail extends React.Component {
         }
         document.getElementById('app').removeChild(this.state.modal)
         this.state.moveItem = ''
+        this.setState({
+            renderTimes: this.state.renderTimes+1
+        })
     }
 
     openMoveModalHandle = (item) => {
         this.state.moveItem = item
-        ReactDOM.render(<Modal teamId={this.teamId} folderId={item._id} callbackParent={this.onChildChanged} />, this.state.modal)
+        ReactDOM.render(<Modal key={"item"+this.state.renderTimes} teamId={this.teamId} folderId={item._id} callbackParent={this.onChildChanged}/>, this.state.modal)
         document.getElementById('app').appendChild(this.state.modal)
     }
 
     renameHandle = (item) => {
-        this.state.renameId = item._id
-        this.state.renameName = item.name
-        this.initTeamFile()
+        this.setState({
+            renameId: item._id,
+            renameName:item.name
+        })
+        // this.state.renameId = item._id
+        // this.state.renameName = item.name
+        // this.initTeamFile()
     }
 
     renameNameInputHandle = async (e) => {

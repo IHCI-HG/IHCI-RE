@@ -18,6 +18,12 @@ export default class Person extends React.Component{
                     mail: '',
                     phone: '',
                     headImg: INIT_DATA.userObj && INIT_DATA.userObj.wxUserInfo && INIT_DATA.userObj.wxUserInfo.headimgurl || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnregyyDrMvhEDpfC4wFetzykulWRVMGF-jp7RXIIqZ5ffEdawIA',
+                },
+                originPersonInfo: INIT_DATA.userObj.personInfo || {
+                    name: '',
+                    mail: '',
+                    phone: '',
+                    headImg: INIT_DATA.userObj && INIT_DATA.userObj.wxUserInfo && INIT_DATA.userObj.wxUserInfo.headimgurl || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnregyyDrMvhEDpfC4wFetzykulWRVMGF-jp7RXIIqZ5ffEdawIA',
                 }
             })
         } else {
@@ -89,6 +95,12 @@ export default class Person extends React.Component{
         showFollow: false,
         userObj: {},
         personInfo: {
+            name: '',
+            headImg: '',
+            phone: '',
+            mail: '',
+        },
+        originPersonInfo:{
             name: '',
             headImg: '',
             phone: '',
@@ -253,6 +265,14 @@ export default class Person extends React.Component{
                 ...this.state.personInfo
             }
         })
+        const result1 = await api('/api/topic/changeCreator',{
+            method:'POST',
+            body:{
+                personInfo: this.state.personInfo,
+                originPersonInfo: this.state.originPersonInfo,
+            }
+        })
+        console.log(result1)
         if(result.state.code === 0) {
             window.toast("设置成功")
             setTimeout(() => {

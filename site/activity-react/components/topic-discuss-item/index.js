@@ -98,7 +98,7 @@ class TopicDiscussItem extends React.Component {
                                         <span className="time">{timeBefore(create_time)}</span>
                                     </div>
                                     {
-                                        allowEdit && <div className="right">
+                                        !this.state.editState && <div className="right">
                                             <span className="edit" onClick={() => { this.props.onBlur(), this.setState({ editState: true }) }}>编辑</span>
                                         </div>
                                     }
