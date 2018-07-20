@@ -136,10 +136,12 @@ export class LoginView extends React.Component {
         const result = await authApi(this.state.username, this.state.password)
         if(result.state.code === 0) {
             window.toast("登录成功")
-            if (this.props.join)
+            if (this.props.join){
                 window.location.href = window.location.href
-            else
-                window.location.href = '/team'
+            }
+            else{
+                setTimeout("window.location.href = '/team'", 1000)
+            }
         } else {
             window.toast(result.state.msg || "登录失败")
         }
