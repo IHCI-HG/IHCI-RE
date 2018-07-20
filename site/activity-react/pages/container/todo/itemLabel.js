@@ -1,5 +1,6 @@
 import * as React from 'react';
 import './style.scss'
+import {formatDate } from '../../../utils/util'
 
 
 class ItemLabel extends React.Component {
@@ -23,8 +24,6 @@ class ItemLabel extends React.Component {
         const assignee = _props.memberList.find((item) => {
             return item._id === _props.assigneeId
         })
-        // console.log('r', _props)
-
         return (
             <div className="todo-label">
                 <span onClick={this.handleOpenEditDialog}>
@@ -32,9 +31,11 @@ class ItemLabel extends React.Component {
                         <span className="assignee">{assignee.name}</span>
                         :<span className="due">未指派</span>
                     }
-                    {   _props.date &&
+                    {   _props.date>= formatDate(new Date())?
                         <span className="due">{_props.date}</span>
+                        :<span className=" due overdue">{_props.date}</span>
                     }
+
                 </span>
                 {   this.state.editDialog &&
                     <div className="todo-label-edit">
@@ -47,7 +48,6 @@ class ItemLabel extends React.Component {
                                     _props.memberList.map((item) => {
                                         return (
                                             <option value={item._id}
-                                                    // selected={(item._id === _props.assigneeId)&&'selected'}
                                                     key={item._id}>
                                                 {item.name}
                                             </option>

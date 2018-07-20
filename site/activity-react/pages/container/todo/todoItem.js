@@ -147,7 +147,8 @@ class TodoItem extends React.Component {
                             <span className="remark">{_props.assignee&&_props.assignee.username}</span>
                             <span className="remark">{timeBefore(Date.parse(_props.completeTime))}</span>
                         </span>
-                        :< ItemLabel
+                        :
+                        < ItemLabel
                             // 使用用户传入，不用id
                             assigneeId={_props.assignee?_props.assignee.id:null}
                             date={_props.ddl}

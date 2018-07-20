@@ -425,7 +425,7 @@ export default class Files extends React.Component {
                             this.state.fileList.map((item, idx) => {
                                 if (item._id == this.state.renameId) {
                                     return (
-                                        <div className="file-line files">
+                                        <div className="file-line files" key={"files"+item.id}>
                                             <div className="name">
                                                 <input autoFocus="autofocus" type="text" className="folder-name" onChange={this.renameNameInputHandle} value={this.state.renameName} />
                                             </div>

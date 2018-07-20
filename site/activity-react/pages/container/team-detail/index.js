@@ -103,12 +103,14 @@ export default class TeamDetail extends React.Component {
         if (resp.data.taskList == undefined) {
             resp.data.taskList = []
         }
+        console.log(resp.data)
         resp.data.taskList.map((item) => {
             let todoItem = {}
             todoItem.id = item.id
             todoItem.name = item.title
             todoItem.hasDone = item.state
             todoItem.ddl = item.deadline
+            todoItem.completeTime = item.completed_time
             todoItem.assignee = {
                 id: item.header.headerId
             }
@@ -141,6 +143,7 @@ export default class TeamDetail extends React.Component {
         if (resp.state.code === 0) {
             this.setState({ todoListArr })
         }
+        console.log(this.state.todoListArr)
     }
 
     initTeamInfo = async () => {
@@ -150,11 +153,9 @@ export default class TeamDetail extends React.Component {
                 teamId: this.teamId
             }
         })
-
         if (!result.data) {
             window.toast('团队内容加载出错')
         }
-
         const teamInfo = {}
         teamInfo._id = result.data._id
         teamInfo.name = result.data.name
@@ -167,13 +168,15 @@ export default class TeamDetail extends React.Component {
 
         const curUserId = this.props.personInfo._id
 
-        let isCreator = false
+        let isCreator = ''
+
         result.data.memberList.map((item) => {  // 判断是否是创建者 ？
             if (item.userId == curUserId) {
-                isCreator = true
+                isCreator = item.role
             }
             memberIDList.push(item.userId)
         })
+        console.log(isCreator)
         const memberResult = await api('/api/userInfoList', {
             method: 'POST',
             body: { userList: memberIDList }
@@ -760,12 +763,8 @@ export default class TeamDetail extends React.Component {
     }
 
     renameHandle = (item) => {
-        this.setState({
-            renameId:item._id
-        })
-        this.setState({
-            renameName:item.Name
-        })
+        this.state.renameId = item._id
+        this.state.renameName = item.name
         this.initTeamFile()
     }
 
@@ -784,7 +783,6 @@ export default class TeamDetail extends React.Component {
     renameComfirmHandle = async (item) => {
         var ossKey = this.teamId + '/' + Date.now() + '/' + this.state.renameName
         // const result1 = await fileRenamer(item.ossKey,ossKey)
-        console.log(result1)
         if (item.fileType == 'file') {
             const result = await api('/api/file/updateFileName', {
                 method: 'POST',
@@ -859,7 +857,7 @@ export default class TeamDetail extends React.Component {
                                 <span>成员</span>
                             </div>
                             {
-                                this.state.isCreator && <div className="admin">
+                                this.state.isCreator == 'creator' && <div className="admin">
                                     <div className="admin-con iconfont icon-setup_fill" onClick={this.toAdminHandle}></div>
                                     <span>设置</span>
                                 </div>

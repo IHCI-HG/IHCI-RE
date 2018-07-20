@@ -113,8 +113,8 @@ class TopicItem extends React.Component{
                             {
                                 this.props.imgList.map((item) => {
                                     return (
-                                        <div className="file-pic-item" key={Math.random()} onClick={this.downloadHandle.bind(this, item.name)}>
-                                            <img className="file-pic" src={window.location.origin + '/static/' + item.name}></img>
+                                        <div className="file-pic-item" key={"pic"+item.id}>
+                                            <img className="file-pic" src={window.location.origin + '/static/' + item.name}  onClick={this.downloadHandle.bind(this, item.name)}></img>
                                             <div className="file-name">{item.name.split("/")[2]}</div>
                                             <span onClick={() => { this.props.openMoveModalHandle(item) }}>移动</span>
                                         </div>
@@ -302,6 +302,7 @@ export default class Task extends React.Component{
         todo.ddl = resp.data.deadline
         todo.name = resp.data.title
         todo.fileList = resp.data.fileList
+        todo.completeTime = resp.data.completed_time
         todo.list = []
         todo.listId = resp.data.listId
         todo.teamId = resp.data.teamId
@@ -315,6 +316,7 @@ export default class Task extends React.Component{
             listItem.hasDone = item.state || false
             listItem.ddl = item.deadline
             listItem.assignee = {}
+            listItem.completeTime = item.completed_time
             listItem.assignee.id = item.headerId
             todo.list.push(listItem)
         })
