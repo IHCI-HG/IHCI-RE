@@ -1034,9 +1034,9 @@ export default class TeamDetail extends React.Component {
                                     }
                                     if (item._id == this.state.renameId) {
                                         return (
-                                            <div className="file-line files" key={Math.random()}>
+                                            <div className="file-line files" key={item.fileType + '-' + item._id}>
                                                 <div className="name">
-                                                    <input autoFocus="autofocus" type="text" className="folder-name" onChange={this.renameNameInputHandle} value={this.state.renameName} />
+                                                    <input  autoFocus="autofocus" type="text" className="folder-name" onChange={this.renameNameInputHandle} value={this.state.renameName} />
                                                 </div>
                                                 <div className="tools">
                                                     <span onClick={() => { this.renameComfirmHandle(item) }}>确定</span>
