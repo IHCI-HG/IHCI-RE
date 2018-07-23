@@ -7,11 +7,30 @@ const topicSchema = new mongoose.Schema({
     title: String,
     content: {type: mongoose.Schema.Types.Mixed},
     fileList: [mongoose.Schema.Types.Mixed],
-    creator: { type: mongoose.Schema.Types.Mixed , required: true },
+    creator: {
+        headImg: String,
+        name: String,
+        phone: String,
+        mail: String
+    },
     team: String, // team的_id
-    discussList: [mongoose.Schema.Types.Mixed],
+    discussList: [
+        {   
+            fileList: [mongoose.Schema.Types.Mixed],
+            creator: {
+                headImg: String,
+                name: String,
+                phone: String,
+                mail: String
+            },
+            teamId: String,
+            topicId: String,
+            title: String,
+            content: String,
+            create_time: String,
+        }
+    ],
 })
-
 topicSchema.statics = {
     createTopic: async function(title, fileList, content, creatorObj, teamId) {
         return this.create({
@@ -34,7 +53,9 @@ topicSchema.statics = {
     findByTopicId: function(topicId) {
         return this.findById(topicId)
     },
-
+    findByTopicCreatorName: async function(creatorName){
+        return this.find({'creator.name': creatorName})
+    },
     addDiscuss: async function(topicId, discussObj) {
         return this.update(
             {_id: topicId},
@@ -47,10 +68,14 @@ topicSchema.statics = {
             { $pull: { discussList: {discussId: discussId}}}
         ).exec()
     },
-    updateDiscuss: async function(topicId, discussId, content,fileList) {
+    updateDiscuss: async function(topicId, discussId, content, fileList, creator) {
         return this.update(
             {_id: topicId, "discussList._id":  mongoose.Types.ObjectId(discussId)},
-            { $set: { "discussList.$.content": content,"discussList.$.fileList":fileList}}
+            { $set: { 
+                "discussList.$.content": content,
+                "discussList.$.fileList":fileList,
+                "discussList.$.creator":creator,
+            }}
         ).exec()
     },
 

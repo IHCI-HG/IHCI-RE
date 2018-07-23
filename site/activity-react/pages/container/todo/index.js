@@ -7,7 +7,8 @@ import TodoItem from './todoItem'
 import NewCheck from './editTodo'
 import Editor from '../../../components/editor'
 import fileUploader from '../../../utils/file-uploader'
-
+import Modal from '../../../components/modal'
+var ReactDOM = require('react-dom')
 import { timeBefore, sortByCreateTime, createMarkup } from '../../../utils/util'
 import MemberChosenList from '../../../components/member-chose-list'
 
@@ -45,7 +46,9 @@ class TopicItem extends React.Component{
     }
 
     discussFileUploadHandle = async (e) => {
-        var ossKey = this.props.teamId + '/' + Date.now() + '/' + e.target.files[0].name
+        var fileName = e.target.files[0].name
+        var fileSize = e.target.files[0].size
+        var ossKey = this.props.teamId + '/' + Date.now() + '/' + fileName
         const disAttachmentsArr = this.state.disAttachmentsArr
         const disOssKeyArr = this.state.disOssKeyArr
         disAttachmentsArr.push(e.target.files[0])
@@ -55,6 +58,11 @@ class TopicItem extends React.Component{
             disOssKeyArr
         })
         const resp = await fileUploader(e.target.files[0], ossKey)
+        resp.teamId = this.props.teamId
+        resp.size = fileSize
+        resp.dir = '/'
+        resp.fileName = fileName
+        resp.ossKey = ossKey
         let discussAttachments = this.state.discussAttachments;
         discussAttachments = [...discussAttachments, resp]
         this.setState({
@@ -63,7 +71,6 @@ class TopicItem extends React.Component{
     }
 
     deleteDiscussFile = async (e, index) => {
-        console.log("del")
         let discussAttachments = this.state.discussAttachments
         discussAttachments.splice(index,1);
         this.setState({
@@ -72,7 +79,6 @@ class TopicItem extends React.Component{
     }
 
     downloadHandle = (ossKey) => {
-        console.log(ossKey)
         window.open(window.location.origin + '/static/' + ossKey)
     }
 
@@ -107,9 +113,10 @@ class TopicItem extends React.Component{
                             {
                                 this.props.imgList.map((item) => {
                                     return (
-                                        <div className="file-pic-item" key={Math.random()} onClick={this.downloadHandle.bind(this, item.name)}>
-                                            <img className="file-pic" src={window.location.origin + '/static/' + item.name}></img>
+                                        <div className="file-pic-item" key={"pic"+item.id}>
+                                            <img className="file-pic" src={window.location.origin + '/static/' + item.name}  onClick={this.downloadHandle.bind(this, item.name)}></img>
                                             <div className="file-name">{item.name.split("/")[2]}</div>
+                                            <span onClick={() => { this.props.openMoveModalHandle(item) }}>移动</span>
                                         </div>
                                     )
                                 })
@@ -117,7 +124,12 @@ class TopicItem extends React.Component{
                                 {
                                      this.props.fileList.map((item) => {
                                         if(!(item.name.endsWith(".jpg")||item.name.endsWith(".jpeg")||item.name.endsWith(".png")||item.name.endsWith(".bmp")||item.name.endsWith(".gif"))){
-                                            return ( <div className="file-item" key={Math.random()} onClick={this.downloadHandle.bind(this, item.name)}>{item.name.split("/")[2]}</div> )
+                                            return ( 
+                                                <div key={"file"+item.id}>
+                                                    <div className="file-item" onClick={this.downloadHandle.bind(this, item.name)}>{item.name.split("/")[2]}</div> 
+                                                    <span onClick={() => { this.props.openMoveModalHandle(item) }}>移动</span>
+                                                </div>
+                                        )
                                         }
                                     })
                                 }
@@ -176,6 +188,9 @@ export default class Task extends React.Component{
         ossKeyArr:[],
         todoAttachmentsArr:[],
         todoOssKeyArr:[],
+
+        modal: document.createElement('div'),
+        moveItem: '',
     }
 
     componentDidMount = async() => {
@@ -287,6 +302,7 @@ export default class Task extends React.Component{
         todo.ddl = resp.data.deadline
         todo.name = resp.data.title
         todo.fileList = resp.data.fileList
+        todo.completeTime = resp.data.completed_time
         todo.list = []
         todo.listId = resp.data.listId
         todo.teamId = resp.data.teamId
@@ -300,6 +316,7 @@ export default class Task extends React.Component{
             listItem.hasDone = item.state || false
             listItem.ddl = item.deadline
             listItem.assignee = {}
+            listItem.completeTime = item.completed_time
             listItem.assignee.id = item.headerId
             todo.list.push(listItem)
         })
@@ -538,6 +555,8 @@ export default class Task extends React.Component{
     }
 
     discussFileUploadHandle = async (e) => {
+        var fileName = e.target.files[0].name
+        var fileSize = e.target.files[0].size
         var ossKey = this.state.todo.teamId + '/' + Date.now() + '/' + e.target.files[0].name
         const attachmentsArr = this.state.attachmentsArr
         const ossKeyArr = this.state.ossKeyArr
@@ -548,6 +567,11 @@ export default class Task extends React.Component{
             ossKeyArr
         })
         const resp = await fileUploader(e.target.files[0], ossKey)
+        resp.teamId = this.state.todo.teamId
+        resp.size = fileSize
+        resp.dir = '/'
+        resp.fileName = fileName
+        resp.ossKey = ossKey
         let discussAttachments = this.state.discussAttachments;
         discussAttachments = [...discussAttachments, resp]
         this.setState({
@@ -630,62 +654,66 @@ export default class Task extends React.Component{
     }
 
     handleTodoModify = async(todoInfo) => {
-        console.log(todoInfo)
-        if(todoInfo.attachmentsArr!==[]){
-            todoInfo.attachmentsArr.map(async(item,index)=>{
-                const result1 = await api('/api/file/createFile', {
-                    method: 'POST',
-                    body: {
-                        fileInfo: {
-                            teamId: this.state.todo.teamId,
-                            size: item.size,
-                            dir: '/',
-                            fileName: item.name,
-                            ossKey: todoInfo.ossKeyArr[index],
+        if(!todoInfo.name.trim()){
+            alert("任务名不能为空")
+        }
+        else{
+            if(todoInfo.attachmentsArr!==[]){
+                todoInfo.attachmentsArr.map(async(item,index)=>{
+                    const result1 = await api('/api/file/createFile', {
+                        method: 'POST',
+                        body: {
+                            fileInfo: {
+                                teamId: this.state.todo.teamId,
+                                size: item.size,
+                                dir: '/',
+                                fileName: item.name,
+                                ossKey: todoInfo.ossKeyArr[index],
+                            }
                         }
+                    })
+                    if (result1.state.code === 0) {
+                        window.toast("上传文件成功")
+                    } else {
+                        window.toast(result1.state.msg)
                     }
                 })
-                if (result1.state.code === 0) {
-                    window.toast("上传文件成功")
-                } else {
-                    window.toast(result1.state.msg)
-                }
-            })
-        }
-        const taskId = this.props.params.id;
-        const editTask = {};
-        editTask.name = todoInfo.name
-        editTask.ddl = todoInfo.date
-        editTask.desc = todoInfo.desc
-        editTask.fileList = todoInfo.fileList
-        editTask.assigneeId = todoInfo.assigneeId
-        const resp = await api('/api/task/edit', {
-            method: 'POST',
-            body: {
-                teamId:this.state.todo.teamId,
-                taskId,
-                editTask
             }
-        })
-        if (resp.state.code === 0) {
-            const todo = this.state.todo
-            todo.imgList = []
-            resp.data.fileList.map((fileItem,index)=>{
-                if(fileItem.name.endsWith(".jpg")||fileItem.name.endsWith(".jpeg")||fileItem.name.endsWith(".png")||fileItem.name.endsWith(".bmp")||fileItem.name.endsWith(".gif")){
-                    todo.imgList.push(fileItem)
+            const taskId = this.props.params.id;
+            const editTask = {};
+            editTask.name = todoInfo.name
+            editTask.ddl = todoInfo.date
+            editTask.desc = todoInfo.desc
+            editTask.fileList = todoInfo.fileList
+            editTask.assigneeId = todoInfo.assigneeId
+            const resp = await api('/api/task/edit', {
+                method: 'POST',
+                body: {
+                    teamId:this.state.todo.teamId,
+                    taskId,
+                    editTask
                 }
             })
-            const rAssignee = {}
-            rAssignee.id = resp.data.header
-            todo.name = resp.data.title
-            todo.ddl = resp.data.deadline
-            todo.desc = resp.data.content
-            todo.assignee = rAssignee
-            todo.fileList = resp.data.fileList
-            console.log('handleTodoModify', todo)
-            this.setState({ todo })
+            if (resp.state.code === 0) {
+                const todo = this.state.todo
+                todo.imgList = []
+                resp.data.fileList.map((fileItem,index)=>{
+                    if(fileItem.name.endsWith(".jpg")||fileItem.name.endsWith(".jpeg")||fileItem.name.endsWith(".png")||fileItem.name.endsWith(".bmp")||fileItem.name.endsWith(".gif")){
+                        todo.imgList.push(fileItem)
+                    }
+                })
+                const rAssignee = {}
+                rAssignee.id = resp.data.header
+                todo.name = resp.data.title
+                todo.ddl = resp.data.deadline
+                todo.desc = resp.data.content
+                todo.assignee = rAssignee
+                todo.fileList = resp.data.fileList
+                console.log('handleTodoModify', todo)
+                this.setState({ todo })
+            }
+            return resp
         }
-        return resp
     }
 
     handleAssigneeChange = async(e) => {
@@ -745,8 +773,8 @@ export default class Task extends React.Component{
 
     // check create 需要返回
     handleCheckCreate = async(todoInfo) => {
-        if(!todoInfo.name){
-            alert("请输入检查项名")
+        if(!todoInfo.name.trim()){
+            alert("检查项名不能为空")
         }
         else{
             const resp = await api('/api/task/addCheckitem', {
@@ -780,32 +808,37 @@ export default class Task extends React.Component{
     }
 
     handleCheckModify = async(index, id, checkItemInfo) => {
-        const todoId = this.props.params.id
-        const checkitemId = id
-        const editCheckitem = {}
-        editCheckitem.name = checkItemInfo.name
-        editCheckitem.ddl = checkItemInfo.date
-        editCheckitem.assigneeId = checkItemInfo.assigneeId
-
-        const resp = await api('/api/task/editCheckitem', {
-            method: 'POST',
-            body: {
-                todoId,
-                checkitemId,
-                editCheckitem,
-                teamId:this.state.todo.teamId,
-            }
-        })
-        if (resp.state.code === 0) {
-            const todo = this.state.todo
-            const rAssignee = {}
-            rAssignee.id = resp.data.header
-            todo.list[index].name = resp.data.content
-            todo.list[index].ddl = resp.data.deadline
-            todo.list[index].assignee = rAssignee
-            this.setState({ todo })
+        if(!todoInfo.name.trim()){
+            alert("检查项名不能为空")
         }
-        return resp
+        else{
+            const todoId = this.props.params.id
+            const checkitemId = id
+            const editCheckitem = {}
+            editCheckitem.name = checkItemInfo.name
+            editCheckitem.ddl = checkItemInfo.date
+            editCheckitem.assigneeId = checkItemInfo.assigneeId
+    
+            const resp = await api('/api/task/editCheckitem', {
+                method: 'POST',
+                body: {
+                    todoId,
+                    checkitemId,
+                    editCheckitem,
+                    teamId:this.state.todo.teamId,
+                }
+            })
+            if (resp.state.code === 0) {
+                const todo = this.state.todo
+                const rAssignee = {}
+                rAssignee.id = resp.data.header
+                todo.list[index].name = resp.data.content
+                todo.list[index].ddl = resp.data.deadline
+                todo.list[index].assignee = rAssignee
+                this.setState({ todo })
+            }
+            return resp
+        }
     }
 
     handleCheckAssigneeChange = async(index, id, e) => {
@@ -907,7 +940,66 @@ export default class Task extends React.Component{
         this.refs['todoItem'].setMode('edit')
     } 
 
+    openMoveModalHandle = (item) => {
+        this.setState({moveItem:item})
+        ReactDOM.render(<Modal teamId={this.state.todo.teamId} folderId={item._id} callbackParent={this.onChildChanged} />, this.state.modal)
+        document.getElementById('app').appendChild(this.state.modal)
+    }
+
+    onChildChanged = (moveTarDir) => {
+        if (moveTarDir != '') {
+            this.moveHandle(this.state.moveItem, moveTarDir)
+        }
+        document.getElementById('app').removeChild(this.state.modal)
+        this.state.moveItem = ''
+    }
+
+    moveHandle = async (item, tarDir) => {
+        const result = await api('/api/file/moveFile', {
+            method: 'POST',
+            body: {
+                fileInfo: {
+                    teamId: this.state.todo.teamId,
+                    dir: item.dir,
+                    fileName: item.name.split("/")[2],
+                    tarDir: tarDir,
+                }
+            }
+        })
+        if(result.state.code === 0){
+            const result1 = await api('/api/task/changeDir', {
+                method: 'POST',
+                body: {
+                    teamId: this.state.todo.teamId,
+                    taskId: this.state.todo.id,
+                    fileName: item.name,
+                    newDir: tarDir,
+                    listId: this.state.todo.listId
+                }
+            })
+    
+            if (result.state.code == 0 && result1.state.code == 0) {
+                const todo = this.state.todo 
+                todo.fileList.map((fileItem)=>{
+                    if(fileItem.name===item.name){
+                        fileItem.dir = tarDir
+                    }
+                })
+                todo.imgList.map((fileItem)=>{
+                    if(fileItem.name===item.name){
+                        fileItem.dir = tarDir
+                    }
+                })
+                this.setState({todo})
+                window.toast("移动文件成功")
+            } else {
+                window.toast("移动文件失败")
+            }
+        }
+    }
+
     render() {
+        console.log(this.state.topicListArr)
         let actionList = this.state.actionList || []
         let moveExpanded = this.state.moveExpanded
         let copyExpanded = this.state.copyExpanded
@@ -927,7 +1019,9 @@ export default class Task extends React.Component{
                          handleTodoModify={this.handleTodoModify}
                          handleTodoCheck={this.handleTodoCheck}
                          handleTodoDelete={this.handleTodoDelete}
-                         teamId={this.state.todo.teamId}/>
+                         openMoveModalHandle={this.openMoveModalHandle}
+                         teamId={this.state.todo.teamId}
+                         />
 
                      <div className="checkitem-list">
                          {
@@ -1050,7 +1144,8 @@ export default class Task extends React.Component{
                                     updateTopicInputHandle={this.updateTopicInputHandle}
                                     updateTopicContent={this.state.updateTopicContent}
                                     updateTopicHandle={this.updateTopicHandle}
-                                    sendContent={this.sendContent}/>
+                                    sendContent={this.sendContent}
+                                    openMoveModalHandle={this.openMoveModalHandle}/>
                                 )
                             })
                         }

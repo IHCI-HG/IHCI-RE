@@ -6,7 +6,12 @@ const discussSchema = new mongoose.Schema({
     create_time: { type: String, default: Date.now },
     title: String,
     content: {type: mongoose.Schema.Types.Mixed},
-    creator: { type: mongoose.Schema.Types.Mixed, required: true },
+    creator: {
+        headImg: String,
+        name: String,
+        phone: String,
+        mail: String
+    },
     fileList: [mongoose.Schema.Types.Mixed],
     teamId: String,
     topicId: String,
@@ -23,6 +28,10 @@ discussSchema.statics = {
             fileList: fileList || [],
         });
         return result;
+    },
+
+    findByDiscussCreatorName: async function(creatorName){
+        return this.find({'creator.name': creatorName})
     },
 
     updateDiscuss: async function (discussId, discussObj) {

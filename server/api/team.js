@@ -32,7 +32,7 @@ const creatTeam = async (req, res, next) => {
     const teamInfo = req.body.teamInfo || {}
     const userId = req.rSession.userId
 
-    if (!teamInfo.name || !teamInfo.teamImg || !teamInfo.teamDes) {
+    if (!teamInfo.name) {
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: "参数不全" },
             data: {}
@@ -484,7 +484,7 @@ const taskList = async (req, res, nect) => {
             var taskListCom = ""
             if(taskListTemp[i].completed_time) {
                 const date = new Date(taskListTemp[i].completed_time)
-                taskListCom = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
+                taskListCom = date
             }
             var taskListDdl = ""
             if(taskListTemp[i].deadline) {
@@ -524,8 +524,9 @@ const taskList = async (req, res, nect) => {
                 }
                 var taskListCom = ""
                 if(result.taskList[j].completed_time) {
-                    const date = result.taskList[j].completed_time
-                    taskListCom = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
+                    const date = new Date(result.taskList[j].completed_time)
+                    taskListCom = (date.getUTCFullYear()+'-'+(date.getUTCMonth()+1)+'-'+date.getUTCDate()+"T"+(date.getUTCHours()>9?"":"0")+date.getUTCHours()+':'+date.getUTCMinutes()+':'+date.getUTCSeconds()+'.'+date.getUTCMilliseconds()+'Z').replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
+                    // taskListCom = date.toUTCString()
                 }
                 var taskListDdl = ""
                 if(result.taskList[j].deadline) {

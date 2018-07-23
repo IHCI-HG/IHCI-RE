@@ -35,22 +35,30 @@
             display: block;
             margin: auto;
             margin-top: 42px;
-            .reg-msg{
-                display: flex;
-                float: left;
-                align-items: center;
-                text-align: center;
-                font-size: 20px;
-                margin-left: 240px;
-                margin-top: 260px;
-                // color: white;
-            }
+            // .reg-msg{
+            //     display: flex;
+            //     float: left;
+            //     align-items: center;
+            //     text-align: center;
+            //     font-size: 20px;
+            //     margin-left: 240px;
+            //     margin-top: 260px;
+            //     // color: white;
+            // }
             .reg-item{
                 display: flex;
-                float: right;
-                margin-right: 42px;
+                // float: right;
+                // margin-right: 42px;
+                margin: auto;
                 align-items: center;
                 text-align: center;
+                .reg-inner-item{
+                    margin: auto;
+                }
+            }
+
+            .banner-con{
+                height: 600px;
             }
         }
 
