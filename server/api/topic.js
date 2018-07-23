@@ -79,7 +79,60 @@ const createTopic = async (req, res, next) => {
     }
 }
 
+const changeTopicCreator = async (req, res, next) => {
+    const personInfo = req.body.personInfo
+    const oldCreatorName = req.body.originPersonInfo.name
+    const userId = req.rSession.userId
+    if(!personInfo || !req.body.originPersonInfo) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: "参数不全" },
+            data: {}
+        });
+        return
+    }
+    try {
+        let discussObj = await discussDB.findByDiscussCreatorName(oldCreatorName)
+        // if(!discussObj) {
+        //     resProcessor.jsonp(req, res, {
+        //         state: { code: 1, msg: "话题不存在" },
+        //         data: {}
+        //     });
+        //     return
+        // }
+        console.log("11111111111111111111",discussObj)
+        let result = []
+        let result1 = []
+        let result2 = []
+        let result3 = []
+        discussObj.map(async(item,index)=>{
+            item.creator = personInfo
+            result3[index] = await discussDB.updateDiscuss(item._id, item)
+            result2[index] = await topicDB.updateDiscuss(item.topicId,item._id,item.content,item.fileList,personInfo)
+        })
+        let topicObj = await topicDB.findByTopicCreatorName(oldCreatorName)
+        topicObj.map(async(item,index)=>{
+            item.creator = personInfo
+            result[index] = await topicDB.updateTopic(item._id, item)
+            result1[index] = await teamDB.updateTopic(item.team, item._id, item)
+        })
+        
+        resProcessor.jsonp(req, res, {
+            state: { code: 0, msg: '请求成功' },
+            data: {
+                result: result,
+                result1: result1,
+                result2: result2
+            }
+        });
+    } catch (error) {
+        console.error(error);
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: '操作失败' },
+            data: {}
+        });
+    }
 
+}
 
 const editTopic = async (req, res, next) => {
     const teamId = req.body.teamId
@@ -110,7 +163,7 @@ const editTopic = async (req, res, next) => {
             });
             return
         }
-
+        editTopic.creator = topicObj.creator
         const result1 = await topicDB.updateTopic(topicId, editTopic)
         const result2 = await teamDB.updateTopic(teamId, topicId, editTopic)
 
@@ -223,7 +276,7 @@ const editDiscuss = async (req, res, next) => {
         discussObj.fileList = fileList || discussObj.fileList;
 
         const result = await discussDB.updateDiscuss(discussId, discussObj)
-        await topicDB.updateDiscuss(topicId, discussId, content,discussObj.fileList)
+        await topicDB.updateDiscuss(topicId, discussId, content,discussObj.fileList,discussObj.creator)
 
         const userObj = await userDB.baseInfoById(userId)
         const topicObj = await topicDB.findByTopicId(topicId)
@@ -464,7 +517,7 @@ module.exports = [
     ['POST', '/api/topic/editTopic', apiAuth, editTopic],
     ['POST', '/api/topic/createDiscuss', apiAuth, createDiscuss],
     ['POST', '/api/topic/editDiscuss', apiAuth, editDiscuss],
-
+    ['POST', '/api/topic/changeCreator', apiAuth, changeTopicCreator],
     ['POST', '/api/topic/readingNotice', apiAuth,readingNotice],
 
     //6.28

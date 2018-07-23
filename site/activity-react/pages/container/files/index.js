@@ -370,6 +370,9 @@ export default class Files extends React.Component {
     render() {
         return (
             <Page title="文件" className="file-page">
+                <div className="return" onClick={()=>{location.href = '/team/'+this.teamId}}>
+                        <div className="teamName">{this.state.teamInfo.name}</div>
+                </div>
                 <input className='file-input-hidden' type="file" ref={(fileInput) => this.fileInput = fileInput} onChange={this.uploadFileHandle}></input>
 
                 <div className="file-con page-wrap">
@@ -422,7 +425,7 @@ export default class Files extends React.Component {
                             this.state.fileList.map((item, idx) => {
                                 if (item._id == this.state.renameId) {
                                     return (
-                                        <div className="file-line files">
+                                        <div className="file-line files" key={"files"+item.id}>
                                             <div className="name">
                                                 <input autoFocus="autofocus" type="text" className="folder-name" onChange={this.renameNameInputHandle} value={this.state.renameName} />
                                             </div>

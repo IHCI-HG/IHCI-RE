@@ -2,14 +2,16 @@ import * as React from 'react';
 import './style.scss'
 import api from '../../../utils/api';
 var ReactDOM = require('react-dom')
-import { timeBefore, sortByCreateTime, createMarkup, formatDate } from '../../../utils/util'
+import { sortByCreateTime, formatDate } from '../../../utils/util'
 import Page from '../../../components/page'
 import Modal from '../../../components/modal'
 import MemberChosenList from '../../../components/member-chose-list'
 import Editor from '../../../components/editor'
 import EditTodoList from '../todo/todolist/editTodoList'
 import TodoList from '../todo/todolist/todoList'
-import fileUploader from '../../../utils/file-uploader';
+import fileUploader from '../../../utils/file-uploader'
+import fileRenamer from '../../../utils/file-renamer'
+import TopicItem from '../../../components/topic-item'
 
 class TeamChoseItem extends React.PureComponent {
     render() {
@@ -18,24 +20,6 @@ class TeamChoseItem extends React.PureComponent {
                 <div className="team-img"></div>
                 <div className="team-name">{this.props.name}</div>
                 {this.props.active && <span className="check">√</span>}
-            </div>
-        )
-    }
-}
-class TopicItem extends React.PureComponent {
-    render() {
-        return (
-            <div className="topic-item" key={"topic-item-" + this.props._id} onClick={() => { this.props.locationTo('/discuss/topic/' + this.props._id) }}>
-                <img src={this.props.creator.headImg} alt="" className="head-img" />
-                <div className="name">{this.props.creator.name}</div>
-                <div className="main">
-                    <div className="topic-title">{this.props.title}</div>
-                    <p className="text-max-line-1" dangerouslySetInnerHTML={createMarkup(this.props.content)}></p>
-                </div>
-                {this.props.fileList.length > 0 &&
-                    <i className="icon iconfont time">&#xe6dd;</i>
-                }
-                <div className="time">{timeBefore(this.props.create_time)}</div>
             </div>
         )
     }
@@ -77,6 +61,7 @@ export default class TeamDetail extends React.Component {
         
         modal: document.createElement('div'),
         moveItem: '',
+        renderTimes: 0,
     }
 
     componentDidMount = async () => {
@@ -119,12 +104,14 @@ export default class TeamDetail extends React.Component {
         if (resp.data.taskList == undefined) {
             resp.data.taskList = []
         }
+        console.log(resp.data)
         resp.data.taskList.map((item) => {
             let todoItem = {}
             todoItem.id = item.id
             todoItem.name = item.title
             todoItem.hasDone = item.state
             todoItem.ddl = item.deadline
+            todoItem.completeTime = item.completed_time
             todoItem.assignee = {
                 id: item.header.headerId
             }
@@ -157,6 +144,7 @@ export default class TeamDetail extends React.Component {
         if (resp.state.code === 0) {
             this.setState({ todoListArr })
         }
+        console.log(this.state.todoListArr)
     }
 
     initTeamInfo = async () => {
@@ -166,11 +154,9 @@ export default class TeamDetail extends React.Component {
                 teamId: this.teamId
             }
         })
-
         if (!result.data) {
             window.toast('团队内容加载出错')
         }
-
         const teamInfo = {}
         teamInfo._id = result.data._id
         teamInfo.name = result.data.name
@@ -183,13 +169,15 @@ export default class TeamDetail extends React.Component {
 
         const curUserId = this.props.personInfo._id
 
-        let isCreator = false
+        let isCreator = ''
+
         result.data.memberList.map((item) => {  // 判断是否是创建者 ？
             if (item.userId == curUserId) {
-                isCreator = true
+                isCreator = item.role
             }
             memberIDList.push(item.userId)
         })
+        console.log(isCreator)
         const memberResult = await api('/api/userInfoList', {
             method: 'POST',
             body: { userList: memberIDList }
@@ -218,7 +206,6 @@ export default class TeamDetail extends React.Component {
         this.setState({
             topicContent: content
         })
-        console.log(this.state.topicContent)
     }
 
     createTopicHandle = async () => {
@@ -228,24 +215,26 @@ export default class TeamDetail extends React.Component {
                 informList.push(item._id)
             }
         })
-        const result1 = await api('/api/file/createFile', {
-            method: 'POST',
-            body: {
-                fileInfo: {
-                    teamId: this.teamId,
-                    size: this.state.attachmentsArg.size,
-                    dir: '/',
-                    fileName: this.state.attachmentsArg.name,
-                    ossKey: this.state.ossKeyArg,
+        if(this.state.attachmentsArg.name){
+            const result1 = await api('/api/file/createFile', {
+                method: 'POST',
+                body: {
+                    fileInfo: {
+                        teamId: this.teamId,
+                        size: this.state.attachmentsArg.size,
+                        dir: '/',
+                        fileName: this.state.attachmentsArg.name,
+                        ossKey: this.state.ossKeyArg,
+                    }
                 }
+            })
+            if (result1.state.code === 0) {
+                window.toast("上传文件成功")
+            } else {
+                window.toast(result1.state.msg)
             }
-        })
-        console.log(result1);
-        if (result1.state.code === 0) {
-            window.toast("上传文件成功")
-        } else {
-            window.toast(result1.state.msg)
         }
+        
         const result = await api('/api/topic/createTopic', {
             method: 'POST',
             body: {
@@ -256,7 +245,6 @@ export default class TeamDetail extends React.Component {
                 informList: informList,
             }
         })
-        console.log('createTopicHandle', result.data)
 
         if (result.state.code == 0) {
             const topicList = this.state.topicList
@@ -338,73 +326,87 @@ export default class TeamDetail extends React.Component {
     }
 
     handleTodoCreate = async (lIndex, id, todoInfo) => {
-        const result = await api('/api/task/create', {
-            method: 'POST',
-            body: {
-                teamId: this.teamId,
-                listId: id,
-                name: todoInfo.name,
-                ddl: todoInfo.date,
-                assigneeId: todoInfo.assigneeId,
-            }
-        })
-        // 返回用户名的显示依赖assigneeId
-        if (result.state.code === 0) {
-            let todo = {
-                listId: result.data.listId,
-                id: result.data.id,
-                name: result.data.title,
-                desc: result.data.content,
-                assignee: {
-                    id: result.data.header,
-                },
-                ddl: result.data.deadline,
-                checkItemDoneNum: 0,
-                // checkItemNum: 0,
-                hasDone: false,
-            }
-            const todoListArr = this.state.todoListArr
-            const todolist = todoListArr[lIndex]
-            if (!todolist.list) {
-                todolist.list = []
-            }
-            todolist.list = [...todolist.list, todo]
-            this.setState({ todoListArr })
+        if(!todoInfo.name.trim()){
+            alert("任务名不能为空")
         }
-        return result
+        else{
+            const result = await api('/api/task/create', {
+                method: 'POST',
+                body: {
+                    teamId: this.teamId,
+                    listId: id,
+                    name: todoInfo.name,
+                    ddl: todoInfo.date,
+                    assigneeId: todoInfo.assigneeId,
+                }
+            })
+            // 返回用户名的显示依赖assigneeId
+            if (result.state.code === 0) {
+                let todo = {
+                    listId: result.data.listId,
+                    id: result.data.id,
+                    name: result.data.title,
+                    desc: result.data.content,
+                    assignee: {
+                        id: result.data.header,
+                    },
+                    ddl: result.data.deadline,
+                    checkItemDoneNum: 0,
+                    // checkItemNum: 0,
+                    hasDone: false,
+                }
+                const todoListArr = this.state.todoListArr
+                const todolist = todoListArr[lIndex]
+                if (!todolist.list) {
+                    todolist.list = []
+                }
+                todolist.list = [...todolist.list, todo]
+                this.setState({ todoListArr })
+            }
+            return result
+        }
+        
     }
 
     handleTodoModify = async (lIndex, lId, id, todoInfo) => {
         let editTask = {}
-        console.log(todoInfo)
-        editTask.name = todoInfo.name
-        editTask.ddl = todoInfo.date
-        editTask.assigneeId = todoInfo.assigneeId
-        const resp = await api('/api/task/edit', {
-            method: 'POST',
-            body: {
-                listId: lId,
-                taskId: todoInfo.id,
-                teamId: this.teamId,
-                editTask: editTask,
-            }
-        })
-        console.log(resp)
-        if (resp.state.code === 0) {
-            const todoListArr = this.state.todoListArr
-            const todolist = todoListArr[lIndex]
-            const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
-            todoItem.name = resp.data.title
-            todoItem.ddl = resp.data.deadline
-            todoItem.assignee.id = resp.data.header
-            todolist.list[itemIndex] = todoItem
-            todolist.list = todolist.list.slice()
-            this.setState({ todoListArr })
+        if(!todoInfo.name.trim()){
+            alert("任务名不能为空")
         }
-        return resp
+        else{
+            editTask.name = todoInfo.name
+            editTask.ddl = todoInfo.date
+            editTask.assigneeId = todoInfo.assigneeId
+            const resp = await api('/api/task/edit', {
+                method: 'POST',
+                body: {
+                    listId: lId,
+                    taskId: todoInfo.id,
+                    teamId: this.teamId,
+                    editTask: editTask,
+                }
+            })
+            if (resp.state.code === 0) {
+                const todoListArr = this.state.todoListArr
+                const todolist = todoListArr[lIndex]
+                const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
+                todoItem.name = resp.data.title
+                todoItem.ddl = resp.data.deadline
+                todoItem.assignee.id = resp.data.header
+                todolist.list[itemIndex] = todoItem
+                todolist.list = todolist.list.slice()
+                this.setState({ todoListArr })
+            }
+            return resp
+        }
     }
 
     handleTodoCheck = async (lIndex, lId, id, hasDone) => {
+        // this.state.todoListArr.map((item,index)=>{
+        //     if(id===item.id){
+                    
+        //     }
+        // })
         let editTask = {}
         editTask.hasDone = !hasDone
         const resp = await api('/api/task/edit', {
@@ -416,7 +418,7 @@ export default class TeamDetail extends React.Component {
                 editTask: editTask,
             }
         })
-        console.log('handleTodoCheck', resp)
+        console.log(resp)
         if (resp.state.code === 0) {
             // 更新 todolist
             const todoListArr = this.state.todoListArr
@@ -461,7 +463,6 @@ export default class TeamDetail extends React.Component {
     handleDateChange = async (lIndex, lId, id, e) => {
         let editTask = {}
         editTask.ddl = e.target.value
-        console.log(editTask)
         const resp = await api('/api/task/edit', {
             method: 'POST',
             body: {
@@ -471,7 +472,6 @@ export default class TeamDetail extends React.Component {
                 editTask: editTask,
             }
         })
-        console.log("date",resp)
         if (resp.state.code === 0) {
             const todoListArr = this.state.todoListArr
             const todolist = todoListArr[lIndex]
@@ -484,7 +484,6 @@ export default class TeamDetail extends React.Component {
     }
 
     handleTodoDelete = async (lIndex, lId, id) => {
-        console.log(lIndex, lId, id)
         const resp = await api('/api/task/delTask', {
             method: "POST",
             body: {
@@ -493,7 +492,6 @@ export default class TeamDetail extends React.Component {
                 listId: lId,
             }
         })
-        console.log(resp)
         if (resp.state.code === 0) {
             const todoListArr = this.state.todoListArr
             const todolist = todoListArr[lIndex]
@@ -507,52 +505,62 @@ export default class TeamDetail extends React.Component {
 
     // todoList
     handleTodoListCreate = async (info) => {
-        var listExist = false
-        this.state.todoListArr.map((item) => {
-            if (item.name === info.name) {
-                alert("清单已存在")
-                listExist = true
-            }
-        })
-        if (!listExist) {
-            const result = await api('/api/task/createTaskList', {
-                method: 'POST',
-                body: {
-                    teamId: this.teamId,
-                    name: info.name,
+        if(!info.name.trim()){
+            alert("清单名不能为空")
+        }
+        else{
+            var listExist = false
+            this.state.todoListArr.map((item) => {
+                if (item.name === info.name) {
+                    alert("清单已存在")
+                    listExist = true
                 }
             })
-            if (result.state.code === 0) {
-                let createTodo = {
-                    id: result.data.id,
-                    name: result.data.name,
-                    list: [],
-                }
-                let todoListArr = this.state.todoListArr
-                todoListArr = [...todoListArr, createTodo]
-                this.setState({
-                    showCreateTodoList: false,
-                    todoListArr
+            if (!listExist) {
+                const result = await api('/api/task/createTaskList', {
+                    method: 'POST',
+                    body: {
+                        teamId: this.teamId,
+                        name: info.name,
+                    }
                 })
+                if (result.state.code === 0) {
+                    let createTodo = {
+                        id: result.data.id,
+                        name: result.data.name,
+                        list: [],
+                    }
+                    let todoListArr = this.state.todoListArr
+                    todoListArr = [...todoListArr, createTodo]
+                    this.setState({
+                        showCreateTodoList: false,
+                        todoListArr
+                    })
+                }
             }
         }
     }
 
     handleTodoListModify = async (index, id, info) => {
-        const todoListArr = this.state.todoListArr
-        const resp = await api('/api/task/updateTasklist', {
-            method: "POST",
-            body: {
-                listId: id,
-                name: info.name,
-                teamId: this.teamId,
-            }
-        })
-        if (resp.state.code === 0) {
-            todoListArr[index].name = resp.data.name
-            this.setState({ todoListArr: todoListArr.slice() })
+        if(!info.name.trim()){
+            alert("清单名不能为空")
         }
-        return resp
+        else{
+            const todoListArr = this.state.todoListArr
+            const resp = await api('/api/task/updateTasklist', {
+                method: "POST",
+                body: {
+                    listId: id,
+                    name: info.name,
+                    teamId: this.teamId,
+                }
+            })
+            if (resp.state.code === 0) {
+                todoListArr[index].name = resp.data.name
+                this.setState({ todoListArr: todoListArr.slice() })
+            }
+            return resp
+        }
     }
 
     handleTodoListDelete = async (index, id) => {
@@ -568,7 +576,6 @@ export default class TeamDetail extends React.Component {
         if (resp.state.code === 0) {
             this.setState({ todoListArr: todoListArr.slice() })
         }
-        console.log(todoListArr)
         return resp
     }
 
@@ -622,10 +629,8 @@ export default class TeamDetail extends React.Component {
         var succeeded;
         const uploadResult = fileUploader(file, ossKey)
         await uploadResult.then(function (val) {
-            console.log(val)
             succeeded = 1
         }).catch(function (reason) {
-            console.log(reason)
             succeeded = 0
         })
 
@@ -646,7 +651,6 @@ export default class TeamDetail extends React.Component {
                 }
             }
         })
-        console.log(result);
         if (result.state.code === 0) {
             window.toast("上传文件成功")
         } else {
@@ -751,18 +755,25 @@ export default class TeamDetail extends React.Component {
         }
         document.getElementById('app').removeChild(this.state.modal)
         this.state.moveItem = ''
+        this.setState({
+            renderTimes: this.state.renderTimes+1
+        })
     }
 
     openMoveModalHandle = (item) => {
         this.state.moveItem = item
-        ReactDOM.render(<Modal teamId={this.teamId} folderId={item._id} callbackParent={this.onChildChanged} />, this.state.modal)
+        ReactDOM.render(<Modal key={"item"+this.state.renderTimes} teamId={this.teamId} folderId={item._id} callbackParent={this.onChildChanged}/>, this.state.modal)
         document.getElementById('app').appendChild(this.state.modal)
     }
 
     renameHandle = (item) => {
-        this.state.renameId = item._id
-        this.state.renameName = item.name
-        this.initTeamFile()
+        this.setState({
+            renameId: item._id,
+            renameName:item.name
+        })
+        // this.state.renameId = item._id
+        // this.state.renameName = item.name
+        // this.initTeamFile()
     }
 
     renameNameInputHandle = (e) => {
@@ -778,20 +789,21 @@ export default class TeamDetail extends React.Component {
     }
 
     renameComfirmHandle = async (item) => {
+        var ossKey = this.teamId + '/' + Date.now() + '/' + this.state.renameName
+        // const result1 = await fileRenamer(item.ossKey,ossKey)
         if (item.fileType == 'file') {
-
             const result = await api('/api/file/updateFileName', {
                 method: 'POST',
                 body: {
                     fileInfo: {
                         teamId: this.teamId,
-                        dir: this.curDir,
+                        dir: '/',
                         fileName: item.name,
                     },
                     tarName: this.state.renameName,
+                    newOssKey:ossKey
                 }
             })
-
             if (result.state.code == 0) {
                 window.toast("修改文件名称成功")
                 this.setState({
@@ -808,7 +820,7 @@ export default class TeamDetail extends React.Component {
                 body: {
                     folderInfo: {
                         teamId: this.teamId,
-                        dir: this.curDir,
+                        dir: '/',
                         folderName: item.name,
                     },
                     tarName: this.state.renameName,
@@ -840,8 +852,7 @@ export default class TeamDetail extends React.Component {
 
         return (
             <Page title={teamInfo.name + " - IHCI"}
-                className="discuss-page">
-                 <input className='file-input-hidden' type="file" ref={(fileInput) => this.fileInput = fileInput} onChange={this.uploadFileHandle}></input>
+                className="project-page">
                 <div className="discuss-con page-wrap">
                     <div className="team-info">
                         <div className="left">
@@ -854,7 +865,7 @@ export default class TeamDetail extends React.Component {
                                 <span>成员</span>
                             </div>
                             {
-                                this.state.isCreator && <div className="admin">
+                                this.state.isCreator == 'creator' && <div className="admin">
                                     <div className="admin-con iconfont icon-setup_fill" onClick={this.toAdminHandle}></div>
                                     <span>设置</span>
                                 </div>
@@ -929,7 +940,6 @@ export default class TeamDetail extends React.Component {
                                         }}>添加任务
                                 </li>
                                         <li onClick={(e) => {
-                                            console.log('添加任务')
                                             this.setState({ showCreateTodoList: true, showMenu: false })
                                             e.stopPropagation()
                                         }}>添加清单
@@ -990,7 +1000,7 @@ export default class TeamDetail extends React.Component {
                             )
                         })
                         }
-
+                        <input className='file-input-hidden' type="file" ref={(fileInput) => this.fileInput = fileInput} onChange={this.uploadFileHandle}></input>
                         <div className="head">
                             <span className='head-title'>文件</span>
                             <div className="create-btn" onClick={this.openFileInput}>上传文件</div>
@@ -1024,7 +1034,7 @@ export default class TeamDetail extends React.Component {
                                     }
                                     if (item._id == this.state.renameId) {
                                         return (
-                                            <div className="file-line files">
+                                            <div className="file-line files" key={Math.random()}>
                                                 <div className="name">
                                                     <input autoFocus="autofocus" type="text" className="folder-name" onChange={this.renameNameInputHandle} value={this.state.renameName} />
                                                 </div>

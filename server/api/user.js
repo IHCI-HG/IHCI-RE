@@ -114,6 +114,30 @@ const getMyInfo = async (req, res, next) => {
     }
 }
 
+const getUserInfo = async (req, res, next) => {
+    const userID = req.body.userId
+    if(!userID) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1 , msg: '参数不全'},
+            data: {}
+        });
+        return 
+    }
+    try{
+    const result = await UserDB.findByUserId(userID)
+    
+        resProcessor.jsonp(req, res, {
+            state: { code: 0 },
+            data: result
+        });
+    } catch (error){
+        resProcessor.jsonp(req, res, {
+            state: { code: 2 , msg: '未知错误'},
+            data: {}
+        });
+    }
+}
+
 const logout = async (req, res, next) => {
     req.rSession.userId = null
 
@@ -421,6 +445,7 @@ module.exports = [
     ['GET', '/api/base/sys-time', sysTime],
 
     ['GET', '/api/getMyInfo',apiAuth, getMyInfo],
+    ['POST', '/api/getUserInfo',apiAuth, getUserInfo],
     ['POST', '/api/userInfoList',apiAuth, userInfoList],
 
     ['POST', '/api/login', login],

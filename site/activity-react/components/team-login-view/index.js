@@ -6,7 +6,7 @@ import './style.scss'
 
 import WxLoginDialog from '../../components/wx-login-dialog'
 
-export class LoginView extends React.Component {
+export class TeamLoginView extends React.Component {
     state = {
         //loginBlock: signUp || login
         loginBlock: "login",
@@ -136,12 +136,10 @@ export class LoginView extends React.Component {
         const result = await authApi(this.state.username, this.state.password)
         if(result.state.code === 0) {
             window.toast("登录成功")
-            if (this.props.join){
+            if (this.props.join)
                 window.location.href = window.location.href
-            }
-            else{
-                setTimeout("window.location.href = '/team'", 1000)
-            }
+            else
+                window.location.href = '/team'
         } else {
             window.toast(result.state.msg || "登录失败")
         }
@@ -188,8 +186,10 @@ export class LoginView extends React.Component {
         }
     }
 
+
     render () {
         return <div className="auth-con">
+        <div className='h1'>加入{this.props.teamName}</div>
                         <div className="auth-nav">
                             <div
                                 className={this.state.loginBlock == "login" ? "auth-nav-item active" : "auth-nav-item"}
@@ -204,15 +204,15 @@ export class LoginView extends React.Component {
                             this.state.loginBlock == "signUp" ?
                                 <div className='auth-form'>
 
-                                    <div className="auth-desc">Your username</div>
-                                    <input className="auth-input" value={this.state.createUsername} onChange={this.createUsernameHandle} onClick={this.judgeUsernameEmptyHandle}></input>
-                                    {/* {this.state.infoCheck.usernameEmpty && <div className='after error'>用户名不能为空</div>} */}
-                                    <div className="auth-desc">Your password</div>
-                                    <input className="auth-input" type="password" value={this.state.createPassword} onChange={this.createPasswordHandle}></input>
-                                    {/* {this.state.infoCheck.passwordEmpty && <div className='after error'>密码不能为空</div>} */}
-                                    <div className="auth-desc">Confirm Password</div>
-                                    <input className="auth-input" type="password" value={this.state.createConfirmPassword} onChange={this.createConfirmPasswordHandle}></input>
-                                    {/* {this.state.infoCheck.confirmPasswordEmpty && <div className='after error'>重新输入密码不能为空</div>} */}
+                                    <div className="auth-desc"></div>
+                                    <input type="text" placeholder="Your username" className="auth-input" value={this.state.createUsername} onChange={this.createUsernameHandle}></input>
+
+                                    <div className="auth-desc"></div>
+                                    <input type="text" placeholder="Your password" className="auth-input" type="password" value={this.state.createPassword} onChange={this.createPasswordHandle}></input>
+
+                                    <div className="auth-desc"></div>
+                                    <input className="auth-input" placeholder="Confirm Password" type="password" value={this.state.createConfirmPassword} onChange={this.createConfirmPasswordHandle}></input>
+
                                     <div className="submit-btn" onClick={this.signHandle}>CREATE ACCOUNT</div>
                                 </div>
                             : ""
@@ -220,12 +220,16 @@ export class LoginView extends React.Component {
                         {
                             this.state.loginBlock == "login" ?
                                 <div className='auth-form'>
-                                <div className="auth-desc">Choose a username</div>
-                                <input className="auth-input" value={this.state.username} onChange={this.usernameHandle}></input>
-                                <div className="auth-desc">Choose a password</div>
-                                <input className="auth-input" type="password" value={this.state.password} onChange={this.passwordHandle}></input>
+                                <div className="auth-desc"></div>
+                                <input type="text" placeholder="Your name" className="auth-input" value={this.state.username} onChange={this.usernameHandle}></input>
+                                <div className="auth-desc"></div>
+                                <input type="text" placeholder="Your password" className="auth-input" type="password" value={this.state.password} onChange={this.passwordHandle}></input>
+
                                     <div className="submit-btn" onClick={this.loginHandle}>LOG IN</div>
-                                    <div className="submit-btn" onClick={this.props.showWxDialogHandle}>微信登录</div>
+                                    {/* <div className="submit-btn" onClick={this.props.showWxDialogHandle}>微信登录</div> */}
+                                    <div className="wx-alarm">Or connect with:</div>
+                                    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+                                    <div><i className="fa fa-weixin fa-3x wx-btn" aria-hidden="true" onClick={this.props.showWxDialogHandle}></i></div>
                                 </div>
                             : ""
                         }

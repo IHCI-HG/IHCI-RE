@@ -1,0 +1,147 @@
+.no-border{
+    outline: none;
+
+}
+.topic-subject-edit {
+    padding: 30px;
+    margin-bottom: 40px;
+    transition: all 1.2s;
+    -webkit-transition: all 1.2s;
+    -moz-transition: all 1.2s;
+
+    &.no-pading {
+        padding: 0;
+    }
+
+    &.highlight{
+        transition: all 1.2s;
+        -webkit-transition: all 1.2s;
+        -moz-transition: all 1.2s;
+        padding: 15px;
+        background-color: #FFEECC;
+        box-shadow: 5px 5px 5px #888888;
+    }
+    
+    .topic-title {
+        font-size: 22px;
+        border: 1px solid #e6e6e6; /*no*/
+        height: 50px;
+        width: 800px;
+        border-radius: 4px;
+        line-height: 50px;
+        padding: 0 10px;
+        margin-bottom: 20px;
+    }
+    .topic-content {
+        font-size: 20px;
+        border: 1px solid #e6e6e6; /*no*/
+        height: 400px;
+        width: 800px;
+        border-radius: 4px;
+        line-height: 40px;
+        padding: 0 12px;
+        margin-bottom: 10px;
+        resize: none;
+    }
+    .discuss-content {
+        font-size: 20px;
+        border: 1px solid #e6e6e6; /*no*/
+        height: 200px;
+        width: 800px;
+        border-radius: 4px;
+        line-height: 40px;
+        padding: 0 12px;
+        margin-bottom: 10px;
+        resize: none;
+    }
+    .button-warp {
+        display: flex;
+        align-items: center;
+    }
+    .save-btn {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 80px;
+        height: 40px;
+        border-radius: 8px;
+        background-color: rgb(255, 158, 41);
+        color: #fff;
+        font-weight: bold;
+        margin-right: 30px;
+    }
+    .cancel-btn {
+        cursor: pointer;
+        color: #999;
+    }
+
+}
+.topic-subject-con {
+    transition: all 1.2s;
+    -webkit-transition: all 1.2s;
+    -moz-transition: all 1.2s;
+
+    &.discuss-con {
+        padding-right: 100px;
+        margin-bottom: 40px;
+    }
+    &.highlight{
+        transition: all 1.2s;
+        -webkit-transition: all 1.2s;
+        -moz-transition: all 1.2s;
+        padding: 15px;
+        padding-right: 95px;
+        background-color: #FFEECC;
+        box-shadow: 5px 5px 5px #888888;
+    }
+    .topic-title {
+        font-size: 26px;
+        font-weight: bold;
+        padding: 30px 0 20px 0;
+    }
+    .flex {
+        display: flex;
+    }
+
+    .head-img {
+        flex-grow: 0;
+        flex-shrink: 0;
+        height: 80px;
+        width: 80px;
+        border-radius: 100px;
+        margin-right: 30px;
+        background-color: #e6e6e6;
+    }
+    .topic-main {
+        flex-grow: 1;
+    }
+    .head-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 30px;
+        padding-top: 15px;
+
+        .name {
+            font-weight: bold;
+            color: #333;
+            font-size: 24px; 
+        }
+        .time {
+            margin-left: 30px;
+            color: #999;
+        }
+        .edit {
+            cursor: pointer;
+            color: #999;
+            margin-left: 30px;
+        }
+        
+        
+    }
+    .content {
+        font-size: 22px;
+        line-height: 1.4;
+    }
+}

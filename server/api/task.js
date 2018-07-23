@@ -17,6 +17,7 @@ import {
     delCheckHeaderTemplate,
     compCheckitemTemplate
 } from '../components/wx-utils/wx-utils'
+import { dayLeft } from '../../site/activity-react/utils/util';
 
 var mongoose = require('mongoose')
 
@@ -406,7 +407,6 @@ const editTask = async (req, res, next) => {
         task.title = editTask.name || taskObj.title;
         task.content = editTask.desc || taskObj.content;
         task.fileList = editTask.fileList || taskObj.fileList;
-        console.log('task.fileList', task.fileList);
         task.deadline = editTask.ddl || taskObj.deadline;
         if (editTask.assigneeId === undefined) {
             task.header = taskObj.header
@@ -429,8 +429,7 @@ const editTask = async (req, res, next) => {
         console.log(task)
         if (editTask.hasDone == true) {
             task.state = true;
-            task.completed_time = new Date()
-
+            task.completed_time = new Date().getTime()
             //6.28
             await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'FINISH_TASK', taskObj._id, taskObj.title, taskObj);
 
@@ -452,7 +451,6 @@ const editTask = async (req, res, next) => {
         if (tasklistId) {
             await tasklistDB.updateTask(tasklistId, taskId, task);
         } else {
-            console.log("...........")
             await teamDB.updateTask(teamId, taskId, task);
         }
 
@@ -491,8 +489,7 @@ const editTask = async (req, res, next) => {
 
 
         if (task.completed_time) {
-            const date = new Date(task.completed_time)
-            task.completed_time = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
+            task.completed_time = new Date(task.completed_time).getTime()
         }
         if (task.deadline) {
             const date = new Date(task.deadline)
@@ -522,6 +519,66 @@ const editTask = async (req, res, next) => {
             data: {}
         });
         console.error(error);
+    }
+}
+
+const changeTaskDir = async (req, res, next) => {
+    const taskId = req.body.taskId;
+    const teamId = req.body.teamId;
+    const fileName = req.body.fileName
+    //fileName是osskey形式
+    const tasklistId = req.body.listId;
+    const newDir = req.body.newDir
+
+    const userId = req.rSession.userId;
+    if (!taskId || !fileName ||!newDir) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: "参数不全" },
+            data: {}
+        });
+        return
+    }
+
+    try {
+        const taskObj = await taskDB.findByTaskId(taskId)
+
+        const baseInfoObj = await userDB.baseInfoById(userId);
+
+        if (!taskObj) {
+            resProcessor.jsonp(req, res, {
+                state: { code: 1, msg: "任务不存在" },
+                data: {}
+            })
+        }
+        taskObj.fileList.map((item)=>{
+            if(item.name===fileName){
+                item.dir = newDir
+            }
+        })
+        const task = {}
+        task.title = editTask.name || taskObj.title;
+        task.content = editTask.desc || taskObj.content;
+        task.fileList = editTask.fileList || taskObj.fileList;
+        task.deadline = editTask.ddl || taskObj.deadline;
+        if (editTask.assigneeId === undefined) {
+            task.header = taskObj.header
+        } else {
+            task.header = editTask.assigneeId
+        }
+        await taskDB.updateTask(taskId, task);
+        // if (tasklistId) {
+        //     await tasklistDB.updateTask(tasklistId, taskId, task);
+        // }
+        resProcessor.jsonp(req, res, {
+            state: { code: 0, msg: '请求成功' },
+            data: task
+        })
+
+    } catch (error) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: '操作失败' },
+            data: {}
+        });
     }
 }
 
@@ -558,7 +615,8 @@ const taskInfo = async (req, res, next) => {
             var completed_time = ""
             if (taskObj.checkitemList[i].completed_time) {
                 const date = new Date(taskObj.checkitemList[i].completed_time)
-                completed_time = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
+                completed_time = (date.getUTCFullYear()+'-'+(date.getUTCMonth()+1)+'-'+date.getUTCDate()+"T"+(date.getUTCHours()>9?"":"0")+date.getUTCHours()+':'+date.getUTCMinutes()+':'+date.getUTCSeconds()+'.'+date.getUTCMilliseconds()+'Z').replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
+                //  = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
             }
             var deadline = ""
             if (taskObj.checkitemList[i].deadline) {
@@ -580,7 +638,7 @@ const taskInfo = async (req, res, next) => {
         var taskCompleted_time = ""
         if (taskObj.completed_time) {
             const date = new Date(taskObj.completed_time)
-            taskCompleted_time = (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g, '$10$2')
+            taskCompleted_time = date
         }
         var taskDeadline = ""
         if (taskObj.deadline) {
@@ -1293,6 +1351,7 @@ module.exports = [
     ['POST', '/api/task/create', apiAuth, createTask],
     ['POST', '/api/task/delTask', apiAuth, delTask],
     ['POST', '/api/task/edit', apiAuth, editTask],
+    ['POST', '/api/task/changeDir', apiAuth, changeTaskDir],
     ['GET', '/api/task/taskInfo', apiAuth, taskInfo],
     ['POST', '/api/task/addCheckitem', apiAuth, addCheckitem],
     ['POST', '/api/task/dropCheckitem', apiAuth, dropCheckitem],

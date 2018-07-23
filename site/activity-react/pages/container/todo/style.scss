@@ -136,6 +136,9 @@
                 bottom: 0;
                 left: 0;
             }
+            .overdue{
+                color: red;
+            }
             &-edit {
                 z-index: 2;
                 background-color: white;
@@ -191,6 +194,7 @@
             &:hover {
                 color: #444;
             }
+
         }
     }
     .buttons {

@@ -163,6 +163,8 @@
     }
 
     .file-list {
+        height:100px;
+        overflow-y: scroll;
         .file-line {
             display: flex;
             align-items: center;

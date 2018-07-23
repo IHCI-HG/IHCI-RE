@@ -18,6 +18,12 @@ export default class Person extends React.Component{
                     mail: '',
                     phone: '',
                     headImg: INIT_DATA.userObj && INIT_DATA.userObj.wxUserInfo && INIT_DATA.userObj.wxUserInfo.headimgurl || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnregyyDrMvhEDpfC4wFetzykulWRVMGF-jp7RXIIqZ5ffEdawIA',
+                },
+                originPersonInfo: INIT_DATA.userObj.personInfo || {
+                    name: '',
+                    mail: '',
+                    phone: '',
+                    headImg: INIT_DATA.userObj && INIT_DATA.userObj.wxUserInfo && INIT_DATA.userObj.wxUserInfo.headimgurl || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnregyyDrMvhEDpfC4wFetzykulWRVMGF-jp7RXIIqZ5ffEdawIA',
                 }
             })
         } else {
@@ -94,6 +100,12 @@ export default class Person extends React.Component{
             phone: '',
             mail: '',
         },
+        originPersonInfo:{
+            name: '',
+            headImg: '',
+            phone: '',
+            mail: '',
+        },
         infoCheck:{
             illegalEmailAddress: false,
             illegalPhoneNumber:false,
@@ -138,7 +150,7 @@ export default class Person extends React.Component{
     }
 
     isPhoneNumber = (phoneNumber) => {
-        const reg = /^0?(1[0-9][0-9]|15[012356789]|17[013678]|18[0-9]|14[57])[0-9]{8}$/;
+        const reg = /^0?(13[0-9]|15[0-3,5-9]|17[0,3,5-8]|18[0-9]|14[57]|19[89])[0-9]{8}$/;
         return reg.test(phoneNumber);
     }
 
@@ -253,12 +265,19 @@ export default class Person extends React.Component{
                 ...this.state.personInfo
             }
         })
-
+        const result1 = await api('/api/topic/changeCreator',{
+            method:'POST',
+            body:{
+                personInfo: this.state.personInfo,
+                originPersonInfo: this.state.originPersonInfo,
+            }
+        })
+        console.log(result1)
         if(result.state.code === 0) {
             window.toast("设置成功")
             setTimeout(() => {
-                location.href = location.href
-            }, 300);
+                location.href = '/team'
+            }, 500);
         } else {
             window.toast("设置失败，请稍后再试")
         }
@@ -470,9 +489,9 @@ export default class Person extends React.Component{
                 */}
 
 
-                <div className="sava-btn" onClick={this.saveHandle}>保存</div>
+                <div className="save-btn" onClick={this.saveHandle}>保存</div>
 
-                <div className="sava-btn" onClick={this.logOutHandle}>登出</div>
+                <div className="save-btn" onClick={this.logOutHandle}>登出</div>
                 {
                     this.state.showWxLogin && <WxLoginDialog state="bind" closeHandle={this.closeWxLoginHandle}/>
                 }
