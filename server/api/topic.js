@@ -100,7 +100,6 @@ const changeTopicCreator = async (req, res, next) => {
         //     return
         // }
         let timelineObj = await timelineDB.findByCreatorName(oldCreatorName)
-        console.log("11111111111111111111",timelineObj)
         let result = []
         let result1 = []
         let result2 = []
@@ -109,7 +108,6 @@ const changeTopicCreator = async (req, res, next) => {
             item.creator = personInfo
             await timelineDB.updateTimeline(item._id, item)
         })
-        console.log("22222222",personInfo)
         discussObj.map(async(item,index)=>{
             item.creator = personInfo
             result3[index] = await discussDB.updateDiscuss(item._id, item)
