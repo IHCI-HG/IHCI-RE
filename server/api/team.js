@@ -297,7 +297,27 @@ const markTeam = async (req, res, next) => {
     }
 
 }
+const leaveTeam = async(req,res) =>{
+    const teamId = req.body.teamId
+    const userId  =  req.rSession.userId
+    try{
+        let teamObj = await teamDB.findByTeamId(teamId)
+        const result = await teamDB.delMember(teamId, userId)
+        await userDB.delTeam(userId, teamId)
 
+        resProcessor.jsonp(req, res, {
+            state: { code: 0, msg: '删除成功' },
+            data: result
+        });
+    }catch (error) {
+        console.error(error);
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: '操作失败' },
+            data: {}
+        });
+    }
+
+}
 const kikMember = async (req, res, next) => {
     const teamId = req.body.teamId
     const tarMemberId = req.body.memberId
@@ -609,6 +629,7 @@ module.exports = [
     ['POST', '/api/team/roleModify', apiAuth, modifyMemberRole],
     ['POST', '/api/team/markTeam', apiAuth, markTeam],
     ['POST', '/api/team/kikMember', apiAuth, kikMember],
+    ['POST', '/api/team/leaveTeam',apiAuth,leaveTeam],
 
     ['GET', '/api/team/memberList', apiAuth, memberList],
     ['GET', '/api/team/taskList', apiAuth, taskList],

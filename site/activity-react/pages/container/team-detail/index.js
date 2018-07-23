@@ -776,7 +776,7 @@ export default class TeamDetail extends React.Component {
         // this.initTeamFile()
     }
 
-    renameNameInputHandle = async (e) => {
+    renameNameInputHandle = (e) => {
         this.setState({
             renameName: e.target.value
         })
@@ -1034,7 +1034,7 @@ export default class TeamDetail extends React.Component {
                                     }
                                     if (item._id == this.state.renameId) {
                                         return (
-                                            <div className="file-line files" key={Math.random()}>
+                                            <div className="file-line files" key={item.fileType + '-' + item._id}>
                                                 <div className="name">
                                                     <input autoFocus="autofocus" type="text" className="folder-name" onChange={this.renameNameInputHandle} value={this.state.renameName} />
                                                 </div>

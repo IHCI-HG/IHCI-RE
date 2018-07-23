@@ -163,6 +163,7 @@ module.exports = [
     ['GET', '/todo/:id', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/team-edit/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/team-admin/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
+    ['GET', '/team-management',clientParams(), routerAuthJudge, pageHandle()],
     ['GET', '/team-join/:teamId', clientParams(), joinTeam, pageHandle() ],
 
     ['GET', '/team-create', clientParams(), routerAuthJudge, pageHandle() ],
