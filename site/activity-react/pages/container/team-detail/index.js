@@ -781,7 +781,7 @@ export default class TeamDetail extends React.Component {
         this.initTeamFile()
     }
 
-    renameNameInputHandle = async (e) => {
+    renameNameInputHandle = (e) => {
         this.setState({
             renameName: e.target.value
         })
