@@ -104,6 +104,7 @@ const changeTopicCreator = async (req, res, next) => {
         let result1 = []
         let result2 = []
         let result3 = []
+        console.log("22222222",personInfo)
         discussObj.map(async(item,index)=>{
             item.creator = personInfo
             result3[index] = await discussDB.updateDiscuss(item._id, item)
@@ -508,6 +509,34 @@ const delDiscuss = async (req,res,next)=>{
     }
 }
 
+const getDiscuss = async (req, res, next) => {
+    const topicId = req.query.topicId
+    const userId = req.rSession.userId
+
+    if(!topicId) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: "参数不全" },
+            data: {}
+        });
+        return
+    }
+
+    try {
+        const discussList = await discussDB.getDiscussByTopicId(topicId)
+
+        resProcessor.jsonp(req, res, {
+            state: { code: 0, msg: '请求成功' },
+            data: discussList
+        });
+    } catch (error) {
+        console.error(error);
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: '操作失败' },
+            data: {}
+        });
+    }
+}
+
 module.exports = [
     ['GET', '/api/topic/get', apiAuth, topicInfo],
     //6.22
@@ -523,5 +552,6 @@ module.exports = [
     //6.28
     ['POST','/api/topic/delTopic',apiAuth,delTopic],
     ['POST','/api/topic/delDiscuss',apiAuth,delDiscuss],
+    ['GET','/api/topic/getDiscuss',apiAuth,getDiscuss],
 
 ];
