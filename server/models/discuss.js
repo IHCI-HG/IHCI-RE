@@ -58,6 +58,9 @@ discussSchema.statics = {
         return result;
     },
 
+    getDiscussByTopicId: async function(topicId) {
+        return this.find({'topicId': topicId})
+    },
     //7.2
     getDiscussByPage:async function(queryList,currentPage){
         var pageSize = 20;

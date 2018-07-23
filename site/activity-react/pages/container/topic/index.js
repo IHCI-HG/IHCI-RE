@@ -109,7 +109,13 @@ export default class Topic extends React.Component{
                 chosen: false,
             })
         ])
-        const discussList = result.data.discussList
+        const result2 = await api('/api/topic/getDiscuss', {
+            method: 'GET',
+            body: {
+                topicId: this.topicId
+            }
+        })
+        const discussList = result2.data
         discussList.map((item)=>{
             item.imgList = []
             item.fileList.map((fileItem,index)=>{

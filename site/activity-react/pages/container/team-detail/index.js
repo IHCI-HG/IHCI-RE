@@ -62,6 +62,9 @@ export default class TeamDetail extends React.Component {
         modal: document.createElement('div'),
         moveItem: '',
         renderTimes: 0,
+
+        renameId: '',
+        renameName: '',
     }
 
     componentDidMount = async () => {
@@ -767,13 +770,15 @@ export default class TeamDetail extends React.Component {
     }
 
     renameHandle = (item) => {
-        this.setState({
-            renameId: item._id,
-            renameName:item.name
-        })
+        // this.setState({
+        //     renameId: item._id,
+        //     renameName:item.name
+        // })
+        this.state.renameId = item._id
+        this.state.renameName = item.name
         // this.state.renameId = item._id
         // this.state.renameName = item.name
-        // this.initTeamFile()
+        this.initTeamFile()
     }
 
     renameNameInputHandle = (e) => {
