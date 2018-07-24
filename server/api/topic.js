@@ -81,9 +81,9 @@ const createTopic = async (req, res, next) => {
 
 const changeTopicCreator = async (req, res, next) => {
     const personInfo = req.body.personInfo
-    const oldCreatorName = req.body.originPersonInfo.name
+    const originPersonInfo = req.body.originPersonInfo.name
     const userId = req.rSession.userId
-    if(!personInfo || !req.body.originPersonInfo) {
+    if(!personInfo || !originPersonInfo) {
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: "参数不全" },
             data: {}
@@ -91,7 +91,7 @@ const changeTopicCreator = async (req, res, next) => {
         return
     }
     try {
-        let discussObj = await discussDB.findByDiscussCreatorName(oldCreatorName)
+        let discussObj = await discussDB.findDiscussByCreatorId(userId)
         // if(!discussObj) {
         //     resProcessor.jsonp(req, res, {
         //         state: { code: 1, msg: "话题不存在" },
@@ -99,7 +99,7 @@ const changeTopicCreator = async (req, res, next) => {
         //     });
         //     return
         // }
-        let timelineObj = await timelineDB.findByCreatorName(oldCreatorName)
+        let timelineObj = await timelineDB.findByCreatorId(userId)
         let result = []
         let result1 = []
         let result2 = []
@@ -113,7 +113,7 @@ const changeTopicCreator = async (req, res, next) => {
             result3[index] = await discussDB.updateDiscuss(item._id, item)
             result2[index] = await topicDB.updateDiscuss(item.topicId,item._id,item.content,item.fileList,personInfo)
         })
-        let topicObj = await topicDB.findByTopicCreatorName(oldCreatorName)
+        let topicObj = await topicDB.findByTopicCreatorId(userId)
         topicObj.map(async(item,index)=>{
             item.creator = personInfo
             result[index] = await topicDB.updateTopic(item._id, item)

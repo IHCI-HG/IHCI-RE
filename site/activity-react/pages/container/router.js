@@ -126,6 +126,13 @@ const routerConf = [{
                 callback(null, require('./sign').default);
             });
         }
+    }, {
+        path: 'completed/:id',
+        getComponent: function (nextState, callback) {
+            require.ensure([], (require) => {
+                callback(null, require('./completed').default);
+            });
+        }
     }
 ]
 
