@@ -139,6 +139,7 @@ export default class Topic extends React.Component{
     }
 
     topicContentHandle = (content) => {
+        console.log(content)
         this.setState({
             topicContentInput: content
         })
@@ -464,7 +465,10 @@ export default class Topic extends React.Component{
                                                     {/* <span className="edit">删除</span> */}
                                             </div>
                                         </div>
-                                        <p dangerouslySetInnerHTML={createMarkup(this.state.topicObj.content)}></p>
+                                        <div className="BraftEditor-container">
+                                            <p className="public-DraftEditor-content BraftEditor-content" dangerouslySetInnerHTML={createMarkup(this.state.topicObj.content)}></p>
+                                        </div>
+                                        
                                     </div>
                                 </div>
                             </div>

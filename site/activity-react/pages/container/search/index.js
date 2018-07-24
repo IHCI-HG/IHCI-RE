@@ -130,7 +130,9 @@ class SearchResultItem extends React.PureComponent{
                             </div>
                             <div className="content">
                                 <span className="name">{this.props.creator.name}</span>-
-                                <span className="content" dangerouslySetInnerHTML={{__html: this.props.content.content}}>{}</span>
+                                <div className="BraftEditor-container">
+                                    <span className="content public-DraftEditor-content BraftEditor-content" dangerouslySetInnerHTML={{__html: this.props.content.content}}>{}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -152,7 +154,9 @@ class SearchResultItem extends React.PureComponent{
                             </div>
                             <div className="content">
                                 <span className="name">{this.props.creator.name}</span>-
-                                <span className="content" dangerouslySetInnerHTML={{__html: this.props.content.content}}>{}</span>
+                                <div className="BraftEditor-container">
+                                    <span className="content public-DraftEditor-content BraftEditor-content" dangerouslySetInnerHTML={{__html: this.props.content.content}}>{}</span>
+                                </div>
                             </div>
                         </div>
                     </div>

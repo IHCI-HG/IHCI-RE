@@ -53,7 +53,9 @@ class TopicItem extends React.PureComponent {
                 <div className="name">{this.props.creator.name}</div>
                 <div className="main">
                     <div className="topic-title">{this.props.title}</div>
-                    <p className="text-max-line-1" dangerouslySetInnerHTML={createMarkup(this.props.content)}></p>
+                    <div className="BraftEditor-container">
+                        <p className="text-max-line-1 public-DraftEditor-content BraftEditor-content" dangerouslySetInnerHTML={createMarkup(this.props.content)}></p>
+                    </div>
                 </div>
                 {this.props.fileList.length > 0 &&
                     <i className="icon iconfont time">&#xe6dd;</i>

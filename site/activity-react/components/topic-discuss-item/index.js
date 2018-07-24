@@ -104,7 +104,9 @@ class TopicDiscussItem extends React.Component {
                                         </div>
                                     }
                                 </div>
-                                <p dangerouslySetInnerHTML={createMarkup(this.props.content)}></p>
+                                <div className="BraftEditor-container">
+                                            <p className="public-DraftEditor-content BraftEditor-content" dangerouslySetInnerHTML={createMarkup(this.props.content)}></p>
+                                </div>
                             </div>
                         </div>
                         <div className="file-list">
