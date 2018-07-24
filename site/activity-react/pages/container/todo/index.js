@@ -108,7 +108,9 @@ class TopicItem extends React.Component{
                         {/* <div className="topic-title">{this.props.title}</div> */}
                         {/* {this.state.showButton&&<div className="topic-content">{this.props.content}</div>} */}
                         {this.state.showButton&&<div>
-                            <p dangerouslySetInnerHTML={createMarkup(this.props.content)}></p>
+                            <div className="BraftEditor-container">
+                                <p className="content public-DraftEditor-content BraftEditor-content" dangerouslySetInnerHTML={createMarkup(this.props.content)}></p>
+                            </div>
                             <div className="file-list">
                             {
                                 this.props.imgList.map((item) => {
@@ -145,7 +147,7 @@ class TopicItem extends React.Component{
                             {/* <div className="infrom">请选择要通知的人：</div>
                             <MemberChosenList choseHandle={this.props.memberChoseHandle} memberList={this.props.memberList}/> */}
                             <div className="btn-con">
-                                <div className="create-btn" onClick={()=>{this.updateTopicHandle();this.setState({showCreateTopic: false,showButton:true})}}>发起讨论</div>
+                                <div className="create-btn" onClick={()=>{this.updateTopicHandle();this.setState({showCreateTopic: false,showButton:true})}}>修改评论</div>
                                 <div className="cancle" onClick={() => {this.setState({showCreateTopic: false,showButton:true})}}>取消</div>
                             </div>
                         </div>}

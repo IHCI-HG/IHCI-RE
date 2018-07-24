@@ -57,8 +57,10 @@ class InformItem extends React.PureComponent{
                           <span className="type">{this.typeMap[this.props.type]}</span>
                           <span className="topic">{this.props.noticeTitle}</span>
                       </div>
-
-                      <div className="content"  dangerouslySetInnerHTML={{__html: this.props.noticeContent}}>{}</div>
+                      <div className="BraftEditor-container">
+                        <div className="content public-DraftEditor-content BraftEditor-content"  dangerouslySetInnerHTML={{__html: this.props.noticeContent}}>{}</div>
+                      </div>
+                      
                   </div>
 
 
@@ -77,7 +79,9 @@ class InformItem extends React.PureComponent{
                             <span className="topic">{this.props.noticeTitle}</span>
                         </div>
 
-                        <div className="content" dangerouslySetInnerHTML={{__html: this.props.noticeContent}}>{}</div>
+                        <div className="BraftEditor-container">
+                            <div className="content public-DraftEditor-content BraftEditor-content"  dangerouslySetInnerHTML={{__html: this.props.noticeContent}}>{}</div>
+                        </div>
                     </div>
 
 

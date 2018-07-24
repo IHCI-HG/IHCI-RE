@@ -159,8 +159,11 @@ class TodoItem extends React.Component {
                     }
                     {   _props.detail === 'detail' &&
                         <div>
-                            <p dangerouslySetInnerHTML={createMarkup(_props.desc)}></p>
+                            <div className="BraftEditor-container">
+                                <p className="content public-DraftEditor-content BraftEditor-content" dangerouslySetInnerHTML={createMarkup(_props.desc)}></p>
+                            </div>
                         </div>
+                        
                     }
                     {   _props.detail === 'detail' &&
                     <div>

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import './style.scss'
 import Editor from "../editor"
+import fileUploader from '../../utils/file-uploader'
 import { timeBefore, createMarkup } from '../../utils/util'
 
 
@@ -58,15 +59,15 @@ class TopicDiscussItem extends React.Component {
     }
 
     render() {
-        const {
-            _id,
-            creator,
-            content,
-            create_time,
-            saveEditHandle,
-            allowEdit,
-            fileList,
-        } = this.props
+        // const {
+        //     _id,
+        //     creator,
+        //     content,
+        //     create_time,
+        //     saveEditHandle,
+        //     allowEdit,
+        //     fileList,
+        // } = this.props
 
         return (
             <div className='no-border' id={this.props.id} tabIndex="0" onBlur={this.props.onBlur}>
@@ -81,7 +82,7 @@ class TopicDiscussItem extends React.Component {
                         <div className="button-warp">
                             <div className="save-btn" 
                                 onClick={() => { 
-                                    this.props.saveEditHandle(_id, this.state.content,this.state.discussAttachments,this.state.discussAttachmentsArr,this.state.discussOssKeyArr); 
+                                    this.props.saveEditHandle(this.props._id, this.state.content,this.state.discussAttachments,this.state.discussAttachmentsArr,this.state.discussOssKeyArr); 
                                     this.setState({ editState: false }) 
                                     }}>保存</div>
                             <div className="cancel-btn" onClick={() => { this.setState({ editState: false }) }}>取消</div>
@@ -90,12 +91,12 @@ class TopicDiscussItem extends React.Component {
                     :
                     <div  className={(this.props.enableHighlight &&this.props.highlight) ? "topic-subject-con discuss-con highlight" :"topic-subject-con discuss-con"}>
                         <div className="flex">
-                            <img className="head-img" src={creator.headImg}></img>
+                            <img className="head-img" src={this.props.creator.headImg}></img>
                             <div className="topic-main">
                                 <div className="head-wrap">
                                     <div className="left">
-                                        <span className="name">{creator.name}</span>
-                                        <span className="time">{timeBefore(create_time)}</span>
+                                        <span className="name">{this.props.creator.name}</span>
+                                        <span className="time">{timeBefore(this.props.create_time)}</span>
                                     </div>
                                     {
                                         !this.state.editState && <div className="right">
@@ -103,7 +104,9 @@ class TopicDiscussItem extends React.Component {
                                         </div>
                                     }
                                 </div>
-                                <p dangerouslySetInnerHTML={createMarkup(content)}></p>
+                                <div className="BraftEditor-container">
+                                            <p className="public-DraftEditor-content BraftEditor-content" dangerouslySetInnerHTML={createMarkup(this.props.content)}></p>
+                                </div>
                             </div>
                         </div>
                         <div className="file-list">
