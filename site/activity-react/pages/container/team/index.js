@@ -17,7 +17,6 @@ class TeamItem extends React.PureComponent{
             <div className="right">
                 <div className={this.props.marked ? "iconfont icon-collection_fill act" : "iconfont icon-collection"} onClick={() => {this.props.starHandle(this.props._id)}}></div>
                 {this.props.managed && <div className="iconfont icon-setup" onClick={() => {this.props.locationTo('/team-admin/' + this.props._id)}}></div>}
-                <div className="iconfont icon-empty" onClick={() => {this.props.deleteHandle(this.props._id)}}></div>
             </div>
         </div>
     }
@@ -91,17 +90,6 @@ export default class Team extends React.Component{
             })
         }
     }
-    deleteHandle = async (_id) =>{
-        console.log(_id)
-        const result = await api('/api/team/leaveTeam', {
-            method: 'POST',
-            body: { teamId: _id }
-        })
-        console.log(result.state.code)
-        if(result.state.code == 0 ){
-            locationTo('/team')
-        }
-    }
 
     locationTo = (url) => {
         location.href = url
@@ -121,7 +109,7 @@ export default class Team extends React.Component{
                     {   
                         this.state.teamList.map((item) => {
                             if(item.marked == true) {
-                                return <TeamItem key={'mark-team' + item._id} {...item} locationTo={this.locationTo} starHandle={this.starHandle} deleteHandle={this.deleteHandle}/>
+                                return <TeamItem key={'mark-team' + item._id} {...item} locationTo={this.locationTo} starHandle={this.starHandle} />
                             }
                         })
                     }
@@ -132,7 +120,7 @@ export default class Team extends React.Component{
                     {   
                         this.state.teamList.map((item) => {
                             if(item.managed == true) {
-                                return <TeamItem key={'manage-team' + item._id} {...item} locationTo={this.locationTo} starHandle={this.starHandle} deleteHandle={this.deleteHandle}/>
+                                return <TeamItem key={'manage-team' + item._id} {...item} locationTo={this.locationTo} starHandle={this.starHandle} />
                             }
                         })
                     }
@@ -142,7 +130,7 @@ export default class Team extends React.Component{
                 <div className="team-list">
                     {   
                         this.state.teamList.map((item) => {
-                            return <TeamItem key={'join-team' + item._id} {...item} locationTo={this.locationTo} starHandle={this.starHandle} deleteHandle={this.deleteHandle} />
+                            return <TeamItem key={'join-team' + item._id} {...item} locationTo={this.locationTo} starHandle={this.starHandle}  />
                         })
                     }
                 </div>
