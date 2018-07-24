@@ -1,0 +1,336 @@
+.head {
+    padding: 40px 0;
+    font-size: 30px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+
+    .create-btn {
+        z-index: 1;
+        font-size: 16px;
+        padding: 10px;
+        border: 1px solid #e6e6e6; /*no*/
+        border-radius: 4px;
+        margin-left: 30px;
+        cursor: pointer;
+        position: relative;
+        .icon {
+            margin-left: 6px;
+        }
+        .menu {
+            width: 100%;
+            position: absolute;
+            background-color: white;
+            border: 1px solid #e6e6e6; /*no*/
+            border-radius: 4px;
+            top: 46px;
+            right: 0px;
+            >li {
+                margin: 10px 10px;
+            }
+        }
+        &:hover {
+            background-color: #e6e6e6;
+        }
+    }
+}
+
+.project-page {
+    padding: 30px 0;
+
+    .sp-nav {
+        margin: 10px 0 30px 0;
+        font-size: 20px;
+
+        .to-team {
+            font-weight: bold;
+            font-size: 20px;
+            cursor: pointer;
+            color: rgb(42, 42, 50);
+        }
+        .pre-tag{
+            cursor: pointer;
+        }
+    }
+
+    .file-list {
+        .file-line {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #e6e6e6; /*no*/
+
+            &.files {
+                font-size: 14px;
+                line-height: 50px; 
+            }
+            &.header {
+                font-size: 12px;
+                line-height: 50px;
+                color: #999;
+            }
+        }
+        .folder-name {
+            display: block;
+            border: none;
+            flex-grow: 1;
+            height: 50px;
+            font-size: 14px;
+            line-height: 50px;
+        }
+
+        div {
+            flex-grow: 0;
+            flex-shrink: 0;
+            overflow: hidden;
+            text-overflow:ellipsis;
+            white-space: nowrap;
+        }
+        .name {
+            width: 50%;
+        }
+        .size {
+            width: 15%;
+        }
+        .last-modify {
+            width: 15%;
+        }
+        .tools {
+            width: 20%;
+            span {
+                margin-right: 10px;
+            }
+        } 
+        .show-all-file {
+            margin-top: 16px;
+        }
+    }
+
+    .discuss-con {
+        margin-top: 20px;
+        padding: 20px 30px 40px 30px;
+
+        .team-info {
+            display: flex;
+            justify-content: space-between;
+            .right {
+                display: flex;
+                align-items: center;
+                flex-shrink: 0;
+            }
+
+            .admin {
+                height: 100px;
+                width: 100px;
+                text-align: center;
+                cursor: pointer;
+                .admin-con {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    height: 70px;
+                    width: 100px;
+
+                    font-size: 26px;
+                }
+            }
+
+        }
+
+        .team-info {
+            display: flex;
+        }
+        .team-des {
+            margin-bottom: 15px;
+        }
+        .div-line {
+           border: 1px dashed  #e6e6e6; /*no*/
+        }
+    }
+
+    .file-list {
+        .file-line {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #e6e6e6; /*no*/
+            .icon{
+                font-size:25px;
+                margin:0 3px 0 0;
+            }
+
+            &.files {
+                font-size: 14px;
+                line-height: 50px; 
+            }
+            &.header {
+                font-size: 12px;
+                line-height: 50px;
+                color: #999;
+            }
+        }
+        .folder-name {
+            display: block;
+            border: none;
+            flex-grow: 1;
+            height: 50px;
+            font-size: 14px;
+            line-height: 50px;
+        }
+
+        div {
+            flex-grow: 0;
+            flex-shrink: 0;
+            overflow: hidden;
+            text-overflow:ellipsis;
+            white-space: nowrap;
+        }
+        .name {
+            width: 50%;
+            &:hover {
+                cursor: pointer;
+            }
+        }
+        .size {
+            width: 15%;
+        }
+        .last-modify {
+            width: 15%;
+        }
+        .tools {
+            width: 20%;
+            span {
+                margin-right: 10px;
+                &:hover {
+                    cursor: pointer;
+                    text-decoration: underline;
+                }
+  
+            }
+        } 
+        .show-all-file {
+            margin-top: 16px;
+        }
+    }
+
+    .create-area {
+        .topic-name {
+            display: block;
+            border: 1px solid #e6e6e6;
+            border-radius: 4px;
+            width: 100%;
+            height: 50px;
+            line-height: 50px;
+            font-size: 22px;
+            padding: 0 20px;
+            margin-bottom: 30px;
+        }
+
+        .topic-content {
+            display: block;
+            width: 100%;
+            border: 1px solid #e6e6e6; /*no*/
+            border-radius: 4px;
+            height: 200px;
+            resize: none;
+            font-size: 20px;
+            padding: 20px;
+            line-height: 1.4;
+            margin-bottom: 30px;
+        }
+
+        .infrom {
+            margin-bottom: 20px;
+        }
+
+        .btn-con {
+            display: flex;
+            align-items: center;
+        }
+        .create-btn {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 120px;
+            height: 50px;
+            border-radius: 8px;
+            background-color: rgb(255, 158, 41);
+            color: #fff;
+            font-weight: bold;
+            margin-right: 30px;
+        }
+        .cancle {
+            color: #333;
+            cursor: pointer;
+        }
+
+    }
+
+    .topic-list {
+        margin-top: 50px;
+    }
+
+    .topic-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-sizing: border-box;
+        border-bottom: 1px solid #e6e6e6; /*no*/
+
+        height: 120px;
+        cursor: pointer;
+
+        .head-img {
+            height: 80px;
+            width: 80px;
+            border-radius: 100px;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+        .name {
+            margin-right: 1.266667rem;
+            flex-shrink: 0;
+        }
+        .main {
+            flex-grow: 1;
+            max-width: 70%;
+            .topic-title {
+                color: #333;
+                font-size: 20px;
+                overflow: hidden;
+                text-overflow:ellipsis;
+                white-space: nowrap;
+                margin-bottom: 10px;
+            }
+            .topic-content {
+                color: #666;
+                overflow: hidden;
+                text-overflow:ellipsis;
+                white-space: nowrap;
+            }
+        }
+        .time {
+            flex-shrink: 0;
+            margin-left: 20px;
+            min-width: 100px;
+            text-align: center;
+        }
+    }
+
+}
+
+.completed {
+    color: #999;
+}
+
+.todo-board {
+    background-color: white;
+    padding: 0.266667rem 0.4rem 0.533333rem 0.4rem;
+}
+
+.todo-list {
+    & ~ & {
+        margin-top: 30px;
+    }
+}
+
+
