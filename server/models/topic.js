@@ -79,6 +79,7 @@ topicSchema.statics = {
         ).exec()
     },
 
+
     //6.22
     getByPage:async function(teamId,currentPage){
         var pageSize = 20;

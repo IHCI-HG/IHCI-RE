@@ -9,6 +9,7 @@ import FollowDialog from '../../../components/follow-dialog'
 export default class Person extends React.Component{
     componentDidMount = async() => {
         this.personInfo = {}
+        this.originPersonInfo = {}
         if(INIT_DATA.userObj) {
             
             this.setState({
@@ -34,6 +35,7 @@ export default class Person extends React.Component{
         if(INIT_DATA.userObj.wxUserInfo) {
             this.setState({
                 ...this.state.personInfo,
+                ...this.state.originPersonInfo,
                 headImg: INIT_DATA.userObj.wxUserInfo.headimgurl
             })
         }

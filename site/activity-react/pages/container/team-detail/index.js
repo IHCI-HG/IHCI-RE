@@ -62,6 +62,9 @@ export default class TeamDetail extends React.Component {
         modal: document.createElement('div'),
         moveItem: '',
         renderTimes: 0,
+
+        renameId: '',
+        renameName: '',
     }
 
     componentDidMount = async () => {
@@ -767,16 +770,18 @@ export default class TeamDetail extends React.Component {
     }
 
     renameHandle = (item) => {
-        this.setState({
-            renameId: item._id,
-            renameName:item.name
-        })
+        // this.setState({
+        //     renameId: item._id,
+        //     renameName:item.name
+        // })
+        this.state.renameId = item._id
+        this.state.renameName = item.name
         // this.state.renameId = item._id
         // this.state.renameName = item.name
-        // this.initTeamFile()
+        this.initTeamFile()
     }
 
-    renameNameInputHandle = async (e) => {
+    renameNameInputHandle = (e) => {
         this.setState({
             renameName: e.target.value
         })
@@ -1034,9 +1039,9 @@ export default class TeamDetail extends React.Component {
                                     }
                                     if (item._id == this.state.renameId) {
                                         return (
-                                            <div className="file-line files" key={Math.random()}>
+                                            <div className="file-line files" key={item.fileType + '-' + item._id}>
                                                 <div className="name">
-                                                    <input autoFocus="autofocus" type="text" className="folder-name" onChange={this.renameNameInputHandle} value={this.state.renameName} />
+                                                    <input  autoFocus="autofocus" type="text" className="folder-name" onChange={this.renameNameInputHandle} value={this.state.renameName} />
                                                 </div>
                                                 <div className="tools">
                                                     <span onClick={() => { this.renameComfirmHandle(item) }}>确定</span>
@@ -1049,7 +1054,7 @@ export default class TeamDetail extends React.Component {
                                         if (item.fileType == 'folder') {
                                             return (
                                                 <div className="file-line files" key={item.fileType + '-' + item._id}>
-                                                    <div className="name" onClick={() => { this.folderClickHandle(item.name) }}>{'(文件夹)'}{item.name}</div>
+                                                    <div className="name" onClick={() => { this.folderClickHandle(item.name) }}><i className="icon iconfont icon-iconset0196"></i>{item.name}</div>
                                                     <div className="size">-</div>
                                                     <div className="last-modify">{formatDate(item.last_modify_time)}</div>
                                                     <div className="tools">

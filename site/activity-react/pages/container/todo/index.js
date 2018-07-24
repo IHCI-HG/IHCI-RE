@@ -108,7 +108,9 @@ class TopicItem extends React.Component{
                         {/* <div className="topic-title">{this.props.title}</div> */}
                         {/* {this.state.showButton&&<div className="topic-content">{this.props.content}</div>} */}
                         {this.state.showButton&&<div>
-                            <p dangerouslySetInnerHTML={createMarkup(this.props.content)}></p>
+                            <div className="BraftEditor-container">
+                                <p className="content public-DraftEditor-content BraftEditor-content" dangerouslySetInnerHTML={createMarkup(this.props.content)}></p>
+                            </div>
                             <div className="file-list">
                             {
                                 this.props.imgList.map((item) => {

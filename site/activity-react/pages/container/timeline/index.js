@@ -185,8 +185,9 @@ class TimelineItem extends React.PureComponent{
                                 <span className="type">{this.typeMap[this.props.type]}</span>
                                 <span className="topic">{this.props.title}</span>
                             </div>
-        
-                            <div className="content" dangerouslySetInnerHTML={{__html: this.props.content.content}}>{}</div>
+                            <div className="BraftEditor-container">
+                                    <span className="content public-DraftEditor-content BraftEditor-content" dangerouslySetInnerHTML={{__html: this.props.content.content}}>{}</span>
+                                </div>
                         </div>
                     </div>
                 )
@@ -202,8 +203,9 @@ class TimelineItem extends React.PureComponent{
                                 <span className="type">{this.typeMap[this.props.type]}</span>
                                 <span className="topic">{this.props.content.title}</span>
                             </div>
-        
-                            <div className="content" dangerouslySetInnerHTML={{__html: this.props.content.content}}>{}</div>
+                            <div className="BraftEditor-container">
+                                    <span className="content public-DraftEditor-content BraftEditor-content" dangerouslySetInnerHTML={{__html: this.props.content.content}}>{}</span>
+                            </div>
                         </div>
                     </div>
                 )

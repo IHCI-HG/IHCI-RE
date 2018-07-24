@@ -2,8 +2,8 @@
 git pull
 
 # 清除旧代码
-rm -rf /public 
-rm -rf /dest
+rm -rf public 
+rm -rf dest
 
 # 编译服务器代码 
 gulp
