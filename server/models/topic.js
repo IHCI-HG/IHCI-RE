@@ -11,7 +11,8 @@ const topicSchema = new mongoose.Schema({
         headImg: String,
         name: String,
         phone: String,
-        mail: String
+        mail: String,
+        _id:mongoose.Schema.Types.ObjectId
     },
     team: String, // team的_id
     discussList: [
@@ -21,7 +22,8 @@ const topicSchema = new mongoose.Schema({
                 headImg: String,
                 name: String,
                 phone: String,
-                mail: String
+                mail: String,
+                _id:mongoose.Schema.Types.ObjectId
             },
             teamId: String,
             topicId: String,
@@ -53,8 +55,8 @@ topicSchema.statics = {
     findByTopicId: function(topicId) {
         return this.findById(topicId)
     },
-    findByTopicCreatorName: async function(creatorName){
-        return this.find({'creator.name': creatorName})
+    findByTopicCreatorId: async function(creatorId){
+        return this.find({'creator._id': creatorId})
     },
     addDiscuss: async function(topicId, discussObj) {
         return this.update(
