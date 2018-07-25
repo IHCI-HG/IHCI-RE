@@ -10,7 +10,8 @@ const discussSchema = new mongoose.Schema({
         headImg: String,
         name: String,
         phone: String,
-        mail: String
+        mail: String,
+        _id:mongoose.Schema.Types.ObjectId
     },
     fileList: [mongoose.Schema.Types.Mixed],
     teamId: String,
@@ -30,8 +31,8 @@ discussSchema.statics = {
         return result;
     },
 
-    findByDiscussCreatorName: async function(creatorName){
-        return this.find({'creator.name': creatorName})
+    findDiscussByCreatorId: async function(creatorId){
+        return this.find({'creator._id': creatorId})
     },
 
     updateDiscuss: async function (discussId, discussObj) {

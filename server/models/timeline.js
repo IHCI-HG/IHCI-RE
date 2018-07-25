@@ -11,7 +11,8 @@ const timelineSchema = new mongoose.Schema({
         headImg: String,
         name: String,
         phone: String,
-        mail: String
+        mail: String,
+        _id:mongoose.Schema.Types.ObjectId
     },
     type: String,
     tarId: String,
@@ -87,8 +88,8 @@ timelineSchema.statics = {
         return this.find({teamId: teamId}).sort({create_time: -1}).exec()
     },
 
-    findByCreatorName: async function(creatorName){
-        return this.find({'creator.name': creatorName})
+    findByCreatorId: async function(creatorId){
+        return this.find({'creator._id': creatorId})
     },
 
     updateTimeline: async function(id, obj) {

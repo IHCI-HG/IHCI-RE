@@ -107,18 +107,19 @@ export default class TeamDetail extends React.Component {
         if (resp.data.taskList == undefined) {
             resp.data.taskList = []
         }
-        console.log(resp.data)
         resp.data.taskList.map((item) => {
-            let todoItem = {}
-            todoItem.id = item.id
-            todoItem.name = item.title
-            todoItem.hasDone = item.state
-            todoItem.ddl = item.deadline
-            todoItem.completeTime = item.completed_time
-            todoItem.assignee = {
-                id: item.header.headerId
+            if(item.state===false){
+                let todoItem = {}
+                todoItem.id = item.id
+                todoItem.name = item.title
+                todoItem.hasDone = item.state
+                todoItem.ddl = item.deadline
+                todoItem.completeTime = item.completed_time
+                todoItem.assignee = {
+                    id: item.header.headerId
+                }
+                unclassifiedList.push(todoItem)
             }
-            unclassifiedList.push(todoItem)
         })
         unclassified.list = unclassifiedList
         if (resp.data.tasklistList == undefined) {
@@ -130,16 +131,18 @@ export default class TeamDetail extends React.Component {
             todoListItem.name = item.name
             todoListItem.list = []
             item.taskList.map((mapTodoItem) => {
-                let todoItem = {}
-                todoItem.id = mapTodoItem.taskId
-                todoItem.name = mapTodoItem.title
-                todoItem.completeTime = mapTodoItem.completed_time
-                todoItem.hasDone = mapTodoItem.state
-                todoItem.ddl = mapTodoItem.deadline
-                todoItem.assignee = {
-                    id: mapTodoItem.header.headerId
+                if(mapTodoItem.state === false){
+                    let todoItem = {}
+                    todoItem.id = mapTodoItem.taskId
+                    todoItem.name = mapTodoItem.title
+                    todoItem.completeTime = mapTodoItem.completed_time
+                    todoItem.hasDone = mapTodoItem.state
+                    todoItem.ddl = mapTodoItem.deadline
+                    todoItem.assignee = {
+                        id: mapTodoItem.header.headerId
+                    }
+                    todoListItem.list.push(todoItem)
                 }
-                todoListItem.list.push(todoItem)
             })
             todoList.push(todoListItem)
         })
@@ -147,7 +150,6 @@ export default class TeamDetail extends React.Component {
         if (resp.state.code === 0) {
             this.setState({ todoListArr })
         }
-        console.log(this.state.todoListArr)
     }
 
     initTeamInfo = async () => {
@@ -1005,6 +1007,8 @@ export default class TeamDetail extends React.Component {
                             )
                         })
                         }
+                            <div className="completed" onClick={()=>{location.href = '/completed/' + this.teamId}}>已完成任务</div>
+                        </div>
                         <input className='file-input-hidden' type="file" ref={(fileInput) => this.fileInput = fileInput} onChange={this.uploadFileHandle}></input>
                         <div className="head">
                             <span className='head-title'>文件</span>
@@ -1086,7 +1090,6 @@ export default class TeamDetail extends React.Component {
                             }
                             <div className='show-all-file' onClick={() => { location.href = '/files/' + this.teamId }}> 查看全部文件 </div>
 
-                        </div>
                     </div>
 
                 </div>

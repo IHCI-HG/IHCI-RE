@@ -116,8 +116,6 @@ export default class TeamAdmin extends React.Component{
             return 
         }
 
-        console.log("ssssssssssss");
-
         const memberResult = await api('/api/team/kikMember', {
             method: 'POST',
             body: { memberId: id, teamId: this.teamId }

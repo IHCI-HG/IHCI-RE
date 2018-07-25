@@ -163,6 +163,7 @@ module.exports = [
     ['GET', '/todo/:id', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/team-edit/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/team-admin/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
+    ['GET', '/team-management',clientParams(), routerAuthJudge, pageHandle()],
     ['GET', '/team-join/:teamId', clientParams(), joinTeam, pageHandle() ],
 
     ['GET', '/team-create', clientParams(), routerAuthJudge, pageHandle() ],
@@ -172,5 +173,6 @@ module.exports = [
     ['GET', '/timeline', clientParams(),    routerAuthJudge, pageHandle() ],
     ['GET', '/member', clientParams(),   routerAuthJudge, pageHandle() ],
     ['GET', '/search', clientParams(),   routerAuthJudge, pageHandle() ],
+    ['GET', '/completed/:id', clientParams(),   routerAuthJudge, pageHandle() ],
     ['GET', '/inform', clientParams(),   routerAuthJudge, personSeting, pageHandle() ],
 ];

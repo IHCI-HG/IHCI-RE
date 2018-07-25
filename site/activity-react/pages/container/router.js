@@ -14,7 +14,7 @@
 // import SearchResult from './search'
 // import Inform from './inform'
 // import Team from './team'
-
+// import TeamManagement from './team-management'
 
 // const routerConf = [
 //     { path: 'search', component: SearchResult },
@@ -112,18 +112,35 @@ const routerConf = [{
                 callback(null, require('./todo').default);
             });
         }
-    }, {
+    }, 
+    {
         path: 'person',
         getComponent: function (nextState, callback) {
             require.ensure([], (require) => {
                 callback(null, require('./person').default);
             });
         }
-    }, {
+    }, 
+    {
+        path: 'team-management',
+        getComponent: function (nextState, callback) {
+            require.ensure([], (require) => {
+                callback(null, require('./team-management').default);
+            });
+        }
+    }, 
+    {
         path: 'sign',
         getComponent: function (nextState, callback) {
             require.ensure([], (require) => {
                 callback(null, require('./sign').default);
+            });
+        }
+    }, {
+        path: 'completed/:id',
+        getComponent: function (nextState, callback) {
+            require.ensure([], (require) => {
+                callback(null, require('./completed').default);
             });
         }
     }

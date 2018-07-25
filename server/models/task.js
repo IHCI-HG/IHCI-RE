@@ -7,7 +7,13 @@ const taskSchema = new Schema({
     create_time: { type: String, default: Date.now },
     title: String,
     content: String,
-    creator: { type: mongoose.Schema.Types.Mixed, require: true },
+    creator:  {
+        headImg: String,
+        name: String,
+        phone: String,
+        mail: String,
+        _id:mongoose.Schema.Types.ObjectId
+    },
     fileList: [mongoose.Schema.Types.Mixed],
     teamId: String,
     tasklistId: String,
@@ -15,6 +21,13 @@ const taskSchema = new Schema({
     completed_time: { type: Date },
     header: String,
     state: Boolean,
+    completer: {
+        headImg: String,
+        name: String,
+        phone: String,
+        mail: String,
+        _id:mongoose.Schema.Types.ObjectId
+    },
     checkitemList: [{
         create_time: { type: String, default: Date.now },
         content: {type: mongoose.Schema.Types.Mixed},
