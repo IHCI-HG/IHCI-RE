@@ -196,7 +196,7 @@ export default class Timeline extends React.Component{
                                                                     item.list.map((todo)=>{
                                                                         if(todo.completeDate===timeKey){
                                                                             return(
-                                                                                <div key={"task "+todo.id} className="completed-item">
+                                                                                <div key={"task "+todo.id} className="completed-item" onClick={()=>{location.href = '/todo/' + todo.id}}>
                                                                                     <i className="iconfont icon-right"></i>{todo.name}
                                                                                     <div className="completer">{todo.completer.name}</div>
                                                                                 </div>

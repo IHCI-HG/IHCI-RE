@@ -108,16 +108,18 @@ export default class TeamDetail extends React.Component {
             resp.data.taskList = []
         }
         resp.data.taskList.map((item) => {
-            let todoItem = {}
-            todoItem.id = item.id
-            todoItem.name = item.title
-            todoItem.hasDone = item.state
-            todoItem.ddl = item.deadline
-            todoItem.completeTime = item.completed_time
-            todoItem.assignee = {
-                id: item.header.headerId
+            if(item.state===false){
+                let todoItem = {}
+                todoItem.id = item.id
+                todoItem.name = item.title
+                todoItem.hasDone = item.state
+                todoItem.ddl = item.deadline
+                todoItem.completeTime = item.completed_time
+                todoItem.assignee = {
+                    id: item.header.headerId
+                }
+                unclassifiedList.push(todoItem)
             }
-            unclassifiedList.push(todoItem)
         })
         unclassified.list = unclassifiedList
         if (resp.data.tasklistList == undefined) {
@@ -129,16 +131,18 @@ export default class TeamDetail extends React.Component {
             todoListItem.name = item.name
             todoListItem.list = []
             item.taskList.map((mapTodoItem) => {
-                let todoItem = {}
-                todoItem.id = mapTodoItem.taskId
-                todoItem.name = mapTodoItem.title
-                todoItem.completeTime = mapTodoItem.completed_time
-                todoItem.hasDone = mapTodoItem.state
-                todoItem.ddl = mapTodoItem.deadline
-                todoItem.assignee = {
-                    id: mapTodoItem.header.headerId
+                if(mapTodoItem.state === false){
+                    let todoItem = {}
+                    todoItem.id = mapTodoItem.taskId
+                    todoItem.name = mapTodoItem.title
+                    todoItem.completeTime = mapTodoItem.completed_time
+                    todoItem.hasDone = mapTodoItem.state
+                    todoItem.ddl = mapTodoItem.deadline
+                    todoItem.assignee = {
+                        id: mapTodoItem.header.headerId
+                    }
+                    todoListItem.list.push(todoItem)
                 }
-                todoListItem.list.push(todoItem)
             })
             todoList.push(todoListItem)
         })
