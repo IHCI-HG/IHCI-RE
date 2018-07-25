@@ -36,6 +36,7 @@ export default class Timeline extends React.Component{
                 todoItem.name = item.title
                 todoItem.hasDone = item.state
                 todoItem.ddl = item.deadline
+                todoItem.completer = item.completer
                 todoItem.completeTime = item.completed_time
                 todoItem.completeTimeStamp = new Date(todoItem.completeTime).getTime()
                 todoItem.completeDate = timeParse(todoItem.completeTimeStamp)
@@ -60,6 +61,7 @@ export default class Timeline extends React.Component{
                     let todoItem = {}
                     todoItem.id = mapTodoItem.taskId
                     todoItem.name = mapTodoItem.title
+                    todoItem.completer = mapTodoItem.completer
                     todoItem.completeTime = mapTodoItem.completed_time
                     todoItem.completeTimeStamp = new Date(todoItem.completeTime).getTime()
                     todoItem.completeDate = timeParse(todoItem.completeTimeStamp)
@@ -76,9 +78,10 @@ export default class Timeline extends React.Component{
         todoListArr = [unclassified, ...todoList]
         if (resp.state.code === 0) {
             this.setState({ todoListArr },() => {
-                this.appendToShowList(this.state.todoListArr)
+                this.appendToShowList(this.state.todoListArr,()=>{console.log(this.state.todoListArr)})
             })
         }
+        console.log(this.state.todoListArr)
     }
 
     initTeamInfo = async () => {
@@ -195,6 +198,7 @@ export default class Timeline extends React.Component{
                                                                             return(
                                                                                 <div key={"task "+todo.id} className="completed-item">
                                                                                     <i className="iconfont icon-right"></i>{todo.name}
+                                                                                    <div className="completer">{todo.completer.name}</div>
                                                                                 </div>
                                                                             )
                                                                         }

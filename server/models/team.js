@@ -109,7 +109,8 @@ teamSchema.statics = {
                     "taskList.$.content": editTask.content,
                     "taskList.$.deadline": editTask.deadline,
                     "taskList.$.completed_time": editTask.completed_time,
-                    "taskList.$.state": editTask.state
+                    "taskList.$.state": editTask.state,
+                    "taskList.$.completer": editTask.completer
                 }
             }
         ).exec()

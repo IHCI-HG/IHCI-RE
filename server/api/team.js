@@ -518,6 +518,7 @@ const taskList = async (req, res, nect) => {
                 deadline: taskListDdl,
                 state: taskListTemp[i].state,
                 completed_time: taskListCom,
+                completer:taskListTemp[i].completer,
                 header: {
                     headerId: taskListTemp[i].header,
                     headername: headername
@@ -559,6 +560,7 @@ const taskList = async (req, res, nect) => {
                     content: result.taskList[j].content,
                     deadline: taskListDdl,
                     state: result.taskList[j].state,
+                    completer: result.taskList[j].completer,
                     completed_time: taskListCom,
                     header: {
                         headerId: result.taskList[j].header,
