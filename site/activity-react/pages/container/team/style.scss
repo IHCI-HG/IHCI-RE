@@ -59,4 +59,41 @@
 
         }
     }
+    .team-list-item {
+        // height: 140px;
+        margin-left: 20px;
+        width: 50%;
+        padding: 10px 10px;
+        border-radius: 2px;
+        border-bottom: 1px solid #999;
+        display: inline-flex;
+        justify-content: space-between;
+        &:hover{
+            background-color: #fff
+        }
+        .left {
+            cursor: pointer;
+            display: inline-flex;
+            width:80%;
+            .bg-img {
+                height: 30px;
+                width: 53px;
+                display: inline-flex;
+                background-color: #888;
+            }
+            .name {
+                color: #999;
+                font-size: 20px;
+                line-height: 1.3;
+                display: inline-flex;
+                margin-left: 5px;
+                padding-top: 3px;
+            }
+        }
+        .right {
+            display: inline-flex;
+            line-height: 1.4;
+
+        }
+    }
 }

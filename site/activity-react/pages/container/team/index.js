@@ -5,10 +5,26 @@ import api from '../../../utils/api';
 import Page from '../../../components/page';
 import { locationTo } from '../../../utils/util';
 
-class TeamItem extends React.PureComponent{
+class TeamGalleryItem extends React.PureComponent{
     render() {
         return <div className="team-item">
 
+            <div className="left" onClick={() => {this.props.locationTo('/team/' + this.props._id)}}>
+                <img className="bg-img" src={this.props.teamImg}></img>
+                <div className="img-con"></div>
+                <div className="name">{this.props.name}</div>
+            </div>
+            <div className="right">
+                <div className={this.props.marked ? "iconfont icon-collection_fill act" : "iconfont icon-collection"} onClick={() => {this.props.starHandle(this.props._id)}}></div>
+                {this.props.managed && <div className="iconfont icon-setup" onClick={() => {this.props.locationTo('/team-admin/' + this.props._id)}}></div>}
+            </div>
+        </div>
+    }
+}
+
+class TeamListItem extends React.PureComponent{
+    render() {
+        return <div className="team-list-item">
             <div className="left" onClick={() => {this.props.locationTo('/team/' + this.props._id)}}>
                 <img className="bg-img" src={this.props.teamImg}></img>
                 <div className="img-con"></div>
@@ -109,7 +125,7 @@ export default class Team extends React.Component{
                     {   
                         this.state.teamList.map((item) => {
                             if(item.marked == true) {
-                                return <TeamItem key={'mark-team' + item._id} {...item} locationTo={this.locationTo} starHandle={this.starHandle} />
+                                return <TeamGalleryItem key={'mark-team' + item._id} {...item} locationTo={this.locationTo} starHandle={this.starHandle} />
                             }
                         })
                     }
@@ -120,7 +136,7 @@ export default class Team extends React.Component{
                     {   
                         this.state.teamList.map((item) => {
                             if(item.managed == true) {
-                                return <TeamItem key={'manage-team' + item._id} {...item} locationTo={this.locationTo} starHandle={this.starHandle} />
+                                return <TeamListItem key={'manage-team' + item._id} {...item} locationTo={this.locationTo} starHandle={this.starHandle} />
                             }
                         })
                     }
@@ -130,7 +146,7 @@ export default class Team extends React.Component{
                 <div className="team-list">
                     {   
                         this.state.teamList.map((item) => {
-                            return <TeamItem key={'join-team' + item._id} {...item} locationTo={this.locationTo} starHandle={this.starHandle}  />
+                            return <TeamListItem key={'join-team' + item._id} {...item} locationTo={this.locationTo} starHandle={this.starHandle}  />
                         })
                     }
                 </div>
