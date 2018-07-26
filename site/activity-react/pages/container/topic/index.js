@@ -442,7 +442,8 @@ export default class Topic extends React.Component{
                                         content={this.state.topicContentInput}
                                         deleteFile={this.deleteFile.bind(this)}
                                         attachments={this.state.topicAttachments}></Editor>
-
+                                <div className="infrom">请选择要通知的人：</div>
+                                <MemberChosenList choseHandle={this.memberChoseHandle} memberList={this.state.memberList}/>
                                 <div className="button-warp">
                                     <div className="save-btn" onClick={this.topicChangeSaveHandle}>保存</div>
                                     <div className="cancel-btn" onClick={() => {this.setState({topicObj: {...this.state.topicObj, editStatus: false}})}}>取消</div>
@@ -497,6 +498,7 @@ export default class Topic extends React.Component{
                                     allowEdit={this.props.personInfo._id == item.creator._id} {...item} 
                                     saveEditHandle = {this.saveDiscussEditHandle}
                                     downloadHandle = {this.downloadHandle}
+                                    memberList = {this.state.memberList}
                                 />
                             )
                         })

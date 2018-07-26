@@ -2,6 +2,7 @@ import * as React from 'react';
 import './style.scss'
 import Editor from "../editor"
 import fileUploader from '../../utils/file-uploader'
+import MemberChosenList from '../member-chose-list'
 import { timeBefore, createMarkup } from '../../utils/util'
 
 
@@ -79,6 +80,8 @@ class TopicDiscussItem extends React.Component {
                             deleteFile={this.deleteDiscussFile.bind(this)}
                             attachments={this.state.discussAttachments}>
                         </Editor>
+                        <div className="infrom">请选择要通知的人：</div>
+                        <MemberChosenList choseHandle={this.memberChoseHandle} memberList={this.props.memberList}/>
                         <div className="button-warp">
                             <div className="save-btn" 
                                 onClick={() => { 
