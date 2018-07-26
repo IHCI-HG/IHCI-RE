@@ -1,9 +1,9 @@
 .team-page {
-    
+    padding: 0.4rem 0;
     .carete {
         cursor: pointer;
-        right: 30px;
-        top: 36px;
+        right: 40px;
+        top: 50px;
         position: absolute;
         display: flex;
         align-items: center;
@@ -11,6 +11,9 @@
         font-size: 22px;
         color: #666;
         font-weight: bold;
+    }
+    .main{
+        padding: 0.4rem 0.4rem;
     }
     .act {
         color: red;
@@ -29,32 +32,39 @@
         flex-wrap: wrap;
     }
     .team-item {
-        // height: 140px;
-        width: 220px;
-        background-color: #fff;
+        height: 160px;
+        width: 250px;
+        // background-color: #eee;
         margin: 20px 20px;
-        border-radius: 2px;
+        border-radius: 10px;
 
         display: flex;
         justify-content: space-between;
-
-        padding: 20px;
-
+        text-align: center;
+        padding: 40px 40px 20px 40px;
+        &:hover{
+            background-color: #eee;
+        }
         .left {
+            width:100%;
             cursor: pointer;
             .bg-img {
-                height: 90px;
-                width: 160px;
+                height: 120px;
+                width: 190px;
                 background-color: #888;
             }
             .name {
                 color: #999;
-                font-size: 20px;
-                margin-top: 20px;
+                font-size: 25px;
+                margin-top: 10px;
                 line-height: 1.3;
             }
         }
         .right {
+            position: relative;
+            right:2%;
+            top:-20%;
+            width:0;
             line-height: 1.4;
 
         }
@@ -62,14 +72,15 @@
     .team-list-item {
         // height: 140px;
         margin-left: 20px;
-        width: 50%;
+        width: 100%;
+        background-color: #fff;
         padding: 10px 10px;
         border-radius: 2px;
-        border-bottom: 1px solid #999;
+        border-top: 1px solid #999;
         display: inline-flex;
         justify-content: space-between;
         &:hover{
-            background-color: #fff
+            background-color: #eee
         }
         .left {
             cursor: pointer;
