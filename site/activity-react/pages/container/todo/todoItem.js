@@ -71,6 +71,7 @@ class TodoItem extends React.Component {
             !shallowEqualIgnoreFun(this.state, nextState)
         );
     }
+    
 
     render() {
         const _props = this.props
@@ -102,7 +103,10 @@ class TodoItem extends React.Component {
         const componentClass = this.caculateStyle()
 
         return (
-            <div className={componentClass}>
+            <div className={componentClass}
+            data-id={this.props.dataId}
+            data-item={this.props.dataItem}
+            draggable='true'>
                 <div className="actions-wrap">
                     <div className="actions">
                         <i className="icon iconfont"
@@ -125,7 +129,10 @@ class TodoItem extends React.Component {
                      onClick={_props.handleTodoCheck.bind(this, _props.hasDone)}>
                     <i className="icon iconfont checked-icon">&#xe750;</i>
                 </div>
-                <div className="todo-wrap">
+                <div className="todo-wrap"
+                data-id={this.props.dataId}
+                data-item={this.props.dataItem}
+                draggable='true'>
                     <span className="name"
                         onClick={() => {
                             if (_props.detail === 'detail' || _props.type === 'check')
@@ -154,7 +161,9 @@ class TodoItem extends React.Component {
                             date={_props.ddl}
                             memberList={_props.memberList}
                             handleDateChange={_props.handleDateChange}
-                            handleAssigneeChange={_props.handleAssigneeChange}>
+                            handleAssigneeChange={_props.handleAssigneeChange}
+                            dataId={this.props.dataId}
+                            dataItem={this.props.dataItem}>
                         </ItemLabel>
                     }
                     {   _props.detail === 'detail' &&
