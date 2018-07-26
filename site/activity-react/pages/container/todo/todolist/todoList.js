@@ -34,7 +34,7 @@ class TodoList extends React.Component {
         this.setState({
             doneList:doneList,
             todoList:todoList
-        })
+        },)
 
     }
     setMode(mode) {
@@ -46,6 +46,11 @@ class TodoList extends React.Component {
         this.setMode('read')
         const resp = await this.props.handleTodoListModify(params)
         return resp
+    }
+
+    handleSaveList = (params) =>{
+        let todoList = this.state.todoList
+        todoList.push(params)
     }
 
     handleClose = () => {
@@ -93,7 +98,6 @@ class TodoList extends React.Component {
         const listType = _props.listType
         // console.log('todolist渲染', _props.id)
         // console.log('list', _props.list)
-
         return (
             <div className="todolist">
                 {
@@ -161,6 +165,7 @@ class TodoList extends React.Component {
                                 confirmLabel="添加任务"
                                 closeAfterConfirm={false}
                                 handleConfirm={_props.handleTodoCreate}
+                                handleSaveList={this.handleSaveList}
                                 handleClose={(() => {this.setState({showCreateTodo: false})}).bind(this)}>
                             </NewTodo>
                             :<div className="new-todo"
@@ -180,6 +185,7 @@ class TodoList extends React.Component {
                                 confirmLabel="添加任务"
                                 closeAfterConfirm={false}
                                 handleConfirm={_props.handleTodoCreate}
+                                handleSaveList={this.handleSaveList}
                                 handleClose={_props.handlecloseEditTodo}>
                             </NewTodo>
                     )
