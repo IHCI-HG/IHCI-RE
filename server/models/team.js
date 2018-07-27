@@ -181,7 +181,7 @@ teamSchema.statics = {
                 $position:index} } }
         ).exec()
     },
-    delNonSence: async function (teamId, taskId) {
+    delNonSence: async function (teamId) {
         return this.update(
             { _id: teamId },
             {

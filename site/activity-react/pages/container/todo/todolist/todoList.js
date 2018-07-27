@@ -76,7 +76,6 @@ class TodoList extends React.Component {
       dragEnd(todo,e) {
         this.dragged.style.display = 'block';
         var data = this.state.todoList;
-        
         var from = Number(this.dragged.dataset.id);
         var to = Number(this.over.dataset.id);
         data.splice(to, 0, data.splice(from, 1)[0]);
@@ -93,6 +92,9 @@ class TodoList extends React.Component {
       dragOver(e) {
         e.preventDefault();
         this.over = e.target;
+      }
+      eventStopPropagation(e){
+          e.stopPropagation()
       }
 
     render() {
@@ -114,9 +116,10 @@ class TodoList extends React.Component {
                         : <div>
                             <h4 className="todolist-name"
                             key={this.props.index}
-                            data-id={this.props.index}
+                            data-listid={this.props.index}
                             draggable='true'
-                            data-item={this.props}>
+                            data-listitem={this.props}
+                            onClick={this.eventStopPropagation.bind(this)}>
                                 <div className="name-actions">
                                     <i className="icon iconfont"
                                        onClick={_props.handleTodoListDelete}>&#xe70b;</i>

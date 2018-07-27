@@ -83,7 +83,6 @@ class EditTodo extends React.Component {
         params.assigneeId = this.state.assigneeId
         params.date = this.state.date
         // 调用父组件方法，把提交参数传出去
-        this.props.handleSaveList(params)
         const resp = await this.props.handleConfirm(params);
         if (resp.state.code === 0) {
             if (this.refs.name)

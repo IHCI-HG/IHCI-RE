@@ -68,7 +68,25 @@ tasklistSchema.statics = {
             }
         ).exec()
     },
-
+    changeTaskIndex: async function (tasklistId, index, task) {
+        return this.update(
+            {_id: tasklistId,},
+            { $push: 
+                { taskList: {
+                $each: [task,""] ,
+                $position:index} } }
+        ).exec()
+    },
+    delNonSence: async function (tasklistId) {
+        return this.update(
+            { _id: tasklistId },
+            {
+                $pull: {
+                    taskList: ""
+                }
+            }
+        ).exec()
+    },
     // updateTask: async function (tasklistId, taskId, editTask) {
     //     return this.update(
     //         { _id: tasklistId, "taskList._id": mongoose.Types.ObjectId(taskId) },

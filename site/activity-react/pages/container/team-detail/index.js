@@ -878,9 +878,12 @@ export default class TeamDetail extends React.Component {
         
         console.log(this.dragged)
         console.log(this.over)
-        var from = Number(this.dragged.dataset.id);
-        var to = Number(this.over.dataset.id);
+        var from = Number(this.dragged.dataset.listid);
+        var to = Number(this.over.dataset.listid);
         console.log(from+","+to)
+        if(!to){
+            return
+        }
         data.splice(to, 0, data.splice(from, 1)[0]);
         data = data.map((doc, index)=> {
           doc.newIndex = index + 1;
@@ -1035,11 +1038,12 @@ export default class TeamDetail extends React.Component {
                             return (
                                 <div 
                                 key={index}
-                                data-id={index}
+                                data-listid={index}
                                 draggable='true'
-                                data-item={todoList}
+                                data-listitem={todoList}
                                 onDragStart={this.dragStart.bind(this)}
-                                onDragEnd={this.dragEnd.bind(this)}>
+                                onDragEnd={this.dragEnd.bind(this)}
+                                >
                                 <TodoList
                                     key={todoList.id}
                                     {...todoList}
@@ -1054,8 +1058,9 @@ export default class TeamDetail extends React.Component {
                                     handleTodoDelete={this.handleTodoDelete.bind(this, index, todoList.id)}
                                     handleTodoListDelete={this.handleTodoListDelete.bind(this, index, todoList.id)}
                                     handleTodoListModify={this.handleTodoListModify.bind(this, index, todoList.id)}
+                                    changeTodoIndex = {this.changeTodoIndex.bind(this)}
                                 ></TodoList>
-                                </div>
+                                // </div>
                             )
                         })
                         }
