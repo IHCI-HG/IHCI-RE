@@ -126,7 +126,10 @@ class TodoItem extends React.Component {
                     </div>
                 </div>
                 <div className={`${_props.hasDone ? 'check-box-checked' : 'check-box'}`}
-                     onClick={_props.handleTodoCheck.bind(this, _props.hasDone)}>
+                     onClick={_props.handleTodoCheck.bind(this, _props.hasDone)}
+                     data-id={this.props.dataId}
+                     data-item={this.props.dataItem}
+                     draggable='true'>
                     <i className="icon iconfont checked-icon">&#xe750;</i>
                 </div>
                 <div className="todo-wrap"
@@ -138,7 +141,10 @@ class TodoItem extends React.Component {
                             if (_props.detail === 'detail' || _props.type === 'check')
                                 return
                             location.href = `/todo/${this.props.id}`
-                    }}>
+                    }}
+                    data-id={this.props.dataId}
+                    data-item={this.props.dataItem}
+                    draggable='true'>
                         {_props.name}
                     </span>
                     {/*如果存在item计数，优先使用*/}
