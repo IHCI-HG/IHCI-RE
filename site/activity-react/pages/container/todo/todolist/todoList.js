@@ -23,6 +23,11 @@ class TodoList extends React.Component {
     componentDidMount=()=>{
         this.setList()
     }
+    componentWillReceiveProps(nextProps) {
+        this.setState({todoList:nextProps.list.filter((todo) => {
+            return todo.hasDone === false
+        })})
+    }
     setList(){
         const _props = this.props
         const doneList = _props.list.filter((todo) => {
@@ -50,7 +55,6 @@ class TodoList extends React.Component {
 
     handleSaveList = (params) =>{
         let todoList = this.state.todoList
-        todoList.push(params)
     }
 
     handleClose = () => {
@@ -69,16 +73,14 @@ class TodoList extends React.Component {
        dragStart(e) {
         this.dragged = e.currentTarget;
       }
-      dragEnd(e) {
+      dragEnd(todo,e) {
         this.dragged.style.display = 'block';
-    
         var data = this.state.todoList;
         
         var from = Number(this.dragged.dataset.id);
         var to = Number(this.over.dataset.id);
         data.splice(to, 0, data.splice(from, 1)[0]);
-    
-    
+        this.props.changeTodoIndex(to,todo.id)
         //set newIndex to judge direction of drag and drop
         data = data.map((doc, index)=> {
           doc.newIndex = index + 1;
@@ -136,7 +138,7 @@ class TodoList extends React.Component {
                             data-item={todo}
                             draggable='true'
                             onDragStart={this.dragStart.bind(this)}
-                            onDragEnd={this.dragEnd.bind(this)}>
+                            onDragEnd={this.dragEnd.bind(this,todo)}>
                             <TodoItem
                                 {...todo}
                                 key={todo.id}

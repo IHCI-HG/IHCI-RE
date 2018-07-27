@@ -583,6 +583,45 @@ const changeTaskDir = async (req, res, next) => {
     }
 }
 
+const changeTaskIndex = async (req, res, next) => {
+    const taskId = req.body.taskId;
+    const teamId = req.body.teamId;
+    const index = req.body.index;
+    console.log("222222",req.body)
+    if (!taskId || !teamId ||!index) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: "参数不全" },
+            data: {}
+        });
+        return
+    }
+
+    try {
+        const taskObj = await taskDB.findByTaskId(taskId)
+
+        if (!taskObj) {
+            resProcessor.jsonp(req, res, {
+                state: { code: 1, msg: "任务不存在" },
+                data: {}
+            })
+        }
+        await teamDB.delTask(teamId, taskId);
+        // console.log("11111111111111",result1)
+        await teamDB.changeTaskIndex(teamId, index ,taskObj);
+        await teamDB.delNonSence(teamId);
+        resProcessor.jsonp(req, res, {
+            state: { code: 0, msg: '请求成功' },
+            data: task
+        })
+
+    } catch (error) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: error },
+            data: {}
+        });
+    }
+}
+
 const taskInfo = async (req, res, next) => {
     const taskId = req.query.taskId
     const userId = req.rSession.userId
@@ -1353,6 +1392,7 @@ module.exports = [
     ['POST', '/api/task/delTask', apiAuth, delTask],
     ['POST', '/api/task/edit', apiAuth, editTask],
     ['POST', '/api/task/changeDir', apiAuth, changeTaskDir],
+    ['POST', '/api/task/changeIndex', apiAuth, changeTaskIndex],
     ['GET', '/api/task/taskInfo', apiAuth, taskInfo],
     ['POST', '/api/task/addCheckitem', apiAuth, addCheckitem],
     ['POST', '/api/task/dropCheckitem', apiAuth, dropCheckitem],

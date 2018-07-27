@@ -366,7 +366,7 @@ export default class TeamDetail extends React.Component {
                     todolist.list = []
                 }
                 todolist.list = [...todolist.list, todo]
-                this.setState({ todoListArr })
+                this.setState({ todoListArr})
             }
             return result
         }
@@ -543,6 +543,21 @@ export default class TeamDetail extends React.Component {
                     })
                 }
             }
+        }
+    }
+
+    changeTodoIndex = async (index,todoId) => {
+        const resp = await api('/api/task/changeIndex', {
+            method: "POST",
+            body: {
+                taskId: todoId,
+                index:index,
+                teamId: this.teamId,
+            }
+        })
+        console.log(resp)
+        if (resp.state.code === 0) {
+
         }
     }
 
@@ -973,6 +988,7 @@ export default class TeamDetail extends React.Component {
                                 handleTodoDelete={this.handleTodoDelete.bind(this, 0, null)}
                                 handleTodoListDelete={this.handleTodoListDelete.bind(this, null, unclassified.id)}
                                 handleTodoListModify={this.handleTodoListModify.bind(this, null, unclassified.id)}
+                                changeTodoIndex = {this.changeTodoIndex.bind(this)}
                             ></TodoList>
                         }
 
