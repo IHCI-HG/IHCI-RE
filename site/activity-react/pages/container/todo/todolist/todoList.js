@@ -76,9 +76,6 @@ class TodoList extends React.Component {
       dragEnd(todo,e) {
         this.dragged.style.display = 'block';
         var data = this.state.todoList;
-        
-        console.log(this.dragged)
-        console.log(this.over)
         var from = Number(this.dragged.dataset.id);
         var to = Number(this.over.dataset.id);
         data.splice(to, 0, data.splice(from, 1)[0]);

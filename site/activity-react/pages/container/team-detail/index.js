@@ -1019,6 +1019,7 @@ export default class TeamDetail extends React.Component {
                                     handleTodoDelete={this.handleTodoDelete.bind(this, index, todoList.id)}
                                     handleTodoListDelete={this.handleTodoListDelete.bind(this, index, todoList.id)}
                                     handleTodoListModify={this.handleTodoListModify.bind(this, index, todoList.id)}
+                                    changeTodoIndex = {this.changeTodoIndex.bind(this)}
                                 ></TodoList>
                             )
                         })
