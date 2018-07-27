@@ -93,6 +93,9 @@ class TodoList extends React.Component {
         e.preventDefault();
         this.over = e.target;
       }
+      eventStopPropagation(e){
+          e.stopPropagation()
+      }
 
     render() {
         const _props = this.props
@@ -111,7 +114,12 @@ class TodoList extends React.Component {
                             handleClose={this.handleClose.bind(this)}>
                         </EditTodoList>
                         : <div>
-                            <h4 className="todolist-name">
+                            <h4 className="todolist-name"
+                            key={this.props.index}
+                            data-listid={this.props.index}
+                            draggable='true'
+                            data-listitem={this.props}
+                            onClick={this.eventStopPropagation.bind(this)}>
                                 <div className="name-actions">
                                     <i className="icon iconfont"
                                        onClick={_props.handleTodoListDelete}>&#xe70b;</i>
