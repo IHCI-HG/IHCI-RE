@@ -1060,7 +1060,7 @@ export default class TeamDetail extends React.Component {
                                     handleTodoListModify={this.handleTodoListModify.bind(this, index, todoList.id)}
                                     changeTodoIndex = {this.changeTodoIndex.bind(this)}
                                 ></TodoList>
-                                // </div>
+                                 </div>
                             )
                         })
                         }
