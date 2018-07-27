@@ -191,6 +191,25 @@ teamSchema.statics = {
             }
         ).exec()
     },
+    changeListIndex: async function (teamId, index, list) {
+        return this.update(
+            {_id: teamId,},
+            { $push: 
+                { tasklistList: {
+                $each: [list,""] ,
+                $position:index} } }
+        ).exec()
+    },
+    delListNonSence: async function (teamId) {
+        return this.update(
+            { _id: teamId },
+            {
+                $pull: {
+                    tasklistList: ""
+                }
+            }
+        ).exec()
+    },
 }
 
 mongoose.model('team', teamSchema);

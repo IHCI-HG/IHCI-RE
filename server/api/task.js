@@ -162,6 +162,50 @@ const delTasklist = async (req, res, next) => {
     }
 }
 
+const changeTaskListIndex = async (req, res, next) => {
+    const listId = req.body.listId;
+    const teamId = req.body.teamId;
+    const index = req.body.index;
+    if (!listId || !teamId ||!index) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: "参数不全" },
+            data: {}
+        });
+        return
+    }
+
+    try {
+        let team = await teamDB.findByTeamId(teamId)
+        if (!team) {
+            resProcessor.jsonp(req, res, {
+                state: { code: 1, msg: '团队不存在' },
+                data: {}
+            });
+            return
+        }
+        const teamObj = team.toObject()
+        list = teamObj.tasklistList.map((item)=>{
+            if(item._id === listId){
+                return item
+            }
+        })
+        await teamDB.delTasklist(teamId, listId);
+        await teamDB.changeListIndex(teamId, index, list);
+        await teamDB.delListNonSence(teamId);
+        
+        resProcessor.jsonp(req, res, {
+            state: { code: 0, msg: '请求成功' },
+            data: task
+        })
+
+    } catch (error) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: error },
+            data: {}
+        });
+    }
+}
+
 const findTasklistById = async (req, res, next) => {
     const userId = req.rSession.userId;
     const listId = req.query.listId;
@@ -1391,6 +1435,7 @@ const findDiscuss = async (req, res, next) => {
 module.exports = [
     ['POST', '/api/task/createTasklist', apiAuth, createTasklist],
     ['POST', '/api/task/updateTasklist', apiAuth, updateTasklist],
+    ['POST', '/api/task/changeListIndex', apiAuth, changeTaskListIndex],
     ['POST', '/api/task/delTasklist', apiAuth, delTasklist],
     ['GET', '/api/task/findTasklistById', apiAuth, findTasklistById],
     ['POST', '/api/task/create', apiAuth, createTask],
