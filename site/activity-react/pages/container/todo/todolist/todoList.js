@@ -77,8 +77,6 @@ class TodoList extends React.Component {
         this.dragged.style.display = 'block';
         var data = this.state.todoList;
         
-        console.log(this.dragged)
-        console.log(this.over)
         var from = Number(this.dragged.dataset.id);
         var to = Number(this.over.dataset.id);
         data.splice(to, 0, data.splice(from, 1)[0]);
@@ -114,7 +112,11 @@ class TodoList extends React.Component {
                             handleClose={this.handleClose.bind(this)}>
                         </EditTodoList>
                         : <div>
-                            <h4 className="todolist-name">
+                            <h4 className="todolist-name"
+                            key={this.props.index}
+                            data-id={this.props.index}
+                            draggable='true'
+                            data-item={this.props}>
                                 <div className="name-actions">
                                     <i className="icon iconfont"
                                        onClick={_props.handleTodoListDelete}>&#xe70b;</i>

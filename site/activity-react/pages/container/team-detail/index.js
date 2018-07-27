@@ -866,8 +866,34 @@ export default class TeamDetail extends React.Component {
         const location = {pathname:'/member', state:{teamId:this.state.teamInfo._id}}
         this.props.router.push(location)
     }
-
-
+    dragStart(e){
+        this.dragged = e.currentTarget;
+    }
+    dragStart(e) {
+        this.dragged = e.currentTarget;
+      }
+      dragEnd(todo,e) {
+        this.dragged.style.display = 'block';
+        var data = this.state.todoListArr;
+        
+        console.log(this.dragged)
+        console.log(this.over)
+        var from = Number(this.dragged.dataset.id);
+        var to = Number(this.over.dataset.id);
+        console.log(from+","+to)
+        data.splice(to, 0, data.splice(from, 1)[0]);
+        data = data.map((doc, index)=> {
+          doc.newIndex = index + 1;
+          return doc;
+        })
+    
+        this.setState({todoListArr: data});
+      }
+    
+      dragOver(e) {
+        e.preventDefault();
+        this.over = e.target;
+      }
     render() {
         let teamInfo = this.state.teamInfo
         const unclassified = this.state.todoListArr[0]
@@ -1001,14 +1027,23 @@ export default class TeamDetail extends React.Component {
                             </EditTodoList>
                         }
 
+                      <div onDragOver={this.dragOver.bind(this)}>
                         {this.state.todoListArr.map((todoList, index) => {
                             if (index === 0) {
                                 return
                             }
                             return (
+                                <div 
+                                key={index}
+                                data-id={index}
+                                draggable='true'
+                                data-item={todoList}
+                                onDragStart={this.dragStart.bind(this)}
+                                onDragEnd={this.dragEnd.bind(this)}>
                                 <TodoList
                                     key={todoList.id}
                                     {...todoList}
+                                    index={index}
                                     createInput="任务名"
                                     memberList={this.state.memberList}
                                     handleTodoCreate={this.handleTodoCreate.bind(this, index, todoList.id)}
@@ -1020,9 +1055,11 @@ export default class TeamDetail extends React.Component {
                                     handleTodoListDelete={this.handleTodoListDelete.bind(this, index, todoList.id)}
                                     handleTodoListModify={this.handleTodoListModify.bind(this, index, todoList.id)}
                                 ></TodoList>
+                                </div>
                             )
                         })
                         }
+                        </div>
                             <div className="completed" onClick={()=>{location.href = '/completed/' + this.teamId}}>已完成任务</div>
                         </div>
                         <input className='file-input-hidden' type="file" ref={(fileInput) => this.fileInput = fileInput} onChange={this.uploadFileHandle}></input>
