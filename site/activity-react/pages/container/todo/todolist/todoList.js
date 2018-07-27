@@ -85,7 +85,7 @@ class TodoList extends React.Component {
           doc.newIndex = index + 1;
           return doc;
         })
-    
+        //test
         this.setState({todoList: data});
       }
     
