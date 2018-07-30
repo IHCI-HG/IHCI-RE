@@ -166,14 +166,13 @@ const changeTaskListIndex = async (req, res, next) => {
     const listId = req.body.listId;
     const teamId = req.body.teamId;
     const index = req.body.index;
-    if (!listId || !teamId ||!index) {
+    if (!listId || !teamId ||!index.toString()) {
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: "参数不全" },
             data: {}
         });
         return
     }
-
     try {
         let team = await teamDB.findByTeamId(teamId)
         if (!team) {
@@ -184,9 +183,10 @@ const changeTaskListIndex = async (req, res, next) => {
             return
         }
         const teamObj = team.toObject()
-        list = teamObj.tasklistList.map((item)=>{
-            if(item._id === listId){
-                return item
+        let list = {}
+        teamObj.tasklistList.map((item)=>{
+            if(item._id.toString() === listId){
+                list = item
             }
         })
         await teamDB.delTasklist(teamId, listId);
@@ -631,7 +631,7 @@ const changeTaskIndex = async (req, res, next) => {
     const taskId = req.body.taskId;
     const teamId = req.body.teamId;
     const index = req.body.index;
-    if (!taskId || !teamId) {
+    if (!taskId || !teamId || !index.toString()) {
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: "参数不全" },
             data: {}

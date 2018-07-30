@@ -890,16 +890,21 @@ export default class TeamDetail extends React.Component {
             doc.newIndex = index + 1;
             return doc;
         })
-        // const resp = await api('/api/task/changeListIndex', {
-        //     method: "POST",
-        //     body: {
-        //         listId: todoList.id,
-        //         index: to,
-        //         teamId: this.teamId,
-        //     }
-        // })
-        // console.log(resp)
-        // this.initTodoListArr()
+        console.log({
+            listId: todoList.id,
+            index: to-1,
+            teamId: this.teamId,
+        })
+        const resp = await api('/api/task/changeListIndex', {
+            method: "POST",
+            body: {
+                listId: todoList.id,
+                index: to-1,
+                teamId: this.teamId,
+            }
+        })
+        console.log(resp)
+        this.initTodoListArr()
         this.setState({todoListArr: data});
     }
     

@@ -535,7 +535,6 @@ const taskList = async (req, res, nect) => {
                 continue;
             }
             const result = temp.toObject()
-            console.log(result)
             const task = []
             for (var j = 0; j < result.taskList.length; j++) {
                 var headername = ""
@@ -565,7 +564,7 @@ const taskList = async (req, res, nect) => {
                         headerId: result.taskList[j].header,
                         headername: headername
                     },
-                    fileList: result.taskList[i].fileList
+                    fileList: result.taskList[j].fileList
                 }
                 task.push(obj2)
             }
