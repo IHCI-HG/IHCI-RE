@@ -103,10 +103,7 @@ class TodoItem extends React.Component {
         const componentClass = this.caculateStyle()
 
         return (
-            <div className={componentClass}
-            data-id={this.props.dataId}
-            data-item={this.props.dataItem}
-            draggable='true'>
+            <div className={componentClass}>
                 <div className="actions-wrap">
                     <div className="actions">
                         <i className="icon iconfont"
@@ -126,25 +123,16 @@ class TodoItem extends React.Component {
                     </div>
                 </div>
                 <div className={`${_props.hasDone ? 'check-box-checked' : 'check-box'}`}
-                     onClick={_props.handleTodoCheck.bind(this, _props.hasDone)}
-                     data-id={this.props.dataId}
-                     data-item={this.props.dataItem}
-                     draggable='true'>
+                     onClick={_props.handleTodoCheck.bind(this, _props.hasDone)}>
                     <i className="icon iconfont checked-icon">&#xe750;</i>
                 </div>
-                <div className="todo-wrap"
-                data-id={this.props.dataId}
-                data-item={this.props.dataItem}
-                draggable='true'>
+                <div className="todo-wrap">
                     <span className="name"
                         onClick={() => {
                             if (_props.detail === 'detail' || _props.type === 'check')
                                 return
                             location.href = `/todo/${this.props.id}`
-                    }}
-                    data-id={this.props.dataId}
-                    data-item={this.props.dataItem}
-                    draggable='true'>
+                    }}>
                         {_props.name}
                     </span>
                     {/*如果存在item计数，优先使用*/}

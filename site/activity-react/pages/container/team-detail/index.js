@@ -3,14 +3,14 @@ import './style.scss'
 import api from '../../../utils/api';
 var ReactDOM = require('react-dom')
 import { sortByCreateTime, formatDate } from '../../../utils/util'
+import Task from "../../container/task"
 import Page from '../../../components/page'
 import Modal from '../../../components/modal'
 import MemberChosenList from '../../../components/member-chose-list'
 import Editor from '../../../components/editor'
-import EditTodoList from '../todo/todolist/editTodoList'
-import TodoList from '../todo/todolist/todoList'
 import fileUploader from '../../../utils/file-uploader'
 import TopicItem from '../../../components/topic-item'
+<<<<<<< HEAD
 import {create} from '../../../../../server/components/uuid/uuid'
  
 class TeamChoseItem extends React.PureComponent {
@@ -24,25 +24,14 @@ class TeamChoseItem extends React.PureComponent {
         )
     }
 }
+=======
 
-function getUpdateItem(arr, id) {
-    let item = null
-    let index = null
-    arr.forEach((innerItem, innerIndex) => {
-        if (innerItem.id === id) {
-            item = innerItem
-            index = innerIndex
-        }
-    })
-    return [item, index]
-}
+>>>>>>> 18aab7b9491725bc3481d148d7f5140c769bce14
+
 
 export default class TeamDetail extends React.Component {
     state = {
         showCreateTopic: false,
-        showCreateTodo: false,
-        showCreateTodoList: false,
-        showMenu: false,
         isCreator: false,
 
         topicName: '',
@@ -52,7 +41,6 @@ export default class TeamDetail extends React.Component {
         teamInfo: {},
         topicList: [],
         memberList: [],
-        todoListArr: [],
         attachmentsArg:{},
         ossKeyArg:"",
         fileList: [],
@@ -70,7 +58,6 @@ export default class TeamDetail extends React.Component {
     componentDidMount = async () => {
         this.teamId = this.props.params.id
         this.initTeamInfo()
-        this.initTodoListArr()
         this.initTeamFile()
     }
 
@@ -91,66 +78,6 @@ export default class TeamDetail extends React.Component {
         }
     }
 
-    initTodoListArr = async () => {
-        // 请求todoListArr数据
-        const resp = await api('/api/team/taskList', {
-            method: 'GET',
-            body: {
-                teamId: this.teamId
-            }
-        })
-        // console.log('resp', resp)
-        let todoListArr = []
-        let unclassifiedList = []
-        let unclassified = {}
-        let todoList = []
-        if (resp.data.taskList == undefined) {
-            resp.data.taskList = []
-        }
-        resp.data.taskList.map((item) => {
-            if(item.state===false){
-                let todoItem = {}
-                todoItem.id = item.id
-                todoItem.name = item.title
-                todoItem.hasDone = item.state
-                todoItem.ddl = item.deadline
-                todoItem.completeTime = item.completed_time
-                todoItem.assignee = {
-                    id: item.header.headerId
-                }
-                unclassifiedList.push(todoItem)
-            }
-        })
-        unclassified.list = unclassifiedList
-        if (resp.data.tasklistList == undefined) {
-            resp.data.tasklistList = []
-        }
-        resp.data.tasklistList.map((item) => {
-            let todoListItem = {}
-            todoListItem.id = item._id
-            todoListItem.name = item.name
-            todoListItem.list = []
-            item.taskList.map((mapTodoItem) => {
-                if(mapTodoItem.state === false){
-                    let todoItem = {}
-                    todoItem.id = mapTodoItem.taskId
-                    todoItem.name = mapTodoItem.title
-                    todoItem.completeTime = mapTodoItem.completed_time
-                    todoItem.hasDone = mapTodoItem.state
-                    todoItem.ddl = mapTodoItem.deadline
-                    todoItem.assignee = {
-                        id: mapTodoItem.header.headerId
-                    }
-                    todoListItem.list.push(todoItem)
-                }
-            })
-            todoList.push(todoListItem)
-        })
-        todoListArr = [unclassified, ...todoList]
-        if (resp.state.code === 0) {
-            this.setState({ todoListArr })
-        }
-    }
 
     initTeamInfo = async () => {
         const result = await api('/api/team/info', {
@@ -328,6 +255,7 @@ export default class TeamDetail extends React.Component {
         location.href = '/team-admin/' + this.teamId
     }
 
+<<<<<<< HEAD
     // todo
     handlecloseEditTodo = () => {
         this.setState({ showCreateTodo: false })
@@ -595,6 +523,8 @@ export default class TeamDetail extends React.Component {
         return resp
     }
 
+=======
+>>>>>>> 18aab7b9491725bc3481d148d7f5140c769bce14
     createFolderHandle = async () => {
         this.setState({ showCreateFolder: true })
     }
@@ -859,57 +789,9 @@ export default class TeamDetail extends React.Component {
         this.props.router.push(location)
     }
 
-    dragStart(e){
-        this.dragged = e.currentTarget;
-    }
-
-    dragStart(e) {
-        this.dragged = e.currentTarget;
-    }
-
-    dragEnd = async(todoList,e) => {
-        this.dragged.style.display = 'block';
-        var data = this.state.todoListArr;
-        
-        console.log(this.dragged)
-        console.log(this.over)
-        var from = Number(this.dragged.dataset.listid);
-        var to = Number(this.over.dataset.listid);
-        console.log(from+","+to)
-        if(!to){
-            return
-        }
-        data.splice(to, 0, data.splice(from, 1)[0]);
-        data = data.map((doc, index)=> {
-            doc.newIndex = index + 1;
-            return doc;
-        })
-        console.log({
-            listId: todoList.id,
-            index: to-1,
-            teamId: this.teamId,
-        })
-        const resp = await api('/api/task/changeListIndex', {
-            method: "POST",
-            body: {
-                listId: todoList.id,
-                index: to-1,
-                teamId: this.teamId,
-            }
-        })
-        console.log(resp)
-        this.initTodoListArr()
-        this.setState({todoListArr: data});
-    }
-    
-    dragOver(e) {
-        e.preventDefault();
-        this.over = e.target;
-    }
 
     render() {
         let teamInfo = this.state.teamInfo
-        const unclassified = this.state.todoListArr[0]
 
         return (
             <Page title={teamInfo.name + " - IHCI"}
@@ -978,105 +860,12 @@ export default class TeamDetail extends React.Component {
                         }
                     </div>
 
-
-                    <div>
-                        <div className="head">
-                            <span className='head-title'>任务</span>
-                            <div className="create-btn">
-                                <span onClick={(e) => {
-                                    this.setState({ showCreateTodo: true })
-                                    e.stopPropagation()
-                                }}>添加任务</span>
-                                <i className="icon iconfont"
-                                    onClick={(e) => {
-                                        this.setState({ showMenu: !this.state.showMenu })
-                                        e.stopPropagation()
-                                    }}
-                                >&#xe783;</i>
-                                {this.state.showMenu &&
-                                    <ul className="menu">
-                                        <li onClick={(e) => {
-                                            this.setState({ showCreateTodo: true, showMenu: false })
-                                            e.stopPropagation()
-                                        }}>添加任务
-                                </li>
-                                        <li onClick={(e) => {
-                                            this.setState({ showCreateTodoList: true, showMenu: false })
-                                            e.stopPropagation()
-                                        }}>添加清单
-                                </li>
-                                    </ul>
-                                }
-                            </div>
-                        </div>
-
-
-                        {unclassified &&
-                            <TodoList
-                                listType="unclassified"
-                                showCreateTodo={this.state.showCreateTodo}
-                                createInput="任务名"
-                                handlecloseEditTodo={this.handlecloseEditTodo.bind(this)}
-                                {...unclassified}
-                                memberList={this.state.memberList}
-                                handleTodoCreate={this.handleTodoCreate.bind(this, 0, null)}
-                                handleTodoCheck={this.handleTodoCheck.bind(this, 0, null)}
-                                handleTodoModify={this.handleTodoModify.bind(this, 0, null)}
-                                handleAssigneeChange={this.handleAssigneeChange.bind(this, 0, null)}
-                                handleDateChange={this.handleDateChange.bind(this, 0, null)}
-                                handleTodoDelete={this.handleTodoDelete.bind(this, 0, null)}
-                                handleTodoListDelete={this.handleTodoListDelete.bind(this, null, unclassified.id)}
-                                handleTodoListModify={this.handleTodoListModify.bind(this, null, unclassified.id)}
-                                changeTodoIndex = {this.changeTodoIndex.bind(this)}
-                            ></TodoList>
-                        }
-
-                        {
-                            this.state.showCreateTodoList &&
-                            <EditTodoList
-                                confirmLabel="保存，开始添加任务"
-                                handleConfirm={this.handleTodoListCreate.bind(this)}
-                                handleClose={(() => { this.setState({ showCreateTodoList: false }) }).bind(this)}>
-                            </EditTodoList>
-                        }
-
-                      <div onDragOver={this.dragOver.bind(this)}>
-                        {this.state.todoListArr.map((todoList, index) => {
-                            if (index === 0) {
-                                return
-                            }
-                            return (
-                                <div 
-                                key={index}
-                                data-listid={index}
-                                draggable='true'
-                                data-listitem={todoList}
-                                onDragStart={this.dragStart.bind(this)}
-                                onDragEnd={this.dragEnd.bind(this,todoList)}
-                                >
-                                <TodoList
-                                    key={todoList.id}
-                                    {...todoList}
-                                    index={index}
-                                    createInput="任务名"
-                                    memberList={this.state.memberList}
-                                    handleTodoCreate={this.handleTodoCreate.bind(this, index, todoList.id)}
-                                    handleTodoCheck={this.handleTodoCheck.bind(this, index, todoList.id)}
-                                    handleTodoModify={this.handleTodoModify.bind(this, index, todoList.id)}
-                                    handleAssigneeChange={this.handleAssigneeChange.bind(this, index, todoList.id)}
-                                    handleDateChange={this.handleDateChange.bind(this, index, todoList.id)}
-                                    handleTodoDelete={this.handleTodoDelete.bind(this, index, todoList.id)}
-                                    handleTodoListDelete={this.handleTodoListDelete.bind(this, index, todoList.id)}
-                                    handleTodoListModify={this.handleTodoListModify.bind(this, index, todoList.id)}
-                                    changeTodoIndex = {this.changeTodoIndex.bind(this)}
-                                ></TodoList>
-                                 </div>
-                            )
-                        })
-                        }
-                        </div>
-                            <div className="completed" onClick={()=>{location.href = '/completed/' + this.teamId}}>已完成任务</div>
-                        </div>
+                        <Task
+                        teamId={this.props.params.id}
+                        curUserId={this.props.personInfo._id}
+                        ></Task>
+                    
+                            
                         <input className='file-input-hidden' type="file" ref={(fileInput) => this.fileInput = fileInput} onChange={this.uploadFileHandle}></input>
                         <div className="head">
                             <span className='head-title'>文件</span>
