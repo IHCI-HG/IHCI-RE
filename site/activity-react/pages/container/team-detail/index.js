@@ -882,6 +882,7 @@ export default class TeamDetail extends React.Component {
         var to = Number(this.over.dataset.listid);
         console.log(from+","+to)
         if(!to){
+            console.log('return')
             return
         }
         data.splice(to, 0, data.splice(from, 1)[0]);

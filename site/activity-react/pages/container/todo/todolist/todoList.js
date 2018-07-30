@@ -12,7 +12,8 @@ class TodoList extends React.Component {
         mode: 'read',
         showCreateTodo: false,
         doneList:[],
-        todoList:[]
+        todoList:[],
+        test:{}
 
     }
 
@@ -72,15 +73,46 @@ class TodoList extends React.Component {
     }
        dragStart(e) {
         this.dragged = e.currentTarget;
+        var obj = e.target
+        var data = this.state.todoList
+        var item = data.splice(obj.dataset.id,1)[0]
+        data = data.map((doc, index)=> {
+            doc.newIndex = index + 1;
+            return doc;
+          })
+        e.item = item
+      }
+      
+      drop(e){
+        var item = e.item
+        var data = this.state.todoList
+        data.push(item)
+        data = data.map((doc, index)=> {
+            doc.newIndex = index + 1;
+            return doc;
+          })
+        console.log(data)
+        this.setState({
+            todoList:data
+        },console.log(this.state.todoList))
+        
       }
       dragEnd(todo,e) {
         this.dragged.style.display = 'block';
+        console.log(this.over)
         var data = this.state.todoList;
         var from = Number(this.dragged.dataset.id);
         var to = Number(this.over.dataset.id);
         data.splice(to, 0, data.splice(from, 1)[0]);
-        this.props.changeTodoIndex(to,todo.id)
+        // this.props.changeTodoIndex(to,todo.id)
         //set newIndex to judge direction of drag and drop
+        for(var i = 0;i<data.length;i++){
+            if(!data[i]) {
+                data.splice(i,1)
+                continue
+            }
+        }
+        console.log(data)
         data = data.map((doc, index)=> {
           doc.newIndex = index + 1;
           return doc;
@@ -91,6 +123,7 @@ class TodoList extends React.Component {
     
       dragOver(e) {
         e.preventDefault();
+    
         this.over = e.target;
       }
       eventStopPropagation(e){
@@ -144,6 +177,7 @@ class TodoList extends React.Component {
                             data-id={i}
                             data-item={todo}
                             draggable='true'
+                            onDrop={this.drop.bind(this)}
                             onDragStart={this.dragStart.bind(this)}
                             onDragEnd={this.dragEnd.bind(this,todo)}>
                             <TodoItem
