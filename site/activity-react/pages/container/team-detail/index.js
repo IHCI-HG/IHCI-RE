@@ -1005,6 +1005,7 @@ export default class TeamDetail extends React.Component {
                         {unclassified &&
                             <TodoList
                                 listType="unclassified"
+                                key={'unclassifid-task-list'}
                                 showCreateTodo={this.state.showCreateTodo}
                                 createInput="任务名"
                                 handlecloseEditTodo={this.handlecloseEditTodo.bind(this)}
@@ -1038,7 +1039,7 @@ export default class TeamDetail extends React.Component {
                             }
                             return (
                                 <div 
-                                key={index}
+                                key={'classifid-task-list-' + index}
                                 data-listid={index}
                                 draggable='true'
                                 data-listitem={todoList}

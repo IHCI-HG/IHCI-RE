@@ -14,7 +14,6 @@ class TodoList extends React.Component {
         doneList:[],
         todoList:[],
         test:{}
-
     }
 
     static defaultProps = {
