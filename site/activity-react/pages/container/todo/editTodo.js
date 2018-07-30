@@ -3,6 +3,7 @@ import './style.scss'
 import ItemLabel from './itemLabel'
 import fileUploader from '../../../utils/file-uploader'
 import Editor from '../../../components/editor'
+import {create} from '../../../../../server/components/uuid/uuid'
 
 
 class EditTodo extends React.Component {
@@ -37,7 +38,8 @@ class EditTodo extends React.Component {
     fileUploadHandle = async (e) => {
         var fileName = e.target.files[0].name
         var fileSize = e.target.files[0].size
-        var ossKey = this.props.teamId + '/' + Date.now() + '/' + e.target.files[0].name
+        var nameParts = e.target.files[0].name.split('.')
+        var ossKey = this.props.teamId + '/' + create() + '.' + nameParts[nameParts.length-1]
         const attachmentsArr = this.state.attachmentsArr
         const ossKeyArr = this.state.ossKeyArr
         attachmentsArr.push(e.target.files[0])

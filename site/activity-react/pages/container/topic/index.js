@@ -7,6 +7,7 @@ import Editor from '../../../components/editor'
 import fileUploader from '../../../utils/file-uploader'
 import MemberChosenList from '../../../components/member-chose-list'
 import TopicDiscussItem from '../../../components/topic-discuss-item'
+import {create} from '../../../../../server/components/uuid/uuid'
 
 export default class Topic extends React.Component{
 
@@ -91,7 +92,12 @@ export default class Topic extends React.Component{
         })
 
         const topicObj = result.data
-
+        topicObj.imgList = []
+        topicObj.fileList.map((fileItem,index)=>{
+            if(fileItem.name.endsWith(".jpg")||fileItem.name.endsWith(".jpeg")||fileItem.name.endsWith(".png")||fileItem.name.endsWith(".bmp")||fileItem.name.endsWith(".gif")){
+                topicObj.imgList.push(fileItem)
+            }
+        })
         console.log(result)
 
         this.teamId = result.data.team
@@ -151,7 +157,9 @@ export default class Topic extends React.Component{
     }
 
     topicFileUploadHandle = async (e) => {
-        var ossKey = this.teamId + '/' + Date.now() + '/' + e.target.files[0].name
+        var fileName = e.target.files[0].name
+        var nameParts = e.target.files[0].name.split('.')
+        var ossKey = this.teamId + '/' + create() + '.' + nameParts[nameParts.length-1]
         const topicAttachmentsArr = this.state.topicAttachmentsArr
         const topicOssKeyArr = this.state.topicOssKeyArr
         topicAttachmentsArr.push(e.target.files[0])
@@ -161,6 +169,7 @@ export default class Topic extends React.Component{
             topicOssKeyArr
         })
         const resp = await fileUploader(e.target.files[0], ossKey)
+        resp.fileName = fileName
         let topicAttachments = this.state.topicAttachments;
         topicAttachments = [...topicAttachments, resp]
         this.setState({
@@ -168,7 +177,9 @@ export default class Topic extends React.Component{
         })
     }
     discussFileUploadHandle = async (e) => {
-        var ossKey = this.teamId + '/' + Date.now() + '/' + e.target.files[0].name
+        var fileName = e.target.files[0].name
+        var nameParts = e.target.files[0].name.split('.')
+        var ossKey = this.teamId + '/' + create() + '.' + nameParts[nameParts.length-1]
         const discussAttachmentsArr = this.state.discussAttachmentsArr
         const discussOssKeyArr = this.state.discussOssKeyArr
         discussAttachmentsArr.push(e.target.files[0])
@@ -178,6 +189,7 @@ export default class Topic extends React.Component{
             discussOssKeyArr
         })
         const resp = await fileUploader(e.target.files[0], ossKey)
+        resp.fileName = fileName
         let discussAttachments = this.state.discussAttachments;
         discussAttachments = [...discussAttachments, resp]
         this.setState({
@@ -477,9 +489,20 @@ export default class Topic extends React.Component{
                     { this.state.topicObj.editStatus== false &&
                         <div className="file-list">
                             {
-                                this.state.topicObj.fileList && this.state.topicObj.fileList.map((item) => {
-                                    return ( <div className="file-item" key={Math.random()} onClick={this.downloadHandle.bind(this, item.name)}>{item.name.split("/")[2]}</div> )
+                                this.state.topicObj.imgList&&this.state.topicObj.imgList.map((item) => {
+                                    return (
+                                        <div className="file-pic-item" key={Math.random()} onClick={this.downloadHandle.bind(this, item.name)}>
+                                            <img className="file-pic" src={window.location.origin + '/static/' + item.name}></img>
+                                            <div className="file-name">{item.fileName}</div>
+                                        </div>
+                                    )
                                 })
+                            }
+                            {
+                                this.state.topicObj.fileList && this.state.topicObj.fileList.map((item) => {
+                                    if(!(item.name.endsWith(".jpg")||item.name.endsWith(".jpeg")||item.name.endsWith(".png")||item.name.endsWith(".bmp")||item.name.endsWith(".gif"))){
+                                    return ( <div className="file-item" key={"file"+item.name} onClick={this.downloadHandle.bind(this, item.name)}>{item.fileName}</div> )
+                                }})
                             }
                         </div>
                     }

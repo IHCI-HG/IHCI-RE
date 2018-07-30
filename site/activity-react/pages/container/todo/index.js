@@ -11,6 +11,7 @@ import Modal from '../../../components/modal'
 var ReactDOM = require('react-dom')
 import { timeBefore, sortByCreateTime, createMarkup } from '../../../utils/util'
 import MemberChosenList from '../../../components/member-chose-list'
+import {create} from '../../../../../server/components/uuid/uuid'
 
 function getUpdateItem(arr, id) {
     let item = null
@@ -48,7 +49,8 @@ class TopicItem extends React.Component{
     discussFileUploadHandle = async (e) => {
         var fileName = e.target.files[0].name
         var fileSize = e.target.files[0].size
-        var ossKey = this.props.teamId + '/' + Date.now() + '/' + fileName
+        var nameParts = e.target.files[0].name.split('.')
+        var ossKey = this.props.teamId + '/' + create() + '.' + nameParts[nameParts.length-1]
         const disAttachmentsArr = this.state.disAttachmentsArr
         const disOssKeyArr = this.state.disOssKeyArr
         disAttachmentsArr.push(e.target.files[0])
@@ -117,7 +119,7 @@ class TopicItem extends React.Component{
                                     return (
                                         <div className="file-pic-item" key={"pic"+item.id}>
                                             <img className="file-pic" src={window.location.origin + '/static/' + item.name}  onClick={this.downloadHandle.bind(this, item.name)}></img>
-                                            <div className="file-name">{item.name.split("/")[2]}</div>
+                                            <div className="file-name">{item.fileName}</div>
                                             <span onClick={() => { this.props.openMoveModalHandle(item) }}>移动</span>
                                         </div>
                                     )
@@ -128,7 +130,7 @@ class TopicItem extends React.Component{
                                         if(!(item.name.endsWith(".jpg")||item.name.endsWith(".jpeg")||item.name.endsWith(".png")||item.name.endsWith(".bmp")||item.name.endsWith(".gif"))){
                                             return ( 
                                                 <div key={"file"+item.id}>
-                                                    <div className="file-item" onClick={this.downloadHandle.bind(this, item.name)}>{item.name.split("/")[2]}</div> 
+                                                    <div className="file-item" onClick={this.downloadHandle.bind(this, item.name)}>{item.fileName}</div> 
                                                     <span onClick={() => { this.props.openMoveModalHandle(item) }}>移动</span>
                                                 </div>
                                         )
@@ -559,7 +561,8 @@ export default class Task extends React.Component{
     discussFileUploadHandle = async (e) => {
         var fileName = e.target.files[0].name
         var fileSize = e.target.files[0].size
-        var ossKey = this.state.todo.teamId + '/' + Date.now() + '/' + e.target.files[0].name
+        var nameParts = e.target.files[0].name.split('.')
+        var ossKey = this.state.todo.teamId + '/' + create() + '.' + nameParts[nameParts.length-1]
         const attachmentsArr = this.state.attachmentsArr
         const ossKeyArr = this.state.ossKeyArr
         attachmentsArr.push(e.target.files[0])
@@ -569,6 +572,7 @@ export default class Task extends React.Component{
             ossKeyArr
         })
         const resp = await fileUploader(e.target.files[0], ossKey)
+        resp.fileName = fileName
         resp.teamId = this.state.todo.teamId
         resp.size = fileSize
         resp.dir = '/'

@@ -10,9 +10,9 @@ import Editor from '../../../components/editor'
 import EditTodoList from '../todo/todolist/editTodoList'
 import TodoList from '../todo/todolist/todoList'
 import fileUploader from '../../../utils/file-uploader'
-import fileRenamer from '../../../utils/file-renamer'
 import TopicItem from '../../../components/topic-item'
-
+import {create} from '../../../../../server/components/uuid/uuid'
+ 
 class TeamChoseItem extends React.PureComponent {
     render() {
         return (
@@ -298,13 +298,16 @@ export default class TeamDetail extends React.Component {
     }
 
     topicFileUploadHandle = async (e) => {
-        var ossKey = this.teamId + '/' + Date.now() + '/' + e.target.files[0].name
+        var fileName= e.target.files[0].name
+        var nameParts = e.target.files[0].name.split('.')
+        var ossKey = this.teamId + '/' + create() + '.' + nameParts[nameParts.length-1]
         this.setState({
             attachmentsArg:e.target.files[0],
             ossKeyArg:ossKey
         })
         const resp = await fileUploader(e.target.files[0], ossKey)
         let topicAttachments = this.state.topicAttachments
+        resp.fileName = fileName
         topicAttachments = [...topicAttachments, resp]
         this.setState({
             topicAttachments,
@@ -407,11 +410,6 @@ export default class TeamDetail extends React.Component {
     }
 
     handleTodoCheck = async (lIndex, lId, id, hasDone) => {
-        // this.state.todoListArr.map((item,index)=>{
-        //     if(id===item.id){
-                    
-        //     }
-        // })
         let editTask = {}
         editTask.hasDone = !hasDone
         const resp = await api('/api/task/edit', {
@@ -641,9 +639,8 @@ export default class TeamDetail extends React.Component {
         this.setState({
             chosenFile: file
         })
-
-        var ossKey = this.teamId + '/' + Date.now() + '/' + file.name
-
+        var nameParts = e.target.files[0].name.split('.')
+        var ossKey = this.teamId + '/' + create() + '.' + nameParts[nameParts.length-1]
         var succeeded;
         const uploadResult = fileUploader(file, ossKey)
         await uploadResult.then(function (val) {
@@ -809,8 +806,6 @@ export default class TeamDetail extends React.Component {
     }
 
     renameComfirmHandle = async (item) => {
-        var ossKey = this.teamId + '/' + Date.now() + '/' + this.state.renameName
-        // const result1 = await fileRenamer(item.ossKey,ossKey)
         if (item.fileType == 'file') {
             const result = await api('/api/file/updateFileName', {
                 method: 'POST',
@@ -821,7 +816,6 @@ export default class TeamDetail extends React.Component {
                         fileName: item.name,
                     },
                     tarName: this.state.renameName,
-                    newOssKey:ossKey
                 }
             })
             if (result.state.code == 0) {
