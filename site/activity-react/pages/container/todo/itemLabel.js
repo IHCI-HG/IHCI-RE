@@ -44,8 +44,8 @@ class ItemLabel extends React.Component {
                         draggable='true'>未指派</span>
                     }
                     {   _props.date>= formatDate(new Date())?
-                        <span className="due">{_props.date}</span>
-                        :<span className=" due overdue">{_props.date}</span>
+                        <span className="due">{(_props.date)?_props.date.split("T")[0]:_props.date}</span>
+                        :<span className=" due overdue">{(_props.date)?_props.date.split("T")[0]:_props.date}</span>
                     }
 
                 </span>

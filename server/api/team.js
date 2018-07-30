@@ -551,8 +551,7 @@ const taskList = async (req, res, nect) => {
                 }
                 var taskListDdl = ""
                 if(result.taskList[j].deadline) {
-                    const date = result.taskList[j].deadline
-                    taskListDdl = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
+                    taskListDdl = result.taskList[j].deadline
                 }
                 const obj2 = {
                     taskId: result.taskList[j]._id,

@@ -100,7 +100,7 @@ export default class TeamDetail extends React.Component {
             }
         })
         // console.log('resp', resp)
-        let todoListArr = this.state.todoListArr
+        let todoListArr = []
         let unclassifiedList = []
         let unclassified = {}
         let todoList = []
@@ -556,9 +556,7 @@ export default class TeamDetail extends React.Component {
             }
         })
         console.log(resp)
-        if (resp.state.code === 0) {
-
-        }
+        this.initTodoListArr()
     }
 
     handleTodoListModify = async (index, id, info) => {
@@ -866,13 +864,16 @@ export default class TeamDetail extends React.Component {
         const location = {pathname:'/member', state:{teamId:this.state.teamInfo._id}}
         this.props.router.push(location)
     }
+
     dragStart(e){
         this.dragged = e.currentTarget;
     }
+
     dragStart(e) {
         this.dragged = e.currentTarget;
-      }
-      dragEnd(todo,e) {
+    }
+
+    dragEnd = async(todoList,e) => {
         this.dragged.style.display = 'block';
         var data = this.state.todoListArr;
         
@@ -886,17 +887,27 @@ export default class TeamDetail extends React.Component {
         }
         data.splice(to, 0, data.splice(from, 1)[0]);
         data = data.map((doc, index)=> {
-          doc.newIndex = index + 1;
-          return doc;
+            doc.newIndex = index + 1;
+            return doc;
         })
-    
+        // const resp = await api('/api/task/changeListIndex', {
+        //     method: "POST",
+        //     body: {
+        //         listId: todoList.id,
+        //         index: to,
+        //         teamId: this.teamId,
+        //     }
+        // })
+        // console.log(resp)
+        // this.initTodoListArr()
         this.setState({todoListArr: data});
-      }
+    }
     
-      dragOver(e) {
+    dragOver(e) {
         e.preventDefault();
         this.over = e.target;
-      }
+    }
+
     render() {
         let teamInfo = this.state.teamInfo
         const unclassified = this.state.todoListArr[0]
@@ -1042,7 +1053,7 @@ export default class TeamDetail extends React.Component {
                                 draggable='true'
                                 data-listitem={todoList}
                                 onDragStart={this.dragStart.bind(this)}
-                                onDragEnd={this.dragEnd.bind(this)}
+                                onDragEnd={this.dragEnd.bind(this,todoList)}
                                 >
                                 <TodoList
                                     key={todoList.id}

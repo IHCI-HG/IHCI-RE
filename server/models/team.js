@@ -191,12 +191,12 @@ teamSchema.statics = {
             }
         ).exec()
     },
-    changeListIndex: async function (teamId, index, list) {
+    changeTaskIndex: async function (teamId, index, task) {
         return this.update(
             {_id: teamId,},
             { $push: 
-                { tasklistList: {
-                $each: [list,""] ,
+                { taskList: {
+                $each: [task,""] ,
                 $position:index} } }
         ).exec()
     },

@@ -631,7 +631,7 @@ const changeTaskIndex = async (req, res, next) => {
     const taskId = req.body.taskId;
     const teamId = req.body.teamId;
     const index = req.body.index;
-    if (!taskId || !teamId ||!index) {
+    if (!taskId || !teamId) {
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: "参数不全" },
             data: {}
@@ -641,14 +641,11 @@ const changeTaskIndex = async (req, res, next) => {
 
     try {
         const taskObj = await taskDB.findByTaskId(taskId)
-
-        if (!taskObj) {
-            resProcessor.jsonp(req, res, {
-                state: { code: 1, msg: "任务不存在" },
-                data: {}
-            })
-        }
         if (taskObj.tasklistId!==""){
+            // if(index === 0){
+            //     await tasklistDB.removeAll(taskObj.tasklistId)
+
+            // }
             await tasklistDB.delTask(taskObj.tasklistId, taskId);
             await tasklistDB.changeTaskIndex(taskObj.tasklistId, index ,taskObj);
             await tasklistDB.delNonSence(taskObj.tasklistId);
