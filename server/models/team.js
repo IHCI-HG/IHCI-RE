@@ -109,7 +109,8 @@ teamSchema.statics = {
                     "taskList.$.content": editTask.content,
                     "taskList.$.deadline": editTask.deadline,
                     "taskList.$.completed_time": editTask.completed_time,
-                    "taskList.$.state": editTask.state
+                    "taskList.$.state": editTask.state,
+                    "taskList.$.completer": editTask.completer
                 }
             }
         ).exec()
@@ -171,7 +172,44 @@ teamSchema.statics = {
             }
         ).exec()
     },
-
+    changeTaskIndex: async function (teamId, index, task) {
+        return this.update(
+            {_id: teamId,},
+            { $push: 
+                { taskList: {
+                $each: [task,""] ,
+                $position:index} } }
+        ).exec()
+    },
+    delNonSence: async function (teamId) {
+        return this.update(
+            { _id: teamId },
+            {
+                $pull: {
+                    taskList: ""
+                }
+            }
+        ).exec()
+    },
+    changeListIndex: async function (teamId, index, list) {
+        return this.update(
+            {_id: teamId,},
+            { $push: 
+                { tasklistList: {
+                $each: [list,""] ,
+                $position:index} } }
+        ).exec()
+    },
+    delListNonSence: async function (teamId) {
+        return this.update(
+            { _id: teamId },
+            {
+                $pullAll: {
+                    tasklistList: ["",null]
+                }
+            }
+        ).exec()
+    },
 }
 
 mongoose.model('team', teamSchema);

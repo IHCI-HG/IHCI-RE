@@ -11,13 +11,37 @@ class TodoList extends React.Component {
         // mode 任务框模式, edit 或者 read
         mode: 'read',
         showCreateTodo: false,
+        doneList:[],
+        todoList:[]
+
     }
 
     static defaultProps = {
         list: [],
         listType: 'classification'
     }
+    componentDidMount=()=>{
+        this.setList()
+    }
+    componentWillReceiveProps(nextProps) {
+        this.setState({todoList:nextProps.list.filter((todo) => {
+            return todo.hasDone === false
+        })})
+    }
+    setList(){
+        const _props = this.props
+        const doneList = _props.list.filter((todo) => {
+            return todo.hasDone === true
+        })
+        const todoList = _props.list.filter((todo) => {
+            return todo.hasDone === false
+        })
+        this.setState({
+            doneList:doneList,
+            todoList:todoList
+        },)
 
+    }
     setMode(mode) {
         console.log('setMode:', mode);
         this.setState({ mode: mode })
@@ -27,6 +51,10 @@ class TodoList extends React.Component {
         this.setMode('read')
         const resp = await this.props.handleTodoListModify(params)
         return resp
+    }
+
+    handleSaveList = (params) =>{
+        let todoList = this.state.todoList
     }
 
     handleClose = () => {
@@ -42,19 +70,38 @@ class TodoList extends React.Component {
             !shallowEqualIgnoreFun(this.state, nextState)
         );
     }
+       dragStart(e) {
+        this.dragged = e.currentTarget;
+      }
+      dragEnd(todo,e) {
+        this.dragged.style.display = 'block';
+        var data = this.state.todoList;
+        var from = Number(this.dragged.dataset.id);
+        var to = Number(this.over.dataset.id);
+        data.splice(to, 0, data.splice(from, 1)[0]);
+        this.props.changeTodoIndex(to,todo.id)
+        //set newIndex to judge direction of drag and drop
+        data = data.map((doc, index)=> {
+          doc.newIndex = index + 1;
+          return doc;
+        })
+        //test
+        this.setState({todoList: data});
+      }
+    
+      dragOver(e) {
+        e.preventDefault();
+        this.over = e.target;
+      }
+      eventStopPropagation(e){
+          e.stopPropagation()
+      }
 
     render() {
         const _props = this.props
         const listType = _props.listType
-        const doneList = _props.list.filter((todo) => {
-            return todo.hasDone === true
-        })
-        const todoList = _props.list.filter((todo) => {
-            return todo.hasDone === false
-        })
         // console.log('todolist渲染', _props.id)
         // console.log('list', _props.list)
-
         return (
             <div className="todolist">
                 {
@@ -67,7 +114,12 @@ class TodoList extends React.Component {
                             handleClose={this.handleClose.bind(this)}>
                         </EditTodoList>
                         : <div>
-                            <h4 className="todolist-name">
+                            <h4 className="todolist-name"
+                            key={this.props.index}
+                            data-listid={this.props.index}
+                            draggable='true'
+                            data-listitem={this.props}
+                            onClick={this.eventStopPropagation.bind(this)}>
                                 <div className="name-actions">
                                     <i className="icon iconfont"
                                        onClick={_props.handleTodoListDelete}>&#xe70b;</i>
@@ -83,10 +135,17 @@ class TodoList extends React.Component {
                         </div>
                     )
                 }
-
+               <div onDragOver={this.dragOver.bind(this)}>
                 {
-                    todoList.map((todo) => {
+                    this.state.todoList.map((todo,i) => {
                         return (
+                            <div 
+                            key={i}
+                            data-id={i}
+                            data-item={todo}
+                            draggable='true'
+                            onDragStart={this.dragStart.bind(this)}
+                            onDragEnd={this.dragEnd.bind(this,todo)}>
                             <TodoItem
                                 {...todo}
                                 key={todo.id}
@@ -96,10 +155,14 @@ class TodoList extends React.Component {
                                 handleTodoModify={_props.handleTodoModify.bind(this,todo.id )}
                                 handleTodoDelete={_props.handleTodoDelete.bind(this,todo.id )}
                                 handleTodoCheck={_props.handleTodoCheck.bind(this, todo.id)}
+                                dataId={i}
+                                dataItem={todo}
                             />
+                            </div>
                         )
                     })
                 }
+                </div>
 
                 {/*归类list*/}
                 {
@@ -111,6 +174,7 @@ class TodoList extends React.Component {
                                 confirmLabel="添加任务"
                                 closeAfterConfirm={false}
                                 handleConfirm={_props.handleTodoCreate}
+                                handleSaveList={this.handleSaveList}
                                 handleClose={(() => {this.setState({showCreateTodo: false})}).bind(this)}>
                             </NewTodo>
                             :<div className="new-todo"
@@ -130,6 +194,7 @@ class TodoList extends React.Component {
                                 confirmLabel="添加任务"
                                 closeAfterConfirm={false}
                                 handleConfirm={_props.handleTodoCreate}
+                                handleSaveList={this.handleSaveList}
                                 handleClose={_props.handlecloseEditTodo}>
                             </NewTodo>
                     )
@@ -137,7 +202,7 @@ class TodoList extends React.Component {
 
 
                 {
-                    doneList.map((todo,index) => {
+                    this.state.doneList.map((todo,index) => {
                         return (
                             <TodoItem
                                 {...todo}

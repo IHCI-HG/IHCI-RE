@@ -518,6 +518,7 @@ const taskList = async (req, res, nect) => {
                 deadline: taskListDdl,
                 state: taskListTemp[i].state,
                 completed_time: taskListCom,
+                completer:taskListTemp[i].completer,
                 header: {
                     headerId: taskListTemp[i].header,
                     headername: headername
@@ -534,7 +535,6 @@ const taskList = async (req, res, nect) => {
                 continue;
             }
             const result = temp.toObject()
-            console.log(result)
             const task = []
             for (var j = 0; j < result.taskList.length; j++) {
                 var headername = ""
@@ -550,8 +550,7 @@ const taskList = async (req, res, nect) => {
                 }
                 var taskListDdl = ""
                 if(result.taskList[j].deadline) {
-                    const date = result.taskList[j].deadline
-                    taskListDdl = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
+                    taskListDdl = result.taskList[j].deadline
                 }
                 const obj2 = {
                     taskId: result.taskList[j]._id,
@@ -559,12 +558,13 @@ const taskList = async (req, res, nect) => {
                     content: result.taskList[j].content,
                     deadline: taskListDdl,
                     state: result.taskList[j].state,
+                    completer: result.taskList[j].completer,
                     completed_time: taskListCom,
                     header: {
                         headerId: result.taskList[j].header,
                         headername: headername
                     },
-                    fileList: result.taskList[i].fileList
+                    fileList: result.taskList[j].fileList
                 }
                 task.push(obj2)
             }

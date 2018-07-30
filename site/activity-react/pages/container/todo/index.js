@@ -190,7 +190,7 @@ export default class Task extends React.Component{
         ossKeyArr:[],
         todoAttachmentsArr:[],
         todoOssKeyArr:[],
-
+        todoHasDone:false,
         modal: document.createElement('div'),
         moveItem: '',
     }
@@ -324,7 +324,7 @@ export default class Task extends React.Component{
         })
         console.log('todo',todo)
         if (resp.state.code === 0) {
-            this.setState({ todo })
+            this.setState({ todo,todoHasDone:todo.hasDone })
         }
     }
 
@@ -1010,6 +1010,12 @@ export default class Task extends React.Component{
                  <div className="return" onClick={()=>{this.locationTo('/team/'+this.state.todo.teamId)}}>
                         <div className="teamName">{this.state.teamName}</div>
                 </div>
+                {
+                    this.state.todoHasDone&&<div className="return-completed" onClick={()=>{this.locationTo('/completed/'+this.state.todo.teamId)}}>
+                        <div className="teamName">已完成的任务</div>
+                    </div>
+                }
+                
                  <div className="discuss-con page-wrap">
                      <TodoItem
                          {...this.state.todo}

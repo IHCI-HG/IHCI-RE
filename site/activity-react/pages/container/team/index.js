@@ -5,10 +5,33 @@ import api from '../../../utils/api';
 import Page from '../../../components/page';
 import { locationTo } from '../../../utils/util';
 
-class TeamItem extends React.PureComponent{
+class TeamGalleryItem extends React.PureComponent{
+    state = {
+        showSettings:false
+    }
     render() {
-        return <div className="team-item">
+        return <div className="team-item" 
+                 onMouseOver={()=>{this.setState({showSettings:true})}} 
+                 onMouseLeave={()=>{this.setState({showSettings:false})}}
+                 onClick={() => {this.props.locationTo('/team/' + this.props._id)}}>
+            <div className="left">
+                <img className="bg-img" src={this.props.teamImg}></img>
+                <div className="img-con"></div>
+                <div className="name">{this.props.name}</div>
+            </div>
+            {this.state.showSettings&&<div className="right">
+                <div className={this.props.marked ? "iconfont icon-collection_fill act" : "iconfont icon-collection"} 
+                onClick={(e) => {this.props.starHandle(this.props._id);e.stopPropagation()}}></div>
+                {this.props.managed && <div className="iconfont icon-setup" 
+                onClick={(e) => {this.props.locationTo('/team-admin/' + this.props._id);e.stopPropagation()}}></div>}
+            </div>}
+        </div>
+    }
+}
 
+class TeamListItem extends React.PureComponent{
+    render() {
+        return <div className="team-list-item">
             <div className="left" onClick={() => {this.props.locationTo('/team/' + this.props._id)}}>
                 <img className="bg-img" src={this.props.teamImg}></img>
                 <div className="img-con"></div>
@@ -102,37 +125,40 @@ export default class Team extends React.Component{
     render() {
         return (
             <Page title="团队 - IHCI" className="team-page">
-                <div className="carete" onClick={() => {this.locationTo('/team-create')}}> 创建团队 </div>
-
-                <div className="head" onClick={this.starHandle}>星标团队</div>
-                <div className="team-list">
-                    {   
-                        this.state.teamList.map((item) => {
-                            if(item.marked == true) {
-                                return <TeamItem key={'mark-team' + item._id} {...item} locationTo={this.locationTo} starHandle={this.starHandle} />
+                <div className="page-wrap">
+                    <div className="main">
+                        <div className="carete" onClick={() => {this.locationTo('/team-create')}}> 创建团队 </div>
+                        <div className="head" onClick={this.starHandle}>星标团队</div>
+                        <div className="team-list">
+                            {   
+                                this.state.teamList.map((item) => {
+                                    if(item.marked == true) {
+                                        return <TeamGalleryItem key={'mark-team' + item._id} {...item} locationTo={this.locationTo} starHandle={this.starHandle} />
+                                    }
+                                })
                             }
-                        })
-                    }
-                </div>
+                        </div>
 
-                <div className="head">我管理的团队</div>
-                <div className="team-list">
-                    {   
-                        this.state.teamList.map((item) => {
-                            if(item.managed == true) {
-                                return <TeamItem key={'manage-team' + item._id} {...item} locationTo={this.locationTo} starHandle={this.starHandle} />
+                        <div className="head">我管理的团队</div>
+                        <div className="team-list">
+                            {   
+                                this.state.teamList.map((item) => {
+                                    if(item.managed == true) {
+                                        return <TeamListItem key={'manage-team' + item._id} {...item} locationTo={this.locationTo} starHandle={this.starHandle} />
+                                    }
+                                })
                             }
-                        })
-                    }
-                </div>
+                        </div>
 
-                <div className="head">我参与的团队</div>
-                <div className="team-list">
-                    {   
-                        this.state.teamList.map((item) => {
-                            return <TeamItem key={'join-team' + item._id} {...item} locationTo={this.locationTo} starHandle={this.starHandle}  />
-                        })
-                    }
+                        <div className="head">我参与的团队</div>
+                        <div className="team-list">
+                            {   
+                                this.state.teamList.map((item) => {
+                                    return <TeamListItem key={'join-team' + item._id} {...item} locationTo={this.locationTo} starHandle={this.starHandle}  />
+                                })
+                            }
+                        </div>
+                    </div>
                 </div>
             </Page>
         )

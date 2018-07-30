@@ -62,12 +62,31 @@ tasklistSchema.statics = {
                     "taskList.$.content": editTask.content,
                     "taskList.$.deadline": editTask.deadline,
                     "taskList.$.completed_time": editTask.completed_time,
-                    "taskList.$.state": editTask.state
+                    "taskList.$.state": editTask.state,
+                    "taskList.$.completer": editTask.completer
                 }
             }
         ).exec()
     },
-
+    changeTaskIndex: async function (tasklistId, index, task) {
+        return this.update(
+            {_id: tasklistId,},
+            { $push: 
+                { taskList: {
+                $each: [task,""] ,
+                $position:index} } }
+        ).exec()
+    },
+    delNonSence: async function (tasklistId) {
+        return this.update(
+            { _id: tasklistId },
+            {
+                $pull: {
+                    taskList: ""
+                }
+            }
+        ).exec()
+    },
     // updateTask: async function (tasklistId, taskId, editTask) {
     //     return this.update(
     //         { _id: tasklistId, "taskList._id": mongoose.Types.ObjectId(taskId) },

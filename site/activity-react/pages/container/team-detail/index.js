@@ -505,6 +505,53 @@ export default class TeamDetail extends React.Component {
         this.props.router.push(location)
     }
 
+    dragStart(e){
+        this.dragged = e.currentTarget;
+    }
+
+    dragStart(e) {
+        this.dragged = e.currentTarget;
+    }
+
+    dragEnd = async(todoList,e) => {
+        this.dragged.style.display = 'block';
+        var data = this.state.todoListArr;
+        
+        console.log(this.dragged)
+        console.log(this.over)
+        var from = Number(this.dragged.dataset.listid);
+        var to = Number(this.over.dataset.listid);
+        console.log(from+","+to)
+        if(!to){
+            return
+        }
+        data.splice(to, 0, data.splice(from, 1)[0]);
+        data = data.map((doc, index)=> {
+            doc.newIndex = index + 1;
+            return doc;
+        })
+        console.log({
+            listId: todoList.id,
+            index: to-1,
+            teamId: this.teamId,
+        })
+        const resp = await api('/api/task/changeListIndex', {
+            method: "POST",
+            body: {
+                listId: todoList.id,
+                index: to-1,
+                teamId: this.teamId,
+            }
+        })
+        console.log(resp)
+        this.initTodoListArr()
+        this.setState({todoListArr: data});
+    }
+    
+    dragOver(e) {
+        e.preventDefault();
+        this.over = e.target;
+    }
 
     render() {
         let teamInfo = this.state.teamInfo

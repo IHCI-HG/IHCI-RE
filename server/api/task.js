@@ -162,6 +162,50 @@ const delTasklist = async (req, res, next) => {
     }
 }
 
+const changeTaskListIndex = async (req, res, next) => {
+    const listId = req.body.listId;
+    const teamId = req.body.teamId;
+    const index = req.body.index;
+    if (!listId || !teamId ||!index.toString()) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: "参数不全" },
+            data: {}
+        });
+        return
+    }
+    try {
+        let team = await teamDB.findByTeamId(teamId)
+        if (!team) {
+            resProcessor.jsonp(req, res, {
+                state: { code: 1, msg: '团队不存在' },
+                data: {}
+            });
+            return
+        }
+        const teamObj = team.toObject()
+        let list = {}
+        teamObj.tasklistList.map((item)=>{
+            if(item._id.toString() === listId){
+                list = item
+            }
+        })
+        await teamDB.delTasklist(teamId, listId);
+        await teamDB.changeListIndex(teamId, index, list);
+        await teamDB.delListNonSence(teamId);
+        
+        resProcessor.jsonp(req, res, {
+            state: { code: 0, msg: '请求成功' },
+            data: task
+        })
+
+    } catch (error) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: error },
+            data: {}
+        });
+    }
+}
+
 const findTasklistById = async (req, res, next) => {
     const userId = req.rSession.userId;
     const listId = req.query.listId;
@@ -430,6 +474,7 @@ const editTask = async (req, res, next) => {
         if (editTask.hasDone == true) {
             task.state = true;
             task.completed_time = new Date().getTime()
+            task.completer = baseInfoObj
             //6.28
             await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'FINISH_TASK', taskObj._id, taskObj.title, taskObj);
 
@@ -577,6 +622,47 @@ const changeTaskDir = async (req, res, next) => {
     } catch (error) {
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: '操作失败' },
+            data: {}
+        });
+    }
+}
+
+const changeTaskIndex = async (req, res, next) => {
+    const taskId = req.body.taskId;
+    const teamId = req.body.teamId;
+    const index = req.body.index;
+    if (!taskId || !teamId || !index.toString()) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: "参数不全" },
+            data: {}
+        });
+        return
+    }
+
+    try {
+        const taskObj = await taskDB.findByTaskId(taskId)
+        if (taskObj.tasklistId!==""){
+            // if(index === 0){
+            //     await tasklistDB.removeAll(taskObj.tasklistId)
+
+            // }
+            await tasklistDB.delTask(taskObj.tasklistId, taskId);
+            await tasklistDB.changeTaskIndex(taskObj.tasklistId, index ,taskObj);
+            await tasklistDB.delNonSence(taskObj.tasklistId);
+        }
+        else{
+            await teamDB.delTask(teamId, taskId);
+            await teamDB.changeTaskIndex(teamId, index ,taskObj);
+            await teamDB.delNonSence(teamId);
+        }
+        resProcessor.jsonp(req, res, {
+            state: { code: 0, msg: '请求成功' },
+            data: task
+        })
+
+    } catch (error) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: error },
             data: {}
         });
     }
@@ -1346,12 +1432,14 @@ const findDiscuss = async (req, res, next) => {
 module.exports = [
     ['POST', '/api/task/createTasklist', apiAuth, createTasklist],
     ['POST', '/api/task/updateTasklist', apiAuth, updateTasklist],
+    ['POST', '/api/task/changeListIndex', apiAuth, changeTaskListIndex],
     ['POST', '/api/task/delTasklist', apiAuth, delTasklist],
     ['GET', '/api/task/findTasklistById', apiAuth, findTasklistById],
     ['POST', '/api/task/create', apiAuth, createTask],
     ['POST', '/api/task/delTask', apiAuth, delTask],
     ['POST', '/api/task/edit', apiAuth, editTask],
     ['POST', '/api/task/changeDir', apiAuth, changeTaskDir],
+    ['POST', '/api/task/changeIndex', apiAuth, changeTaskIndex],
     ['GET', '/api/task/taskInfo', apiAuth, taskInfo],
     ['POST', '/api/task/addCheckitem', apiAuth, addCheckitem],
     ['POST', '/api/task/dropCheckitem', apiAuth, dropCheckitem],
