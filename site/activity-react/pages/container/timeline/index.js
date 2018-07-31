@@ -105,9 +105,9 @@ class TimelineItem extends React.PureComponent{
         'CREATE_TASKLIST':'创建了清单：',
         'DELETE_TASKLIST':'删除了清单：',
 
-        'CHANGE_TASK_HEADER':'将任务',
-        'CHANGE_CHECKITEM_HEADER':'将检查项',
-        'CHANGE_TASK_DDL':'将任务',
+        'CHANGE_TASK_HEADER':'更改了任务',
+        'CHANGE_CHECKITEM_HEADER':'更改了检查项',
+        'CHANGE_TASK_DDL':'更改了任务',
         'CHANGE_CHECKITEM_DDL':'更改了检查项',
         'REOPEN_TASK':'重新打开了任务：',
         'REOPEN_CHECKITEM':'重新打开了检查项：',
@@ -115,9 +115,10 @@ class TimelineItem extends React.PureComponent{
         'EDIT_CHECK_ITEM':'编辑了检查项：',
     }
     componentDidMount = () =>{
-        if(this.props.content.header!==null){
+        if(this.props.content.header){
             this.getUserName(this.props.content.header)
         }
+        else(this.setState({headerName:"未指派"}))
     }
     getUserName = async(id) => {
         const result = await api('/api/getUserInfo', {
@@ -138,7 +139,7 @@ class TimelineItem extends React.PureComponent{
     }
     render() {
         switch(this.props.type){
-            case 'CHANGE_TASK_DDL': case 'CHANGE_CHECKITEM_DDL':
+            case 'CHANGE_TASK_DDL': 
                 return(
                     <div className='news-item-wrap'>
                         <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
@@ -148,14 +149,14 @@ class TimelineItem extends React.PureComponent{
                             <div className="des-line">
                                 <span className="name">{this.props.creator.name}</span>
                                 <span className="type">{this.typeMap[this.props.type]}</span>
-                                <span className="topic">&nbsp; {this.props.content.title}&nbsp; 的完成时间改为&nbsp; </span>
+                                <span className="topic">&nbsp; {this.props.content.title}&nbsp; 的完成时间为&nbsp; </span>
                                 <span className="content">{this.props.content.deadline}</span>
                             </div>
 
                         </div>
                     </div>
                 )
-            case 'CHANGE_TASK_HEADER': case 'CHANGE_CHECKITEM_HEADER':
+            case 'CHANGE_CHECKITEM_DDL':
                 return(
                     <div className='news-item-wrap'>
                         <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
@@ -165,11 +166,42 @@ class TimelineItem extends React.PureComponent{
                             <div className="des-line">
                                 <span className="name">{this.props.creator.name}</span>
                                 <span className="type">{this.typeMap[this.props.type]}</span>
-                                <span className="topic">&nbsp; {this.props.content.title} &nbsp;指派给了: &nbsp;</span>
-                                <span className="content">{this.state.headerName}</span>
+                                <span className="topic">&nbsp; {this.props.content.content}&nbsp; 的完成时间为&nbsp; </span>
+                                <span className="content">{this.props.content.deadline}</span>
                             </div>
 
-                            
+                        </div>
+                    </div>
+                )
+            case 'CHANGE_TASK_HEADER': 
+                return(
+                    <div className='news-item-wrap'>
+                        <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
+                        <img src={this.props.creator.headImg} alt="" className="head-img" />
+
+                        <div className="news-con">
+                            <div className="des-line">
+                                <span className="name">{this.props.creator.name}</span>
+                                <span className="type">{this.typeMap[this.props.type]}</span>
+                                <span className="topic">&nbsp; {this.props.content.title} &nbsp;的指派人: &nbsp;</span>
+                                <span className="content">{this.state.headerName}</span>
+                            </div>
+                        </div>
+                    </div>
+                )
+            case 'CHANGE_CHECKITEM_HEADER':
+                return(
+                    <div className='news-item-wrap'>
+                        <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
+                        <img src={this.props.creator.headImg} alt="" className="head-img" />
+
+                        <div className="news-con">
+                            <div className="des-line">
+                                <span className="name">{this.props.creator.name}</span>
+                                <span className="type">{this.typeMap[this.props.type]}</span>
+                                <span className="topic">&nbsp; {this.props.content.content} &nbsp;的指派人: &nbsp;</span>
+                                <span className="content">{this.state.headerName}</span>
+                            </div>
                         </div>
                     </div>
                 )
@@ -233,7 +265,6 @@ export default class Timeline extends React.Component{
             newsList: result.data,
             memberJumped: !!queryPerson ? !!queryPerson : false,
         }, () => {
-            // console.log(this.state.newsList)
              this.appendToShowList(this.state.newsList)
         })
         // if(result.data.length == 0){
@@ -266,14 +297,11 @@ export default class Timeline extends React.Component{
                 timeStamp: lastStamp? lastStamp: '',
             }
         })
-
-        // console.log(result)
         this.setState({
             newsList: result.data
         }, () => {
             this.appendToShowList(this.state.newsList)
         })
-        // console.log(result)
         if(result.data.length<moreTimeLineItemNum){
             this.setState({
                 noMoreResult: true,
@@ -315,7 +343,6 @@ export default class Timeline extends React.Component{
                 noMoreResult: true,
             })
         }
-        // console.log(showList)
     }
 
    

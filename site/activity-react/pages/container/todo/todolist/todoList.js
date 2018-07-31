@@ -43,7 +43,6 @@ class TodoList extends React.Component {
 
     }
     setMode(mode) {
-        console.log('setMode:', mode);
         this.setState({ mode: mode })
     }
 
@@ -82,19 +81,26 @@ class TodoList extends React.Component {
                     listType === 'classification' && (
                     this.state.mode === 'edit'
                         ? <EditTodoList
-                            confirmLabel="保存"
+                          confirmLabel="保存"
                             defaultValue={_props.name}
                             handleConfirm={this.handleSave.bind(this)}
                             handleClose={this.handleClose.bind(this)}>
                         </EditTodoList>
                         : <div>
-                            <h4 className="todolist-name">
+                            <h4 className="todolist-name"
+                            data-listid={this.props.index}
+                            data-listindex={_props.index}
+                            data-type='list'
+                            draggable='true'
+                            onDragStart={_props.dragStart}
+                            onDragEnd={_props.dragEnd}
+                            onDragOver={_props.dragOver}
+                            onDrop={_props.drop}>
                                 <div className="name-actions">
                                     <i className="icon iconfont"
                                        onClick={_props.handleTodoListDelete}>&#xe70b;</i>
                                     <i className="icon iconfont"
                                        onClick={(e) => {
-                                           console.log('edit')
                                            this.setMode('edit')
                                            e.stopPropagation()
                                        }}>&#xe6ec;</i>
@@ -108,7 +114,16 @@ class TodoList extends React.Component {
                 {
                     this.state.todoList.map((todo,i) => {
                         return (
-                            
+                            <div
+                            key={todo.id}
+                            draggable='true'
+                            onDragStart={_props.dragStart}
+                            onDragEnd={_props.dragEnd.bind(this,todo.id)}
+                            onDragOver={_props.dragOver}
+                            onDrop={_props.drop}
+                            data-id={i}
+                            data-listindex={_props.index}
+                            data-type='item'>              
                             <TodoItem
                                 {...todo}
                                 key={todo.id}
@@ -118,7 +133,10 @@ class TodoList extends React.Component {
                                 handleTodoModify={_props.handleTodoModify.bind(this,todo.id )}
                                 handleTodoDelete={_props.handleTodoDelete.bind(this,todo.id )}
                                 handleTodoCheck={_props.handleTodoCheck.bind(this, todo.id)}
+                                dataId={i}
+                                index={_props.index}
                             />
+                            </div>
                            
                         )
                     })

@@ -452,25 +452,17 @@ const editTask = async (req, res, next) => {
         task.content = editTask.desc || taskObj.content;
         task.fileList = editTask.fileList || taskObj.fileList;
         task.deadline = editTask.ddl || taskObj.deadline;
-        if (editTask.assigneeId === undefined) {
-            task.header = taskObj.header
-        } else {
-            task.header = editTask.assigneeId
-            
-
+        if (editTask.assigneeId) {
+            task.header = editTask.assigneeId   
             //7.6
             await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'CHANGE_TASK_HEADER', taskObj._id, taskObj.title, task);
-
-
+        }else{
+            task.header = undefined
+            await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'CHANGE_TASK_HEADER', taskObj._id, taskObj.title, task);
         }
-        console.log(task.header)
-        var headername = ""
-        if (task.header) {
-            const headerObj = await userDB.findByUserId(task.header);
-            headername = headerObj.username
+        if (!task.header) {
+            task.headername = '未指派'
         }
-        task.headername = headername
-        console.log(task)
         if (editTask.hasDone == true) {
             task.state = true;
             task.completed_time = new Date().getTime()
@@ -632,6 +624,7 @@ const changeTaskIndex = async (req, res, next) => {
     const taskId = req.body.taskId;
     const teamId = req.body.teamId;
     const index = req.body.index;
+    console.log(req.body)
     if (!taskId || !teamId || !index.toString()) {
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: "参数不全" },
@@ -650,6 +643,7 @@ const changeTaskIndex = async (req, res, next) => {
             await tasklistDB.delTask(taskObj.tasklistId, taskId);
             await tasklistDB.changeTaskIndex(taskObj.tasklistId, index ,taskObj);
             await tasklistDB.delNonSence(taskObj.tasklistId);
+            await teamDB.delListNonSense(teamId)
         }
         else{
             await teamDB.delTask(teamId, taskId);
@@ -666,6 +660,56 @@ const changeTaskIndex = async (req, res, next) => {
             state: { code: 1, msg: error },
             data: {}
         });
+    }
+}
+
+const changeTaskList = async (req, res, next) => {
+    const taskId = req.body.taskId;
+    const listIdTo = req.body.listIdTo;
+    const listIdFrom = req.body.listIdFrom;
+    const userId = req.rSession.userId;
+
+    if (!taskId) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 0, msg: "参数不全" },
+            data: {}
+        });
+        return
+    }
+
+    try {
+
+        var result = (await taskDB.findByTaskId(taskId)).toObject();
+        const teamId = result.teamId;
+
+        if (listIdTo===""&&listIdFrom!=="") {
+            await tasklistDB.delTask(listIdFrom,taskId)
+            await teamDB.addTask(teamId,result)
+        }
+        if (listIdTo!==""&&listIdFrom==="") {
+            await teamDB.delTask(teamId,taskId)
+            await tasklistDB.addTask(listIdTo,result)
+        } 
+        if (listIdTo!==""&&listIdFrom!=="") {
+            await tasklistDB.delTask(listIdFrom,result)
+            await tasklistDB.addTask(listIdTo,result)
+        }
+
+        // const baseInfoObj = await userDB.baseInfoById(userId);
+        // const teamObj = await teamDB.findByTeamId(teamId);
+        // await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'MOVE_TASK', result._id, result.title, result);
+
+
+        resProcessor.jsonp(req, res, {
+            state: { code: 0, msg: '请求成功' },
+            data: result
+        });
+    } catch (error) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: '操作失败' },
+            data: {}
+        });
+        console.error(error);
     }
 }
 
@@ -981,13 +1025,16 @@ const editCheckitem = async (req, res, next) => {
                 break;
             }
         }
-
         const checkitemObj = {}
         checkitemObj.content = editCheckitem.name || checkitemObjTemp.content || ""
-        if (editCheckitem.assigneeId === undefined) {
-            checkitemObj.header = checkitemObjTemp.header
-        } else {
+        if (editCheckitem.assigneeId) {
             checkitemObj.header = editCheckitem.assigneeId
+
+        } else {
+            checkitemObj.header = undefined
+        }
+        if(!checkitemObj.header){
+            checkitemObj.headername ='未指派'
         }
         checkitemObj.deadline = editCheckitem.ddl || checkitemObjTemp.deadline || ""
         if (checkitemObj.header) {
@@ -1054,6 +1101,7 @@ const editCheckitem = async (req, res, next) => {
         }
 
         //7.6
+        console.log("7777777777777",editCheckitem.ddl)
         if(editCheckitem.ddl)
         {
             const teamObj = await teamDB.findByTeamId(teamId);
@@ -1074,10 +1122,6 @@ const editCheckitem = async (req, res, next) => {
         }
 
         //7.9
-        const teamObj123 = await teamDB.findByTeamId(teamId);
-        const baseInfoObj123 = await userDB.baseInfoById(userId);
-        await timelineDB.createTimeline(teamId, teamObj123.name, baseInfoObj123, 'CHANGE_CHECKITEM_DDL', checkitemObj._id, checkitemObj.title, checkitemObj);
-
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
@@ -1441,6 +1485,7 @@ module.exports = [
     ['POST', '/api/task/edit', apiAuth, editTask],
     ['POST', '/api/task/changeDir', apiAuth, changeTaskDir],
     ['POST', '/api/task/changeIndex', apiAuth, changeTaskIndex],
+    ['POST', '/api/task/changeList', apiAuth, changeTaskList],
     ['GET', '/api/task/taskInfo', apiAuth, taskInfo],
     ['POST', '/api/task/addCheckitem', apiAuth, addCheckitem],
     ['POST', '/api/task/dropCheckitem', apiAuth, dropCheckitem],

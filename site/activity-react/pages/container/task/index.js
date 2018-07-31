@@ -3,6 +3,7 @@ import './style.scss'
 import api from '../../../utils/api';
 import TodoList from '../todo/todolist/todoList'
 import EditTodoList from '../todo/todolist/editTodoList'
+import { DH_CHECK_P_NOT_SAFE_PRIME } from 'constants';
 
 class TeamChoseItem extends React.PureComponent {
     render() {
@@ -58,15 +59,10 @@ class Task extends React.Component{
 
         const curUserId = this.props.curUserId
 
-        let isCreator = ''
 
         result.data.memberList.map((item) => {  // 判断是否是创建者 ？
-            if (item.userId == curUserId) {
-                isCreator = item.role
-            }
             memberIDList.push(item.userId)
         })
-        console.log(isCreator)
         const memberResult = await api('/api/userInfoList', {
             method: 'POST',
             body: { userList: memberIDList }
@@ -84,21 +80,21 @@ class Task extends React.Component{
         })
     }
     initTodoListArr = async () => {
-        // 请求todoListArr数据
         const resp = await api('/api/team/taskList', {
             method: 'GET',
             body: {
                 teamId: this.teamId
             }
         })
-        // console.log('resp', resp)
         let todoListArr = this.state.todoListArr
+        //未分类列表
         let unclassifiedList = []
         let unclassified = {}
         let todoList = []
         if (resp.data.taskList == undefined) {
             resp.data.taskList = []
         }
+         //普通任务项都加到未分类列表中
         resp.data.taskList.map((item) => {
             if(item.state === false){
                 let todoItem = {}
@@ -113,10 +109,12 @@ class Task extends React.Component{
                 unclassifiedList.push(todoItem)
             }
         })
+         //未分类对象的列表是未分类列表
         unclassified.list = unclassifiedList
         if (resp.data.tasklistList == undefined) {
             resp.data.tasklistList = []
         }
+        //清单对象加入到todoList数组中
         resp.data.tasklistList.map((item) => {
             let todoListItem = {}
             todoListItem.id = item._id
@@ -184,6 +182,7 @@ class Task extends React.Component{
             }
         }
     }
+    //任务项的创建/添加
     handleTodoCreate = async (lIndex, id, todoInfo) => {
         if(!todoInfo.name.trim()){
             alert("任务名不能为空")
@@ -226,12 +225,8 @@ class Task extends React.Component{
         }
         
     }
+    //checkbox
     handleTodoCheck = async (lIndex, lId, id, hasDone) => {
-        // this.state.todoListArr.map((item,index)=>{
-        //     if(id===item.id){
-                    
-        //     }
-        // })
         let editTask = {}
         editTask.hasDone = !hasDone
         const resp = await api('/api/task/edit', {
@@ -243,7 +238,6 @@ class Task extends React.Component{
                 editTask: editTask,
             }
         })
-        console.log(resp)
         if (resp.state.code === 0) {
             // 更新 todolist
             const todoListArr = this.state.todoListArr
@@ -258,9 +252,7 @@ class Task extends React.Component{
             if(!doneList.find((item)=>{return todoItem.id === item.id})){
                 doneList.push(todoItem)
             }
-            todolist.list = todolist.list.slice()
-            this.setState({ todoListArr,doneList })
-            console.log(doneList)
+            this.setState({ doneList })
         }
     }
     handleTodoModify = async (lIndex, lId, id, todoInfo) => {
@@ -289,15 +281,18 @@ class Task extends React.Component{
                 todoItem.ddl = resp.data.deadline
                 todoItem.assignee.id = resp.data.header
                 todolist.list[itemIndex] = todoItem
-                todolist.list = todolist.list.slice()
                 this.setState({ todoListArr })
             }
+            //todoItem有使用
             return resp
         }
     }
     handleAssigneeChange = async (lIndex, lId, id, e) => {
         let editTask = {}
         editTask.assigneeId = e.target.value
+        if(editTask.assigneeId === "null"){
+            editTask.assigneeId = undefined
+        }
         const resp = await api('/api/task/edit', {
             method: 'POST',
             body: {
@@ -307,7 +302,6 @@ class Task extends React.Component{
                 editTask: editTask,
             }
         })
-        console.log(resp)
         if (resp.state.code === 0) {
             let todoListArr = this.state.todoListArr
             const todolist = todoListArr[lIndex]
@@ -316,7 +310,6 @@ class Task extends React.Component{
             todoItem.assignee = {}
             todoItem.assignee.id = resp.data.header
             todolist.list[itemIndex] = todoItem
-            todolist.list = todolist.list.slice()
             this.setState({ todoListArr })
             return resp
         }
@@ -338,7 +331,6 @@ class Task extends React.Component{
             const todolist = todoListArr[lIndex]
             const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
             todoItem.ddl = resp.data.deadline
-            todolist.list = todolist.list.slice()
             this.setState({ todoListArr })
             return resp
         }
@@ -357,7 +349,6 @@ class Task extends React.Component{
             const todolist = todoListArr[lIndex]
             const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
             todolist.list.splice(itemIndex, 1)
-            todolist.list = todolist.list.slice()
             this.setState({ todoListArr })
             return resp
         }
@@ -373,7 +364,7 @@ class Task extends React.Component{
         const [todolist, todolistIndex] = getUpdateItem(todoListArr, id)
         todoListArr.splice(todolistIndex, 1)
         if (resp.state.code === 0) {
-            this.setState({ todoListArr: todoListArr.slice() })
+            this.setState({ todoListArr })
         }
         return resp
     }
@@ -393,9 +384,69 @@ class Task extends React.Component{
             })
             if (resp.state.code === 0) {
                 todoListArr[index].name = resp.data.name
-                this.setState({ todoListArr: todoListArr.slice() })
+                this.setState({ todoListArr })
             }
             return resp
+        }
+    }
+    dragStart(e){
+        this.dragged = e.currentTarget
+    }
+    dragEnd = async(lIndex,id,e) => {
+        const todoListArr = this.state.todoListArr
+        var data=[]
+        var from ;
+        var to;
+        console.log(id)
+        if(this.dragged.dataset.type =='item'){
+            from = Number(this.dragged.dataset.id)
+            to = Number(this.over.dataset.id)
+            data = todoListArr[lIndex].list
+            console.log(to)
+            const resp = await api('/api/task/changeIndex', {
+                method: "POST",
+                body: {
+                    taskId: id,
+                    index: to,
+                    teamId: this.teamId,
+                }
+            })
+            console.log(resp)
+            this.initTodoListArr()
+        }else if(this.dragged.dataset.type == 'list'){
+            from = Number(this.dragged.dataset.listid)
+            to = Number(this.over.dataset.listid)
+            data = todoListArr
+            if(to === 0 || !to) return
+            const resp = await api('/api/task/changeListIndex', {
+                method: "POST",
+                body: {
+                    listId: id,
+                    index: to-1,
+                    teamId: this.teamId,
+                }
+            })
+            console.log(resp)
+            this.initTodoListArr()
+        }
+        
+    }
+
+    dragOver(e){
+        e.preventDefault()
+        this.over = e.target
+    }
+    drop(e){
+        console.log(this.dragged)
+        console.log(e.target)
+ 
+        if(this.dragged.dataset.listindex !== e.target.dataset.listindex){
+        const todoListArr = this.state.todoListArr
+        var from = todoListArr[this.dragged.dataset.listindex].list
+        var targetItem = from.splice(this.dragged.dataset.id,1)[0]
+        var to = todoListArr[e.target.dataset.listindex].list
+        to.splice(e.target.dataset.id,0,targetItem)
+        this.setState({ todoListArr })
         }
     }
 
@@ -454,6 +505,11 @@ class Task extends React.Component{
                 handleTodoDelete={this.handleTodoDelete.bind(this, 0, null)}
                 handleTodoListDelete={this.handleTodoListDelete.bind(this, null, unclassified.id)}
                 handleTodoListModify={this.handleTodoListModify.bind(this, null, unclassified.id)}
+                dragOver={this.dragOver.bind(this)}
+                dragStart={this.dragStart.bind(this)}
+                dragEnd={this.dragEnd.bind(this,0)}
+                drop={this.drop.bind(this)}
+                index={0}
             ></TodoList>
         }
 
@@ -466,6 +522,7 @@ class Task extends React.Component{
             </EditTodoList>
         }
 
+      
         {this.state.todoListArr.map((todoList, index) => {
             if (index === 0) {
                 return
@@ -485,10 +542,16 @@ class Task extends React.Component{
                     handleTodoDelete={this.handleTodoDelete.bind(this, index, todoList.id)}
                     handleTodoListDelete={this.handleTodoListDelete.bind(this, index, todoList.id)}
                     handleTodoListModify={this.handleTodoListModify.bind(this, index, todoList.id)}
+                    index={index}
+                    dragOver={this.dragOver.bind(this)}
+                    dragStart={this.dragStart.bind(this)}
+                    dragEnd={this.dragEnd.bind(this,index)}
+                    drop={this.drop.bind(this)}
                 ></TodoList>
             )
         })
         }
+        
         <div className="completed" onClick={()=>{location.href = '/completed/' + this.teamId}}>已完成任务</div>
     </div>
         )}

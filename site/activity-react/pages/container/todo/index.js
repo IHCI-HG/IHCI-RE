@@ -852,6 +852,9 @@ export default class Task extends React.Component{
         const checkitemId = id
         const editCheckitem = {}
         editCheckitem.assigneeId = e.target.value
+        if(editCheckitem.assigneeId === "null"){
+            editCheckitem.assigneeId = undefined
+        }
         const resp = await api('/api/task/editCheckitem', {
             method: 'POST',
             body: {
@@ -967,7 +970,7 @@ export default class Task extends React.Component{
                 fileInfo: {
                     teamId: this.state.todo.teamId,
                     dir: item.dir,
-                    fileName: item.name.split("/")[2],
+                    fileName: item.fileName,
                     tarDir: tarDir,
                 }
             }

@@ -10,6 +10,7 @@ import MemberChosenList from '../../../components/member-chose-list'
 import Editor from '../../../components/editor'
 import fileUploader from '../../../utils/file-uploader'
 import TopicItem from '../../../components/topic-item'
+import {create} from '../../../../../server/components/uuid/uuid'
 
 
 export default class TeamDetail extends React.Component {
@@ -505,7 +506,6 @@ export default class TeamDetail extends React.Component {
 
     render() {
         let teamInfo = this.state.teamInfo
-
         return (
             <Page title={teamInfo.name + " - IHCI"}
                 className="project-page">
