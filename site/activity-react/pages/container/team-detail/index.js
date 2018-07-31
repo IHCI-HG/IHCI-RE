@@ -506,7 +506,6 @@ export default class TeamDetail extends React.Component {
 
     render() {
         let teamInfo = this.state.teamInfo
-
         return (
             <Page title={teamInfo.name + " - IHCI"}
                 className="project-page">

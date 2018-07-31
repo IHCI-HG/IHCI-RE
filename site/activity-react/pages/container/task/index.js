@@ -393,15 +393,27 @@ class Task extends React.Component{
     dragStart(e){
         this.dragged = e.currentTarget
     }
-    dragEnd(lIndex,e){
+    dragEnd = async(lIndex,id,e) => {
        const todoListArr = this.state.todoListArr
        var data=[]
        var from ;
        var to;
+       console.log(id)
        if(this.dragged.dataset.type =='item'){
-         from = this.dragged.dataset.id
-         to = this.over.dataset.id
+         from = Number(this.dragged.dataset.id)
+         to = Number(this.over.dataset.id)
         data = todoListArr[lIndex].list
+        console.log(to)
+        const resp = await api('/api/task/changeIndex', {
+            method: "POST",
+            body: {
+                taskId: id,
+                index: to,
+                teamId: this.teamId,
+            }
+        })
+        console.log(resp)
+        this.initTodoListArr()
        }else if(this.dragged.dataset.type == 'list'){
          from = this.dragged.dataset.listid
          to = this.over.dataset.listid
@@ -425,7 +437,9 @@ class Task extends React.Component{
         var from = todoListArr[this.dragged.dataset.listindex].list
         console.log(from)
         var targetItem = from.splice(this.dragged.dataset.id,1)[0]
-        var to = todoListArr[e.target.dataset.listindex].list
+        if(todoListArr[e.target.dataset.listindex]){
+            var to = todoListArr[e.target.dataset.listindex].list
+        }
         to.splice(e.target.dataset.id,0,targetItem)
         this.setState({ todoListArr })
     }

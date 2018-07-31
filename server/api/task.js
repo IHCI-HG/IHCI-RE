@@ -661,6 +661,56 @@ const changeTaskIndex = async (req, res, next) => {
     }
 }
 
+const changeTaskList = async (req, res, next) => {
+    const taskId = req.body.taskId;
+    const listIdTo = req.body.listIdTo;
+    const listIdFrom = req.body.listIdFrom;
+    const userId = req.rSession.userId;
+
+    if (!taskId) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 0, msg: "参数不全" },
+            data: {}
+        });
+        return
+    }
+
+    try {
+
+        var result = (await taskDB.findByTaskId(taskId)).toObject();
+        const teamId = result.teamId;
+
+        if (listIdTo===""&&listIdFrom!=="") {
+            await tasklistDB.delTask(listIdFrom,taskId)
+            await teamDB.addTask(teamId,result)
+        }
+        if (listIdTo!==""&&listIdFrom==="") {
+            await teamDB.delTask(teamId,taskId)
+            await tasklistDB.addTask(listIdTo,result)
+        } 
+        if (listIdTo!==""&&listIdFrom!=="") {
+            await tasklistDB.delTask(listIdFrom,result)
+            await tasklistDB.addTask(listIdTo,result)
+        }
+
+        // const baseInfoObj = await userDB.baseInfoById(userId);
+        // const teamObj = await teamDB.findByTeamId(teamId);
+        // await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'MOVE_TASK', result._id, result.title, result);
+
+
+        resProcessor.jsonp(req, res, {
+            state: { code: 0, msg: '请求成功' },
+            data: result
+        });
+    } catch (error) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: '操作失败' },
+            data: {}
+        });
+        console.error(error);
+    }
+}
+
 const taskInfo = async (req, res, next) => {
     const taskId = req.query.taskId
     const userId = req.rSession.userId
@@ -1433,6 +1483,7 @@ module.exports = [
     ['POST', '/api/task/edit', apiAuth, editTask],
     ['POST', '/api/task/changeDir', apiAuth, changeTaskDir],
     ['POST', '/api/task/changeIndex', apiAuth, changeTaskIndex],
+    ['POST', '/api/task/changeList', apiAuth, changeTaskList],
     ['GET', '/api/task/taskInfo', apiAuth, taskInfo],
     ['POST', '/api/task/addCheckitem', apiAuth, addCheckitem],
     ['POST', '/api/task/dropCheckitem', apiAuth, dropCheckitem],

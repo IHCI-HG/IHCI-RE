@@ -93,7 +93,7 @@ class TodoList extends React.Component {
                             data-type='list'
                             draggable='true'
                             onDragStart={_props.dragStart}
-                            onDragEnd={_props.dragEnd}
+                            onDragEnd={_props.dragEnd.bind(this,this.props.id)}
                             onDragOver={_props.dragOver}>
                                 <div className="name-actions">
                                     <i className="icon iconfont"
@@ -118,7 +118,7 @@ class TodoList extends React.Component {
                             key={todo.id}
                             draggable='true'
                             onDragStart={_props.dragStart}
-                            onDragEnd={_props.dragEnd}
+                            onDragEnd={_props.dragEnd.bind(this,todo.id)}
                             onDragOver={_props.dragOver}
                             onDrop={_props.drop}
                             data-id={i}
