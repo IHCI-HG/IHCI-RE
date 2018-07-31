@@ -259,13 +259,7 @@ class Task extends React.Component{
             if(!doneList.find((item)=>{return todoItem.id === item.id})){
                 doneList.push(todoItem)
             }
-<<<<<<< HEAD
-            todolist.list = todolist.list.slice()
-            this.setState({ todoListArr,doneList })
-=======
             this.setState({ doneList })
-            console.log(doneList)
->>>>>>> 8edafcd0473dce65a1c62b706f49f6c8950ab130
         }
     }
     handleTodoModify = async (lIndex, lId, id, todoInfo) => {
