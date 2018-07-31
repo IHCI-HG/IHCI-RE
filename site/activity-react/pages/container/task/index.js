@@ -391,29 +391,45 @@ class Task extends React.Component{
     dragStart(e){
         this.dragged = e.currentTarget
     }
-    dragEnd(lIndex,e){
-       const todoListArr = this.state.todoListArr
-       var data=[]
-       var from ;
-       var to;
-       if(this.dragged.dataset.type =='item'){
-         from = this.dragged.dataset.id
-         to = this.over.dataset.id
+    dragEnd = async(lIndex,id,e) => {
+        const todoListArr = this.state.todoListArr
+        var data=[]
+        var from ;
+        var to;
+        console.log(id)
+        if(this.dragged.dataset.type =='item'){
+            from = Number(this.dragged.dataset.id)
+            to = Number(this.over.dataset.id)
         data = todoListArr[lIndex].list
-       }else if(this.dragged.dataset.type == 'list'){
-         from = this.dragged.dataset.listid
-         to = this.over.dataset.listid
-        data = todoListArr
-       
-        if(to == 0 || !to) return
-       }
-
-       data.splice(to,0,data.splice(from,1)[0]) 
-       data.map((doc,index) =>{
-           doc.newIndex = index+1
-       })
-       this.setState({ todoListArr })
+        console.log(to)
+        const resp = await api('/api/task/changeIndex', {
+            method: "POST",
+            body: {
+                taskId: id,
+                index: to,
+                teamId: this.teamId,
+            }
+        })
+        console.log(resp)
+        this.initTodoListArr()
+        }else if(this.dragged.dataset.type == 'list'){
+            from = Number(this.dragged.dataset.listid)
+            to = Number(this.over.dataset.listid)
+            data = todoListArr
+            if(to === 0 || !to) return
+        }
+        const resp = await api('/api/task/changeListIndex', {
+            method: "POST",
+            body: {
+                listId: id,
+                index: to-1,
+                teamId: this.teamId,
+            }
+        })
+        console.log(resp)
+        this.initTodoListArr()
     }
+
     dragOver(e){
         e.preventDefault()
         this.over = e.target
