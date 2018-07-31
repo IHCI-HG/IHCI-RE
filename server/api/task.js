@@ -452,9 +452,7 @@ const editTask = async (req, res, next) => {
         task.content = editTask.desc || taskObj.content;
         task.fileList = editTask.fileList || taskObj.fileList;
         task.deadline = editTask.ddl || taskObj.deadline;
-        if (editTask.assigneeId === undefined) {
-            task.header = taskObj.header
-        } else {
+        if (editTask.assigneeId) {
             task.header = editTask.assigneeId
             
 
@@ -462,15 +460,13 @@ const editTask = async (req, res, next) => {
             await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'CHANGE_TASK_HEADER', taskObj._id, taskObj.title, task);
 
 
+        }else{
+            task.header = undefined
+            await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'CHANGE_TASK_HEADER', taskObj._id, taskObj.title, task);
         }
-        console.log(task.header)
-        var headername = ""
-        if (task.header) {
-            const headerObj = await userDB.findByUserId(task.header);
-            headername = headerObj.username
+        if (!task.header) {
+            task.headername = '未指派'
         }
-        task.headername = headername
-        console.log(task)
         if (editTask.hasDone == true) {
             task.state = true;
             task.completed_time = new Date().getTime()
