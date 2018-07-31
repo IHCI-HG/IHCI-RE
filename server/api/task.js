@@ -453,13 +453,9 @@ const editTask = async (req, res, next) => {
         task.fileList = editTask.fileList || taskObj.fileList;
         task.deadline = editTask.ddl || taskObj.deadline;
         if (editTask.assigneeId) {
-            task.header = editTask.assigneeId
-            
-
+            task.header = editTask.assigneeId   
             //7.6
             await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'CHANGE_TASK_HEADER', taskObj._id, taskObj.title, task);
-
-
         }else{
             task.header = undefined
             await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'CHANGE_TASK_HEADER', taskObj._id, taskObj.title, task);
@@ -977,13 +973,16 @@ const editCheckitem = async (req, res, next) => {
                 break;
             }
         }
-
         const checkitemObj = {}
         checkitemObj.content = editCheckitem.name || checkitemObjTemp.content || ""
-        if (editCheckitem.assigneeId === undefined) {
-            checkitemObj.header = checkitemObjTemp.header
-        } else {
+        if (editCheckitem.assigneeId) {
             checkitemObj.header = editCheckitem.assigneeId
+
+        } else {
+            checkitemObj.header = undefined
+        }
+        if(!checkitemObj.header){
+            checkitemObj.headername ='未指派'
         }
         checkitemObj.deadline = editCheckitem.ddl || checkitemObjTemp.deadline || ""
         if (checkitemObj.header) {
@@ -1050,6 +1049,7 @@ const editCheckitem = async (req, res, next) => {
         }
 
         //7.6
+        console.log("7777777777777",editCheckitem.ddl)
         if(editCheckitem.ddl)
         {
             const teamObj = await teamDB.findByTeamId(teamId);
@@ -1070,10 +1070,6 @@ const editCheckitem = async (req, res, next) => {
         }
 
         //7.9
-        const teamObj123 = await teamDB.findByTeamId(teamId);
-        const baseInfoObj123 = await userDB.baseInfoById(userId);
-        await timelineDB.createTimeline(teamId, teamObj123.name, baseInfoObj123, 'CHANGE_CHECKITEM_DDL', checkitemObj._id, checkitemObj.title, checkitemObj);
-
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },

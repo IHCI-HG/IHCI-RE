@@ -852,6 +852,9 @@ export default class Task extends React.Component{
         const checkitemId = id
         const editCheckitem = {}
         editCheckitem.assigneeId = e.target.value
+        if(editCheckitem.assigneeId === "null"){
+            editCheckitem.assigneeId = undefined
+        }
         const resp = await api('/api/task/editCheckitem', {
             method: 'POST',
             body: {
