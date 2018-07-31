@@ -197,7 +197,6 @@ class Task extends React.Component{
                     assigneeId: todoInfo.assigneeId,
                 }
             })
-            console.log(result.data)
             // 返回用户名的显示依赖assigneeId
             if (result.state.code === 0) {
                 let todo = {
@@ -256,7 +255,6 @@ class Task extends React.Component{
         }
     }
     handleTodoModify = async (lIndex, lId, id, todoInfo) => {
-        console.log(todoInfo)
         let editTask = {}
         if(!todoInfo.name.trim()){
             alert("任务名不能为空")
@@ -433,15 +431,16 @@ class Task extends React.Component{
         this.over = e.target
     }
     drop(e){
+        if(this.dragged.dataset.listindex !== e.target.dataset.listindex){
         const todoListArr = this.state.todoListArr
         var from = todoListArr[this.dragged.dataset.listindex].list
-        console.log(from)
         var targetItem = from.splice(this.dragged.dataset.id,1)[0]
         if(todoListArr[e.target.dataset.listindex]){
             var to = todoListArr[e.target.dataset.listindex].list
         }
         to.splice(e.target.dataset.id,0,targetItem)
         this.setState({ todoListArr })
+        }
     }
 
 

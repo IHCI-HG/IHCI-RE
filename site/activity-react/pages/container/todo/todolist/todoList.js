@@ -43,7 +43,6 @@ class TodoList extends React.Component {
 
     }
     setMode(mode) {
-        console.log('setMode:', mode);
         this.setState({ mode: mode })
     }
 
@@ -100,7 +99,6 @@ class TodoList extends React.Component {
                                        onClick={_props.handleTodoListDelete}>&#xe70b;</i>
                                     <i className="icon iconfont"
                                        onClick={(e) => {
-                                           console.log('edit')
                                            this.setMode('edit')
                                            e.stopPropagation()
                                        }}>&#xe6ec;</i>
