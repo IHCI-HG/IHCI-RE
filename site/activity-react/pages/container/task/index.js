@@ -256,7 +256,9 @@ class Task extends React.Component{
             todoItem.completeTime = resp.data.completed_time
             // ...更新完成时间赋值
             todolist.list[itemIndex] = todoItem
-            doneList.push(todoItem)      
+            if(!doneList.find((item)=>{return todoItem.id === item.id})){
+                doneList.push(todoItem)
+            }
             this.setState({ doneList })
             console.log(doneList)
         }
