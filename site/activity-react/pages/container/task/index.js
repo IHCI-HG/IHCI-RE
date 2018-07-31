@@ -401,10 +401,22 @@ class Task extends React.Component{
         this.dragged = e.currentTarget
     }
     dragEnd(lIndex,e){
-       const from = this.dragged.dataset.id
-       const to = this.over.dataset.id
        const todoListArr = this.state.todoListArr
-       let data = todoListArr[lIndex].list
+       var data=[]
+       var from ;
+       var to;
+       if(this.dragged.dataset.type =='item'){
+         from = this.dragged.dataset.id
+         to = this.over.dataset.id
+        data = todoListArr[lIndex].list
+       }else if(this.dragged.dataset.type == 'list'){
+         from = this.dragged.dataset.listid
+         to = this.over.dataset.listid
+        data = todoListArr
+       
+        if(to == 0 || !to) return
+       }
+
        data.splice(to,0,data.splice(from,1)[0]) 
        data.map((doc,index) =>{
            doc.newIndex = index+1
@@ -486,6 +498,7 @@ class Task extends React.Component{
             </EditTodoList>
         }
 
+      
         {this.state.todoListArr.map((todoList, index) => {
             if (index === 0) {
                 return
@@ -505,6 +518,7 @@ class Task extends React.Component{
                     handleTodoDelete={this.handleTodoDelete.bind(this, index, todoList.id)}
                     handleTodoListDelete={this.handleTodoListDelete.bind(this, index, todoList.id)}
                     handleTodoListModify={this.handleTodoListModify.bind(this, index, todoList.id)}
+                    index={index}
                     dragOver={this.dragOver.bind(this)}
                     dragStart={this.dragStart.bind(this)}
                     dragEnd={this.dragEnd.bind(this,index)}
@@ -512,6 +526,7 @@ class Task extends React.Component{
             )
         })
         }
+        
         <div className="completed" onClick={()=>{location.href = '/completed/' + this.teamId}}>已完成任务</div>
     </div>
         )}
