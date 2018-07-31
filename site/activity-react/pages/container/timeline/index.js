@@ -139,7 +139,7 @@ class TimelineItem extends React.PureComponent{
     }
     render() {
         switch(this.props.type){
-            case 'CHANGE_TASK_DDL': case 'CHANGE_CHECKITEM_DDL':
+            case 'CHANGE_TASK_DDL': 
                 return(
                     <div className='news-item-wrap'>
                         <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
@@ -149,14 +149,31 @@ class TimelineItem extends React.PureComponent{
                             <div className="des-line">
                                 <span className="name">{this.props.creator.name}</span>
                                 <span className="type">{this.typeMap[this.props.type]}</span>
-                                <span className="topic">&nbsp; {this.props.content.title}&nbsp; 的完成时间改为&nbsp; </span>
+                                <span className="topic">&nbsp; {this.props.content.title}&nbsp; 的完成时间为&nbsp; </span>
                                 <span className="content">{this.props.content.deadline}</span>
                             </div>
 
                         </div>
                     </div>
                 )
-            case 'CHANGE_TASK_HEADER': case 'CHANGE_CHECKITEM_HEADER':
+            case 'CHANGE_CHECKITEM_DDL':
+                return(
+                    <div className='news-item-wrap'>
+                        <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
+                        <img src={this.props.creator.headImg} alt="" className="head-img" />
+
+                        <div className="news-con">
+                            <div className="des-line">
+                                <span className="name">{this.props.creator.name}</span>
+                                <span className="type">{this.typeMap[this.props.type]}</span>
+                                <span className="topic">&nbsp; {this.props.content.content}&nbsp; 的完成时间为&nbsp; </span>
+                                <span className="content">{this.props.content.deadline}</span>
+                            </div>
+
+                        </div>
+                    </div>
+                )
+            case 'CHANGE_TASK_HEADER': 
                 return(
                     <div className='news-item-wrap'>
                         <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
@@ -169,8 +186,22 @@ class TimelineItem extends React.PureComponent{
                                 <span className="topic">&nbsp; {this.props.content.title} &nbsp;的指派人: &nbsp;</span>
                                 <span className="content">{this.state.headerName}</span>
                             </div>
+                        </div>
+                    </div>
+                )
+            case 'CHANGE_CHECKITEM_HEADER':
+                return(
+                    <div className='news-item-wrap'>
+                        <div className="time">{formatDate(this.props.create_time, 'hh:mm')}</div>
+                        <img src={this.props.creator.headImg} alt="" className="head-img" />
 
-                            
+                        <div className="news-con">
+                            <div className="des-line">
+                                <span className="name">{this.props.creator.name}</span>
+                                <span className="type">{this.typeMap[this.props.type]}</span>
+                                <span className="topic">&nbsp; {this.props.content.content} &nbsp;的指派人: &nbsp;</span>
+                                <span className="content">{this.state.headerName}</span>
+                            </div>
                         </div>
                     </div>
                 )
@@ -234,7 +265,7 @@ export default class Timeline extends React.Component{
             newsList: result.data,
             memberJumped: !!queryPerson ? !!queryPerson : false,
         }, () => {
-            // console.log(this.state.newsList)
+            console.log(this.state.newsList)
              this.appendToShowList(this.state.newsList)
         })
         // if(result.data.length == 0){
@@ -267,8 +298,6 @@ export default class Timeline extends React.Component{
                 timeStamp: lastStamp? lastStamp: '',
             }
         })
-
-        // console.log(result)
         this.setState({
             newsList: result.data
         }, () => {
