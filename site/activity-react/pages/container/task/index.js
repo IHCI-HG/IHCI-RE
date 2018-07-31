@@ -79,14 +79,12 @@ class Task extends React.Component{
         })
     }
     initTodoListArr = async () => {
-        // 请求todoListArr数据
         const resp = await api('/api/team/taskList', {
             method: 'GET',
             body: {
                 teamId: this.teamId
             }
         })
-        // console.log('resp', resp)
         let todoListArr = this.state.todoListArr
         //未分类列表
         let unclassifiedList = []
@@ -228,11 +226,6 @@ class Task extends React.Component{
     }
     //checkbox
     handleTodoCheck = async (lIndex, lId, id, hasDone) => {
-        // this.state.todoListArr.map((item,index)=>{
-        //     if(id===item.id){
-                    
-        //     }
-        // })
         let editTask = {}
         editTask.hasDone = !hasDone
         const resp = await api('/api/task/edit', {
