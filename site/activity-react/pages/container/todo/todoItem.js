@@ -105,6 +105,7 @@ class TodoItem extends React.Component {
         return (
             <div className={componentClass}
             data-id={this.props.dataId}
+            data-listindex={this.props.index}
             draggable='true'>
                 <div className="actions-wrap">
                     <div className="actions">
