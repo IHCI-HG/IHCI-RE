@@ -77,7 +77,8 @@ class TodoList extends React.Component {
         // console.log('todolist渲染', _props.id)
         // console.log('list', _props.list)
         return (
-            <div className="todolist">
+            <div className="todolist"
+            >
                 {
                     listType === 'classification' && (
                     this.state.mode === 'edit'
@@ -108,7 +109,13 @@ class TodoList extends React.Component {
                 {
                     this.state.todoList.map((todo,i) => {
                         return (
-                            
+                            <div
+                            key={todo.id}
+                            draggable='true'
+                            onDragStart={_props.dragStart}
+                            onDragEnd={_props.dragEnd}
+                            onDragOver={_props.dragOver}
+                            data-id={i}>              
                             <TodoItem
                                 {...todo}
                                 key={todo.id}
@@ -118,7 +125,9 @@ class TodoList extends React.Component {
                                 handleTodoModify={_props.handleTodoModify.bind(this,todo.id )}
                                 handleTodoDelete={_props.handleTodoDelete.bind(this,todo.id )}
                                 handleTodoCheck={_props.handleTodoCheck.bind(this, todo.id)}
+                                dataId={i}
                             />
+                            </div>
                            
                         )
                     })
