@@ -435,6 +435,7 @@ class Task extends React.Component{
         this.over = e.target
     }
     drop(e){
+ 
         if(this.dragged.dataset.listindex !== e.target.dataset.listindex){
         const todoListArr = this.state.todoListArr
         var from = todoListArr[this.dragged.dataset.listindex].list

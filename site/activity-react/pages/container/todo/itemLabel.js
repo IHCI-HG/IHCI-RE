@@ -27,6 +27,7 @@ class ItemLabel extends React.Component {
         return (
             <div className="todo-label"
             data-id={this.props.dataId}
+            data-listindex={this.props.index}
             draggable='true'>
                 <span onClick={this.handleOpenEditDialog}
                 data-id={this.props.dataId}
