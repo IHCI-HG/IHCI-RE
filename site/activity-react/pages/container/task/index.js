@@ -254,9 +254,6 @@ class Task extends React.Component{
             todoItem.completeTime = resp.data.completed_time
             // ...更新完成时间赋值
             todolist.list[itemIndex] = todoItem
-            if(todoItem.listId === ""){
-                todoItem.listType === unclassified
-            }
             doneList.push(todoItem)
             todolist.list = todolist.list.slice()
             this.setState({ todoListArr,doneList })
@@ -443,6 +440,7 @@ class Task extends React.Component{
                 createInput="任务名"
                 handlecloseEditTodo={this.handlecloseEditTodo.bind(this)}
                 {...unclassified}
+                id=""
                 doneList={this.state.doneList}
                 memberList={this.state.memberList}
                 handleTodoCreate={this.handleTodoCreate.bind(this, 0, null)}
