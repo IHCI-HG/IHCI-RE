@@ -265,7 +265,6 @@ export default class Timeline extends React.Component{
             newsList: result.data,
             memberJumped: !!queryPerson ? !!queryPerson : false,
         }, () => {
-            console.log(this.state.newsList)
              this.appendToShowList(this.state.newsList)
         })
         // if(result.data.length == 0){
@@ -303,7 +302,6 @@ export default class Timeline extends React.Component{
         }, () => {
             this.appendToShowList(this.state.newsList)
         })
-        // console.log(result)
         if(result.data.length<moreTimeLineItemNum){
             this.setState({
                 noMoreResult: true,
@@ -345,7 +343,6 @@ export default class Timeline extends React.Component{
                 noMoreResult: true,
             })
         }
-        // console.log(showList)
     }
 
    
