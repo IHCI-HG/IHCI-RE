@@ -10,7 +10,6 @@ import MemberChosenList from '../../../components/member-chose-list'
 import Editor from '../../../components/editor'
 import fileUploader from '../../../utils/file-uploader'
 import TopicItem from '../../../components/topic-item'
-<<<<<<< HEAD
 import {create} from '../../../../../server/components/uuid/uuid'
  
 class TeamChoseItem extends React.PureComponent {
@@ -24,9 +23,6 @@ class TeamChoseItem extends React.PureComponent {
         )
     }
 }
-=======
-
->>>>>>> 18aab7b9491725bc3481d148d7f5140c769bce14
 
 
 export default class TeamDetail extends React.Component {
@@ -255,7 +251,6 @@ export default class TeamDetail extends React.Component {
         location.href = '/team-admin/' + this.teamId
     }
 
-<<<<<<< HEAD
     // todo
     handlecloseEditTodo = () => {
         this.setState({ showCreateTodo: false })
@@ -523,8 +518,6 @@ export default class TeamDetail extends React.Component {
         return resp
     }
 
-=======
->>>>>>> 18aab7b9491725bc3481d148d7f5140c769bce14
     createFolderHandle = async () => {
         this.setState({ showCreateFolder: true })
     }
