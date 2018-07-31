@@ -5,7 +5,7 @@ import api from '../../../utils/api';
 import Confirm from '../../../components/confirm'
 var ReactDOM = require('react-dom')
 
-export default class TeanManagement extends React.Component{
+export default class TeamManagement extends React.Component{
     state = {
         teamList:[],
         confirm: document.createElement('div'),
