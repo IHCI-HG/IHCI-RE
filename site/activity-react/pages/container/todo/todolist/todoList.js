@@ -118,7 +118,7 @@ class TodoList extends React.Component {
                             onDragStart={_props.dragStart}
                             onDragEnd={_props.dragEnd.bind(this,todo.id)}
                             onDragOver={_props.dragOver}
-                            onDrop={_props.drop}
+                            onDrop={_props.drop.bind(this,todo.id,this.props.id)}
                             data-id={i}
                             data-listindex={_props.index}
                             data-type='item'>              
