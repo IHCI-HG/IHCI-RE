@@ -475,6 +475,7 @@ const editTask = async (req, res, next) => {
             task.state = true;
             task.completed_time = new Date().getTime()
             task.completer = baseInfoObj
+            task.listId = tasklistId||""
             //6.28
             await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'FINISH_TASK', taskObj._id, taskObj.title, taskObj);
 

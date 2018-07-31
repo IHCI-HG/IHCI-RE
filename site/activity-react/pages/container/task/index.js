@@ -34,6 +34,7 @@ class Task extends React.Component{
         showMenu: false,
         todoListArr: [],
         memberList: [],
+        doneList: [],
     } 
     componentDidMount = async () => {
         this.teamId = this.props.teamId
@@ -98,16 +99,18 @@ class Task extends React.Component{
             resp.data.taskList = []
         }
         resp.data.taskList.map((item) => {
-            let todoItem = {}
-            todoItem.id = item.id
-            todoItem.name = item.title
-            todoItem.hasDone = item.state
-            todoItem.ddl = item.deadline
-            todoItem.completeTime = item.completed_time
-            todoItem.assignee = {
-                id: item.header.headerId
+            if(item.state === false){
+                let todoItem = {}
+                todoItem.id = item.id
+                todoItem.name = item.title
+                todoItem.hasDone = item.state
+                todoItem.ddl = item.deadline
+                todoItem.completeTime = item.completed_time
+                todoItem.assignee = {
+                    id: item.header.headerId
+                }
+                unclassifiedList.push(todoItem)
             }
-            unclassifiedList.push(todoItem)
         })
         unclassified.list = unclassifiedList
         if (resp.data.tasklistList == undefined) {
@@ -119,16 +122,18 @@ class Task extends React.Component{
             todoListItem.name = item.name
             todoListItem.list = []
             item.taskList.map((mapTodoItem) => {
-                let todoItem = {}
-                todoItem.id = mapTodoItem.taskId
-                todoItem.name = mapTodoItem.title
-                todoItem.completeTime = mapTodoItem.completed_time
-                todoItem.hasDone = mapTodoItem.state
-                todoItem.ddl = mapTodoItem.deadline
-                todoItem.assignee = {
-                    id: mapTodoItem.header.headerId
+                if(mapTodoItem.state === false){
+                    let todoItem = {}
+                    todoItem.id = mapTodoItem.taskId
+                    todoItem.name = mapTodoItem.title
+                    todoItem.completeTime = mapTodoItem.completed_time
+                    todoItem.hasDone = mapTodoItem.state
+                    todoItem.ddl = mapTodoItem.deadline
+                    todoItem.assignee = {
+                        id: mapTodoItem.header.headerId
+                    }
+                    todoListItem.list.push(todoItem)
                 }
-                todoListItem.list.push(todoItem)
             })
             todoList.push(todoListItem)
         })
@@ -241,14 +246,21 @@ class Task extends React.Component{
         if (resp.state.code === 0) {
             // 更新 todolist
             const todoListArr = this.state.todoListArr
+            const doneList = this.state.doneList
             const todolist = todoListArr[lIndex]
             const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
             todoItem.hasDone = resp.data.state
+            todoItem.listId = resp.data.listId
             todoItem.completeTime = resp.data.completed_time
             // ...更新完成时间赋值
             todolist.list[itemIndex] = todoItem
+            if(todoItem.listId === ""){
+                todoItem.listType === unclassified
+            }
+            doneList.push(todoItem)
             todolist.list = todolist.list.slice()
-            this.setState({ todoListArr })
+            this.setState({ todoListArr,doneList })
+            console.log(doneList)
         }
     }
     handleTodoModify = async (lIndex, lId, id, todoInfo) => {
@@ -431,6 +443,7 @@ class Task extends React.Component{
                 createInput="任务名"
                 handlecloseEditTodo={this.handlecloseEditTodo.bind(this)}
                 {...unclassified}
+                doneList={this.state.doneList}
                 memberList={this.state.memberList}
                 handleTodoCreate={this.handleTodoCreate.bind(this, 0, null)}
                 handleTodoCheck={this.handleTodoCheck.bind(this, 0, null)}
@@ -460,6 +473,7 @@ class Task extends React.Component{
                 <TodoList
                     key={todoList.id}
                     {...todoList}
+                    doneList={this.state.doneList}
                     createInput="任务名"
                     memberList={this.state.memberList}
                     handleTodoCreate={this.handleTodoCreate.bind(this, index, todoList.id)}

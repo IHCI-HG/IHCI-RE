@@ -22,22 +22,25 @@ class TodoList extends React.Component {
     }
     componentDidMount=()=>{
         this.setList()
+        // this.setState({doneList: this.props.doneList.filter((done)=>{return done.listId === this.props.id})})
     }
     componentWillReceiveProps(nextProps) {
         this.setState({todoList:nextProps.list.filter((todo) => {
             return todo.hasDone === false
+        }),doneList:nextProps.doneList.filter((done)=>{
+            if(done.listId===""){
+                return done.listType === this.props.listType && done.hasDone === true
+            }
+            return done.listId === this.props.id && done.hasDone === true
         })})
     }
     setList(){
         const _props = this.props
-        const doneList = _props.list.filter((todo) => {
-            return todo.hasDone === true
-        })
+
         const todoList = _props.list.filter((todo) => {
             return todo.hasDone === false
         })
         this.setState({
-            doneList:doneList,
             todoList:todoList
         },)
 
@@ -76,6 +79,8 @@ class TodoList extends React.Component {
         const listType = _props.listType
         // console.log('todolist渲染', _props.id)
         // console.log('list', _props.list)
+        console.log(this.props)
+        console.log(this.state.doneList)
         return (
             <div className="todolist">
                 {
