@@ -120,7 +120,7 @@ class TopicItem extends React.Component{
                                         <div className="file-pic-item" key={"pic"+item.id}>
                                             <img className="file-pic" src={window.location.origin + '/static/' + item.name}  onClick={this.downloadHandle.bind(this, item.name)}></img>
                                             <div className="file-name">{item.fileName}</div>
-                                            <span onClick={() => { this.props.openMoveModalHandle(item) }}>移动</span>
+                                            <span onClick={() => { this.props.openMoveModalHandle(item);e.stopPropagation() }}>移动</span>
                                         </div>
                                     )
                                 })
@@ -1129,18 +1129,6 @@ export default class Task extends React.Component{
                                 </form>
                             </div>}
                         </div>
-                    </div>
-                    <div className="action-list">
-                    {
-                        actionList.map((item) => {
-                            return(
-                                <div className="action-item">
-                                    <i className={"iconfont "+item.icon+((item.success)?" success":"")}></i>
-                                    <div className={"action "+((item.success)?" success":"")}>{item.time} {item.creator.name} {item.action}{item.task} </div>
-                                </div>
-                            )
-                        })
-                    }
                     </div>
                     <div className="topic-list">
                         {

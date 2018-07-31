@@ -175,8 +175,8 @@ class TodoItem extends React.Component {
                                 {
                                     _props.imgList&&_props.imgList.map((item) => {
                                         return (
-                                            <div className="file-pic-item" key={Math.random()} onClick={()=>{window.open(window.location.origin + '/static/' + item.name)}}>
-                                                <img className="file-pic" src={window.location.origin + '/static/' + item.name}></img>
+                                            <div className="file-pic-item" key={Math.random()}>
+                                                <img className="file-pic" src={window.location.origin + '/static/' + item.name} onClick={()=>{window.open(window.location.origin + '/static/' + item.name)}}></img>
                                                 <div className="file-name">{item.fileName}</div>
                                                 <span onClick={() => { this.props.openMoveModalHandle(item) }}>移动</span>
                                             </div>
