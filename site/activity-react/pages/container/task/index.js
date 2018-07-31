@@ -388,20 +388,22 @@ class Task extends React.Component{
             return resp
         }
     }
-    dragStart(e){
+    dragStart(id, lId, e){
         this.dragged = e.currentTarget
+        this.setState({
+            listIdFrom: lId,
+            dragTodoId: id
+        })
     }
     dragEnd = async(lIndex,id,e) => {
         const todoListArr = this.state.todoListArr
         var data=[]
         var from ;
         var to;
-        console.log(id)
         if(this.dragged.dataset.type =='item'){
             from = Number(this.dragged.dataset.id)
             to = Number(this.over.dataset.id)
             data = todoListArr[lIndex].list
-            console.log(to)
             const resp = await api('/api/task/changeIndex', {
                 method: "POST",
                 body: {
@@ -410,7 +412,6 @@ class Task extends React.Component{
                     teamId: this.teamId,
                 }
             })
-            console.log(resp)
             this.initTodoListArr()
         }else if(this.dragged.dataset.type == 'list'){
             from = Number(this.dragged.dataset.listid)
@@ -425,7 +426,6 @@ class Task extends React.Component{
                     teamId: this.teamId,
                 }
             })
-            console.log(resp)
             this.initTodoListArr()
         }
         
@@ -435,7 +435,7 @@ class Task extends React.Component{
         e.preventDefault()
         this.over = e.target
     }
-    drop(e){
+    drop = async(listIdTo, e) => {
         console.log(this.dragged)
         console.log(e.target)
  
@@ -446,6 +446,20 @@ class Task extends React.Component{
         var to = todoListArr[e.target.dataset.listindex].list
         to.splice(e.target.dataset.id,0,targetItem)
         this.setState({ todoListArr })
+        console.log({
+            taskId: this.state.dragTodoId,
+            listIdTo: listIdTo,
+            listIdFrom: this.state.listIdFrom,
+        })
+        const resp = await api('/api/task/changeList',{
+            method: "POST",
+            body: {
+                taskId: this.state.dragTodoId,
+                listIdTo: listIdTo,
+                listIdFrom: this.state.listIdFrom,
+            }
+        })
+        this.initTodoListArr()
         }
     }
 

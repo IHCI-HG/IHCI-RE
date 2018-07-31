@@ -668,7 +668,7 @@ const changeTaskList = async (req, res, next) => {
     const listIdTo = req.body.listIdTo;
     const listIdFrom = req.body.listIdFrom;
     const userId = req.rSession.userId;
-
+    console.log(req.body)
     if (!taskId) {
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: "参数不全" },
@@ -681,7 +681,6 @@ const changeTaskList = async (req, res, next) => {
 
         var result = (await taskDB.findByTaskId(taskId)).toObject();
         const teamId = result.teamId;
-
         if (listIdTo===""&&listIdFrom!=="") {
             await tasklistDB.delTask(listIdFrom,taskId)
             await teamDB.addTask(teamId,result)
@@ -691,7 +690,7 @@ const changeTaskList = async (req, res, next) => {
             await tasklistDB.addTask(listIdTo,result)
         } 
         if (listIdTo!==""&&listIdFrom!=="") {
-            await tasklistDB.delTask(listIdFrom,result)
+            await tasklistDB.delTask(listIdFrom,taskId)
             await tasklistDB.addTask(listIdTo,result)
         }
 
