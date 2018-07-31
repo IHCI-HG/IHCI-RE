@@ -430,6 +430,15 @@ class Task extends React.Component{
         e.preventDefault()
         this.over = e.target
     }
+    drop(e){
+        const todoListArr = this.state.todoListArr
+        var from = todoListArr[this.dragged.dataset.listindex].list
+        console.log(from)
+        var targetItem = from.splice(this.dragged.dataset.id,1)[0]
+        var to = todoListArr[e.target.dataset.listindex].list
+        to.splice(e.target.dataset.id,0,targetItem)
+        this.setState({ todoListArr })
+    }
 
 
     render(){
@@ -489,6 +498,8 @@ class Task extends React.Component{
                 dragOver={this.dragOver.bind(this)}
                 dragStart={this.dragStart.bind(this)}
                 dragEnd={this.dragEnd.bind(this,0)}
+                drop={this.drop.bind(this)}
+                index={0}
             ></TodoList>
         }
 
@@ -525,6 +536,7 @@ class Task extends React.Component{
                     dragOver={this.dragOver.bind(this)}
                     dragStart={this.dragStart.bind(this)}
                     dragEnd={this.dragEnd.bind(this,index)}
+                    drop={this.drop.bind(this)}
                 ></TodoList>
             )
         })

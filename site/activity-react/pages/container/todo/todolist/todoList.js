@@ -120,7 +120,9 @@ class TodoList extends React.Component {
                             onDragStart={_props.dragStart}
                             onDragEnd={_props.dragEnd}
                             onDragOver={_props.dragOver}
+                            onDrop={_props.drop}
                             data-id={i}
+                            data-listindex={_props.index}
                             data-type='item'>              
                             <TodoItem
                                 {...todo}
@@ -132,6 +134,7 @@ class TodoList extends React.Component {
                                 handleTodoDelete={_props.handleTodoDelete.bind(this,todo.id )}
                                 handleTodoCheck={_props.handleTodoCheck.bind(this, todo.id)}
                                 dataId={i}
+                                index={_props.index}
                             />
                             </div>
                            

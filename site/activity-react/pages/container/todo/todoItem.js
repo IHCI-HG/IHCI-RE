@@ -130,9 +130,11 @@ class TodoItem extends React.Component {
                 </div>
                 <div className="todo-wrap"
                 data-id={this.props.dataId}
+                data-listindex={this.props.index}
                 draggable='true'>
                     <span className="name"
                     data-id={this.props.dataId}
+                    data-listindex={this.props.index}
                         onClick={() => {
                             if (_props.detail === 'detail' || _props.type === 'check')
                                 return
@@ -161,7 +163,8 @@ class TodoItem extends React.Component {
                             memberList={_props.memberList}
                             handleDateChange={_props.handleDateChange}
                             handleAssigneeChange={_props.handleAssigneeChange}
-                            dataId={this.props.dataId}>
+                            dataId={this.props.dataId}
+                            index={this.props.index}>
                         </ItemLabel>
                     }
                     {   _props.detail === 'detail' &&

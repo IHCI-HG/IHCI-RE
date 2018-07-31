@@ -34,9 +34,11 @@ class ItemLabel extends React.Component {
                     {   assignee ?
                         <span className="assignee"
                         data-id={this.props.dataId}
+                        data-listindex={this.props.index}
                         draggable='true'>{assignee.name}</span>
                         :<span className="due"
                         data-id={this.props.dataId}
+                        data-listindex={this.props.index}
                         draggable='true'>未指派</span>
                     }
                     {   _props.date>= formatDate(new Date())?
