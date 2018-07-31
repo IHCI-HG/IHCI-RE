@@ -105,9 +105,9 @@ class TimelineItem extends React.PureComponent{
         'CREATE_TASKLIST':'创建了清单：',
         'DELETE_TASKLIST':'删除了清单：',
 
-        'CHANGE_TASK_HEADER':'将任务',
-        'CHANGE_CHECKITEM_HEADER':'将检查项',
-        'CHANGE_TASK_DDL':'将任务',
+        'CHANGE_TASK_HEADER':'更改了任务',
+        'CHANGE_CHECKITEM_HEADER':'更改了检查项',
+        'CHANGE_TASK_DDL':'更改了任务',
         'CHANGE_CHECKITEM_DDL':'更改了检查项',
         'REOPEN_TASK':'重新打开了任务：',
         'REOPEN_CHECKITEM':'重新打开了检查项：',
@@ -115,9 +115,10 @@ class TimelineItem extends React.PureComponent{
         'EDIT_CHECK_ITEM':'编辑了检查项：',
     }
     componentDidMount = () =>{
-        if(this.props.content.header!==null){
+        if(this.props.content.header){
             this.getUserName(this.props.content.header)
         }
+        else(this.setState({headerName:"未指派"}))
     }
     getUserName = async(id) => {
         const result = await api('/api/getUserInfo', {
@@ -165,7 +166,7 @@ class TimelineItem extends React.PureComponent{
                             <div className="des-line">
                                 <span className="name">{this.props.creator.name}</span>
                                 <span className="type">{this.typeMap[this.props.type]}</span>
-                                <span className="topic">&nbsp; {this.props.content.title} &nbsp;指派给了: &nbsp;</span>
+                                <span className="topic">&nbsp; {this.props.content.title} &nbsp;的指派人: &nbsp;</span>
                                 <span className="content">{this.state.headerName}</span>
                             </div>
 

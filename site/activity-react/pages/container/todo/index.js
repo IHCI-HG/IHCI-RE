@@ -967,7 +967,7 @@ export default class Task extends React.Component{
                 fileInfo: {
                     teamId: this.state.todo.teamId,
                     dir: item.dir,
-                    fileName: item.name.split("/")[2],
+                    fileName: item.fileName,
                     tarDir: tarDir,
                 }
             }

@@ -261,7 +261,6 @@ class Task extends React.Component{
                 doneList.push(todoItem)
             }
             this.setState({ doneList })
-            console.log(doneList)
         }
     }
     handleTodoModify = async (lIndex, lId, id, todoInfo) => {
@@ -300,6 +299,10 @@ class Task extends React.Component{
     handleAssigneeChange = async (lIndex, lId, id, e) => {
         let editTask = {}
         editTask.assigneeId = e.target.value
+        if(editTask.assigneeId === "null"){
+            editTask.assigneeId = undefined
+        }
+        console.log(editTask.assigneeId)
         const resp = await api('/api/task/edit', {
             method: 'POST',
             body: {
