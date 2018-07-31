@@ -1,4 +1,5 @@
 import React from 'react'
+import './style.scss'
 import api from '../../../utils/api';
 import TodoList from '../todo/todolist/todoList'
 import EditTodoList from '../todo/todolist/editTodoList'
