@@ -400,34 +400,35 @@ class Task extends React.Component{
         if(this.dragged.dataset.type =='item'){
             from = Number(this.dragged.dataset.id)
             to = Number(this.over.dataset.id)
-        data = todoListArr[lIndex].list
-        console.log(to)
-        const resp = await api('/api/task/changeIndex', {
-            method: "POST",
-            body: {
-                taskId: id,
-                index: to,
-                teamId: this.teamId,
-            }
-        })
-        console.log(resp)
-        this.initTodoListArr()
+            data = todoListArr[lIndex].list
+            console.log(to)
+            const resp = await api('/api/task/changeIndex', {
+                method: "POST",
+                body: {
+                    taskId: id,
+                    index: to,
+                    teamId: this.teamId,
+                }
+            })
+            console.log(resp)
+            this.initTodoListArr()
         }else if(this.dragged.dataset.type == 'list'){
             from = Number(this.dragged.dataset.listid)
             to = Number(this.over.dataset.listid)
             data = todoListArr
             if(to === 0 || !to) return
+            const resp = await api('/api/task/changeListIndex', {
+                method: "POST",
+                body: {
+                    listId: id,
+                    index: to-1,
+                    teamId: this.teamId,
+                }
+            })
+            console.log(resp)
+            this.initTodoListArr()
         }
-        const resp = await api('/api/task/changeListIndex', {
-            method: "POST",
-            body: {
-                listId: id,
-                index: to-1,
-                teamId: this.teamId,
-            }
-        })
-        console.log(resp)
-        this.initTodoListArr()
+        
     }
 
     dragOver(e){

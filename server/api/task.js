@@ -624,6 +624,7 @@ const changeTaskIndex = async (req, res, next) => {
     const taskId = req.body.taskId;
     const teamId = req.body.teamId;
     const index = req.body.index;
+    console.log(req.body)
     if (!taskId || !teamId || !index.toString()) {
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: "参数不全" },
@@ -642,6 +643,7 @@ const changeTaskIndex = async (req, res, next) => {
             await tasklistDB.delTask(taskObj.tasklistId, taskId);
             await tasklistDB.changeTaskIndex(taskObj.tasklistId, index ,taskObj);
             await tasklistDB.delNonSence(taskObj.tasklistId);
+            await teamDB.delListNonSense(teamId)
         }
         else{
             await teamDB.delTask(teamId, taskId);
