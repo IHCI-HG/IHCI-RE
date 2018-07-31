@@ -27,20 +27,16 @@ class ItemLabel extends React.Component {
         return (
             <div className="todo-label"
             data-id={this.props.dataId}
-            data-item={this.props.dataItem}
             draggable='true'>
                 <span onClick={this.handleOpenEditDialog}
                 data-id={this.props.dataId}
-                data-item={this.props.dataItem}
                 draggable='true'>
                     {   assignee ?
                         <span className="assignee"
                         data-id={this.props.dataId}
-                        data-item={this.props.dataItem}
                         draggable='true'>{assignee.name}</span>
                         :<span className="due"
                         data-id={this.props.dataId}
-                        data-item={this.props.dataItem}
                         draggable='true'>未指派</span>
                     }
                     {   _props.date>= formatDate(new Date())?

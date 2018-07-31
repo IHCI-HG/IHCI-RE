@@ -2,6 +2,7 @@ import React from 'react'
 import api from '../../../utils/api';
 import TodoList from '../todo/todolist/todoList'
 import EditTodoList from '../todo/todolist/editTodoList'
+import { DH_CHECK_P_NOT_SAFE_PRIME } from 'constants';
 
 class TeamChoseItem extends React.PureComponent {
     render() {
@@ -398,6 +399,36 @@ class Task extends React.Component{
             return resp
         }
     }
+    dragStart(e){
+        this.dragged = e.currentTarget
+    }
+    dragEnd(lIndex,e){
+       const todoListArr = this.state.todoListArr
+       var data=[]
+       var from ;
+       var to;
+       if(this.dragged.dataset.type =='item'){
+         from = this.dragged.dataset.id
+         to = this.over.dataset.id
+        data = todoListArr[lIndex].list
+       }else if(this.dragged.dataset.type == 'list'){
+         from = this.dragged.dataset.listid
+         to = this.over.dataset.listid
+        data = todoListArr
+       
+        if(to == 0 || !to) return
+       }
+
+       data.splice(to,0,data.splice(from,1)[0]) 
+       data.map((doc,index) =>{
+           doc.newIndex = index+1
+       })
+       this.setState({ todoListArr })
+    }
+    dragOver(e){
+        e.preventDefault()
+        this.over = e.target
+    }
 
 
     render(){
@@ -454,6 +485,9 @@ class Task extends React.Component{
                 handleTodoDelete={this.handleTodoDelete.bind(this, 0, null)}
                 handleTodoListDelete={this.handleTodoListDelete.bind(this, null, unclassified.id)}
                 handleTodoListModify={this.handleTodoListModify.bind(this, null, unclassified.id)}
+                dragOver={this.dragOver.bind(this)}
+                dragStart={this.dragStart.bind(this)}
+                dragEnd={this.dragEnd.bind(this,0)}
             ></TodoList>
         }
 
@@ -466,6 +500,7 @@ class Task extends React.Component{
             </EditTodoList>
         }
 
+      
         {this.state.todoListArr.map((todoList, index) => {
             if (index === 0) {
                 return
@@ -485,10 +520,15 @@ class Task extends React.Component{
                     handleTodoDelete={this.handleTodoDelete.bind(this, index, todoList.id)}
                     handleTodoListDelete={this.handleTodoListDelete.bind(this, index, todoList.id)}
                     handleTodoListModify={this.handleTodoListModify.bind(this, index, todoList.id)}
+                    index={index}
+                    dragOver={this.dragOver.bind(this)}
+                    dragStart={this.dragStart.bind(this)}
+                    dragEnd={this.dragEnd.bind(this,index)}
                 ></TodoList>
             )
         })
         }
+        
         <div className="completed" onClick={()=>{location.href = '/completed/' + this.teamId}}>已完成任务</div>
     </div>
         )}
