@@ -405,6 +405,11 @@ class Task extends React.Component{
             from = Number(this.dragged.dataset.id)
             to = Number(this.over.dataset.id)
             data = todoListArr[lIndex].list
+            console.log({
+                taskId: id,
+                index: to,
+                teamId: this.teamId,
+            })
             const resp = await api('/api/task/changeIndex', {
                 method: "POST",
                 body: {

@@ -92,10 +92,10 @@ class TodoList extends React.Component {
                             data-listindex={_props.index}
                             data-type='list'
                             draggable='true'
-                            onDragStart={_props.dragStart}
-                            onDragEnd={_props.dragEnd}
+                            onDragStart={_props.dragStart.bind(this,null,this.props.id)}
+                            onDragEnd={_props.dragEnd.bind(this,this.props.id)}
                             onDragOver={_props.dragOver}
-                            onDrop={_props.drop}>
+                            onDrop={_props.drop.bind(this,this.props.id)}>
                                 <div className="name-actions">
                                     <i className="icon iconfont"
                                        onClick={_props.handleTodoListDelete}>&#xe70b;</i>
