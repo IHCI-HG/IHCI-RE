@@ -199,7 +199,6 @@ class Task extends React.Component{
                     assigneeId: todoInfo.assigneeId,
                 }
             })
-            console.log(result.data)
             // 返回用户名的显示依赖assigneeId
             if (result.state.code === 0) {
                 let todo = {
@@ -245,7 +244,6 @@ class Task extends React.Component{
                 editTask: editTask,
             }
         })
-        console.log(resp)
         if (resp.state.code === 0) {
             // 更新 todolist
             const todoListArr = this.state.todoListArr
@@ -264,7 +262,6 @@ class Task extends React.Component{
         }
     }
     handleTodoModify = async (lIndex, lId, id, todoInfo) => {
-        console.log(todoInfo)
         let editTask = {}
         if(!todoInfo.name.trim()){
             alert("任务名不能为空")
@@ -326,7 +323,6 @@ class Task extends React.Component{
     handleDateChange = async (lIndex, lId, id, e) => {
         let editTask = {}
         editTask.ddl = e.target.value
-        console.log(editTask.ddl)
         const resp = await api('/api/task/edit', {
             method: 'POST',
             body: {
@@ -432,7 +428,6 @@ class Task extends React.Component{
     drop(e){
         const todoListArr = this.state.todoListArr
         var from = todoListArr[this.dragged.dataset.listindex].list
-        console.log(from)
         var targetItem = from.splice(this.dragged.dataset.id,1)[0]
         var to = todoListArr[e.target.dataset.listindex].list
         to.splice(e.target.dataset.id,0,targetItem)
