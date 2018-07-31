@@ -301,7 +301,6 @@ class Task extends React.Component{
         if(editTask.assigneeId === "null"){
             editTask.assigneeId = undefined
         }
-        console.log(editTask.assigneeId)
         const resp = await api('/api/task/edit', {
             method: 'POST',
             body: {
@@ -311,7 +310,6 @@ class Task extends React.Component{
                 editTask: editTask,
             }
         })
-        console.log(resp)
         if (resp.state.code === 0) {
             let todoListArr = this.state.todoListArr
             const todolist = todoListArr[lIndex]
