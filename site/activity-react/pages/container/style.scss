@@ -102,7 +102,7 @@
         top: 70px;
         right: 100px;
         z-index: 100;
-        border-radius: 7%;
+        border-radius: 10px;
 
         .menuHeader{
             font-size: 20px;
@@ -127,6 +127,7 @@
             font-size: 25px;
             padding: 15px 20px;
             cursor: pointer;
+            border-radius: 0 0 10px 10px;
             
         }
     }
