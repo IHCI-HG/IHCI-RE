@@ -50,7 +50,7 @@ class TopicItem extends React.PureComponent {
     render() {
         return (
             <div className="topic-item" key={"topic-item-" + this.props._id} >
-                <img src={this.props.creator.headImg} alt="" className="head-img" />
+                <img src={this.props.creator.headImg} alt="" className="head-img" onClick={this.props.toTimeLineHandle.bind(this,this.props.creator.id)}/>
                 <div className="name">{this.props.creator.name}</div>
                 <div className="main" onClick={() => { this.props.locationTo('/discuss/topic/' + this.props._id) }}>
                     <div className="topic-title">{this.props.title}</div>
