@@ -781,7 +781,12 @@ export default class TeamDetail extends React.Component {
         const location = {pathname:'/member', state:{teamId:this.state.teamInfo._id}}
         this.props.router.push(location)
     }
-
+    toTimeLineHandle = (memberId , event) => {
+        const query = {userId:memberId,}
+        const location = {pathname:'/timeline', query:query}
+        this.props.activeTagHandle('/timeline')
+        this.props.router.push(location)
+    }
 
     render() {
         let teamInfo = this.state.teamInfo
@@ -845,6 +850,7 @@ export default class TeamDetail extends React.Component {
                             this.state.topicList.map((item) => {
                                 return (
                                     <TopicItem locationTo={this.locationTo}
+                                        toTimeLineHandle={this.toTimeLineHandle.bind(this)}
                                         key={item._id}
                                         {...item} />
                                 )
