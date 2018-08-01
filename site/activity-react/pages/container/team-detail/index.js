@@ -559,12 +559,14 @@ export default class TeamDetail extends React.Component {
 
     uploadFileHandle = async (e) => {
         var file = e.target.files[0];
-        this.setState({
-            chosenFile: file
-        })
-        var nameParts = e.target.files[0].name.split('.')
+        var nameParts = file.name.split('.')
         var ossKey = this.teamId + '/' + create() + '.' + nameParts[nameParts.length-1]
         var succeeded;
+        
+        if(file.size > 20*1024*1024){
+            window.toast("上传文件大小不能超过20M")
+            return
+        }
         const uploadResult = fileUploader(file, ossKey)
         await uploadResult.then(function (val) {
             succeeded = 1

@@ -286,9 +286,9 @@ const createFile = async function(teamId, dir, fileName, ossKey, size) {
 
     size = parseInt(size)
 
-    if(size > 20*1024*1024) {
-        throw '上传文件大小不能超过20M'
-    }
+    // if(size > 20*1024*1024) {
+    //     throw '上传文件大小不能超过20M'
+    // }
 
     var sizeStr
     if(size < 1024) {
