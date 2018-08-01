@@ -6,6 +6,8 @@
     height: 80px;
 
     padding: 0 50px;
+
+    position: relative;
     .search-bar{
         // float: left;
         align-items: center;
@@ -21,7 +23,7 @@
             text-align: left;
             width: 256px;
             border: 1px solid #ccc;
-            border-radius: 5px;
+            border-radius: 5%;
             padding: 5px 8px;
             color: #333;
             transition: width 0.4s ease-in-out;
@@ -76,6 +78,57 @@
         border-radius: 100px;
         height: 60px;
         width: 60px;
-        background-color: #763;
+        //background-color: #763;
     }
+
+    // 菜单的小箭头
+    .menuArrow{
+        position: absolute;
+        top: -8px;
+        right: 30px;
+        overflow: hidden;
+        width: 13px;
+        height: 13px;
+        background: whitesmoke;
+        border-left: 1px solid whitesmoke;
+        border-top: 1px solid whitesmoke;
+        -webkit-transform: rotate(45deg);
+        transform: rotate(45deg);
+    }
+    .menu{
+        background:whitesmoke;
+        width: 250px;
+        position: absolute;
+        top: 70px;
+        right: 100px;
+        z-index: 100;
+        border-radius: 7%;
+
+        .menuHeader{
+            font-size: 20px;
+            padding: 15px 20px;
+            margin:auto;
+        }
+        .menuSet{
+            border-top: 1px solid #E3E3E3;
+            font-size: 25px;
+            padding:15px 20px;
+            cursor: pointer;
+        }
+        .menuCreate{
+            border-top: 1px solid #E3E3E3;
+            font-size:25px;
+            padding:15px 20px;
+            cursor: pointer; 
+        }
+        .menuQuit{
+            border-top: 1px solid #E3E3E3;
+            margin: 0 auto;
+            font-size: 25px;
+            padding: 15px 20px;
+            cursor: pointer;
+            
+        }
+    }
+    
 }

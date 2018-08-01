@@ -14,12 +14,72 @@ import TeamJoin from './team-join'
 class App extends React.Component{
     state = {
         activeTag : '',
+        menuName: '',
+        menuEmail: '',
+
         headImg: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnregyyDrMvhEDpfC4wFetzykulWRVMGF-jp7RXIIqZ5ffEdawIA',
         infoImg: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1529474819406&di=267791f485fba8aa30e0adc8f0eede6b&imgtype=0&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimgad%2Fpic%2Fitem%2Fb8014a90f603738d6c070f19b81bb051f819ecb8.jpg',
         personInfo: {
             teamList: []
         },
+
+        display: 'none',
+        menuSetBgColor: '',
+        menuCreateBgColor: '',
+        menuQuitBgColor: '',
+        
     }
+    handleMouseOut = this.handleMouseOut.bind(this);
+    handleMouseOver = this.handleMouseOver.bind(this);
+    handleSetMouseOver = this.handleSetMouseOver.bind(this);
+    handleSetMouseOut = this.handleSetMouseOut.bind(this);
+    handleCreateMouseOver = this.handleCreateMouseOver.bind(this);
+    handleCreateMouseOut = this.handleCreateMouseOut.bind(this);
+    handleQuitMouseOver = this.handleQuitMouseOver.bind(this);
+    handleQuitMouseOut = this.handleQuitMouseOut.bind(this);
+
+    handleMouseOver() {
+        this.setState({
+            display:'block',
+        })
+    }
+    handleMouseOut() {
+        this.setState({
+            display:'none',
+        });
+    }
+    handleSetMouseOver() {
+        this.setState({
+            menuSetBgColor: '#ccc'
+        })
+    }
+    handleSetMouseOut() {
+        this.setState({
+            menuSetBgColor: 'whitesmoke'
+        })
+    }
+    handleCreateMouseOver() {
+        this.setState({
+            menuCreateBgColor: '#ccc'
+        })
+    }
+    handleCreateMouseOut() {
+        this.setState({
+            menuCreateBgColor: 'whitesmoke'
+        })
+    }
+    handleQuitMouseOver() {
+        this.setState({
+            menuQuitBgColor: '#ccc'
+        })
+    }
+    handleQuitMouseOut() {
+        this.setState({
+            menuQuitBgColor: 'whitesmoke'
+        })
+    }
+
+
 
     componentWillMount = async() => {
         this.setHeadImg()
@@ -33,10 +93,12 @@ class App extends React.Component{
         if(result.data && result.data.personInfo && result.data.personInfo.headImg) {
             this.setState({
                 headImg: result.data.personInfo.headImg,
+                menuName: result.data.personInfo.name,
+                menuEmail: result.data.personInfo.mail,
                 personInfo: {
                     ...result.data,
                     ...result.data.personInfo,
-                }
+                },
             })
         }
         if (!(/team-join/.test(this.props.location.pathname)) && !this.infoAllFilled()){
@@ -110,11 +172,46 @@ class App extends React.Component{
         //     this.setState({active})
         // }
     }
+    locationTo = (url) => {
+        location.href = url
+    }
+    logOutHandle = async () => {
+        const result = await api('/api/logout', {
+            method: 'POST',
+            body: {
+                ...this.state.personInfo
+            }
+        })
+
+        if(result.state.code === 0) {
+            location.href = '/'
+        }
+
+    } 
 
     render() {
         return (
             <div>
                 <div className='main-nav'>
+                    {/* 头像-菜单栏 */}
+                    <div className="menu" style={{display:this.state.display}} 
+                    onMouseOver={this.handleMouseOver} onMouseOut={this.handleMouseOut}>
+                        <div className="menuArrow" ></div>{/* 菜单箭头 */}
+                        <div className="menuHeader" >
+                            <div>{this.state.menuName}<small><i className="iconfont icon-people"></i></small></div>
+                            <div>{this.state.menuEmail}</div>
+                        </div>
+                        <div className="menuSet" onClick={this.routerHandle.bind(this, '/person')} 
+                        style={{backgroundColor:this.state.menuSetBgColor}}
+                        onMouseOver={this.handleSetMouseOver} onMouseOut={this.handleSetMouseOut}>个人设置</div>
+                        <div className="menuCreate" onClick={() => {this.locationTo('/team-create')}} 
+                        style={{backgroundColor:this.state.menuCreateBgColor}}
+                        onMouseOver={this.handleCreateMouseOver} onMouseOut={this.handleCreateMouseOut}>+创建团队</div>
+                        <div className="menuQuit" onClick={this.logOutHandle} 
+                        style={{backgroundColor:this.state.menuQuitBgColor}}
+                        onMouseOver={this.handleQuitMouseOver} onMouseOut={this.handleQuitMouseOut}>退出</div>
+                    </div>
+
                     <div className="left">
                         <div className="logo">这是LOGO</div>
                         <div className="nav-list">
@@ -130,9 +227,15 @@ class App extends React.Component{
                                 <input className='searchInput' ref={(input) => { this.searchInputr = input; }} type="text" onChange={this.handleSearchTextChange} placeholder="搜索"/>
                             </form>
                         </div>
-                        <div className='nav-item' onClick={this.routerHandle.bind(this, '/person')}>
-                            <img className="head-img" src={this.state.headImg} />
-                        </div>
+
+                        <div className='nav-item' 
+                        onClick={this.routerHandle.bind(this, '/person')}
+                        onMouseOver={this.handleMouseOver} 
+                        onMouseLeave={this.handleMouseOut}
+                        >                           
+                            <img className="head-img" src={this.state.headImg} />                               
+                        </div>                
+
                         <div className='remind'>
                             <span className='iconfont icon-remind' onClick={this.routerHandle.bind(this, '/inform')}></span>
                         </div>
