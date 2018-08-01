@@ -597,7 +597,8 @@ export default class TeamDetail extends React.Component {
                             {
                                 this.state.showCreateFolder ? <div className="file-line files">
                                     <div className="name">
-                                        <input autoFocus="autofocus" type="text" className="folder-name" onChange={this.createFolderNameInputHandle} value={this.state.createFolderName} />
+                                        <input autoFocus="autofocus" type="text" className="folder-name" 
+                                        onKeyDown={(event)=>{if(event.keyCode== "13"){this.createFolderComfirmHandle()}}} onChange={this.createFolderNameInputHandle} value={this.state.createFolderName} />
                                     </div>
                                     <div className="tools">
                                         <span onClick={this.createFolderComfirmHandle}>创建</span>
@@ -615,7 +616,8 @@ export default class TeamDetail extends React.Component {
                                         return (
                                             <div className="file-line files" key={item.fileType + '-' + item._id}>
                                                 <div className="name">
-                                                    <input  autoFocus="autofocus" type="text" className="folder-name" onChange={this.renameNameInputHandle} value={this.state.renameName} />
+                                                    <input  autoFocus="autofocus" type="text" className="folder-name" 
+                                                    onKeyDown={(event)=>{if(event.keyCode== "13"){this.renameComfirmHandle(item)}}} onChange={this.renameNameInputHandle} value={this.state.renameName} />
                                                 </div>
                                                 <div className="tools">
                                                     <span onClick={() => { this.renameComfirmHandle(item) }}>确定</span>
