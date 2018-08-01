@@ -95,6 +95,7 @@ const fileUploader = async (file, ossKey) => {
         progress: async function (p, cpt) {
             // options.onProgress(p);
             if (cpt !== undefined) {
+                // console.log(cpt.fileSize)
                 checkpoint = cpt;
                 fileName = cpt.name;
                 uploadId = cpt.uploadId;
@@ -102,6 +103,7 @@ const fileUploader = async (file, ossKey) => {
             return Promise.resolve();
         },
     });
+
 
     if (result.res.status == 200) { 
         console.log("文件上传成功");

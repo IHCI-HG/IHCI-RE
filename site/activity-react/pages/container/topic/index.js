@@ -430,7 +430,12 @@ export default class Topic extends React.Component{
     downloadHandle = (ossKey) => {
         window.open(window.location.origin + '/static/' + ossKey)
     }
-
+    toTimeLineHandle = (memberId , event) => {
+        const query = {userId:memberId,}
+        const location = {pathname:'/timeline', query:query}
+        this.props.activeTagHandle('/timeline')
+        this.props.router.push(location)
+    }
     render() {
         return (
             <Page className="topic-page">
@@ -465,7 +470,7 @@ export default class Topic extends React.Component{
                             <div className="topic-subject-con">
                                 <div className="topic-title">{this.state.topicObj.title}</div>
                                 <div className="flex">
-                                    <img className="head-img" src={this.state.topicObj.creator.headImg}></img>
+                                    <img className="head-img" id = "image" src={this.state.topicObj.creator.headImg} onClick={this.toTimeLineHandle.bind(this,this.state.topicObj.creator.id)}></img>
                                     <div className="topic-main">
                                         <div className="head-wrap">
                                             <div className="left">
@@ -522,6 +527,7 @@ export default class Topic extends React.Component{
                                     saveEditHandle = {this.saveDiscussEditHandle}
                                     downloadHandle = {this.downloadHandle}
                                     memberList = {this.state.memberList}
+                                    toTimeLineHandle = {this.toTimeLineHandle.bind(this)}
                                 />
                             )
                         })

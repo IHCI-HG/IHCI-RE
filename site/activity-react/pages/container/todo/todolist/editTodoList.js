@@ -34,7 +34,8 @@ class EditTodoList extends React.Component {
                     <input ref="name"
                            className="dashed-input"
                            placeholder="输入清单名"
-                           defaultValue={_props.defaultValue}>
+                           defaultValue={_props.defaultValue}
+                           onKeyDown = {(event)=>{if(event.keyCode== "13"){this.handleConfirm()}}}>
                     </input>
                     <div className="buttons">
                         <button className="confirm"

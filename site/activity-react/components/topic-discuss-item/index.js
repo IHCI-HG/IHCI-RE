@@ -98,7 +98,7 @@ class TopicDiscussItem extends React.Component {
                     :
                     <div  className={(this.props.enableHighlight &&this.props.highlight) ? "topic-subject-con discuss-con highlight" :"topic-subject-con discuss-con"}>
                         <div className="flex">
-                            <img className="head-img" src={this.props.creator.headImg}></img>
+                            <img className="head-img" src={this.props.creator.headImg} onClick = {this.props.toTimeLineHandle.bind(this,this.props.creator.id)}></img>
                             <div className="topic-main">
                                 <div className="head-wrap">
                                     <div className="left">

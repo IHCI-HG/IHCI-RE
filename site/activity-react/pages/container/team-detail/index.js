@@ -559,12 +559,14 @@ export default class TeamDetail extends React.Component {
 
     uploadFileHandle = async (e) => {
         var file = e.target.files[0];
-        this.setState({
-            chosenFile: file
-        })
-        var nameParts = e.target.files[0].name.split('.')
+        var nameParts = file.name.split('.')
         var ossKey = this.teamId + '/' + create() + '.' + nameParts[nameParts.length-1]
         var succeeded;
+        
+        if(file.size > 20*1024*1024){
+            window.toast("上传文件大小不能超过20M")
+            return
+        }
         const uploadResult = fileUploader(file, ossKey)
         await uploadResult.then(function (val) {
             succeeded = 1
@@ -781,7 +783,12 @@ export default class TeamDetail extends React.Component {
         const location = {pathname:'/member', state:{teamId:this.state.teamInfo._id}}
         this.props.router.push(location)
     }
-
+    toTimeLineHandle = (memberId , event) => {
+        const query = {userId:memberId,}
+        const location = {pathname:'/timeline', query:query}
+        this.props.activeTagHandle('/timeline')
+        this.props.router.push(location)
+    }
 
     render() {
         let teamInfo = this.state.teamInfo
@@ -845,6 +852,7 @@ export default class TeamDetail extends React.Component {
                             this.state.topicList.map((item) => {
                                 return (
                                     <TopicItem locationTo={this.locationTo}
+                                        toTimeLineHandle={this.toTimeLineHandle.bind(this)}
                                         key={item._id}
                                         {...item} />
                                 )
@@ -876,7 +884,8 @@ export default class TeamDetail extends React.Component {
                             {
                                 this.state.showCreateFolder ? <div className="file-line files">
                                     <div className="name">
-                                        <input autoFocus="autofocus" type="text" className="folder-name" onChange={this.createFolderNameInputHandle} value={this.state.createFolderName} />
+                                        <input autoFocus="autofocus" type="text" className="folder-name" 
+                                        onKeyDown={(event)=>{if(event.keyCode== "13"){this.createFolderComfirmHandle()}}} onChange={this.createFolderNameInputHandle} value={this.state.createFolderName} />
                                     </div>
                                     <div className="tools">
                                         <span onClick={this.createFolderComfirmHandle}>创建</span>
@@ -894,7 +903,8 @@ export default class TeamDetail extends React.Component {
                                         return (
                                             <div className="file-line files" key={item.fileType + '-' + item._id}>
                                                 <div className="name">
-                                                    <input  autoFocus="autofocus" type="text" className="folder-name" onChange={this.renameNameInputHandle} value={this.state.renameName} />
+                                                    <input  autoFocus="autofocus" type="text" className="folder-name" 
+                                                    onKeyDown={(event)=>{if(event.keyCode== "13"){this.renameComfirmHandle(item)}}} onChange={this.renameNameInputHandle} value={this.state.renameName} />
                                                 </div>
                                                 <div className="tools">
                                                     <span onClick={() => { this.renameComfirmHandle(item) }}>确定</span>
