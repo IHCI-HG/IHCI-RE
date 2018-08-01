@@ -25,6 +25,7 @@
         top: -0.03rem;
         .icon {
             margin: 0 6px;
+            cursor: pointer;
         }
     }
     .new-todo {
@@ -34,5 +35,6 @@
         color: #4ea5ad;
         margin-bottom: 20px;
         font-weight: bold;
+        cursor: pointer;
     }
 }
