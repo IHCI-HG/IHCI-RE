@@ -12,6 +12,11 @@
         // float: left;
         align-items: center;
         display: flex;
+        &:hover{
+            color: #44acb6;
+            cursor: pointer;
+        }
+
 
         .searchBox{
             float: left;
@@ -68,17 +73,27 @@
         &:visited {
             color: #999;
         }
+        &:hover{
+            color:#44acb6;
+        }
         &.active {
             color: #333;
             font-weight: bold;
         }
     }
-    
-    .head-img {
+    .remind{
+        &:hover{
+            color:#44acb6;
+        }
+    }
+    .head-img {       
         border-radius: 100px;
         height: 60px;
         width: 60px;
         //background-color: #763;
+        &:hover{
+            box-shadow: 0px 6px 10px #ccc;
+        }
     }
 
     // 菜单的小箭头
