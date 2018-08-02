@@ -418,7 +418,7 @@ class Task extends React.Component{
                     teamId: this.teamId,
                 }
             })
-            if(resp){
+            if(resp.state.code === 0){
                 this.initTodoListArr()
             }
         }else if(this.dragged.dataset.type == 'list'){
@@ -434,7 +434,7 @@ class Task extends React.Component{
                     teamId: this.teamId,
                 }
             })
-            if(resp){
+            if(resp.state.code === 0){
                 this.initTodoListArr()
             }
         }
@@ -450,23 +450,23 @@ class Task extends React.Component{
             onDragStart: false
         })
         if(this.dragged.dataset.listindex !== e.target.dataset.listindex){
-        const todoListArr = this.state.todoListArr
-        var from = todoListArr[this.dragged.dataset.listindex].list
-        var targetItem = from.splice(this.dragged.dataset.id,1)[0]
-        var to = todoListArr[e.target.dataset.listindex].list
-        to.splice(e.target.dataset.id,0,targetItem)
-        this.setState({ todoListArr })
-        const resp = await api('/api/task/changeList',{
-            method: "POST",
-            body: {
-                taskId: this.state.dragTodoId,
-                listIdTo: listIdTo,
-                listIdFrom: this.state.listIdFrom,
+            const todoListArr = this.state.todoListArr
+            var from = todoListArr[this.dragged.dataset.listindex].list
+            var targetItem = from.splice(this.dragged.dataset.id,1)[0]
+            var to = todoListArr[e.target.dataset.listindex].list
+            to.splice(e.target.dataset.id,0,targetItem)
+            this.setState({ todoListArr })
+            const resp = await api('/api/task/changeList',{
+                method: "POST",
+                body: {
+                    taskId: this.state.dragTodoId,
+                    listIdTo: listIdTo,
+                    listIdFrom: this.state.listIdFrom,
+                }
+            })
+            if(resp.state.code === 0){
+                this.initTodoListArr()
             }
-        })
-        if(resp){
-            this.initTodoListArr()
-        }
         }
     }
 
