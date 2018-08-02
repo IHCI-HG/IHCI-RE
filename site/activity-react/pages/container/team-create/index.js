@@ -117,8 +117,12 @@ export default class TeamCreate extends React.Component{
                     <input type="text" value={this.state.name} className="admin-input" onChange={this.teamNameInputHandle} />
 
                     <div className="admin-title-sm">团队图片</div>
-                    <div className="create-btn" onClick={this.openFileInput}> 上传图片 </div>
-                    <img className="img-preview" src={this.state.teamImg}></img>
+                    <div className="img-wrap">
+                        <div>
+                            <img className="img-preview" src={this.state.teamImg}></img>
+                        </div>
+                        <div className="create-btn" onClick={this.openFileInput}> 上传图片 </div>
+                    </div>
 
                     <div className="admin-title-sm">团队说明</div>
                     <textarea type="text" value={this.state.desc} className="admin-tra" onChange={this.teamDescChangeHandle} placeholder="（选填)" />

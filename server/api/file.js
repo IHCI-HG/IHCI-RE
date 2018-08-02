@@ -254,9 +254,8 @@ const delFolder = async (req, res, next) => {
 const updateFileName = async (req, res, next) => {
     const fileInfo = req.body.fileInfo
     const tarName = req.body.tarName
-    const ossKey = req.body.newOssKey
     try {
-        await file.updateFileName(fileInfo.teamId, fileInfo.dir, fileInfo.fileName, tarName,ossKey)
+        await file.updateFileName(fileInfo.teamId, fileInfo.dir, fileInfo.fileName, tarName)
 
         resProcessor.jsonp(req, res, {
             state: {code: 0, msg: "Successfully updated name"},

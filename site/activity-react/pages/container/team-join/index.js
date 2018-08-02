@@ -56,6 +56,8 @@ export default class TeamAdmin extends React.Component{
         setTimeout(() => {
             if(result.state.code == 0) {
                 location.href = "/team/" + this.state.teamObj._id
+            }else if(result.state.msg ==='您已在团队中'){
+                location.href = "/team/"+this.state.teamObj._id
             }
         }, 400);
 

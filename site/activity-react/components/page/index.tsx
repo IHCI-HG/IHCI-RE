@@ -4,6 +4,7 @@ import Detect from '../../utils/detect'
 // component
 import Toast from '../toast'
 import Loading from '../loading';
+import Bar from '../bar'
 
 import './style.scss';
 import './reset.scss';
@@ -26,6 +27,11 @@ interface IState {
         show: boolean
         msg: string
         timeout: number
+    },
+    bar:{
+        show: boolean
+        msg: string
+        timeout: number
     }
 }
 
@@ -33,6 +39,9 @@ class Page extends React.Component<IPageProps, IState> {
 
     /** Toast 组件 */
     private toast: Toast
+
+    /** Bar 组件 */
+    private bar:Bar
 
     /** Loading 组件 */
     private loading: Loading
@@ -45,12 +54,18 @@ class Page extends React.Component<IPageProps, IState> {
             show: false,
             msg: '',
             timeout: 1000
+        },
+        bar:{
+            show: false,
+            msg: '',
+            timeout: 1000 
         }
     }
 
     componentDidMount() {
         this.setTitle(this.props.title);
         (window as any).toast = this.toast.show.bind(this.toast);
+        (window as any).bar = this.bar.show.bind(this.bar);
         (window as any).loading = this.loading.show.bind(this.loading);
     }
 
@@ -110,7 +125,10 @@ class Page extends React.Component<IPageProps, IState> {
                 key='toast'
                 ref={ el => this.toast = el }
             />,
-
+            <Bar
+            key='bar'
+            ref={ el => this.bar = el }
+            />,
             <Loading
                 key='loading'
                 ref={ el => this.loading = el }

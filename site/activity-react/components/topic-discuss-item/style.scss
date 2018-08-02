@@ -58,6 +58,9 @@
         display: flex;
         align-items: center;
     }
+    .infrom {
+        margin-bottom: 20px;
+    }
     .save-btn {
         cursor: pointer;
         display: flex;
@@ -112,6 +115,7 @@
         border-radius: 100px;
         margin-right: 30px;
         background-color: #e6e6e6;
+        cursor: pointer;
     }
     .topic-main {
         flex-grow: 1;
@@ -144,4 +148,32 @@
         font-size: 22px;
         line-height: 1.4;
     }
+}
+
+.file-list {
+    margin: 10px 100px 0px;
+    padding: 14px;
+    .file-pic-item {
+        display: inline-block;
+        margin-right:40px;
+        margin-top:20px;
+        color: #6a6f7b;
+        text-align: center;
+        width:140px;
+        .file-pic{
+            width:140px;
+            text-align: center;
+        }
+        .file-name{
+            text-align: center;
+            margin-top: 20px;
+        }
+    }
+    .file-item {
+        margin-top:20px;
+        color: #6a6f7b;
+    }
+}
+.infrom {
+    margin-bottom: 20px;
 }

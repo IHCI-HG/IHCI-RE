@@ -84,7 +84,7 @@ fileSchema.statics = {
             last_modify_time: Date.now()
         }).exec()
     },
-    updateName: function(teamId, dir, fileName,tarFileName,ossKey) {
+    updateName: function(teamId, dir, fileName,tarFileName) {
         return this.update({
             team: mongoose.Types.ObjectId(teamId),
             dir: dir,
@@ -92,7 +92,6 @@ fileSchema.statics = {
         },{
             fileName: tarFileName,
             last_modify_time: Date.now(),
-            ossKey:ossKey,
         }).exec()
     },   
     findByTeamIdList: function(teamIdList) {
@@ -287,9 +286,9 @@ const createFile = async function(teamId, dir, fileName, ossKey, size) {
 
     size = parseInt(size)
 
-    if(size > 20*1024*1024) {
-        throw '上传文件大小不能超过20M'
-    }
+    // if(size > 20*1024*1024) {
+    //     throw '上传文件大小不能超过20M'
+    // }
 
     var sizeStr
     if(size < 1024) {
@@ -381,16 +380,6 @@ const createFolder = async function(teamId, dir, folderName) {
     }).exec()
     if(!folderObj) {
         throw '目录不存在'
-    }
-
-    let exist = false
-    folderObj.fileList.map((item) => {
-        if(item.name == folderName) {
-            exist = true
-        } 
-    })
-    if(exist) {
-        throw '文件名已存在'
     }
 
     folderObj = await folderDB.createFolder(teamId, dir, folderName)
@@ -568,7 +557,7 @@ const delFolder = async function(teamId, dir, folderName) {
  * @param {any} fileName 
  * @param {any} tarName
  */
-const updateFileName = async function(teamId, dir, fileName, tarName,ossKey) {
+const updateFileName = async function(teamId, dir, fileName, tarName) {
     if(fileName == tarName) return
     const tarDirFileNameExist = await dirFileExist(teamId, dir, tarName)
     if(tarDirFileNameExist) {
@@ -585,7 +574,7 @@ const updateFileName = async function(teamId, dir, fileName, tarName,ossKey) {
     }
 
     await folderDB.dropFile(teamId, dir, fileName)
-    await fileDB.updateName(teamId, dir, fileName, tarName, ossKey)
+    await fileDB.updateName(teamId, dir, fileName, tarName)
 
     fileObj = await fileDB.findOne({
         team: mongoose.Types.ObjectId(teamId),
@@ -595,7 +584,6 @@ const updateFileName = async function(teamId, dir, fileName, tarName,ossKey) {
     if(!fileObj) {
         throw '修改后文件不存在'
     }
-    fileObj.ossKey = ossKey
     await folderDB.appendFile(teamId, dir, fileObj)
 }
 

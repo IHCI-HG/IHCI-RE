@@ -71,6 +71,7 @@ class TodoItem extends React.Component {
             !shallowEqualIgnoreFun(this.state, nextState)
         );
     }
+    
 
     render() {
         const _props = this.props
@@ -100,9 +101,11 @@ class TodoItem extends React.Component {
 
         const hasDoneNum = this.caculateHasDoneNum()
         const componentClass = this.caculateStyle()
-
         return (
-            <div className={componentClass}>
+            <div className={componentClass}
+            data-id={this.props.dataId}
+            data-listindex={this.props.index}
+            draggable='true'>
                 <div className="actions-wrap">
                     <div className="actions">
                         <i className="icon iconfont"
@@ -125,8 +128,13 @@ class TodoItem extends React.Component {
                      onClick={_props.handleTodoCheck.bind(this, _props.hasDone)}>
                     <i className="icon iconfont checked-icon">&#xe750;</i>
                 </div>
-                <div className="todo-wrap">
+                <div className="todo-wrap"
+                data-id={this.props.dataId}
+                data-listindex={this.props.index}
+                draggable='true'>
                     <span className="name"
+                    data-id={this.props.dataId}
+                    data-listindex={this.props.index}
                         onClick={() => {
                             if (_props.detail === 'detail' || _props.type === 'check')
                                 return
@@ -154,7 +162,9 @@ class TodoItem extends React.Component {
                             date={_props.ddl}
                             memberList={_props.memberList}
                             handleDateChange={_props.handleDateChange}
-                            handleAssigneeChange={_props.handleAssigneeChange}>
+                            handleAssigneeChange={_props.handleAssigneeChange}
+                            dataId={this.props.dataId}
+                            index={this.props.index}>
                         </ItemLabel>
                     }
                     {   _props.detail === 'detail' &&
@@ -172,9 +182,9 @@ class TodoItem extends React.Component {
                                 {
                                     _props.imgList&&_props.imgList.map((item) => {
                                         return (
-                                            <div className="file-pic-item" key={Math.random()} onClick={()=>{window.open(window.location.origin + '/static/' + item.name)}}>
-                                                <img className="file-pic" src={window.location.origin + '/static/' + item.name}></img>
-                                                <div className="file-name">{item.name.split("/")[2]}</div>
+                                            <div className="file-pic-item" key={Math.random()}>
+                                                <img className="file-pic" src={window.location.origin + '/static/' + item.name} onClick={()=>{window.open(window.location.origin + '/static/' + item.name)}}></img>
+                                                <div className="file-name">{item.fileName}</div>
                                                 <span onClick={() => { this.props.openMoveModalHandle(item) }}>移动</span>
                                             </div>
                                         )
@@ -185,7 +195,7 @@ class TodoItem extends React.Component {
                                         if(!(item.name.endsWith(".jpg")||item.name.endsWith(".jpeg")||item.name.endsWith(".png")||item.name.endsWith(".bmp")||item.name.endsWith(".gif"))){
                                             return ( 
                                                 <div key={Math.random()} >
-                                                    <div className="file-item" onClick={()=>{window.open(window.location.origin + '/static/' + item.name)}}>{item.name.split("/")[2]}</div>
+                                                    <div className="file-item" onClick={()=>{window.open(window.location.origin + '/static/' + item.name)}}>{item.fileName}</div>
                                                     <span onClick={() => { this.props.openMoveModalHandle(item) }}>移动</span>
                                                 </div> 
                                         )

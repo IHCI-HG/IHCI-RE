@@ -535,7 +535,6 @@ const taskList = async (req, res, nect) => {
                 continue;
             }
             const result = temp.toObject()
-            console.log(result)
             const task = []
             for (var j = 0; j < result.taskList.length; j++) {
                 var headername = ""
@@ -551,8 +550,7 @@ const taskList = async (req, res, nect) => {
                 }
                 var taskListDdl = ""
                 if(result.taskList[j].deadline) {
-                    const date = result.taskList[j].deadline
-                    taskListDdl = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
+                    taskListDdl = result.taskList[j].deadline
                 }
                 const obj2 = {
                     taskId: result.taskList[j]._id,
@@ -566,7 +564,7 @@ const taskList = async (req, res, nect) => {
                         headerId: result.taskList[j].header,
                         headername: headername
                     },
-                    fileList: result.taskList[i].fileList
+                    fileList: result.taskList[j].fileList
                 }
                 task.push(obj2)
             }

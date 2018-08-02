@@ -136,12 +136,7 @@ export class LoginView extends React.Component {
         const result = await authApi(this.state.username, this.state.password)
         if(result.state.code === 0) {
             window.toast("登录成功")
-            if (this.props.join){
-                window.location.href = window.location.href
-            }
-            else{
                 setTimeout("window.location.href = '/team'", 1000)
-            }
         } else {
             window.toast(result.state.msg || "登录失败")
         }
@@ -178,9 +173,7 @@ export class LoginView extends React.Component {
         if(result.state.code === 0) {
             window.toast("注册成功")
             setTimeout(() => {
-                if (this.props.join)
-                    location.href = location.href
-                else location.href = '/person'
+                location.href = '/person'
             }, 300);
         }
         else{

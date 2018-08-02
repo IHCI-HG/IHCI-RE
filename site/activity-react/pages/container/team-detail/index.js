@@ -3,16 +3,15 @@ import './style.scss'
 import api from '../../../utils/api';
 var ReactDOM = require('react-dom')
 import { sortByCreateTime, formatDate } from '../../../utils/util'
+import Task from "../../container/task"
 import Page from '../../../components/page'
 import Modal from '../../../components/modal'
 import MemberChosenList from '../../../components/member-chose-list'
 import Editor from '../../../components/editor'
-import EditTodoList from '../todo/todolist/editTodoList'
-import TodoList from '../todo/todolist/todoList'
 import fileUploader from '../../../utils/file-uploader'
-import fileRenamer from '../../../utils/file-renamer'
 import TopicItem from '../../../components/topic-item'
-
+import {create} from '../../../../../server/components/uuid/uuid'
+ 
 class TeamChoseItem extends React.PureComponent {
     render() {
         return (
@@ -25,24 +24,10 @@ class TeamChoseItem extends React.PureComponent {
     }
 }
 
-function getUpdateItem(arr, id) {
-    let item = null
-    let index = null
-    arr.forEach((innerItem, innerIndex) => {
-        if (innerItem.id === id) {
-            item = innerItem
-            index = innerIndex
-        }
-    })
-    return [item, index]
-}
 
 export default class TeamDetail extends React.Component {
     state = {
         showCreateTopic: false,
-        showCreateTodo: false,
-        showCreateTodoList: false,
-        showMenu: false,
         isCreator: false,
 
         topicName: '',
@@ -52,7 +37,6 @@ export default class TeamDetail extends React.Component {
         teamInfo: {},
         topicList: [],
         memberList: [],
-        todoListArr: [],
         attachmentsArg:{},
         ossKeyArg:"",
         fileList: [],
@@ -70,7 +54,6 @@ export default class TeamDetail extends React.Component {
     componentDidMount = async () => {
         this.teamId = this.props.params.id
         this.initTeamInfo()
-        this.initTodoListArr()
         this.initTeamFile()
     }
 
@@ -91,66 +74,6 @@ export default class TeamDetail extends React.Component {
         }
     }
 
-    initTodoListArr = async () => {
-        // 请求todoListArr数据
-        const resp = await api('/api/team/taskList', {
-            method: 'GET',
-            body: {
-                teamId: this.teamId
-            }
-        })
-        // console.log('resp', resp)
-        let todoListArr = this.state.todoListArr
-        let unclassifiedList = []
-        let unclassified = {}
-        let todoList = []
-        if (resp.data.taskList == undefined) {
-            resp.data.taskList = []
-        }
-        resp.data.taskList.map((item) => {
-            if(item.state===false){
-                let todoItem = {}
-                todoItem.id = item.id
-                todoItem.name = item.title
-                todoItem.hasDone = item.state
-                todoItem.ddl = item.deadline
-                todoItem.completeTime = item.completed_time
-                todoItem.assignee = {
-                    id: item.header.headerId
-                }
-                unclassifiedList.push(todoItem)
-            }
-        })
-        unclassified.list = unclassifiedList
-        if (resp.data.tasklistList == undefined) {
-            resp.data.tasklistList = []
-        }
-        resp.data.tasklistList.map((item) => {
-            let todoListItem = {}
-            todoListItem.id = item._id
-            todoListItem.name = item.name
-            todoListItem.list = []
-            item.taskList.map((mapTodoItem) => {
-                if(mapTodoItem.state === false){
-                    let todoItem = {}
-                    todoItem.id = mapTodoItem.taskId
-                    todoItem.name = mapTodoItem.title
-                    todoItem.completeTime = mapTodoItem.completed_time
-                    todoItem.hasDone = mapTodoItem.state
-                    todoItem.ddl = mapTodoItem.deadline
-                    todoItem.assignee = {
-                        id: mapTodoItem.header.headerId
-                    }
-                    todoListItem.list.push(todoItem)
-                }
-            })
-            todoList.push(todoListItem)
-        })
-        todoListArr = [unclassified, ...todoList]
-        if (resp.state.code === 0) {
-            this.setState({ todoListArr })
-        }
-    }
 
     initTeamInfo = async () => {
         const result = await api('/api/team/info', {
@@ -298,13 +221,16 @@ export default class TeamDetail extends React.Component {
     }
 
     topicFileUploadHandle = async (e) => {
-        var ossKey = this.teamId + '/' + Date.now() + '/' + e.target.files[0].name
+        var fileName= e.target.files[0].name
+        var nameParts = e.target.files[0].name.split('.')
+        var ossKey = this.teamId + '/' + create() + '.' + nameParts[nameParts.length-1]
         this.setState({
             attachmentsArg:e.target.files[0],
             ossKeyArg:ossKey
         })
         const resp = await fileUploader(e.target.files[0], ossKey)
         let topicAttachments = this.state.topicAttachments
+        resp.fileName = fileName
         topicAttachments = [...topicAttachments, resp]
         this.setState({
             topicAttachments,
@@ -366,7 +292,7 @@ export default class TeamDetail extends React.Component {
                     todolist.list = []
                 }
                 todolist.list = [...todolist.list, todo]
-                this.setState({ todoListArr })
+                this.setState({ todoListArr})
             }
             return result
         }
@@ -407,11 +333,6 @@ export default class TeamDetail extends React.Component {
     }
 
     handleTodoCheck = async (lIndex, lId, id, hasDone) => {
-        // this.state.todoListArr.map((item,index)=>{
-        //     if(id===item.id){
-                    
-        //     }
-        // })
         let editTask = {}
         editTask.hasDone = !hasDone
         const resp = await api('/api/task/edit', {
@@ -546,6 +467,19 @@ export default class TeamDetail extends React.Component {
         }
     }
 
+    changeTodoIndex = async (index,todoId) => {
+        const resp = await api('/api/task/changeIndex', {
+            method: "POST",
+            body: {
+                taskId: todoId,
+                index:index,
+                teamId: this.teamId,
+            }
+        })
+        console.log(resp)
+        this.initTodoListArr()
+    }
+
     handleTodoListModify = async (index, id, info) => {
         if(!info.name.trim()){
             alert("清单名不能为空")
@@ -625,13 +559,24 @@ export default class TeamDetail extends React.Component {
 
     uploadFileHandle = async (e) => {
         var file = e.target.files[0];
-        this.setState({
-            chosenFile: file
-        })
-
-        var ossKey = this.teamId + '/' + Date.now() + '/' + file.name
-
+        var nameParts = file.name.split('.')
+        var ossKey = this.teamId + '/' + create() + '.' + nameParts[nameParts.length-1]
         var succeeded;
+        let exist = false
+        this.state.fileList.map((item) => {
+            if(item.name == file.name) {
+                exist = true
+            } 
+        })
+        if(exist) {
+            window.toast("文件名已存在")
+            return
+        }
+        
+        if(file.size > 20*1024*1024){
+            window.toast("上传文件大小不能超过20M")
+            return
+        }
         const uploadResult = fileUploader(file, ossKey)
         await uploadResult.then(function (val) {
             succeeded = 1
@@ -796,8 +741,6 @@ export default class TeamDetail extends React.Component {
     }
 
     renameComfirmHandle = async (item) => {
-        var ossKey = this.teamId + '/' + Date.now() + '/' + this.state.renameName
-        // const result1 = await fileRenamer(item.ossKey,ossKey)
         if (item.fileType == 'file') {
             const result = await api('/api/file/updateFileName', {
                 method: 'POST',
@@ -808,7 +751,6 @@ export default class TeamDetail extends React.Component {
                         fileName: item.name,
                     },
                     tarName: this.state.renameName,
-                    newOssKey:ossKey
                 }
             })
             if (result.state.code == 0) {
@@ -851,12 +793,15 @@ export default class TeamDetail extends React.Component {
         const location = {pathname:'/member', state:{teamId:this.state.teamInfo._id}}
         this.props.router.push(location)
     }
-
+    toTimeLineHandle = (memberId , event) => {
+        const query = {userId:memberId,}
+        const location = {pathname:'/timeline', query:query}
+        this.props.activeTagHandle('/timeline')
+        this.props.router.push(location)
+    }
 
     render() {
         let teamInfo = this.state.teamInfo
-        const unclassified = this.state.todoListArr[0]
-
         return (
             <Page title={teamInfo.name + " - IHCI"}
                 className="project-page">
@@ -917,6 +862,7 @@ export default class TeamDetail extends React.Component {
                             this.state.topicList.map((item) => {
                                 return (
                                     <TopicItem locationTo={this.locationTo}
+                                        toTimeLineHandle={this.toTimeLineHandle.bind(this)}
                                         key={item._id}
                                         {...item} />
                                 )
@@ -924,91 +870,12 @@ export default class TeamDetail extends React.Component {
                         }
                     </div>
 
-
-                    <div>
-                        <div className="head">
-                            <span className='head-title'>任务</span>
-                            <div className="create-btn">
-                                <span onClick={(e) => {
-                                    this.setState({ showCreateTodo: true })
-                                    e.stopPropagation()
-                                }}>添加任务</span>
-                                <i className="icon iconfont"
-                                    onClick={(e) => {
-                                        this.setState({ showMenu: !this.state.showMenu })
-                                        e.stopPropagation()
-                                    }}
-                                >&#xe783;</i>
-                                {this.state.showMenu &&
-                                    <ul className="menu">
-                                        <li onClick={(e) => {
-                                            this.setState({ showCreateTodo: true, showMenu: false })
-                                            e.stopPropagation()
-                                        }}>添加任务
-                                </li>
-                                        <li onClick={(e) => {
-                                            this.setState({ showCreateTodoList: true, showMenu: false })
-                                            e.stopPropagation()
-                                        }}>添加清单
-                                </li>
-                                    </ul>
-                                }
-                            </div>
-                        </div>
-
-
-                        {unclassified &&
-                            <TodoList
-                                listType="unclassified"
-                                showCreateTodo={this.state.showCreateTodo}
-                                createInput="任务名"
-                                handlecloseEditTodo={this.handlecloseEditTodo.bind(this)}
-                                {...unclassified}
-                                memberList={this.state.memberList}
-                                handleTodoCreate={this.handleTodoCreate.bind(this, 0, null)}
-                                handleTodoCheck={this.handleTodoCheck.bind(this, 0, null)}
-                                handleTodoModify={this.handleTodoModify.bind(this, 0, null)}
-                                handleAssigneeChange={this.handleAssigneeChange.bind(this, 0, null)}
-                                handleDateChange={this.handleDateChange.bind(this, 0, null)}
-                                handleTodoDelete={this.handleTodoDelete.bind(this, 0, null)}
-                                handleTodoListDelete={this.handleTodoListDelete.bind(this, null, unclassified.id)}
-                                handleTodoListModify={this.handleTodoListModify.bind(this, null, unclassified.id)}
-                            ></TodoList>
-                        }
-
-                        {
-                            this.state.showCreateTodoList &&
-                            <EditTodoList
-                                confirmLabel="保存，开始添加任务"
-                                handleConfirm={this.handleTodoListCreate.bind(this)}
-                                handleClose={(() => { this.setState({ showCreateTodoList: false }) }).bind(this)}>
-                            </EditTodoList>
-                        }
-
-                        {this.state.todoListArr.map((todoList, index) => {
-                            if (index === 0) {
-                                return
-                            }
-                            return (
-                                <TodoList
-                                    key={todoList.id}
-                                    {...todoList}
-                                    createInput="任务名"
-                                    memberList={this.state.memberList}
-                                    handleTodoCreate={this.handleTodoCreate.bind(this, index, todoList.id)}
-                                    handleTodoCheck={this.handleTodoCheck.bind(this, index, todoList.id)}
-                                    handleTodoModify={this.handleTodoModify.bind(this, index, todoList.id)}
-                                    handleAssigneeChange={this.handleAssigneeChange.bind(this, index, todoList.id)}
-                                    handleDateChange={this.handleDateChange.bind(this, index, todoList.id)}
-                                    handleTodoDelete={this.handleTodoDelete.bind(this, index, todoList.id)}
-                                    handleTodoListDelete={this.handleTodoListDelete.bind(this, index, todoList.id)}
-                                    handleTodoListModify={this.handleTodoListModify.bind(this, index, todoList.id)}
-                                ></TodoList>
-                            )
-                        })
-                        }
-                            <div className="completed" onClick={()=>{location.href = '/completed/' + this.teamId}}>已完成任务</div>
-                        </div>
+                        <Task
+                        teamId={this.props.params.id}
+                        curUserId={this.props.personInfo._id}
+                        ></Task>
+                    
+                            
                         <input className='file-input-hidden' type="file" ref={(fileInput) => this.fileInput = fileInput} onChange={this.uploadFileHandle}></input>
                         <div className="head">
                             <span className='head-title'>文件</span>
@@ -1027,7 +894,8 @@ export default class TeamDetail extends React.Component {
                             {
                                 this.state.showCreateFolder ? <div className="file-line files">
                                     <div className="name">
-                                        <input autoFocus="autofocus" type="text" className="folder-name" onChange={this.createFolderNameInputHandle} value={this.state.createFolderName} />
+                                        <input autoFocus="autofocus" type="text" className="folder-name" 
+                                        onKeyDown={(event)=>{if(event.keyCode== "13"){this.createFolderComfirmHandle()}}} onChange={this.createFolderNameInputHandle} value={this.state.createFolderName} />
                                     </div>
                                     <div className="tools">
                                         <span onClick={this.createFolderComfirmHandle}>创建</span>
@@ -1045,7 +913,8 @@ export default class TeamDetail extends React.Component {
                                         return (
                                             <div className="file-line files" key={item.fileType + '-' + item._id}>
                                                 <div className="name">
-                                                    <input  autoFocus="autofocus" type="text" className="folder-name" onChange={this.renameNameInputHandle} value={this.state.renameName} />
+                                                    <input  autoFocus="autofocus" type="text" className="folder-name" 
+                                                    onKeyDown={(event)=>{if(event.keyCode== "13"){this.renameComfirmHandle(item)}}} onChange={this.renameNameInputHandle} value={this.state.renameName} />
                                                 </div>
                                                 <div className="tools">
                                                     <span onClick={() => { this.renameComfirmHandle(item) }}>确定</span>

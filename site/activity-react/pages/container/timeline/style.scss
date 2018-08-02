@@ -140,7 +140,15 @@
         margin-bottom: 20px;
 
         .news-con{
-            cursor: pointer;
+            //cursor: pointer;
+            .des-line{
+                .topic, .content{
+                    cursor: pointer;
+                    &:hover{
+                        color:#44acb6;
+                    }
+                }
+            }
         }
 
         .time {

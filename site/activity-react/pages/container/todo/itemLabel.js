@@ -25,15 +25,26 @@ class ItemLabel extends React.Component {
             return item._id === _props.assigneeId
         })
         return (
-            <div className="todo-label">
-                <span onClick={this.handleOpenEditDialog}>
+            <div className="todo-label"
+            data-id={this.props.dataId}
+            data-listindex={this.props.index}
+            draggable='true'>
+                <span onClick={this.handleOpenEditDialog}
+                data-id={this.props.dataId}
+                draggable='true'>
                     {   assignee ?
-                        <span className="assignee">{assignee.name}</span>
-                        :<span className="due">未指派</span>
+                        <span className="assignee"
+                        data-id={this.props.dataId}
+                        data-listindex={this.props.index}
+                        draggable='true'>{assignee.name}</span>
+                        :<span className="due"
+                        data-id={this.props.dataId}
+                        data-listindex={this.props.index}
+                        draggable='true'>未指派</span>
                     }
                     {   _props.date>= formatDate(new Date())?
-                        <span className="due">{_props.date}</span>
-                        :<span className=" due overdue">{_props.date}</span>
+                        <span className="due">{(_props.date)?_props.date.split("T")[0]:_props.date}</span>
+                        :<span className=" due overdue">{(_props.date)?_props.date.split("T")[0]:_props.date}</span>
                     }
 
                 </span>

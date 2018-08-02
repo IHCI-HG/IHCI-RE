@@ -2,7 +2,9 @@ import * as React from 'react';
 import './style.scss'
 import Editor from "../editor"
 import fileUploader from '../../utils/file-uploader'
+import MemberChosenList from '../member-chose-list'
 import { timeBefore, createMarkup } from '../../utils/util'
+import {create} from '../../../../server/components/uuid/uuid'
 
 
 class TopicDiscussItem extends React.Component {
@@ -33,7 +35,9 @@ class TopicDiscussItem extends React.Component {
         })
     }
     discussFileUploadHandle = async (e) => {
-        var ossKey = this.props.teamId + '/' + Date.now() + '/' + e.target.files[0].name
+        var fileName = e.target.files[0].name
+        var nameParts = e.target.files[0].name.split('.')
+        var ossKey = this.props.teamId + '/' + create() + '.' + nameParts[nameParts.length-1]
         const discussAttachmentsArr = this.state.discussAttachmentsArr
         const discussOssKeyArr = this.state.discussOssKeyArr
         discussAttachmentsArr.push(e.target.files[0])
@@ -43,6 +47,7 @@ class TopicDiscussItem extends React.Component {
             discussOssKeyArr
         })
         const resp = await fileUploader(e.target.files[0], ossKey)
+        resp.fileName = fileName
         let discussAttachments = this.state.discussAttachments;
         discussAttachments = [...discussAttachments, resp]
         this.setState({
@@ -79,6 +84,8 @@ class TopicDiscussItem extends React.Component {
                             deleteFile={this.deleteDiscussFile.bind(this)}
                             attachments={this.state.discussAttachments}>
                         </Editor>
+                        <div className="infrom">请选择要通知的人：</div>
+                        <MemberChosenList choseHandle={this.memberChoseHandle} memberList={this.props.memberList}/>
                         <div className="button-warp">
                             <div className="save-btn" 
                                 onClick={() => { 
@@ -91,7 +98,7 @@ class TopicDiscussItem extends React.Component {
                     :
                     <div  className={(this.props.enableHighlight &&this.props.highlight) ? "topic-subject-con discuss-con highlight" :"topic-subject-con discuss-con"}>
                         <div className="flex">
-                            <img className="head-img" src={this.props.creator.headImg}></img>
+                            <img className="head-img" src={this.props.creator.headImg} onClick = {this.props.toTimeLineHandle.bind(this,this.props.creator.id)}></img>
                             <div className="topic-main">
                                 <div className="head-wrap">
                                     <div className="left">
@@ -115,7 +122,7 @@ class TopicDiscussItem extends React.Component {
                                     return (
                                         <div className="file-pic-item" key={Math.random()} onClick={this.props.downloadHandle.bind(this, item.name)}>
                                             <img className="file-pic" src={window.location.origin + '/static/' + item.name}></img>
-                                            <div className="file-name">{item.name.split("/")[2]}</div>
+                                            <div className="file-name">{item.fileName}</div>
                                         </div>
                                     )
                                 })
@@ -123,7 +130,7 @@ class TopicDiscussItem extends React.Component {
                             {
                             this.props.fileList.map((item) => {
                                 if(!(item.name.endsWith(".jpg")||item.name.endsWith(".jpeg")||item.name.endsWith(".png")||item.name.endsWith(".bmp")||item.name.endsWith(".gif"))){
-                                    return ( <div className="file-item" key={Math.random()} onClick={this.props.downloadHandle.bind(this, item.name)}>{item.name.split("/")[2]}</div> )
+                                    return ( <div className="file-item" key={Math.random()} onClick={this.props.downloadHandle.bind(this, item.name)}>{item.fileName}</div> )
                                 }
                                 })
                             }

@@ -276,12 +276,26 @@ export default class Person extends React.Component{
         })
         console.log(result1)
         if(result.state.code === 0) {
-            window.toast("设置成功")
+            if(INIT_DATA.userObj.personInfo){
+                window.toast("设置成功")
+            }
             setTimeout(() => {
                 location.href = '/team'
             }, 500);
         } else {
             window.toast("设置失败，请稍后再试")
+        }
+        if(!INIT_DATA.userObj.personInfo){
+            const result = await api('/api/manual', {
+                method: 'POST',
+                body: {
+                    mailAccount: this.state.personInfo.mail,
+                }
+            })
+    
+            if(result.state.code === 0) {
+                window.toast("设置成功，已发送使用说明邮件，请检查邮箱")
+            }
         }
     }
 
