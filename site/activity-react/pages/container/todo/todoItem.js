@@ -101,7 +101,6 @@ class TodoItem extends React.Component {
 
         const hasDoneNum = this.caculateHasDoneNum()
         const componentClass = this.caculateStyle()
-
         return (
             <div className={componentClass}
             data-id={this.props.dataId}

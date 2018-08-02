@@ -562,6 +562,16 @@ export default class TeamDetail extends React.Component {
         var nameParts = file.name.split('.')
         var ossKey = this.teamId + '/' + create() + '.' + nameParts[nameParts.length-1]
         var succeeded;
+        let exist = false
+        this.state.fileList.map((item) => {
+            if(item.name == file.name) {
+                exist = true
+            } 
+        })
+        if(exist) {
+            window.toast("文件名已存在")
+            return
+        }
         
         if(file.size > 20*1024*1024){
             window.toast("上传文件大小不能超过20M")
