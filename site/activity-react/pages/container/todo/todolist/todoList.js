@@ -26,7 +26,9 @@ class TodoList extends React.Component {
     }
     componentWillReceiveProps(nextProps) {
         this.setState({todoList:nextProps.list.filter((todo) => {
-            return todo.hasDone === false
+            if(todo){
+                return todo.hasDone === false
+            }
         }),doneList:nextProps.doneList.filter((done)=>{
             return done.listId === this.props.id && done.hasDone === true
         })})

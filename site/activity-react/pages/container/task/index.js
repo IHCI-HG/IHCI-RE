@@ -39,7 +39,7 @@ class Task extends React.Component{
         doneList: [],
         onDragStart: false,
     } 
-    
+
     componentDidMount = async () => {
         this.teamId = this.props.teamId
         this.initTodoListArr()
