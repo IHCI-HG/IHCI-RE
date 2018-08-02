@@ -160,6 +160,14 @@ class TodoList extends React.Component {
                                 handleClose={(() => {this.setState({showCreateTodo: false})}).bind(this)}>
                             </NewTodo>
                             :<div className="new-todo"
+                            data-listid={this.props.index}
+                            data-listindex={_props.index}
+                            data-type='list'
+                            draggable='true'
+                            onDragStart={_props.dragStart.bind(this,null,this.props.id)}
+                            onDragEnd={_props.dragEnd.bind(this,this.props.id)}
+                            onDragOver={_props.dragOver}
+                            onDrop={_props.drop.bind(this,this.props.id)}
                                   onClick={(e) => {
                                     this.setState({showCreateTodo: true})
                                     e.stopPropagation()}}>添加新任务</div>

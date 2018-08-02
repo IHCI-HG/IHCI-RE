@@ -133,6 +133,10 @@
 
                     font-size: 26px;
                 }
+                &:hover{
+                    color:#44acb6;
+                }
+        
             }
 
         }
@@ -161,6 +165,11 @@
             &.files {
                 font-size: 14px;
                 line-height: 50px; 
+                .name{
+                    &:hover{
+                        cursor: pointer;
+                    }
+                }
             }
             &.header {
                 font-size: 12px;
@@ -186,9 +195,7 @@
         }
         .name {
             width: 50%;
-            &:hover {
-                cursor: pointer;
-            }
+            
         }
         .size {
             width: 15%;

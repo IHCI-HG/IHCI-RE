@@ -176,6 +176,7 @@ export default class Task extends React.Component{
         topicListArr: [],
         copyNumber:0,
         teamToMove: '请选择小组',
+        listToMove:'',
         teamToCopy: '请选择小组',
         user: {
             headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
@@ -184,6 +185,7 @@ export default class Task extends React.Component{
         todo: {},
         copyTeamList:[],
         moveTeamList:[],
+        moveTodoList:[],
         loadMoreCount:1,
         // replyCount:0
         teamName:"",
@@ -221,11 +223,13 @@ export default class Task extends React.Component{
         })
         const teamList = result.data.teamList
         console.log(result)
+        /*
         teamList.map((item, index)=>{
             if(item.teamId === this.state.todo.teamId){
                 teamList.splice(index, 1)
             }
         })
+        */
         this.setState({
             moveTeamList: teamList,
         })
@@ -513,7 +517,7 @@ export default class Task extends React.Component{
             loadMoreCount:this.state.loadMoreCount+1
         },this.loadTopicListArr)}
 
-    moveToTeamHandle = async () => {
+    moveTodoHandle = async () => {
         if(this.state.teamToMove=="请选择小组"){
             alert(this.state.teamToMove)
         }
@@ -522,7 +526,8 @@ export default class Task extends React.Component{
                 method:"POST",
                 body:{
                     taskId:this.props.params.id,
-                    teamIdMoveTo: this.state.teamToMove
+                    teamIdMoveTo: this.state.teamToMove,
+                    tasklistId: this.state.listToMove
                 }
             })
             console.log("move",resp)
@@ -605,10 +610,30 @@ export default class Task extends React.Component{
             updateTopicContent: e
         })
     }
-
-    moveSelectedHandle = (e) => {
+    initSelectedTeamList = async () =>{
+        const resp = await api('/api/team/taskList', {
+            method: 'GET',
+            body: {
+                teamId: this.state.teamToMove
+            }
+        })
+        if (resp.data.tasklistList == undefined) {
+            resp.data.tasklistList = []
+        }
+        this.setState({
+            moveTodoList : resp.data.tasklistList
+        })
+        console.log(this.state.moveTodoList)
+    }
+    moveTeamSelectedHandle = (e) => {
         this.setState({
             teamToMove: e.target.value
+        },()=>{this.initSelectedTeamList()})
+        
+    }
+    moveListSelectedHandle = (e) => {
+        this.setState({
+            listToMove: e.target.value
         })
     }
 
@@ -1090,7 +1115,7 @@ export default class Task extends React.Component{
                         <div className={"item "+((copyExpanded)?"expanded":"")}>
                             {!copyExpanded&&<a  onClick={() => {this.setState({copyExpanded: true,moveExpanded: false})}}>复制</a>}
                             {copyExpanded&&<div className="confirm">
-                                    <p className="title">复制任务到小组</p>
+                                    <p className="title">复制任务到当前清单</p>
                                     <input type="number" placeholder="复制数量[1~50]" min="1" max="50" name="count" id="count" onChange={this.numberInputHandle} />
                                     {/* <div className="simple-select select-choose-projects require-select" >
                                         <select onChange={this.copySelectedHandle} value={this.state.teamToCopy} className="select-list">
@@ -1113,9 +1138,9 @@ export default class Task extends React.Component{
                             {!moveExpanded&&<a onClick={() => {this.setState({moveExpanded: true,copyExpanded: false})}}>移动</a>}
                             {moveExpanded&&<div className="confirm">
                                 <form>
-                                    <p className="title">移动任务到小组</p>
+                                    <p className="title">移动任务</p>
                                     <div className="simple-select select-choose-projects require-select" >
-                                        <select onChange={this.moveSelectedHandle} value={this.state.teamToMove} className="select-list">
+                                        <select onChange={this.moveTeamSelectedHandle} value={this.state.teamToMove} className="select-list">
                                             <option className="default" value="请选择小组">点击选择小组</option>
                                             {this.state.moveTeamList.map((item) => {
                                                 return (
@@ -1126,8 +1151,18 @@ export default class Task extends React.Component{
                                             })
                                             }
                                         </select>
+                                        <select onChange={this.moveListSelectedHandle} value={this.state.listToMove} className="select-list">
+                                            <option className="default" value=" ">不选择清单</option>
+                                            {this.state.moveTodoList.map((item) => {
+                                                return (
+                                                    <option className = "select-item" key={'list name'+item._id} value={item._id}>
+                                                       {item.name}
+                                                    </option>
+                                                )
+                                            })}
+                                        </select>
                                     </div>
-                                    <button className="act" onClick={this.moveToTeamHandle}>移动</button>
+                                    <button className="act" onClick={this.moveTodoHandle}>移动</button>
                                     <div type="button" className="cancel" onClick={() => {this.setState({moveExpanded: false})}}>取消</div>
                                 </form>
                             </div>}

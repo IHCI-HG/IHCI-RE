@@ -192,6 +192,22 @@ export default class TeamAdmin extends React.Component{
             teamImg: window.location.origin+'/img/'+ossKey
         })
     }
+    copyHandle = () => {
+        var copyVal = document.getElementById("copyVal");
+        copyVal.select();
+        try{
+            if(document.execCommand('copy', false, null)){
+                console.log('copied');
+            }
+            else{
+                console.log('failed');
+            }
+            
+        }catch(err){
+                console.log(err);
+        }
+    } 
+    
 
 
     render() {
@@ -203,7 +219,8 @@ export default class TeamAdmin extends React.Component{
                         <div className="add-member-dialog">
                             <div><img className="close" type="button" src={require('../team-admin/icon_close.png')} alt=""/></div>
                             <div className="des">将下面的公共邀请链接发送给需要邀请的人</div>
-                            <input type="text" value={`${location.host}/team-join/${this.teamId}`} className="invite-input" />
+                            <input type="text" id="copyVal" readOnly value={`${location.host}/team-join/${this.teamId}`} className="invite-input" />
+                            <button className="copyBtn" onClick={this.copyHandle}>点击复制到剪贴板</button>
                         </div>
                     </div>
                 } 
