@@ -37,6 +37,7 @@ class Task extends React.Component{
         todoListArr: [],
         memberList: [],
         doneList: [],
+        onDragStart: false,
     } 
     componentDidMount = async () => {
         this.teamId = this.props.teamId
@@ -146,7 +147,7 @@ class Task extends React.Component{
         this.setState({ showCreateTodo: false })
     }
       // todoList
-      handleTodoListCreate = async (info) => {
+    handleTodoListCreate = async (info) => {
         if(!info.name.trim()){
             alert("清单名不能为空")
         }
@@ -393,7 +394,8 @@ class Task extends React.Component{
         this.dragged = e.currentTarget
         this.setState({
             listIdFrom: lId,
-            dragTodoId: id
+            dragTodoId: id,
+            onDragStart: true
         })
     }
     dragEnd = async(lIndex,id,e) => {
@@ -401,15 +403,13 @@ class Task extends React.Component{
         var data=[]
         var from ;
         var to;
+        this.setState({
+            onDragStart: false
+        })
         if(this.dragged.dataset.type =='item'){
             from = Number(this.dragged.dataset.id)
             to = Number(this.over.dataset.id)
             data = todoListArr[lIndex].list
-            console.log({
-                taskId: id,
-                index: to,
-                teamId: this.teamId,
-            })
             const resp = await api('/api/task/changeIndex', {
                 method: "POST",
                 body: {
@@ -418,7 +418,9 @@ class Task extends React.Component{
                     teamId: this.teamId,
                 }
             })
-            this.initTodoListArr()
+            if(resp){
+                this.initTodoListArr()
+            }
         }else if(this.dragged.dataset.type == 'list'){
             from = Number(this.dragged.dataset.listid)
             to = Number(this.over.dataset.listid)
@@ -432,7 +434,9 @@ class Task extends React.Component{
                     teamId: this.teamId,
                 }
             })
-            this.initTodoListArr()
+            if(resp){
+                this.initTodoListArr()
+            }
         }
         
     }
@@ -442,6 +446,9 @@ class Task extends React.Component{
         this.over = e.target
     }
     drop = async(listIdTo, e) => {
+        this.setState({
+            onDragStart: false
+        })
         if(this.dragged.dataset.listindex !== e.target.dataset.listindex){
         const todoListArr = this.state.todoListArr
         var from = todoListArr[this.dragged.dataset.listindex].list
@@ -457,7 +464,9 @@ class Task extends React.Component{
                 listIdFrom: this.state.listIdFrom,
             }
         })
-        this.initTodoListArr()
+        if(resp){
+            this.initTodoListArr()
+        }
         }
     }
 
@@ -506,6 +515,9 @@ class Task extends React.Component{
                 handlecloseEditTodo={this.handlecloseEditTodo.bind(this)}
                 {...unclassified}
                 id=""
+                highLight={this.state.onDragStart&&(this.state.listIdFrom!=="")}
+                dragTodoId={this.state.dragTodoId}
+                dragStarted={this.state.onDragStart}
                 doneList={this.state.doneList}
                 memberList={this.state.memberList}
                 handleTodoCreate={this.handleTodoCreate.bind(this, 0, null)}
@@ -544,6 +556,9 @@ class Task extends React.Component{
                     {...todoList}
                     doneList={this.state.doneList}
                     createInput="任务名"
+                    highLight={this.state.onDragStart&&(this.state.listIdFrom!==todoList.id)}
+                    dragTodoId={this.state.dragTodoId}
+                    dragStarted={this.state.onDragStart}
                     memberList={this.state.memberList}
                     handleTodoCreate={this.handleTodoCreate.bind(this, index, todoList.id)}
                     handleTodoCheck={this.handleTodoCheck.bind(this, index, todoList.id)}
