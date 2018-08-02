@@ -636,14 +636,9 @@ const changeTaskIndex = async (req, res, next) => {
     try {
         const taskObj = await taskDB.findByTaskId(taskId)
         if (taskObj.tasklistId!==""){
-            // if(index === 0){
-            //     await tasklistDB.removeAll(taskObj.tasklistId)
-
-            // }
             await tasklistDB.delTask(taskObj.tasklistId, taskId);
             await tasklistDB.changeTaskIndex(taskObj.tasklistId, index ,taskObj);
             await tasklistDB.delNonSence(taskObj.tasklistId);
-            await teamDB.delListNonSense(teamId)
         }
         else{
             await teamDB.delTask(teamId, taskId);

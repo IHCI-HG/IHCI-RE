@@ -442,9 +442,6 @@ class Task extends React.Component{
         this.over = e.target
     }
     drop = async(listIdTo, e) => {
-        console.log(this.dragged)
-        console.log(e.target)
- 
         if(this.dragged.dataset.listindex !== e.target.dataset.listindex){
         const todoListArr = this.state.todoListArr
         var from = todoListArr[this.dragged.dataset.listindex].list
@@ -452,11 +449,6 @@ class Task extends React.Component{
         var to = todoListArr[e.target.dataset.listindex].list
         to.splice(e.target.dataset.id,0,targetItem)
         this.setState({ todoListArr })
-        console.log({
-            taskId: this.state.dragTodoId,
-            listIdTo: listIdTo,
-            listIdFrom: this.state.listIdFrom,
-        })
         const resp = await api('/api/task/changeList',{
             method: "POST",
             body: {
