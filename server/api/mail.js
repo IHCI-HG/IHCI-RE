@@ -46,6 +46,34 @@ const activation = async (req, res, next) => {
        }
 }
 
+const sendManual = async (req, res, next) => {
+    const userId = req.rSession.userId
+    const mailAccount = req.body.mailAccount
+    const mailCode = randomChar()
+    const result = await UserDB.findByIdAndUpdate({_id: userId}, {mailCode: mailCode, mailLimitTime: Date.now()+600*1000 }, {new: true})
+    var mail = {
+        // 发件人
+        from: 'ICHI <' + conf.mail.auth.user + '>',
+        // 主题
+        subject: '欢迎使用IHCI平台',
+        // 收件人
+        to: mailAccount, //发送给注册时填写的邮箱
+        text: '下面为您介绍IHCI平台的相关信息和使用说明：....'
+    };
+       const sendFlag = await sendMail(mail)
+       if(sendFlag){
+        resProcessor.jsonp(req, res, {
+            state: { code: 0, msg:"成功"},
+            data: {}
+                   });
+       }else{
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg:"失败"},
+            data: {}
+                   });
+       }
+}
+
 const checkCode = async (req, res, next) => {
     const userId = req.body.userId;
     const mailCode = req.body.mailCode;
@@ -85,5 +113,6 @@ const checkCode = async (req, res, next) => {
 
 module.exports = [
     ['POST', '/api/activation', apiAuth, activation],
+    ['POST', '/api/manual', apiAuth, sendManual],
     ['POST', '/api/checkCode', checkCode],
 ];
