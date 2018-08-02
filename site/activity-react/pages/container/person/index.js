@@ -276,7 +276,9 @@ export default class Person extends React.Component{
         })
         console.log(result1)
         if(result.state.code === 0) {
-            window.toast("设置成功")
+            if(INIT_DATA.userObj.personInfo){
+                window.toast("设置成功")
+            }
             setTimeout(() => {
                 location.href = '/team'
             }, 500);
@@ -292,7 +294,7 @@ export default class Person extends React.Component{
             })
     
             if(result.state.code === 0) {
-                console.log("已发送激活邮件，请检查邮箱")
+                window.toast("设置成功，已发送使用说明邮件，请检查邮箱")
             }
         }
     }
