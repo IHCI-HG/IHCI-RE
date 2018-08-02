@@ -26,7 +26,9 @@ class TodoList extends React.Component {
     }
     componentWillReceiveProps(nextProps) {
         this.setState({todoList:nextProps.list.filter((todo) => {
-            return todo.hasDone === false
+            if(todo){
+                return todo.hasDone === false
+            }
         }),doneList:nextProps.doneList.filter((done)=>{
             return done.listId === this.props.id && done.hasDone === true
         })})
@@ -76,7 +78,7 @@ class TodoList extends React.Component {
         // console.log('todolist渲染', _props.id)
         // console.log('list', _props.list)
         return (
-            <div className="todolist">
+            <div className={(_props.highLight)?"todolist highlight":"todolist"}>
                 {
                     listType === 'classification' && (
                     this.state.mode === 'edit'
@@ -115,6 +117,7 @@ class TodoList extends React.Component {
                     this.state.todoList.map((todo,i) => {
                         return (
                             <div
+                            className={(!_props.highLight)&&(_props.dragStarted)&&(_props.dragTodoId!==todo.id)?"todo-highlight":""}
                             key={todo.id}
                             draggable='true'
                             onDragStart={_props.dragStart.bind(this,todo.id,this.props.id)}
@@ -157,6 +160,14 @@ class TodoList extends React.Component {
                                 handleClose={(() => {this.setState({showCreateTodo: false})}).bind(this)}>
                             </NewTodo>
                             :<div className="new-todo"
+                            data-listid={this.props.index}
+                            data-listindex={_props.index}
+                            data-type='list'
+                            draggable='true'
+                            onDragStart={_props.dragStart.bind(this,null,this.props.id)}
+                            onDragEnd={_props.dragEnd.bind(this,this.props.id)}
+                            onDragOver={_props.dragOver}
+                            onDrop={_props.drop.bind(this,this.props.id)}
                                   onClick={(e) => {
                                     this.setState({showCreateTodo: true})
                                     e.stopPropagation()}}>添加新任务</div>

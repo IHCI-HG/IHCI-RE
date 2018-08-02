@@ -64,7 +64,6 @@ const getOssClient = async () => {
         body: {}
     })
     const token = result.data
-    console.log('token', token);
 
     if(!OSSW) {
         if(window.toast) {
@@ -93,6 +92,7 @@ const fileUploader = async (file, ossKey) => {
     var result = await client.multipartUpload(ossKey, file, {
         checkpoint: checkpoint,
         progress: async function (p, cpt) {
+            window.bar(p)
             // options.onProgress(p);
             if (cpt !== undefined) {
                 // console.log(cpt.fileSize)

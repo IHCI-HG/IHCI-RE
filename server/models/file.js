@@ -382,16 +382,6 @@ const createFolder = async function(teamId, dir, folderName) {
         throw '目录不存在'
     }
 
-    let exist = false
-    folderObj.fileList.map((item) => {
-        if(item.name == folderName) {
-            exist = true
-        } 
-    })
-    if(exist) {
-        throw '文件名已存在'
-    }
-
     folderObj = await folderDB.createFolder(teamId, dir, folderName)
     await folderDB.appendFolder(teamId, dir, folderObj)
 

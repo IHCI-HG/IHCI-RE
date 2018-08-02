@@ -647,7 +647,7 @@ const changeTaskIndex = async (req, res, next) => {
         }
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
-            data: task
+            data: {}
         })
 
     } catch (error) {
@@ -678,14 +678,20 @@ const changeTaskList = async (req, res, next) => {
         const teamId = result.teamId;
         if (listIdTo===""&&listIdFrom!=="") {
             await tasklistDB.delTask(listIdFrom,taskId)
+            result.tasklistId = ""
+            await taskDB.updateTask(taskId,result)
             await teamDB.addTask(teamId,result)
         }
         if (listIdTo!==""&&listIdFrom==="") {
             await teamDB.delTask(teamId,taskId)
+            result.tasklistId = listIdTo
+            await taskDB.updateTask(taskId,result)
             await tasklistDB.addTask(listIdTo,result)
         } 
         if (listIdTo!==""&&listIdFrom!=="") {
             await tasklistDB.delTask(listIdFrom,taskId)
+            result.tasklistId = listIdTo
+            await taskDB.updateTask(taskId,result)
             await tasklistDB.addTask(listIdTo,result)
         }
 
@@ -696,7 +702,7 @@ const changeTaskList = async (req, res, next) => {
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
-            data: result
+            data: {}
         });
     } catch (error) {
         resProcessor.jsonp(req, res, {
