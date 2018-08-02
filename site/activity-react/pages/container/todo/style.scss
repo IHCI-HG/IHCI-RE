@@ -38,6 +38,7 @@
     }
 
     .check-box {
+        cursor: pointer;
         &:hover {
             background-color: #eee;
         }
@@ -47,6 +48,7 @@
     }
 
     .check-box-checked {
+        cursor: pointer;
         background-color: #6DBE53;
         border: 1px solid #aed581;
         .checked-icon {
@@ -81,6 +83,7 @@
         background-color: white;
         .icon {
             margin: 0 6px;
+            cursor: pointer;
         }
     }
     .todo-wrap {
@@ -88,6 +91,9 @@
         position: relative;
         padding-left: 30px;
         line-height: 24px;
+        .name{
+            cursor: pointer;
+        }
         .dashed-input {
             border: none;
             border-bottom: 1px dashed #cccccc;
@@ -241,6 +247,7 @@
     color: #999;
     margin-bottom: 20px;
     font-weight: bold;
+    cursor: pointer;
 }
 
 .discuss-page {

@@ -11,6 +11,18 @@ import Editor from '../../../components/editor'
 import fileUploader from '../../../utils/file-uploader'
 import TopicItem from '../../../components/topic-item'
 import {create} from '../../../../../server/components/uuid/uuid'
+ 
+class TeamChoseItem extends React.PureComponent {
+    render() {
+        return (
+            <div className="admin-team-item">
+                <div className="team-img"></div>
+                <div className="team-name">{this.props.name}</div>
+                {this.props.active && <span className="check">√</span>}
+            </div>
+        )
+    }
+}
 
 
 export default class TeamDetail extends React.Component {
@@ -239,6 +251,273 @@ export default class TeamDetail extends React.Component {
         location.href = '/team-admin/' + this.teamId
     }
 
+    // todo
+    handlecloseEditTodo = () => {
+        this.setState({ showCreateTodo: false })
+    }
+
+    handleTodoCreate = async (lIndex, id, todoInfo) => {
+        if(!todoInfo.name.trim()){
+            alert("任务名不能为空")
+        }
+        else{
+            const result = await api('/api/task/create', {
+                method: 'POST',
+                body: {
+                    teamId: this.teamId,
+                    listId: id,
+                    name: todoInfo.name,
+                    ddl: todoInfo.date,
+                    assigneeId: todoInfo.assigneeId,
+                }
+            })
+            // 返回用户名的显示依赖assigneeId
+            if (result.state.code === 0) {
+                let todo = {
+                    listId: result.data.listId,
+                    id: result.data.id,
+                    name: result.data.title,
+                    desc: result.data.content,
+                    assignee: {
+                        id: result.data.header,
+                    },
+                    ddl: result.data.deadline,
+                    checkItemDoneNum: 0,
+                    // checkItemNum: 0,
+                    hasDone: false,
+                }
+                const todoListArr = this.state.todoListArr
+                const todolist = todoListArr[lIndex]
+                if (!todolist.list) {
+                    todolist.list = []
+                }
+                todolist.list = [...todolist.list, todo]
+                this.setState({ todoListArr})
+            }
+            return result
+        }
+        
+    }
+
+    handleTodoModify = async (lIndex, lId, id, todoInfo) => {
+        let editTask = {}
+        if(!todoInfo.name.trim()){
+            alert("任务名不能为空")
+        }
+        else{
+            editTask.name = todoInfo.name
+            editTask.ddl = todoInfo.date
+            editTask.assigneeId = todoInfo.assigneeId
+            const resp = await api('/api/task/edit', {
+                method: 'POST',
+                body: {
+                    listId: lId,
+                    taskId: todoInfo.id,
+                    teamId: this.teamId,
+                    editTask: editTask,
+                }
+            })
+            if (resp.state.code === 0) {
+                const todoListArr = this.state.todoListArr
+                const todolist = todoListArr[lIndex]
+                const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
+                todoItem.name = resp.data.title
+                todoItem.ddl = resp.data.deadline
+                todoItem.assignee.id = resp.data.header
+                todolist.list[itemIndex] = todoItem
+                todolist.list = todolist.list.slice()
+                this.setState({ todoListArr })
+            }
+            return resp
+        }
+    }
+
+    handleTodoCheck = async (lIndex, lId, id, hasDone) => {
+        let editTask = {}
+        editTask.hasDone = !hasDone
+        const resp = await api('/api/task/edit', {
+            method: 'POST',
+            body: {
+                listId: lId,
+                taskId: id,
+                teamId: this.teamId,
+                editTask: editTask,
+            }
+        })
+        console.log(resp)
+        if (resp.state.code === 0) {
+            // 更新 todolist
+            const todoListArr = this.state.todoListArr
+            const todolist = todoListArr[lIndex]
+            const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
+            todoItem.hasDone = resp.data.state
+            todoItem.completeTime = resp.data.completed_time
+            // ...更新完成时间赋值
+            todolist.list[itemIndex] = todoItem
+            todolist.list = todolist.list.slice()
+            this.setState({ todoListArr })
+        }
+    }
+
+    handleAssigneeChange = async (lIndex, lId, id, e) => {
+        let editTask = {}
+        editTask.assigneeId = e.target.value
+        const resp = await api('/api/task/edit', {
+            method: 'POST',
+            body: {
+                listId: lId,
+                taskId: id,
+                teamId: this.teamId,
+                editTask: editTask,
+            }
+        })
+        console.log(resp)
+        if (resp.state.code === 0) {
+            let todoListArr = this.state.todoListArr
+            const todolist = todoListArr[lIndex]
+            const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
+            // fix bug: 这里进行过短路优化
+            todoItem.assignee = {}
+            todoItem.assignee.id = resp.data.header
+            todolist.list[itemIndex] = todoItem
+            todolist.list = todolist.list.slice()
+            this.setState({ todoListArr })
+            return resp
+        }
+    }
+
+    handleDateChange = async (lIndex, lId, id, e) => {
+        let editTask = {}
+        editTask.ddl = e.target.value
+        const resp = await api('/api/task/edit', {
+            method: 'POST',
+            body: {
+                listId: lId,
+                taskId: id,
+                teamId: this.teamId,
+                editTask: editTask,
+            }
+        })
+        if (resp.state.code === 0) {
+            const todoListArr = this.state.todoListArr
+            const todolist = todoListArr[lIndex]
+            const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
+            todoItem.ddl = resp.data.deadline
+            todolist.list = todolist.list.slice()
+            this.setState({ todoListArr })
+            return resp
+        }
+    }
+
+    handleTodoDelete = async (lIndex, lId, id) => {
+        const resp = await api('/api/task/delTask', {
+            method: "POST",
+            body: {
+                taskId: id,
+                teamId: this.teamId,
+                listId: lId,
+            }
+        })
+        if (resp.state.code === 0) {
+            const todoListArr = this.state.todoListArr
+            const todolist = todoListArr[lIndex]
+            const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
+            todolist.list.splice(itemIndex, 1)
+            todolist.list = todolist.list.slice()
+            this.setState({ todoListArr })
+            return resp
+        }
+    }
+
+    // todoList
+    handleTodoListCreate = async (info) => {
+        if(!info.name.trim()){
+            alert("清单名不能为空")
+        }
+        else{
+            var listExist = false
+            this.state.todoListArr.map((item) => {
+                if (item.name === info.name) {
+                    alert("清单已存在")
+                    listExist = true
+                }
+            })
+            if (!listExist) {
+                const result = await api('/api/task/createTaskList', {
+                    method: 'POST',
+                    body: {
+                        teamId: this.teamId,
+                        name: info.name,
+                    }
+                })
+                if (result.state.code === 0) {
+                    let createTodo = {
+                        id: result.data.id,
+                        name: result.data.name,
+                        list: [],
+                    }
+                    let todoListArr = this.state.todoListArr
+                    todoListArr = [...todoListArr, createTodo]
+                    this.setState({
+                        showCreateTodoList: false,
+                        todoListArr
+                    })
+                }
+            }
+        }
+    }
+
+    changeTodoIndex = async (index,todoId) => {
+        const resp = await api('/api/task/changeIndex', {
+            method: "POST",
+            body: {
+                taskId: todoId,
+                index:index,
+                teamId: this.teamId,
+            }
+        })
+        console.log(resp)
+        this.initTodoListArr()
+    }
+
+    handleTodoListModify = async (index, id, info) => {
+        if(!info.name.trim()){
+            alert("清单名不能为空")
+        }
+        else{
+            const todoListArr = this.state.todoListArr
+            const resp = await api('/api/task/updateTasklist', {
+                method: "POST",
+                body: {
+                    listId: id,
+                    name: info.name,
+                    teamId: this.teamId,
+                }
+            })
+            if (resp.state.code === 0) {
+                todoListArr[index].name = resp.data.name
+                this.setState({ todoListArr: todoListArr.slice() })
+            }
+            return resp
+        }
+    }
+
+    handleTodoListDelete = async (index, id) => {
+        const todoListArr = this.state.todoListArr
+        const resp = await api('/api/task/delTasklist', {
+            method: "POST",
+            body: {
+                listId: id
+            }
+        })
+        const [todolist, todolistIndex] = getUpdateItem(todoListArr, id)
+        todoListArr.splice(todolistIndex, 1)
+        if (resp.state.code === 0) {
+            this.setState({ todoListArr: todoListArr.slice() })
+        }
+        return resp
+    }
+
     createFolderHandle = async () => {
         this.setState({ showCreateFolder: true })
     }
@@ -280,12 +559,14 @@ export default class TeamDetail extends React.Component {
 
     uploadFileHandle = async (e) => {
         var file = e.target.files[0];
-        this.setState({
-            chosenFile: file
-        })
-        var nameParts = e.target.files[0].name.split('.')
+        var nameParts = file.name.split('.')
         var ossKey = this.teamId + '/' + create() + '.' + nameParts[nameParts.length-1]
         var succeeded;
+        
+        if(file.size > 20*1024*1024){
+            window.toast("上传文件大小不能超过20M")
+            return
+        }
         const uploadResult = fileUploader(file, ossKey)
         await uploadResult.then(function (val) {
             succeeded = 1
@@ -502,7 +783,12 @@ export default class TeamDetail extends React.Component {
         const location = {pathname:'/member', state:{teamId:this.state.teamInfo._id}}
         this.props.router.push(location)
     }
-
+    toTimeLineHandle = (memberId , event) => {
+        const query = {userId:memberId,}
+        const location = {pathname:'/timeline', query:query}
+        this.props.activeTagHandle('/timeline')
+        this.props.router.push(location)
+    }
 
     render() {
         let teamInfo = this.state.teamInfo
@@ -566,6 +852,7 @@ export default class TeamDetail extends React.Component {
                             this.state.topicList.map((item) => {
                                 return (
                                     <TopicItem locationTo={this.locationTo}
+                                        toTimeLineHandle={this.toTimeLineHandle.bind(this)}
                                         key={item._id}
                                         {...item} />
                                 )
@@ -597,7 +884,8 @@ export default class TeamDetail extends React.Component {
                             {
                                 this.state.showCreateFolder ? <div className="file-line files">
                                     <div className="name">
-                                        <input autoFocus="autofocus" type="text" className="folder-name" onChange={this.createFolderNameInputHandle} value={this.state.createFolderName} />
+                                        <input autoFocus="autofocus" type="text" className="folder-name" 
+                                        onKeyDown={(event)=>{if(event.keyCode== "13"){this.createFolderComfirmHandle()}}} onChange={this.createFolderNameInputHandle} value={this.state.createFolderName} />
                                     </div>
                                     <div className="tools">
                                         <span onClick={this.createFolderComfirmHandle}>创建</span>
@@ -615,7 +903,8 @@ export default class TeamDetail extends React.Component {
                                         return (
                                             <div className="file-line files" key={item.fileType + '-' + item._id}>
                                                 <div className="name">
-                                                    <input  autoFocus="autofocus" type="text" className="folder-name" onChange={this.renameNameInputHandle} value={this.state.renameName} />
+                                                    <input  autoFocus="autofocus" type="text" className="folder-name" 
+                                                    onKeyDown={(event)=>{if(event.keyCode== "13"){this.renameComfirmHandle(item)}}} onChange={this.renameNameInputHandle} value={this.state.renameName} />
                                                 </div>
                                                 <div className="tools">
                                                     <span onClick={() => { this.renameComfirmHandle(item) }}>确定</span>
