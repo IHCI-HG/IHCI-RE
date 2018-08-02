@@ -64,7 +64,6 @@ const getOssClient = async () => {
         body: {}
     })
     const token = result.data
-    console.log('token', token);
 
     if(!OSSW) {
         if(window.toast) {
