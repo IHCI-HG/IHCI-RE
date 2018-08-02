@@ -27,10 +27,10 @@ const activation = async (req, res, next) => {
         // 发件人
         from: 'ICHI <' + conf.mail.auth.user + '>',
         // 主题
-        subject: '激活您在IHCI平台上的账号',
+        subject: '欢迎使用IHCI平台',
         // 收件人
         to: mailAccount, //发送给注册时填写的邮箱
-        text: '请勿回复 , 进入这个链接激活你的邮件 ：' + conf.mailOrigin+'/activate?userId='+ userId +'&mailCode='+ mailCode
+        text: '下面为您介绍IHCI平台的相关信息和使用说明：....'
     };
        const sendFlag = await sendMail(mail)
        if(sendFlag){
