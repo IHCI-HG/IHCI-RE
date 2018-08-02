@@ -76,7 +76,7 @@ class TodoList extends React.Component {
         // console.log('todolist渲染', _props.id)
         // console.log('list', _props.list)
         return (
-            <div className="todolist">
+            <div className={(_props.highLight)?"todolist highlight":"todolist"}>
                 {
                     listType === 'classification' && (
                     this.state.mode === 'edit'
@@ -115,6 +115,7 @@ class TodoList extends React.Component {
                     this.state.todoList.map((todo,i) => {
                         return (
                             <div
+                            className={(!_props.highLight)&&(_props.dragStarted)&&(_props.dragTodoId!==todo.id)?"todo-highlight":""}
                             key={todo.id}
                             draggable='true'
                             onDragStart={_props.dragStart.bind(this,todo.id,this.props.id)}

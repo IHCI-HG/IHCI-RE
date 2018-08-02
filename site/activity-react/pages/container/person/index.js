@@ -283,6 +283,9 @@ export default class Person extends React.Component{
         } else {
             window.toast("设置失败，请稍后再试")
         }
+        if(!INIT_DATA.userObj.personInfo){
+            console.log("发送使用说明邮箱")
+        }
     }
 
     logOutHandle = async () => {
