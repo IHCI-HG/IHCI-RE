@@ -34,7 +34,7 @@ class Bar extends React.Component<{}, IState> {
 
     render() {
         var divStyle;
-        if(Number(this.state.content) > 0.85){
+        if(Number(this.state.content) > 0.9){
              divStyle = {   
                 width: Number(this.state.content)*100 +'%'
               };
@@ -45,7 +45,7 @@ class Bar extends React.Component<{}, IState> {
         }
         // console.log(this.state.show||Number(this.state.content) != 1)
         return createPortal(
-            <div className={`bar ${this.state.show||Number(this.state.content) <0.8 ? '' : 'closed'}`}>
+            <div className={`bar ${this.state.show||(Number(this.state.content) < 1 &&this.state.content != '')? '' : 'closed'}`}>
                 {/* <div className='bd'> */}
                     {/* <p className='cnt'>{this.state.content}</p> */}
                     <div className="progress" >
