@@ -39,11 +39,13 @@ class Task extends React.Component{
         doneList: [],
         onDragStart: false,
     } 
+    
     componentDidMount = async () => {
         this.teamId = this.props.teamId
         this.initTodoListArr()
         this.initTeamInfo()
     }
+
     initTeamInfo = async () => {
         const result = await api('/api/team/info', {
             method: 'POST',
@@ -80,6 +82,7 @@ class Task extends React.Component{
             memberList: memberList
         })
     }
+
     initTodoListArr = async () => {
         const resp = await api('/api/team/taskList', {
             method: 'GET',
@@ -256,6 +259,7 @@ class Task extends React.Component{
             this.setState({ doneList })
         }
     }
+
     handleTodoModify = async (lIndex, lId, id, todoInfo) => {
         let editTask = {}
         if(!todoInfo.name.trim()){
@@ -288,6 +292,7 @@ class Task extends React.Component{
             return resp
         }
     }
+
     handleAssigneeChange = async (lIndex, lId, id, e) => {
         let editTask = {}
         editTask.assigneeId = e.target.value
@@ -315,6 +320,7 @@ class Task extends React.Component{
             return resp
         }
     }
+
     handleDateChange = async (lIndex, lId, id, e) => {
         let editTask = {}
         editTask.ddl = e.target.value
@@ -336,6 +342,7 @@ class Task extends React.Component{
             return resp
         }
     }
+
     handleTodoDelete = async (lIndex, lId, id) => {
         const resp = await api('/api/task/delTask', {
             method: "POST",
@@ -354,6 +361,7 @@ class Task extends React.Component{
             return resp
         }
     }
+
     handleTodoListDelete = async (index, id) => {
         const todoListArr = this.state.todoListArr
         const resp = await api('/api/task/delTasklist', {
@@ -369,6 +377,7 @@ class Task extends React.Component{
         }
         return resp
     }
+    
     handleTodoListModify = async (index, id, info) => {
         if(!info.name.trim()){
             alert("清单名不能为空")
@@ -445,6 +454,7 @@ class Task extends React.Component{
         e.preventDefault()
         this.over = e.target
     }
+
     drop = async(listIdTo, e) => {
         this.setState({
             onDragStart: false

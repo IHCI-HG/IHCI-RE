@@ -14,17 +14,60 @@
         }
     }
     
-    .create-btn {
-        display: inline-block;
-        font-size: 16px;
-        padding: 10px;
-        width: 100px;
-        border: 1px solid #e6e6e6; /*no*/
-        border-radius: 4px;
-        margin-right: 30px;
-        cursor: pointer;
-        &:hover {
-            background-color: #e6e6e6;
+    .img-wrap{
+        padding:20px 0;
+        width:160px;
+        text-align: center;
+        .create-btn{
+            font-size: 12px;
+            height: 30px;
+            line-height: 30px;
+            padding: 0 30px; 
+            border-radius: 200px; 
+            color: #666;
+            background-color: #EEE;
+            border-color: #EEE;
+            font-weight: 300;
+            font-size: 16px;
+            font-family: "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+            text-decoration: none;
+            text-align: center;
+            line-height: 40px;
+            height: 40px;
+            padding: 0 40px;
+            margin: 0;
+            display: inline-block;
+            appearance: none;
+            cursor: pointer;
+            border: none;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            -webkit-transition-property: all;
+            transition-property: all;
+            -webkit-transition-duration: .3s;
+            transition-duration: .3s;
+            &:hover{
+                background-color: #f6f6f6;
+                text-decoration: none;
+                outline: none;
+            }
+            &:active{
+                text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+                text-decoration: none;
+                background-color: #eeeeee;
+                border-color: #cfcfcf;
+                color: #d4d4d4;
+                -webkit-transition-duration: 0s;
+                transition-duration: 0s;
+                -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+                box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+            }
+        }
+        .img-preview {
+            height: 90px;
+            width: 160px;
+            margin-bottom:10px;
         }
     }
 
@@ -126,11 +169,6 @@
             line-height: 40px;
             font-size: 20px;
             padding: 0 20px;
-        }
-        .img-preview {
-            height: 90px;
-            width: 160px;
-            margin-left: 60px;
         }
         .admin-tra {
             resize: none;
