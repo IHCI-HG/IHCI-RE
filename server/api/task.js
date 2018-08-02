@@ -1208,17 +1208,21 @@ const taskMove = async (req, res, next) => {
 
         var result = (await taskDB.findByTaskId(taskId)).toObject();
         const teamId = result.teamId;
-
-        //6.28
         if (result.tasklistId) {
             await tasklistDB.delTask(result.tasklistId,taskId)
         } else {
             await teamDB.delTask(result.teamId,taskId);
         }
+        result.tasklistId = tasklistId
+        if(tasklistId){
+            await taskDB.updateTask(taskId,result)
+        }
+        //6.28
+        
 
         result.create_time = Date.now;
         result.teamId = teamIdMoveTo;
-        result.tasklistId = tasklistId ||[];
+        result.tasklistId = tasklistId || [];
         result.deadline = undefined;
         result.completed_time = undefined;
         result.header = undefined;
