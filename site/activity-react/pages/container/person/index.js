@@ -284,7 +284,16 @@ export default class Person extends React.Component{
             window.toast("设置失败，请稍后再试")
         }
         if(!INIT_DATA.userObj.personInfo){
-            console.log("发送使用说明邮箱")
+            const result = await api('/api/manual', {
+                method: 'POST',
+                body: {
+                    mailAccount: this.state.personInfo.mail,
+                }
+            })
+    
+            if(result.state.code === 0) {
+                console.log("已发送激活邮件，请检查邮箱")
+            }
         }
     }
 
