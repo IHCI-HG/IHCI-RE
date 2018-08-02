@@ -93,6 +93,7 @@ const fileUploader = async (file, ossKey) => {
     var result = await client.multipartUpload(ossKey, file, {
         checkpoint: checkpoint,
         progress: async function (p, cpt) {
+            window.bar(p)
             // options.onProgress(p);
             if (cpt !== undefined) {
                 // console.log(cpt.fileSize)
