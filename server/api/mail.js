@@ -25,7 +25,7 @@ const activation = async (req, res, next) => {
     const result = await UserDB.findByIdAndUpdate({_id: userId}, {mailCode: mailCode, mailLimitTime: Date.now()+600*1000 }, {new: true})
     var mail = {
         // 发件人
-        from: 'ICHI <' + conf.mail.auth.user + '>',
+        from: 'IHCI <' + conf.mail.auth.user + '>',
         // 主题
         subject: '欢迎使用IHCI平台',
         // 收件人
