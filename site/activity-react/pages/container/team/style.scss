@@ -69,6 +69,7 @@
             top:-20%;
             width:0;
             line-height: 1.4;
+            cursor: pointer;
 
         }
     }
@@ -107,7 +108,9 @@
         .right {
             display: inline-flex;
             line-height: 1.4;
-
+            &:hover{
+                cursor: pointer;
+            }
         }
     }
 }
