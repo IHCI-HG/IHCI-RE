@@ -7,8 +7,10 @@ var path = require('path'),
     proxy = require('../components/proxy/proxy'),
     resProcessor = require('../components/res-processor/res-processor'),
     htmlProcessor = require('../components/html-processor/html-processor'),
+    envi = require('../components/envi/envi'),
     conf = require('../conf'),
-    server = require('../server');
+    server = require('../server'),
+    url = require('url');
 
 var pageHandle = require('../components/page-handle/page-handle')
 var querystring = require('querystring');
@@ -20,6 +22,12 @@ var TestDB = mongoose.model('test')
 var UserDB = mongoose.model('user')
 var TeamDB = mongoose.model('team')
 
+import {
+    pub_codeToAccessToken,
+    web_accessTokenToUserInfo,
+    web_codeToUserInfo,
+    pub_openidToUserInfo,
+} from '../components/wx-utils/wx-utils'
 // 路由前判定是否已经登录或信息填写完全
 const routerAuthJudge = async (req, res, next) => {
     const userId = req.rSession.userId
@@ -145,10 +153,57 @@ const joinTeam = async (req, res, next) => {
     next()
 }
 
+const silentAuth = async(req, res, next) => {
+    if(envi.isWeixin(req)){
+        //静默授权
+        // res.redirect('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx87136e7c8133efe3&redirect_uri=http%3A%2F%2Fwww.animita.cn&response_type=code&scope=snsapi_base&state=123#wechat_redirect')
+        urlObj = url.parse(req.url,true)
+        var code = urlObj.query.code
+        console.log(code)
+        const result = await pub_codeToAccessToken(code)
+        console.log(result)
+        if(result.openid){
+            const result1 = await pub_openidToUserInfo(result.openid)
+            console.log(result1)
+        }
+        if(result1.unionid) {
+            const findUser = await UserDB.findByOpenId(result1.unionid)
+            if(findUser){
+                req.rSession.userId = findUser._id
+                if(urlObj.pathname = '/'){
+                    res.redirect('/team')
+                }
+                else{
+                    res.redirect(req.url)
+                }
+            }
+            else{
+                res.redirect(`/wx-login-or-sign?union=${result.unionid}`)
+            }
+        }
+        else{
+            // res.redirect('')
+            //关注公众号
+        }
+        // if(result.unionid) {
+        //     const userObj = await UserDB.findByUnionId(result.unionid)
+        //     if(userObj) {
+        //         req.rSession.userId = userObj._id
+        //         res.redirect('/team');
+        //     } else {
+        //         res.redirect('/sign');
+        //     }
+        // } else {
+        //     // 由于某些原因授权失败
+        //     res.redirect('/?fail=true');
+        // }
+    }
+}
+
 module.exports = [
     // 主页
-    ['GET', '/', clientParams(), mainPage],
-
+    ['GET', '/', clientParams(), silentAuth, mainPage],
+    // ['GET', '/', clientParams(), mainPage],
     ['GET', '/activate', clientParams(), pageHandle()],
 
     ['GET', '/auth', clientParams(), wxAuthCodeHandle , mainPage],
