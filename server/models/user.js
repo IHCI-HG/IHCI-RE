@@ -46,7 +46,6 @@ userSchema.statics = {
             return this.create({
                 unionid:unionid
             })
-            console.log("create")
         }
     },
     createUser: async function(username, password, userInfo = {}) {

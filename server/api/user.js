@@ -305,7 +305,9 @@ const wxLogin = async (req, res, next) => {
                     res.redirect('/team');
                 } else {
                     const result = await UserDB.createWxUser(unionid)
+                    req.rSession.userId = result._id
                     res.redirect('/person');
+                    
                 }
             } else {
                 // 由于某些原因授权失败
