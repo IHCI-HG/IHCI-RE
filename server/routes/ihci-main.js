@@ -39,7 +39,8 @@ const routerAuthJudge = async (req, res, next) => {
             res.redirect('/person')
             return
         }
-    } else {
+    } 
+    else {
         res.redirect('/')
         return
     }
@@ -157,17 +158,17 @@ const silentAuth = async(req, res, next) => {
     if(envi.isWeixin(req)){
         //静默授权
         // res.redirect('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx87136e7c8133efe3&redirect_uri=http%3A%2F%2Fwww.animita.cn&response_type=code&scope=snsapi_base&state=123#wechat_redirect')
-        urlObj = url.parse(req.url,true)
+        var urlObj = url.parse(req.url,true)
         var code = urlObj.query.code
         console.log(code)
         const result = await pub_codeToAccessToken(code)
         console.log(result)
         if(result.openid){
-            const result1 = await pub_openidToUserInfo(result.openid)
+            var result1 = await pub_openidToUserInfo(result.openid)
             console.log(result1)
         }
         if(result1.unionid) {
-            const findUser = await UserDB.findByOpenId(result1.unionid)
+            const findUser = await UserDB.findByUnionId(result1.unionid)
             if(findUser){
                 req.rSession.userId = findUser._id
                 if(urlObj.pathname = '/'){
@@ -178,26 +179,23 @@ const silentAuth = async(req, res, next) => {
                 }
             }
             else{
-                res.redirect(`/wx-login-or-sign?union=${result.unionid}`)
+                const result2 = await UserDB.createUser(null,null,{
+                    unionid:result1.unionid,
+                    wxUserInfo:result1
+                })
+                const findUser = await UserDB.findByUnionId(result1.unionid)
+                if(findUser){
+                    req.rSession.userId = findUser._id
+                }
+                res.redirect(`/person?union=${result1.unionid}`)
             }
         }
         else{
             // res.redirect('')
             //关注公众号
         }
-        // if(result.unionid) {
-        //     const userObj = await UserDB.findByUnionId(result.unionid)
-        //     if(userObj) {
-        //         req.rSession.userId = userObj._id
-        //         res.redirect('/team');
-        //     } else {
-        //         res.redirect('/sign');
-        //     }
-        // } else {
-        //     // 由于某些原因授权失败
-        //     res.redirect('/?fail=true');
-        // }
     }
+    next()
 }
 
 module.exports = [
