@@ -163,7 +163,7 @@ const silentAuth = async(req, res, next) => {
         const result = await pub_codeToAccessToken(code)
         console.log(result)
         if(result.openid){
-            const result1 = await pub_openidToUserInfo(result.openid)
+            var result1 = await pub_openidToUserInfo(result.openid)
             console.log(result1)
         }
         if(result1.unionid) {
@@ -178,7 +178,7 @@ const silentAuth = async(req, res, next) => {
                 }
             }
             else{
-                const result1 = await UserDB.createUser(null,null,{
+                const result2 = await UserDB.createUser(null,null,{
                     unionid:result1.unionid,
                     wxUserInfo:result1
                 })
@@ -186,7 +186,7 @@ const silentAuth = async(req, res, next) => {
                 if(findUser){
                     req.rSession.userId = findUser._id
                 }
-                res.redirect(`/person?union=${result.unionid}`)
+                res.redirect(`/person?union=${result1.unionid}`)
             }
         }
         else{
