@@ -56,10 +56,33 @@ export default class TeamAdmin extends React.Component{
         desc: '',
 
         memberList: [],
-        showAddMemberDialog: false
+        showAddMemberDialog: false,
+
+        infoCheck:{
+            illegalName: false,
+
+        }
+
     }
 
+    isName = (name) => {
+        const reg = /^[\u4E00-\u9FA5A-Za-z]{1}[\u4E00-\u9FA5A-Za-z0-9_\-]{0,11}$/;
+        return reg.test(name);
+    }
     teamNameInputHandle = (e) => {
+        const name = e.target.value
+        var illegalName = false
+        if (!this.isName(name)){
+            illegalName = true
+        }
+        this.setState({    
+            name: name,
+            infoCheck: {
+                ...this.state.infoCheck,
+                illegalName: illegalName,
+            },    
+        })
+
         this.setState({
             name: e.target.value
         })
@@ -128,7 +151,31 @@ export default class TeamAdmin extends React.Component{
         }
     }
 
+    infoCheckIllegal = () =>{
+        var infoCheck = {
+            illegalName: false,
+        }
+        if (!this.isName(this.state.name)){
+            infoCheck.illegalName = true
+        }
+        this.setState({
+            infoCheck: infoCheck,
+        })
+        for(var key in infoCheck)
+        {
+            if (infoCheck[key])
+                return true
+        }
+        return false
+    }
+
     saveBtnHandle = async () => {
+        var infoCheckIllegal = this.infoCheckIllegal()
+
+        if (infoCheckIllegal){
+            window.toast("设置失败，请检查格式")
+            return
+        }
         const result = await api('/api/team/modifyTeamInfo', {
             method: 'POST',
             body: {
@@ -198,6 +245,7 @@ export default class TeamAdmin extends React.Component{
         try{
             if(document.execCommand('copy', false, null)){
                 console.log('copied');
+                window.toast('复制成功');
             }
             else{
                 console.log('failed');
@@ -227,9 +275,11 @@ export default class TeamAdmin extends React.Component{
 
                 <div className="team-admin-con page-wrap">
                     <div className="admin-title-bg">团队设置</div>
+                    
 
                     <div className="admin-title-sm">团队名称</div>
                     <input type="text" value={this.state.name} className="admin-input" onChange={this.teamNameInputHandle} />
+                    {this.state.infoCheck.illegalName && <div className="after error">名字以不超过12个的英文、汉字、数字、下划线与短横构成</div>}
 
                     <div className="admin-title-sm">团队图片</div>
                     <div className="img-wrap">

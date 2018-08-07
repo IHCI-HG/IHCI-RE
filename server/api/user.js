@@ -311,11 +311,10 @@ const wxLogin = async (req, res, next) => {
                         unionid:unionid,
                         wxUserInfo:userInfo
                     })
-                    const findUser = await UserDB.findByUnionId(unionid)
-                    if(findUser){
-                        req.rSession.userId = findUser._id
-                    }
+                    const result = await UserDB.createWxUser(unionid)
+                    req.rSession.userId = result._id
                     res.redirect('/person');
+                    
                 }
             } else {
                 // 由于某些原因授权失败
