@@ -37,6 +37,18 @@ const userSchema = new mongoose.Schema({
 })
 
 userSchema.statics = {
+    createWxUser: async function(unionid){
+        const result = await this.findOne({unionid:unionid}).exec()
+        if(result){
+            return null
+        } else{
+           
+            return this.create({
+                unionid:unionid
+            })
+            console.log("create")
+        }
+    },
     createUser: async function(username, password, userInfo = {}) {
         const result = await this.findOne({username: username}).exec()
         if(result) {
