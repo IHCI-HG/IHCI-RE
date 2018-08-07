@@ -2,6 +2,7 @@ var _ = require('underscore'),
     resProcessor = require('../components/res-processor/res-processor'),
     proxy = require('../components/proxy/proxy'),
     conf = require('../conf');
+const crypto = require('crypto-js');
 
 
 import fetch from 'isomorphic-fetch';
@@ -67,6 +68,39 @@ const signUp = async (req, res, next) => {
     });
 }
 
+const signUpAndBindWx = async (req, res, next) => {
+    const userInfo = req.body.userInfo
+    const userId = req.rSession.userId
+    if(!userInfo.username || !userInfo.password || !userInfo.unionid) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: "参数不全"},
+            data: {}
+        });
+        return
+    }
+    const findUser = await UserDB.findByUnionId(userInfo.unionid)
+    const result = await UserDB.updateUser(userId,{
+        username: userInfo.username,
+        password: crypto.SHA256(userInfo.password).toString()
+    })
+    if(!result) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: "用户名已经存在"},
+            data: {}
+        });
+        return
+    }
+
+    req.rSession.userId = result._id
+
+    resProcessor.jsonp(req, res, {
+        state: { code: 0, msg: "操作成功" },
+        data: {
+            userPo: result
+        }
+    });
+}
+
 const login = async (req, res, next) => {
 
     const username = lo.get(req, 'body.username')
@@ -81,6 +115,41 @@ const login = async (req, res, next) => {
     }
     const result = await UserDB.authJudge(username, password)
     if(result) {
+        req.rSession.userId = result._id
+        resProcessor.jsonp(req, res, {
+            state: { code: 0 },
+            data: {
+                sysTime: new Date().getTime(),
+                userPo: result
+            }
+        });
+    } else {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1 , msg: '账号或密码错误'},
+            data: {}
+        });
+    }
+}
+
+const loginAndBindWx = async (req, res, next) => {
+
+    const username = lo.get(req, 'body.username')
+    const password = lo.get(req, 'body.password')
+    const unionid = lo.get(req, 'body.unionid')
+    if(!username || !password || !unionid) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1 , msg: '参数不全'},
+            data: {}
+        });
+        return
+    }
+    const result = await UserDB.authJudge(username, password)
+    if(result) {
+        const findResult = await UserDB.findByUsername(username)
+        const userId = findResult._id
+        const userDBresult = await UserDB.updateUser(userId, {
+            unionid: unionid
+        })
         req.rSession.userId = result._id
         resProcessor.jsonp(req, res, {
             state: { code: 0 },
@@ -463,4 +532,6 @@ module.exports = [
 
     ['POST', '/api/user/readNotice', apiAuth, readNotice],
     //['POST', '/api/user/getUserId', apiAuth, getUserId],
+    ['POST', '/api/user/loginAndBindWx', apiAuth, loginAndBindWx],
+    ['POST', '/api/user/SignUpAndBindWx', apiAuth, signUpAndBindWx],
 ];

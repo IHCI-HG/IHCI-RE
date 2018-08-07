@@ -167,7 +167,7 @@ const silentAuth = async(req, res, next) => {
             console.log(result1)
         }
         if(result1.unionid) {
-            const findUser = await UserDB.findByOpenId(result1.unionid)
+            const findUser = await UserDB.findByUnionId(result1.unionid)
             if(findUser){
                 req.rSession.userId = findUser._id
                 if(urlObj.pathname = '/'){
@@ -178,26 +178,23 @@ const silentAuth = async(req, res, next) => {
                 }
             }
             else{
-                res.redirect(`/wx-login-or-sign?union=${result.unionid}`)
+                const result1 = await UserDB.createUser(null,null,{
+                    unionid:result1.unionid,
+                    wxUserInfo:result1
+                })
+                const findUser = await UserDB.findByUnionId(result1.unionid)
+                if(findUser){
+                    req.rSession.userId = findUser._id
+                }
+                res.redirect(`/person?union=${result.unionid}`)
             }
         }
         else{
             // res.redirect('')
             //关注公众号
         }
-        // if(result.unionid) {
-        //     const userObj = await UserDB.findByUnionId(result.unionid)
-        //     if(userObj) {
-        //         req.rSession.userId = userObj._id
-        //         res.redirect('/team');
-        //     } else {
-        //         res.redirect('/sign');
-        //     }
-        // } else {
-        //     // 由于某些原因授权失败
-        //     res.redirect('/?fail=true');
-        // }
     }
+    next()
 }
 
 module.exports = [
