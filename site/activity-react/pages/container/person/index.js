@@ -1,11 +1,10 @@
 import * as React from 'react';
 import './style.scss'
-import api from '../../../utils/api';
 import Page from '../../../components/page'
 import WxLoginDialog from '../../../components/wx-login-dialog'
 import fileUploader from '../../../utils/file-uploader';
 import FollowDialog from '../../../components/follow-dialog'
-
+import api, { authApi } from '../../../utils/api';
 export default class Person extends React.Component{
     componentDidMount = async() => {
         this.personInfo = {}
@@ -591,7 +590,7 @@ export default class Person extends React.Component{
                 </div>
                 
                 {
-                    !!this.state.userObj.username?
+                    !this.state.userObj.username?
                     <div className="edit-con"> 
                        <div className = "login" onClick={this.setTologinHandle}>绑定已有平台账号</div>
                        <div className = "signUp" onClick={this.setTosignUpHandle}>注册平台账号</div>
@@ -602,9 +601,9 @@ export default class Person extends React.Component{
                     this.state.loginBlock === "login"?
                     <div className="loginBlock">
                     <div className ="login-desc">Enter username: </div>
-                    <input classNmae="login-input" value={this.state.username} onChange={this.usernameHandle}></input>
+                    <input className="login-input" value={this.state.username} onChange={this.usernameHandle}></input>
                     <div className ="login-desc">Enter password: </div>
-                    <input classNmae="login-input" type="password" value={this.state.password} onChange={this.passwordHandle}></input>
+                    <input className="login-input" type="password" value={this.state.password} onChange={this.passwordHandle}></input>
                     <div className="login-btn" onClick={this.loginHandle}>LoginAndBind</div>
                     </div>
                     :""

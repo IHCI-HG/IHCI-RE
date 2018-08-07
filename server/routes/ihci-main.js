@@ -187,7 +187,7 @@ const silentAuth = async(req, res, next) => {
                 if(findUser){
                     req.rSession.userId = findUser._id
                 }
-                res.redirect(`/person?union=${result1.unionid}`)
+                res.redirect('/person')
             }
         }
         else{

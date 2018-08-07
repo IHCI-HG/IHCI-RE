@@ -145,12 +145,14 @@ const loginAndBindWx = async (req, res, next) => {
     }
     const result = await UserDB.authJudge(username, password)
     if(result) {
-        const findResult = await UserDB.findByUsername(username)
+        await UserDB.delUserByUsername(username)
+        const findResult = await UserDB.findByUnionId(unionid)
         const userId = findResult._id
         const userDBresult = await UserDB.updateUser(userId, {
-            unionid: unionid
+            username: username,
+            password: password
         })
-        req.rSession.userId = result._id
+        req.rSession.userId = findResult._id
         resProcessor.jsonp(req, res, {
             state: { code: 0 },
             data: {
