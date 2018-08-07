@@ -1,0 +1,13 @@
+.wx-login-dialog {
+    position: fixed;
+    z-index: 10;
+    padding: 30px 40px;
+    border: 1px solid #e6e6e6; /*no*/
+    background-color: #fff;
+
+    .close {
+        z-index: 10;
+        position: absolute;
+        font-size: 30px;
+    }
+}
