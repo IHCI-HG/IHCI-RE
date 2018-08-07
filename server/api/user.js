@@ -311,6 +311,7 @@ const wxLogin = async (req, res, next) => {
                         unionid:unionid,
                         wxUserInfo:userInfo
                     })
+                    const result = await UserDB.createWxUser(unionid)
                     req.rSession.userId = result._id
                     res.redirect('/person');
                     
