@@ -618,7 +618,7 @@ export default class Person extends React.Component{
                     <input className="login-input" type="password" value={this.state.createPassword} onChange={this.createPasswordHandle}></input>
                     <div className="login-desc">Confirm Password: </div>
                     <input className="login-input" type="password" value={this.state.createConfirmPassword} onChange={this.createConfirmPasswordHandle}></input>
-                    <div className="login-btn" onClick={this.signUpHandle}>SighUpAndBind</div>
+                    <div className="login-btn" onClick={this.signUpHandle}>SignUpAndBind</div>
                     </div>
                     :""
                 }
