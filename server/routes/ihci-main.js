@@ -174,11 +174,12 @@ const silentAuth = async(req, res, next) => {
             const findUser = await UserDB.findByUnionId(result1.unionid)
             if(findUser){
                 req.rSession.userId = findUser._id
-                if(urlObj.pathname = '/'){
+                console.log(urlObj)
+                if(urlObj.pathname === '/'){
                     res.redirect('/team')
                 }
                 else{
-                    res.redirect(req.url)
+                    console.log(urlObj.pathname)
                 }
             }
             else{
@@ -213,10 +214,8 @@ module.exports = [
     ['GET', '/files/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/sign', clientParams(), routerAuthJudge, pageHandle() ],
 
-    ['GET', '/test', clientParams(), routerAuthJudge, pageHandle() ],
-    ['GET', '/test-editor', clientParams(), routerAuthJudge, pageHandle() ],
-    ['GET', '/team/:id', clientParams(), routerAuthJudge, pageHandle() ],
-    ['GET', '/todo/:id', clientParams(), routerAuthJudge, pageHandle() ],
+    ['GET', '/team/:id', clientParams(), routerAuthJudge, silentAuth, pageHandle() ],
+    ['GET', '/todo/:id', clientParams(), routerAuthJudge, silentAuth, pageHandle() ],
     ['GET', '/team-edit/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/team-admin/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/team-management',clientParams(), routerAuthJudge, pageHandle()],
@@ -224,12 +223,11 @@ module.exports = [
 
     ['GET', '/team-create', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/person', clientParams(), routerAuthJudge, personSeting, pageHandle() ],
-    ['GET', '/discuss/:id', clientParams(), routerAuthJudge, pageHandle() ],
-    ['GET', '/discuss/topic/:id', clientParams(), routerAuthJudge, pageHandle() ],
-    ['GET', '/timeline', clientParams(),    routerAuthJudge, pageHandle() ],
+    ['GET', '/discuss/topic/:id', clientParams(), routerAuthJudge, silentAuth, pageHandle() ],
+    ['GET', '/timeline', clientParams(),    routerAuthJudge, silentAuth, pageHandle() ],
     ['GET', '/member', clientParams(),   routerAuthJudge, pageHandle() ],
     ['GET', '/search', clientParams(),   routerAuthJudge, pageHandle() ],
-    ['GET', '/completed/:id', clientParams(),   routerAuthJudge, pageHandle() ],
+    ['GET', '/completed/:id', clientParams(), routerAuthJudge, silentAuth, pageHandle() ],
     ['GET', '/inform', clientParams(),   routerAuthJudge, personSeting, pageHandle() ],
     ['GET', '/wxcode', clientParams(),  pageHandle() ],
 ];
