@@ -160,12 +160,9 @@ const silentAuth = async(req, res, next) => {
         // res.redirect('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx87136e7c8133efe3&redirect_uri=http%3A%2F%2Fwww.animita.cn&response_type=code&scope=snsapi_base&state=123#wechat_redirect')
         var urlObj = url.parse(req.url,true)
         var code = urlObj.query.code
-        console.log(code)
         const result = await pub_codeToAccessToken(code)
-        console.log(result)
         if(result.openid){
             var result1 = await pub_openidToUserInfo(result.openid)
-            console.log(result1)
         }
         if(result1.unionid) {
             const findUser = await UserDB.findByUnionId(result1.unionid)
