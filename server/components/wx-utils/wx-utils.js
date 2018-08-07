@@ -57,6 +57,13 @@ export const web_codeToAccessToken = async function (code) {
     return data
 }
 
+// 微信公众号内网页登录，用 code 拿用户的 access_token (包括openid 和 unionid)
+export const pub_codeToAccessToken = async function (code) {
+    const result = await fetch(`https://api.weixin.qq.com/sns/oauth2/access_token?appid=${conf.pubAppId}&secret=${conf.pubAppSe}&code=${code}&grant_type=authorization_code`)
+    const data = await result.json()
+    return data
+}
+
 // 网页登录，用access_token + openid 拿用户信息
 export const web_accessTokenToUserInfo = async function (accessToken, openid) {
     const result = await fetch(`https://api.weixin.qq.com/sns/userinfo?access_token=${accessToken}&openid=${openid}`)
