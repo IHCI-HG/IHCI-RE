@@ -604,9 +604,9 @@ export default class Person extends React.Component{
                 
                 {
                     !this.state.userObj.username?
-                    <div className="edit-con"> 
-                       <div className = "login" onClick={this.setTologinHandle}>绑定已有平台账号</div>
-                       <div className = "signUp" onClick={this.setTosignUpHandle}>注册平台账号</div>
+                    <div className="auth-nav"> 
+                       <div className = "auth-nav-item" onClick={this.setTologinHandle}>绑定已有平台账号</div>
+                       <div className = "auth-nav-item" onClick={this.setTosignUpHandle}>注册平台账号</div>
                     </div>
                        :"" 
                 }
