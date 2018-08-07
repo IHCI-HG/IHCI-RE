@@ -225,4 +225,5 @@ module.exports = [
     ['GET', '/search', clientParams(),   routerAuthJudge, pageHandle() ],
     ['GET', '/completed/:id', clientParams(),   routerAuthJudge, pageHandle() ],
     ['GET', '/inform', clientParams(),   routerAuthJudge, personSeting, pageHandle() ],
+    ['GET', '/wxcode', clientParams(),  pageHandle() ],
 ];
