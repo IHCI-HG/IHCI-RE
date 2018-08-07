@@ -157,7 +157,7 @@ const silentAuth = async(req, res, next) => {
     if(envi.isWeixin(req)){
         //静默授权
         // res.redirect('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx87136e7c8133efe3&redirect_uri=http%3A%2F%2Fwww.animita.cn&response_type=code&scope=snsapi_base&state=123#wechat_redirect')
-        urlObj = url.parse(req.url,true)
+        var urlObj = url.parse(req.url,true)
         var code = urlObj.query.code
         console.log(code)
         const result = await pub_codeToAccessToken(code)
