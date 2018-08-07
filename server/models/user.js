@@ -46,7 +46,7 @@ userSchema.statics = {
                 ...userInfo,
                 username: username,
                 // password: crypto.createHmac('sha1', conf.salt).update(password).digest('hex'),
-                password: crypto.SHA256(password).toString()
+                password: password?crypto.SHA256(password).toString():null
             })
         }
     },
@@ -108,6 +108,10 @@ userSchema.statics = {
         } else {
             return []
         }
+    },
+    delUserByUsername: async function(username){
+        const result = await this.remove({ username: username }).exec()
+        return result
     },
 
 
