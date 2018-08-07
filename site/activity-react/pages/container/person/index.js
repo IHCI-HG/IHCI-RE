@@ -602,9 +602,9 @@ export default class Person extends React.Component{
                     this.state.loginBlock === "login"?
                     <div className="loginBlock">
                     <div className ="login-desc">Enter username: </div>
-                    <input classNmae="login-input" value={this.state.userObj.username} onChange={this.usernameHandle}></input>
+                    <input classNmae="login-input" value={this.state.username} onChange={this.usernameHandle}></input>
                     <div className ="login-desc">Enter password: </div>
-                    <input classNmae="login-input" type="password" value={this.state.userObj.password} onChange={this.passwordHandle}></input>
+                    <input classNmae="login-input" type="password" value={this.state.password} onChange={this.passwordHandle}></input>
                     <div className="login-btn" onClick={this.loginHandle}>LoginAndBind</div>
                     </div>
                     :""
