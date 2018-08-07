@@ -188,7 +188,7 @@ const silentAuth = async(req, res, next) => {
             }
         }
         else{
-            // res.redirect('')
+            res.redirect('/wxcode')
             //关注公众号
         }
     }
