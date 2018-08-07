@@ -145,12 +145,14 @@ const loginAndBindWx = async (req, res, next) => {
     }
     const result = await UserDB.authJudge(username, password)
     if(result) {
-        const findResult = await UserDB.findByUsername(username)
+        await UserDB.delUserByUsername(username)
+        const findResult = await UserDB.findByUnionId(unionid)
         const userId = findResult._id
         const userDBresult = await UserDB.updateUser(userId, {
-            unionid: unionid
+            username: username,
+            password: password
         })
-        req.rSession.userId = result._id
+        req.rSession.userId = findResult._id
         resProcessor.jsonp(req, res, {
             state: { code: 0 },
             data: {
@@ -298,12 +300,21 @@ const wxLogin = async (req, res, next) => {
 
         if(state == 'auth') {
             if(result.unionid) {
+                const unionid = result.unionid
                 const userObj = await UserDB.findByUnionId(result.unionid)
+                const userInfo = await web_accessTokenToUserInfo(result.access_token, result.openid)
                 if(userObj) {
                     req.rSession.userId = userObj._id
                     res.redirect('/team');
                 } else {
-                    res.redirect('/sign');
+                    const result = await UserDB.createUser(null,null,{
+                        unionid:unionid,
+                        wxUserInfo:userInfo
+                    })
+                    const result = await UserDB.createWxUser(unionid)
+                    req.rSession.userId = result._id
+                    res.redirect('/person');
+                    
                 }
             } else {
                 // 由于某些原因授权失败

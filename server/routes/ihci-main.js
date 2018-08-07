@@ -39,7 +39,8 @@ const routerAuthJudge = async (req, res, next) => {
             res.redirect('/person')
             return
         }
-    } else {
+    } 
+    else {
         res.redirect('/')
         return
     }
@@ -157,14 +158,11 @@ const silentAuth = async(req, res, next) => {
     if(envi.isWeixin(req)){
         //静默授权
         // res.redirect('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx87136e7c8133efe3&redirect_uri=http%3A%2F%2Fwww.animita.cn&response_type=code&scope=snsapi_base&state=123#wechat_redirect')
-        urlObj = url.parse(req.url,true)
+        var urlObj = url.parse(req.url,true)
         var code = urlObj.query.code
-        console.log(code)
         const result = await pub_codeToAccessToken(code)
-        console.log(result)
         if(result.openid){
-            const result1 = await pub_openidToUserInfo(result.openid)
-            console.log(result1)
+            var result1 = await pub_openidToUserInfo(result.openid)
         }
         if(result1.unionid) {
             const findUser = await UserDB.findByUnionId(result1.unionid)
@@ -178,7 +176,7 @@ const silentAuth = async(req, res, next) => {
                 }
             }
             else{
-                const result1 = await UserDB.createUser(null,null,{
+                const result2 = await UserDB.createUser(null,null,{
                     unionid:result1.unionid,
                     wxUserInfo:result1
                 })
@@ -186,7 +184,7 @@ const silentAuth = async(req, res, next) => {
                 if(findUser){
                     req.rSession.userId = findUser._id
                 }
-                res.redirect(`/person?union=${result.unionid}`)
+                res.redirect('/person')
             }
         }
         else{

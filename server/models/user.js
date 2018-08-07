@@ -37,6 +37,17 @@ const userSchema = new mongoose.Schema({
 })
 
 userSchema.statics = {
+    createWxUser: async function(unionid){
+        const result = await this.findOne({unionid:unionid}).exec()
+        if(result){
+            return null
+        } else{
+           
+            return this.create({
+                unionid:unionid
+            })
+        }
+    },
     createUser: async function(username, password, userInfo = {}) {
         const result = await this.findOne({username: username}).exec()
         if(result) {
@@ -46,7 +57,7 @@ userSchema.statics = {
                 ...userInfo,
                 username: username,
                 // password: crypto.createHmac('sha1', conf.salt).update(password).digest('hex'),
-                password: crypto.SHA256(password).toString()
+                password: password?crypto.SHA256(password).toString():null
             })
         }
     },
@@ -108,6 +119,10 @@ userSchema.statics = {
         } else {
             return []
         }
+    },
+    delUserByUsername: async function(username){
+        const result = await this.remove({ username: username }).exec()
+        return result
     },
 
 

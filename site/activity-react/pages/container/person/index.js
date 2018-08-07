@@ -1,12 +1,10 @@
 import * as React from 'react';
 import './style.scss'
-import api from '../../../utils/api';
 import Page from '../../../components/page'
 import WxLoginDialog from '../../../components/wx-login-dialog'
 import fileUploader from '../../../utils/file-uploader';
 import FollowDialog from '../../../components/follow-dialog'
-
-
+import api, { authApi } from '../../../utils/api';
 export default class Person extends React.Component{
     componentDidMount = async() => {
         this.personInfo = {}
@@ -605,12 +603,12 @@ export default class Person extends React.Component{
                 </div>
                 
                 {
-                    //!this.state.userObj.username?
-                    <div className="auth-nav"> 
-                       <div className = "auth-nav-item login" onClick={this.setTologinHandle}><span>绑定已有平台账号</span></div>
-                       <div className = "auth-nav-item signUp" onClick={this.setTosignUpHandle}><span>注册平台账号</span></div>
+                    !this.state.userObj.username?
+                    <div className="edit-con"> 
+                       <div className = "login" onClick={this.setTologinHandle}>绑定已有平台账号</div>
+                       <div className = "signUp" onClick={this.setTosignUpHandle}>注册平台账号</div>
                     </div>
-                       //:"" 
+                       :"" 
                 }
                 {
                     this.state.loginBlock === "login"?
