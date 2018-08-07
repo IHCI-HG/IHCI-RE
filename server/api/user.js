@@ -304,17 +304,15 @@ const wxLogin = async (req, res, next) => {
                 const userObj = await UserDB.findByUnionId(result.unionid)
                 const userInfo = await web_accessTokenToUserInfo(result.access_token, result.openid)
                 if(userObj) {
-                    req.rSession.userId = userObj._id
                     res.redirect('/team');
+                    req.rSession.userId = userObj._id
                 } else {
                     const result = await UserDB.createUser(null,null,{
                         unionid:unionid,
                         wxUserInfo:userInfo
                     })
-                    const result = await UserDB.createWxUser(unionid)
-                    req.rSession.userId = result._id
                     res.redirect('/person');
-                    
+                    req.rSession.userId = result._id                    
                 }
             } else {
                 // 由于某些原因授权失败

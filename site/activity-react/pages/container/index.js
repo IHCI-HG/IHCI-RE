@@ -10,6 +10,7 @@ import '../../commen/style.scss'
 import Team from './team'
 import ActivateMail from './activate-mail'
 import TeamJoin from './team-join'
+import WxCode from './wxcode'
 
 class App extends React.Component{
     state = {
@@ -261,6 +262,10 @@ const routeConfig = [
     {
         path: '/team-join/:id',
         component: TeamJoin 
+    },
+    {
+        path: '/wxcode',
+        component: WxCode 
     },
 ]
 

@@ -188,7 +188,7 @@ const silentAuth = async(req, res, next) => {
             }
         }
         else{
-            // res.redirect('')
+            res.redirect('/wxcode')
             //关注公众号
         }
     }
@@ -225,4 +225,5 @@ module.exports = [
     ['GET', '/search', clientParams(),   routerAuthJudge, pageHandle() ],
     ['GET', '/completed/:id', clientParams(),   routerAuthJudge, pageHandle() ],
     ['GET', '/inform', clientParams(),   routerAuthJudge, personSeting, pageHandle() ],
+    ['GET', '/wxcode', clientParams(),  pageHandle() ],
 ];
