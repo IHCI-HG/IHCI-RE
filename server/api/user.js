@@ -229,12 +229,14 @@ const wxLogin = async (req, res, next) => {
 
         if(state == 'auth') {
             if(result.unionid) {
+                const unionid = result.unionid
                 const userObj = await UserDB.findByUnionId(result.unionid)
                 if(userObj) {
                     req.rSession.userId = userObj._id
                     res.redirect('/team');
                 } else {
-                    res.redirect('/sign');
+                    const result = await UserDB.createWxUser(unionid)
+                    res.redirect('/person');
                 }
             } else {
                 // 由于某些原因授权失败

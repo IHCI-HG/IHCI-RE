@@ -31,7 +31,8 @@ const routerAuthJudge = async (req, res, next) => {
             res.redirect('/person')
             return
         }
-    } else {
+    } 
+    else {
         res.redirect('/')
         return
     }
