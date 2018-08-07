@@ -302,11 +302,19 @@ const wxLogin = async (req, res, next) => {
             if(result.unionid) {
                 const unionid = result.unionid
                 const userObj = await UserDB.findByUnionId(result.unionid)
+                const userInfo = await web_accessTokenToUserInfo(result.access_token, result.openid)
                 if(userObj) {
                     req.rSession.userId = userObj._id
                     res.redirect('/team');
                 } else {
-                    const result = await UserDB.createWxUser(unionid)
+                    const result = await UserDB.createUser(null,null,{
+                        unionid:unionid,
+                        wxUserInfo:userInfo
+                    })
+                    const findUser = await UserDB.findByUnionId(unionid)
+                    if(findUser){
+                        req.rSession.userId = findUser._id
+                    }
                     res.redirect('/person');
                 }
             } else {
