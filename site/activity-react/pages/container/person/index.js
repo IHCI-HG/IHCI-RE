@@ -6,6 +6,7 @@ import WxLoginDialog from '../../../components/wx-login-dialog'
 import fileUploader from '../../../utils/file-uploader';
 import FollowDialog from '../../../components/follow-dialog'
 
+
 export default class Person extends React.Component{
     componentDidMount = async() => {
         this.personInfo = {}
@@ -134,14 +135,28 @@ export default class Person extends React.Component{
     }
 
     setTologinHandle = () => {
-        this.setState({
-          loginBlock:"login"
-        });
+        if(this.state.loginBlock !=="login"){
+            this.setState({
+                loginBlock:"login"
+              });
+        }else{
+            this.setState({
+                loginBlock:''
+            });
+        }
+
+        
     }
     setTosignUpHandle = () => {
-        this.setState({
-            loginBlock:"signUp"
-        });
+        if(this.state.loginBlock !=="signUp"){
+            this.setState({
+                loginBlock:"signUp"
+            });
+        }else{
+            this.setState({
+                loginBlock:''
+            });
+        }    
     }
     usernameHandle = (e) => {
         const username = e.target.value;
@@ -151,8 +166,7 @@ export default class Person extends React.Component{
         }else{
             usernameEmpty = true
         }
-        this.setState({
-            
+        this.setState({  
             username: e.target.value,
             infoCheck:{
                 ...this.state.infoCheck,
@@ -591,20 +605,20 @@ export default class Person extends React.Component{
                 </div>
                 
                 {
-                    !!this.state.userObj.username?
-                    <div className="edit-con"> 
-                       <div className = "login" onClick={this.setTologinHandle}>绑定已有平台账号</div>
-                       <div className = "signUp" onClick={this.setTosignUpHandle}>注册平台账号</div>
+                    //!this.state.userObj.username?
+                    <div className="auth-nav"> 
+                       <div className = "auth-nav-item login" onClick={this.setTologinHandle}><span>绑定已有平台账号</span></div>
+                       <div className = "auth-nav-item signUp" onClick={this.setTosignUpHandle}><span>注册平台账号</span></div>
                     </div>
-                       :"" 
+                       //:"" 
                 }
                 {
                     this.state.loginBlock === "login"?
                     <div className="loginBlock">
                     <div className ="login-desc">Enter username: </div>
-                    <input classNmae="login-input" value={this.state.username} onChange={this.usernameHandle}></input>
+                    <input className="login-input" value={this.state.username} onChange={this.usernameHandle}></input>
                     <div className ="login-desc">Enter password: </div>
-                    <input classNmae="login-input" type="password" value={this.state.password} onChange={this.passwordHandle}></input>
+                    <input className="login-input" type="password" value={this.state.password} onChange={this.passwordHandle}></input>
                     <div className="login-btn" onClick={this.loginHandle}>LoginAndBind</div>
                     </div>
                     :""
@@ -634,7 +648,8 @@ export default class Person extends React.Component{
                     {
 
                         !!this.state.userObj.unionid ? 
-                        <div className="band" onClick={this.unbindHandle}>解绑</div>
+                        (!!this.state.userObj.username?
+                        <div className="band" onClick={this.unbindHandle}>解绑</div>:"")
                         :
                         <div className="band" onClick={this.openWxLoginHandle}>绑定</div>
                     
