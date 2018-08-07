@@ -1,6 +1,16 @@
 .team-admin-page {
     padding: 30px 0;
 
+    .after{
+        display: flex;
+        color: #666;
+        margin: 10px;
+        align-items: center;
+
+    }
+    .error{
+        color: #f00;
+    }
 
     .sp-nav {
         margin: 10px 0 30px 0;
