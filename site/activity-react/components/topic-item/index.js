@@ -54,9 +54,11 @@ class TopicItem extends React.PureComponent {
                 <div className="name">{this.props.creator.name}</div>
                 <div className="main" onClick={() => { this.props.locationTo('/discuss/topic/' + this.props._id) }}>
                     <div className="topic-title">{this.props.title}</div>
+                    {/*
                     <div className="BraftEditor-container">
-                        <p className="text-max-line-1 public-DraftEditor-content BraftEditor-content" dangerouslySetInnerHTML={createMarkup(this.props.content)}></p>
+                        <p className="text-max-line-1 public-DraftEditor-content BraftEditor-content " dangerouslySetInnerHTML={createMarkup(this.props.content)}></p>
                     </div>
+                    */}
                 </div>
                 {this.props.fileList.length > 0 &&
                     <i className="icon iconfont time">&#xe6dd;</i>
