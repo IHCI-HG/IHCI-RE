@@ -713,7 +713,9 @@ export default class Person extends React.Component{
 
 
                 <div className="save-btn" onClick={this.saveHandle}>保存</div>
-                <div className="save-btn" onClick={this.logOutHandle}>登出</div>
+                {
+                    !INIT_DATA.isWeixin&&<div className="save-btn" onClick={this.logOutHandle}>登出</div>
+                }
                 <div className="save-btn" onClick={()=>{location.href = '/team-management'}}>团队管理</div>
                 {
                     this.state.showWxLogin && <WxLoginDialog state="bind" closeHandle={this.closeWxLoginHandle}/>

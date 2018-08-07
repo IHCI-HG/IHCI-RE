@@ -133,9 +133,9 @@ const personSeting = async (req, res, next) => {
     if(newUserObj){
         newUserObj.password = undefined
     }
-
     req.INIT_DATA = {
-        userObj: userObj || newUserObj
+        userObj: userObj || newUserObj,
+        isWeixin: envi.isWeixin(req)
     }
     next()
 }
