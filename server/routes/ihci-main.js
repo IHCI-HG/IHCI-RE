@@ -163,7 +163,7 @@ const joinTeam = async (req, res, next) => {
 const silentAuth = async(req, res, next) => {
     if(envi.isWeixin(req)){
         //静默授权
-        // res.redirect('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx87136e7c8133efe3&redirect_uri=http%3A%2F%2Fwww.animita.cn&response_type=code&scope=snsapi_base&state=123#wechat_redirect')
+        res.redirect('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx87136e7c8133efe3&redirect_uri=http%3A%2F%2Fwww.animita.cn&response_type=code&scope=snsapi_base&state=123#wechat_redirect')
         var urlObj = url.parse(req.url,true)
         var code = urlObj.query.code
         const result = await pub_codeToAccessToken(code)
@@ -174,12 +174,11 @@ const silentAuth = async(req, res, next) => {
             const findUser = await UserDB.findByUnionId(result1.unionid)
             if(findUser){
                 req.rSession.userId = findUser._id
-                console.log(urlObj)
                 if(urlObj.pathname === '/'){
                     res.redirect('/team')
                 }
                 else{
-                    console.log(urlObj.pathname)
+                    res.redirect(urlObj.pathname)
                 }
             }
             else{
