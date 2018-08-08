@@ -32,6 +32,7 @@ const userSchema = new mongoose.Schema({
     wxUserInfo: mongoose.Schema.Types.Mixed,
     mailCode :String,
     mailLimitTime :String,
+    oldId :String,
     isLive : { type: Boolean, default: false},
     noticeList: [mongoose.Schema.Types.Mixed],
 })
@@ -71,6 +72,10 @@ userSchema.statics = {
     },
     findByUserId: async function(userId) {
         const result = await this.findById(userId)
+        return result
+    },
+    findByOldId: async function(oldId) {
+        const result = await this.findOne({oldId: oldId}).exec()
         return result
     },
     baseInfoById: async function(userId) {
