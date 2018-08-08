@@ -150,7 +150,7 @@ export const createTopicTemplate = async function (userIdList, topicObj) {
             pub_pushTemplateMsg(
                 item.openid,
                 'p6pZBXX0SaqODRDZgY_3NqyIAK0mYN9HXYq6yMLyA04',
-                'http://www.animita.cn/team/discuss/topic/' + topicObj._id,
+                'http://www.animita.cn/discuss/topic/' + topicObj._id,
                 {
                     "first": {
                         "value": topicObj.creator.name + " 创建了讨论",
@@ -190,7 +190,7 @@ export const replyTopicTemplate = async function (userIdList, discussObj) {
             pub_pushTemplateMsg(
                 item.openid,
                 'p6pZBXX0SaqODRDZgY_3NqyIAK0mYN9HXYq6yMLyA04',
-                'http://www.animita.cn/team/discuss/topic/' + discussObj.topicId,
+                'http://www.animita.cn/discuss/topic/' + discussObj.topicId,
                 {
                     "first": {
                         "value": discussObj.creator.name + " 回复了讨论",
@@ -222,7 +222,7 @@ export const applyIntoTeam = async function (userIdList, userObj) {
             pub_pushTemplateMsg(
                 item.openid,
                 'p6pZBXX0SaqODRDZgY_3NqyIAK0mYN9HXYq6yMLyA04',
-                'http://www.animita.cn/team/discuss/topic/',
+                'http://www.animita.cn/discuss/topic/',
                 {
                     "first": {
                         "value": userObj.username + "申请加入团队",
@@ -254,7 +254,7 @@ export const admitIntoTeam = async function (userIdList, teamObj) {
             pub_pushTemplateMsg(
                 item.openid,
                 'p6pZBXX0SaqODRDZgY_3NqyIAK0mYN9HXYq6yMLyA04',
-                'http://www.animita.cn/team/discuss/topic/',
+                'http://www.animita.cn/discuss/topic/',
                 {
                     "first": {
                         "value": teamObj.name + "通过了你的申请",
