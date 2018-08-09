@@ -18,7 +18,7 @@ class App extends React.Component{
         menuName: '',
         menuEmail: '',
 
-        headImg: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnregyyDrMvhEDpfC4wFetzykulWRVMGF-jp7RXIIqZ5ffEdawIA',
+        headImg: require('./DefaultImage.jpg'),
         infoImg: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1529474819406&di=267791f485fba8aa30e0adc8f0eede6b&imgtype=0&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimgad%2Fpic%2Fitem%2Fb8014a90f603738d6c070f19b81bb051f819ecb8.jpg',
         personInfo: {
             teamList: []
