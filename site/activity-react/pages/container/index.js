@@ -28,8 +28,13 @@ class App extends React.Component{
         menuSetBgColor: '',
         menuCreateBgColor: '',
         menuQuitBgColor: '',
+
+        showRemindCount: '',
         
     }
+
+
+
     handleMouseOut = this.handleMouseOut.bind(this);
     handleMouseOver = this.handleMouseOver.bind(this);
     handleSetMouseOver = this.handleSetMouseOver.bind(this);
@@ -38,6 +43,20 @@ class App extends React.Component{
     handleCreateMouseOut = this.handleCreateMouseOut.bind(this);
     handleQuitMouseOver = this.handleQuitMouseOver.bind(this);
     handleQuitMouseOut = this.handleQuitMouseOut.bind(this);
+
+    initUnreadList = async () => {
+        const result = await api('/api/user/showUnreadList', {
+            method: 'POST',
+            body:{}
+        })
+        this.setState({
+          showRemindCount: result.data.length
+        })
+
+        console.log("inform:   " + result);
+    }
+
+
 
     handleMouseOver() {
         this.setState({
@@ -87,6 +106,8 @@ class App extends React.Component{
     }
     componentDidMount = async() => {
         this.activeTagHandle(this.props.location.pathname)
+  
+        await this.initUnreadList()
     }
 
     setHeadImg = async () => {
@@ -239,6 +260,9 @@ class App extends React.Component{
 
                         <div className='remind'>
                             <span className='iconfont icon-remind' onClick={this.routerHandle.bind(this, '/inform')}></span>
+                            
+                            {this.state.showRemindCount>0 && <span className="redPoint">{this.state.showRemindCount}</span>}
+                            
                         </div>
                     </div>
 

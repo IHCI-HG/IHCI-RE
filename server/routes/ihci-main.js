@@ -123,13 +123,19 @@ const wxAuthCodeHandle = async (req, res, next) => {
 const personSeting = async (req, res, next) => {
     const userId = req.rSession.userId
     const userObj = await UserDB.findById(userId)
-
+    if(!userObj){
+        var newUserObj = await UserDB.findByOldId(userId)
+        req.rSession.userId = newUserObj._id
+    }
     if(userObj) {
         userObj.password = undefined
     }
-
+    if(newUserObj){
+        newUserObj.password = undefined
+    }
     req.INIT_DATA = {
-        userObj
+        userObj: userObj || newUserObj,
+        isWeixin: envi.isWeixin(req)
     }
     next()
 }
@@ -157,42 +163,54 @@ const joinTeam = async (req, res, next) => {
 const silentAuth = async(req, res, next) => {
     if(envi.isWeixin(req)){
         //静默授权
-        // res.redirect('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx87136e7c8133efe3&redirect_uri=http%3A%2F%2Fwww.animita.cn&response_type=code&scope=snsapi_base&state=123#wechat_redirect')
         var urlObj = url.parse(req.url,true)
-        var code = urlObj.query.code
-        const result = await pub_codeToAccessToken(code)
-        if(result.openid){
-            var result1 = await pub_openidToUserInfo(result.openid)
+        if(!req.rSession.userId&&!urlObj.query.code){
+            res.redirect(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx87136e7c8133efe3&redirect_uri=http%3A%2F%2Fwww.animita.cn&response_type=code&scope=snsapi_base&state=123#wechat_redirect`)
         }
-        if(result1.unionid) {
-            const findUser = await UserDB.findByUnionId(result1.unionid)
-            if(findUser){
-                req.rSession.userId = findUser._id
-                if(urlObj.pathname = '/'){
-                    res.redirect('/team')
-                }
-                else{
-                    res.redirect(req.url)
-                }
+        if(!req.rSession.userId&&urlObj.query.code){
+            var code = urlObj.query.code
+            const result = await pub_codeToAccessToken(code)
+            if(result.openid){
+                var result1 = await pub_openidToUserInfo(result.openid)
             }
-            else{
-                const result2 = await UserDB.createUser(null,null,{
-                    unionid:result1.unionid,
-                    wxUserInfo:result1
-                })
+            if(result1.unionid) {
                 const findUser = await UserDB.findByUnionId(result1.unionid)
                 if(findUser){
                     req.rSession.userId = findUser._id
+                    if(urlObj.pathname === '/'){
+                        res.redirect('/team')
+                    }
+                    else{
+                        res.redirect(urlObj.pathname)
+                    }
                 }
-                res.redirect('/person')
+                else{
+                    const result2 = await UserDB.createUser(null,null,{
+                        unionid:result1.unionid,
+                        wxUserInfo:result1
+                    })
+                    const findUser = await UserDB.findByUnionId(result1.unionid)
+                    if(findUser){
+                        req.rSession.userId = findUser._id
+                    }
+                    res.redirect('/person')
+                }
+            }
+            else{
+                res.redirect('/wxcode')
+                //关注公众号
             }
         }
-        else{
-            res.redirect('/wxcode')
-            //关注公众号
+        if(req.rSession.userId&&urlObj.pathname==='/'){
+            res.redirect('/team')
+        }
+        if(req.rSession.userId&&urlObj.pathname!=='/'){
+            next()
         }
     }
-    next()
+    else{
+        next()
+    }
 }
 
 module.exports = [
@@ -207,10 +225,8 @@ module.exports = [
     ['GET', '/files/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/sign', clientParams(), routerAuthJudge, pageHandle() ],
 
-    ['GET', '/test', clientParams(), routerAuthJudge, pageHandle() ],
-    ['GET', '/test-editor', clientParams(), routerAuthJudge, pageHandle() ],
-    ['GET', '/team/:id', clientParams(), routerAuthJudge, pageHandle() ],
-    ['GET', '/todo/:id', clientParams(), routerAuthJudge, pageHandle() ],
+    ['GET', '/team/:id', clientParams(), routerAuthJudge, silentAuth, pageHandle() ],
+    ['GET', '/todo/:id', clientParams(), routerAuthJudge, silentAuth, pageHandle() ],
     ['GET', '/team-edit/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/team-admin/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/team-management',clientParams(), routerAuthJudge, pageHandle()],
@@ -218,12 +234,11 @@ module.exports = [
 
     ['GET', '/team-create', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/person', clientParams(), routerAuthJudge, personSeting, pageHandle() ],
-    ['GET', '/discuss/:id', clientParams(), routerAuthJudge, pageHandle() ],
-    ['GET', '/discuss/topic/:id', clientParams(), routerAuthJudge, pageHandle() ],
-    ['GET', '/timeline', clientParams(),    routerAuthJudge, pageHandle() ],
+    ['GET', '/discuss/topic/:id', clientParams(), routerAuthJudge, silentAuth, pageHandle() ],
+    ['GET', '/timeline', clientParams(),    routerAuthJudge, silentAuth, pageHandle() ],
     ['GET', '/member', clientParams(),   routerAuthJudge, pageHandle() ],
     ['GET', '/search', clientParams(),   routerAuthJudge, pageHandle() ],
-    ['GET', '/completed/:id', clientParams(),   routerAuthJudge, pageHandle() ],
+    ['GET', '/completed/:id', clientParams(), routerAuthJudge, silentAuth, pageHandle() ],
     ['GET', '/inform', clientParams(),   routerAuthJudge, personSeting, pageHandle() ],
     ['GET', '/wxcode', clientParams(),  pageHandle() ],
 ];

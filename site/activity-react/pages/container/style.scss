@@ -86,6 +86,21 @@
         &:hover{
             color:#44acb6;
         }
+        .redPoint {
+            height: 16px;
+            width: 16px;
+            border-radius: 16px;
+
+            display: inline-block;
+            text-align: center;
+            font-size: 0.1em;
+            color: #fff;
+            background-color: red;
+            
+            position: relative;
+            top: -8px;
+            right: 8px;
+        }
     }
     .head-img {       
         border-radius: 100px;
