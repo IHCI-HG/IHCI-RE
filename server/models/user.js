@@ -32,7 +32,6 @@ const userSchema = new mongoose.Schema({
     wxUserInfo: mongoose.Schema.Types.Mixed,
     mailCode :String,
     mailLimitTime :String,
-    oldId :String,
     isLive : { type: Boolean, default: false},
     noticeList: [mongoose.Schema.Types.Mixed],
 })
@@ -125,8 +124,8 @@ userSchema.statics = {
             return []
         }
     },
-    delUserByUsername: async function(username){
-        const result = await this.remove({ username: username }).exec()
+    delUserById: async function(_id){
+        const result = await this.remove({ _id: _id }).exec()
         return result
     },
 
