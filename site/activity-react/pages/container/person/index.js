@@ -133,14 +133,28 @@ export default class Person extends React.Component{
     }
 
     setTologinHandle = () => {
-        this.setState({
-          loginBlock:"login"
-        });
+        if(this.state.loginBlock !=="login"){
+            this.setState({
+                loginBlock:"login"
+              });
+        }else{
+            this.setState({
+                loginBlock:''
+            });
+        }
+
+        
     }
     setTosignUpHandle = () => {
-        this.setState({
-            loginBlock:"signUp"
-        });
+        if(this.state.loginBlock !=="signUp"){
+            this.setState({
+                loginBlock:"signUp"
+            });
+        }else{
+            this.setState({
+                loginBlock:''
+            });
+        }    
     }
     usernameHandle = (e) => {
         const username = e.target.value;
@@ -150,8 +164,7 @@ export default class Person extends React.Component{
         }else{
             usernameEmpty = true
         }
-        this.setState({
-            
+        this.setState({  
             username: e.target.value,
             infoCheck:{
                 ...this.state.infoCheck,
@@ -591,9 +604,9 @@ export default class Person extends React.Component{
                 
                 {
                     !this.state.userObj.username?
-                    <div className="edit-con"> 
-                       <div className = "login" onClick={this.setTologinHandle}>绑定已有平台账号</div>
-                       <div className = "signUp" onClick={this.setTosignUpHandle}>注册平台账号</div>
+                    <div className="auth-nav"> 
+                       <div className = "auth-nav-item" onClick={this.setTologinHandle}>绑定已有平台账号</div>
+                       <div className = "auth-nav-item" onClick={this.setTosignUpHandle}>注册平台账号</div>
                     </div>
                        :"" 
                 }
@@ -633,7 +646,8 @@ export default class Person extends React.Component{
                     {
 
                         !!this.state.userObj.unionid ? 
-                        <div className="band" onClick={this.unbindHandle}>解绑</div>
+                        (!!this.state.userObj.username?
+                        <div className="band" onClick={this.unbindHandle}>解绑</div>:"")
                         :
                         <div className="band" onClick={this.openWxLoginHandle}>绑定</div>
                     
@@ -699,7 +713,9 @@ export default class Person extends React.Component{
 
 
                 <div className="save-btn" onClick={this.saveHandle}>保存</div>
-                <div className="save-btn" onClick={this.logOutHandle}>登出</div>
+                {
+                    !INIT_DATA.isWeixin&&<div className="save-btn" onClick={this.logOutHandle}>登出</div>
+                }
                 <div className="save-btn" onClick={()=>{location.href = '/team-management'}}>团队管理</div>
                 {
                     this.state.showWxLogin && <WxLoginDialog state="bind" closeHandle={this.closeWxLoginHandle}/>
