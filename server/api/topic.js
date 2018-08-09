@@ -105,21 +105,37 @@ const changeTopicCreator = async (req, res, next) => {
         let result2 = []
         let result3 = []
         timelineObj.map(async(item)=>{
-            item.creator = personInfo
+            item.creator.headImg = personInfo.headImg
+            item.creator.name = personInfo.name
+            item.creator.phone = personInfo.phone
+            item.creator.mail = personInfo.mail
             await timelineDB.updateTimeline(item._id, item)
         })
         discussObj.map(async(item,index)=>{
-            item.creator = personInfo
+            item.creator.headImg = personInfo.headImg
+            item.creator.name = personInfo.name
+            item.creator.phone = personInfo.phone
+            item.creator.mail = personInfo.mail
             result3[index] = await discussDB.updateDiscuss(item._id, item)
             result2[index] = await topicDB.updateDiscuss(item.topicId,item._id,item.content,item.fileList,personInfo)
         })
         let topicObj = await topicDB.findByTopicCreatorId(userId)
         topicObj.map(async(item,index)=>{
-            item.creator = personInfo
+            item.creator.headImg = personInfo.headImg
+            item.creator.name = personInfo.name
+            item.creator.phone = personInfo.phone
+            item.creator.mail = personInfo.mail
             result[index] = await topicDB.updateTopic(item._id, item)
             result1[index] = await teamDB.updateTopic(item.team, item._id, item)
         })
-        
+        let userObj = await userDB.findByUserId(userId)
+        userObj.noticeList.map(async(item)=>{
+            item.creator.headImg = personInfo.headImg
+            item.creator.name = personInfo.name
+            item.creator.phone = personInfo.phone
+            item.creator.mail = personInfo.mail
+        })
+        await userDB.updateUser(userId,userObj)
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
             data: {

@@ -139,8 +139,10 @@
     .auth-nav{
         display:flex;
         justify-content: center;
+        align-items: center;
         width:400px;
         height:70px;
+        padding-bottom: 30px;
         .auth-nav-item{
             cursor: pointer;
             display:flex;
@@ -155,6 +157,7 @@
             font-weight: bold;
             margin-top:0px;
             margin-right:30px;
+            margin-bottom: 30px;
             &:hover{
                 box-shadow: 1px 2px 6px #a2a2a2;
             }  

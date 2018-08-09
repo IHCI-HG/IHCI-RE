@@ -335,8 +335,7 @@ export default class Topic extends React.Component{
         this.setState({memberList})
     }
 
-    
-    
+     
     createDiscussInputHandle = (e) => {
         this.setState({
             createDiscussContent: e.target.value
