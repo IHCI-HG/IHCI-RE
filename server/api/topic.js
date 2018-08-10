@@ -191,7 +191,17 @@ const editTopic = async (req, res, next) => {
         const teamObj = await teamDB.findByTeamId(teamId)
         await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'EDIT_TOPIC', result1._id, result1.title, result1)
         //todo 还要在timeline表中增加项目
+        console.log(result1);
+        if(informList && informList.length) {
+            //replyTopicTemplate(informList, result1)
 
+            //添加通知
+            informList.map((item) => {
+                userDB.addEditTopicNotice(item, result1, teamObj.name)
+            })
+            //notificationMail(informList, result1, "修改了讨论")
+
+        }
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
             data: {
@@ -296,6 +306,7 @@ const editDiscuss = async (req, res, next) => {
         discussObj.fileList = fileList || discussObj.fileList;
 
         const result = await discussDB.updateDiscuss(discussId, discussObj)
+        console.log(result)
         await topicDB.updateDiscuss(topicId, discussId, content,discussObj.fileList,discussObj.creator)
 
         const userObj = await userDB.baseInfoById(userId)
@@ -303,7 +314,16 @@ const editDiscuss = async (req, res, next) => {
         const teamObj = await teamDB.findByTeamId(teamId)
         await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'EDIT_REPLY', result._id, topicObj.title, result)
         console.log(teamId, teamObj.name, userObj, 'EDIT_REPLY', result._id, topicObj.title, result)
+        
+        if(informList && informList.length) {
+            //replyTopicTemplate(informList, result)
+            //添加通知
+            informList.map((item) => {
+                userDB.addEditReplyNotice(item, result, teamObj.name)
+            })
+            //notificationMail(informList, result, "编辑了回复")
 
+        }
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
             data: result

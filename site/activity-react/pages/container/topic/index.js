@@ -218,8 +218,14 @@ export default class Topic extends React.Component{
     }
 
     topicChangeSaveHandle = async () => {
+        const informList = []
+        this.state.memberList.map((item) => {
+            if(item.chosen) {
+                informList.push(item._id)
+            }
+        })
         let editTopic = {
-            title: this.state.topicNameInput,
+                title: this.state.topicNameInput,
                 content: this.state.topicContentInput,
                 fileList: this.state.topicAttachments,
         }
@@ -251,7 +257,7 @@ export default class Topic extends React.Component{
                 teamId: this.teamId,
                 topicId: this.topicId,
                 editTopic,
-                informList: [],
+                informList: informList,
                 fileList:this.state.topicAttachments
             }
         })
@@ -264,12 +270,23 @@ export default class Topic extends React.Component{
                     content: this.state.topicContentInput,
                     fileList: this.state.topicAttachments,
                     editStatus: false,
+                },
+            })
+            this.state.memberList.map((item)=>{
+                if(item.chosen){
+                    item.chosen = false
                 }
             })
         }
     }
 
     saveDiscussEditHandle = async (_id, content,fileList,attArr,ossArr) => {
+        const informList = []
+        this.state.memberList.map((item) => {
+            if(item.chosen) {
+                informList.push(item._id)
+            }
+        })
         if(attArr!==[])
         {
             attArr.map(async(item,index)=>{
@@ -299,7 +316,7 @@ export default class Topic extends React.Component{
                 topicId: this.topicId,
                 discussId: _id,
                 content: content,
-                informList: [],
+                informList: informList,
                 fileList:fileList
             }
         })
@@ -319,8 +336,13 @@ export default class Topic extends React.Component{
                     discussList[idx].imgList = imgList
                 }
             })
+            this.state.memberList.map((item)=>{
+                if(item.chosen){
+                    item.chosen = false
+                }
+            })
             this.setState({
-                discussList: discussList
+                discussList: discussList,
             })
         }
     }
@@ -379,8 +401,8 @@ export default class Topic extends React.Component{
                 teamId: this.teamId,
                 topicId: this.topicId,
                 content: this.state.createDiscussContent,
-                fileList:this.state.discussAttachments
-                // informList: informList
+                fileList:this.state.discussAttachments,
+                informList: informList
             }
         })
         console.log(result)
@@ -398,6 +420,11 @@ export default class Topic extends React.Component{
                 createDiscussContent: '',
                 createDiscussChosen: false,
                 discussAttachments:[],
+            })
+            this.state.memberList.map((item)=>{
+                if(item.chosen){
+                    item.chosen = false
+                }
             })
             
         } else {
@@ -526,6 +553,7 @@ export default class Topic extends React.Component{
                                     saveEditHandle = {this.saveDiscussEditHandle}
                                     downloadHandle = {this.downloadHandle}
                                     memberList = {this.state.memberList}
+                                    memberChoseHandle = {this.memberChoseHandle.bind(this)}
                                     toTimeLineHandle = {this.toTimeLineHandle.bind(this)}
                                 />
                             )

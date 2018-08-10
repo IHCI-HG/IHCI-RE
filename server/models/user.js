@@ -205,7 +205,8 @@ userSchema.statics = {
                 $addToSet: {
                     noticeList: {
                         create_time: topicObj.create_time,
-                        noticeId: topicObj._id,
+                        noticeId: mongoose.Types.ObjectId(),
+                        topicId:topicObj._id.toString(),
                         teamId: topicObj.team,
                         teamName: teamName,
                         creator: topicObj.creator,
@@ -226,7 +227,8 @@ userSchema.statics = {
                 $addToSet: {
                     noticeList: {
                         create_time: discussObj.create_time,
-                        noticeId: discussObj._id,
+                        noticeId: mongoose.Types.ObjectId(),
+                        discussId:discussObj._id.toString(),
                         teamId: discussObj.teamId,
                         teamName: teamName,
                         topicId: discussObj.topicId,
@@ -234,6 +236,49 @@ userSchema.statics = {
                         noticeTitle: discussObj.title,
                         noticeContent: discussObj.content,
                         type: "REPLY_TOPIC",
+                        readState: false,
+                    }
+                }
+            }
+        ).exec()
+    },
+    addEditTopicNotice: async function(userId, topicObj, teamName) {
+        return this.update(
+            { _id: userId },
+            {
+                $addToSet: {
+                    noticeList: {
+                        create_time: topicObj.create_time,
+                        noticeId: mongoose.Types.ObjectId(),
+                        topicId:topicObj._id.toString(),
+                        teamId: topicObj.team,
+                        teamName: teamName,
+                        creator: topicObj.creator,
+                        noticeTitle: topicObj.title,
+                        noticeContent: topicObj.content,
+                        type: "EDIT_TOPIC",
+                        readState: false,
+                    }
+                }
+            }
+        ).exec()
+    },
+    addEditReplyNotice: async function(userId, discussObj, teamName) {
+        return this.update(
+            { _id: userId },
+            {
+                $addToSet: {
+                    noticeList: {
+                        create_time: discussObj.create_time,
+                        noticeId: mongoose.Types.ObjectId(),
+                        discussId:discussObj._id.toString(),
+                        teamId: discussObj.teamId,
+                        teamName: teamName,
+                        topicId: discussObj.topicId,
+                        creator: discussObj.creator,
+                        noticeTitle: discussObj.title,
+                        noticeContent: discussObj.content,
+                        type: "EDIT_REPLY",
                         readState: false,
                     }
                 }

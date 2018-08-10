@@ -16,6 +16,8 @@ class InformItem extends React.PureComponent{
     typeMap = {
         'CREATE_TOPIC': '创建了讨论：',
         'REPLY_TOPIC': '回复了讨论：',
+        'EDIT_TOPIC': '修改了讨论: ',
+        'EDIT_REPLY': '编辑了回复: ',
     }
     changeReadState = async () => {
         const queryNoticeId = this.props.noticeId
@@ -32,9 +34,13 @@ class InformItem extends React.PureComponent{
             // console.log(result)
             this.setState( () => {
               if (this.props.type == 'CREATE_TOPIC')
-                this.props.locationTo('/discuss/topic/' + this.props.noticeId)
+                this.props.locationTo('/discuss/topic/' + this.props.topicId)
               if (this.props.type == 'REPLY_TOPIC')
                 this.props.locationTo('/discuss/topic/' + this.props.topicId)
+              if(this.props.type == 'EDIT_TOPIC')
+              this.props.locationTo('/discuss/topic/' + this.props.topicId)
+              if(this.props.type == 'EDIT_REPLY')
+              this.props.locationTo('/discuss/topic/' + this.props.topicId)
             })
 
     }
@@ -68,6 +74,48 @@ class InformItem extends React.PureComponent{
           )
         case 'REPLY_TOPIC':
             return (
+                <div className='infs-item-wrap' key={"infs-item-wrap-" + this.props._id} onClick={() => {this.toReadStateHandle()}}>
+                    <div className="date">{formatDate(this.props.create_time, 'MM月dd日')}</div>
+                    <img src={this.props.creator.headImg} alt="" className="head-img" />
+
+                    <div className="infs-con">
+                        <div className="des-line">
+                            <span className="name">{this.props.creator.name}</span>
+                            <span className="type">{this.typeMap[this.props.type]}</span>
+                            <span className="topic">{this.props.noticeTitle}</span>
+                        </div>
+
+                        <div className="BraftEditor-container">
+                            <div className="content public-DraftEditor-content BraftEditor-content"  dangerouslySetInnerHTML={{__html: this.props.noticeContent}}>{}</div>
+                        </div>
+                    </div>
+
+
+                </div>
+              )
+              case 'EDIT_TOPIC':
+              return (
+                <div className='infs-item-wrap' key={"infs-item-wrap-" + this.props._id} onClick={() => {this.toReadStateHandle()}}>
+                    <div className="date">{formatDate(this.props.create_time, 'MM月dd日')}</div>
+                    <img src={this.props.creator.headImg} alt="" className="head-img" />
+
+                    <div className="infs-con">
+                        <div className="des-line">
+                            <span className="name">{this.props.creator.name}</span>
+                            <span className="type">{this.typeMap[this.props.type]}</span>
+                            <span className="topic">{this.props.noticeTitle}</span>
+                        </div>
+
+                        <div className="BraftEditor-container">
+                            <div className="content public-DraftEditor-content BraftEditor-content"  dangerouslySetInnerHTML={{__html: this.props.noticeContent}}>{}</div>
+                        </div>
+                    </div>
+
+
+                </div>
+              )
+              case 'EDIT_REPLY':
+              return (
                 <div className='infs-item-wrap' key={"infs-item-wrap-" + this.props._id} onClick={() => {this.toReadStateHandle()}}>
                     <div className="date">{formatDate(this.props.create_time, 'MM月dd日')}</div>
                     <img src={this.props.creator.headImg} alt="" className="head-img" />
@@ -187,6 +235,8 @@ export default class Infs extends React.Component{
       typeMap = {
           'CREATE_TOPIC': '创建了讨论：',
           'REPLY_TOPIC': '回复了讨论：',
+          'EDIT_TOPIC': '修改了讨论：',
+          'EDIT_REPLY': '编辑了回复: ',
       }
       state = {
           // type: create, reply
