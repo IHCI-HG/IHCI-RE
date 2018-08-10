@@ -17,13 +17,13 @@ export default class Person extends React.Component{
                     name: '',
                     mail: '',
                     phone: '',
-                    headImg: INIT_DATA.userObj && INIT_DATA.userObj.wxUserInfo && INIT_DATA.userObj.wxUserInfo.headimgurl || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnregyyDrMvhEDpfC4wFetzykulWRVMGF-jp7RXIIqZ5ffEdawIA',
+                    headImg: INIT_DATA.userObj && INIT_DATA.userObj.wxUserInfo && INIT_DATA.userObj.wxUserInfo.headimgurl || require('../DefaultImage.jpg'),
                 },
                 originPersonInfo: INIT_DATA.userObj.personInfo || {
                     name: '',
                     mail: '',
                     phone: '',
-                    headImg: INIT_DATA.userObj && INIT_DATA.userObj.wxUserInfo && INIT_DATA.userObj.wxUserInfo.headimgurl || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnregyyDrMvhEDpfC4wFetzykulWRVMGF-jp7RXIIqZ5ffEdawIA',
+                    headImg: INIT_DATA.userObj && INIT_DATA.userObj.wxUserInfo && INIT_DATA.userObj.wxUserInfo.headimgurl || require('../DefaultImage.jpg'),
                 }
             })
         } else {
@@ -655,14 +655,10 @@ export default class Person extends React.Component{
                 </div>
 
                 <div className="edit-con">
-                    <div className="before">服务号</div>
-
-                    { !!this.state.userObj.subState ? <div className="bind-wx act">已关注</div> : <div className="bind-wx">未关注</div> }
-
-                    {!!!this.state.userObj.subState && <div className='after'>需要<div className='follow-btn' onClick={this.openFollowDialogHandle}>关注服务号</div>才能接受讨论消息提醒</div>}
-
-
-
+                    {this.state.userObj.unionid ?<div className="before">服务号</div>:""}
+                    {this.state.userObj.unionid ? ( !INIT_DATA.isWeixin && !this.state.userObj.subState ? <div className="bind-wx ">未关注</div> : <div className="bind-wx act">已关注</div>):""} 
+                    {this.state.userObj.unionid && !INIT_DATA.isWeixin && !this.state.userObj.subState && <div className='after'>需要<div className='follow-btn' onClick={this.openFollowDialogHandle}>关注服务号</div>才能接受讨论消息提醒</div>}
+                    
                 </div>
 
                 <div className="edit-con">
