@@ -156,10 +156,9 @@ const joinTeam = async (req, res, next) => {
 const silentAuth = async(req, res, next) => {
     if(envi.isWeixin(req)){
         //静默授权
-        console.log(req.url)
         var urlObj = url.parse(req.url,true)
         if(!req.rSession.userId&&!urlObj.query.code){
-            res.redirect(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx87136e7c8133efe3&redirect_uri=http%3A%2F%2Fwww.animita.cn&response_type=code&scope=snsapi_base&state=123#wechat_redirect`)
+            res.redirect(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx87136e7c8133efe3&redirect_uri=http%3A%2F%2Fwww.animita.cn${urlObj.pathname.substr(0,urlObj.pathname.length-1)}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`)
         }
         if(!req.rSession.userId&&urlObj.query.code){
             var code = urlObj.query.code
@@ -219,20 +218,20 @@ module.exports = [
     ['GET', '/files/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/sign', clientParams(), routerAuthJudge, pageHandle() ],
 
-    ['GET', '/team/:id', clientParams(), routerAuthJudge, pageHandle(), silentAuth ],
-    ['GET', '/todo/:id', clientParams(), routerAuthJudge, silentAuth, pageHandle() ],
+    ['GET', '/team/:id', clientParams(), silentAuth, routerAuthJudge, pageHandle() ],
+    ['GET', '/todo/:id', clientParams(), silentAuth, routerAuthJudge, pageHandle() ],
     ['GET', '/team-edit/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/team-admin/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/team-management',clientParams(), routerAuthJudge, pageHandle()],
-    ['GET', '/team-join/:teamId', clientParams(), joinTeam, pageHandle() ],
+    ['GET', '/team-join/:teamId', clientParams(), silentAuth, joinTeam, pageHandle() ],
 
     ['GET', '/team-create', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/person', clientParams(), routerAuthJudge, personSeting, pageHandle() ],
-    ['GET', '/discuss/topic/:id', clientParams(), routerAuthJudge, pageHandle(), silentAuth ],
-    ['GET', '/timeline', clientParams(),    routerAuthJudge, silentAuth, pageHandle() ],
+    ['GET', '/discuss/topic/:id', clientParams(), silentAuth, routerAuthJudge, pageHandle() ],
+    ['GET', '/timeline', clientParams(), silentAuth,    routerAuthJudge, pageHandle() ],
     ['GET', '/member', clientParams(),   routerAuthJudge, pageHandle() ],
     ['GET', '/search', clientParams(),   routerAuthJudge, pageHandle() ],
-    ['GET', '/completed/:id', clientParams(), routerAuthJudge, silentAuth, pageHandle() ],
+    ['GET', '/completed/:id', clientParams(), silentAuth, routerAuthJudge, pageHandle() ],
     ['GET', '/inform', clientParams(),   routerAuthJudge, personSeting, pageHandle() ],
     ['GET', '/wxcode', clientParams(),  pageHandle() ],
 ];

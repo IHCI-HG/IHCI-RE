@@ -1,7 +1,8 @@
 var _ = require('underscore'),
     resProcessor = require('../components/res-processor/res-processor'),
     proxy = require('../components/proxy/proxy'),
-    conf = require('../conf');
+    conf = require('../conf'),
+    envi = require('../components/envi/envi');
 const crypto = require('crypto-js');
 
 
@@ -247,6 +248,7 @@ const setUserInfo = async (req, res, next) => {
     const result = await UserDB.updateUser(userId, {
         personInfo: personInfoObj
     })
+    console.log(result)
     if(result) {
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '设置成功' },
@@ -340,7 +342,12 @@ const unbindWechat = async (req, res, next) => {
             unionid: '',
             openid: '',
             subState: false,
+            wxUserInfo: null,
         })
+        if(envi.isWeixin(req)&&result.unionid===''){
+            req.rSession.userId = undefined
+        }
+        res.redirect('/person')
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '设置成功' },
             data: {

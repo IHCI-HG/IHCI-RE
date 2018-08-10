@@ -549,7 +549,7 @@ export default class Topic extends React.Component{
                                             <div className="infrom">请选择要通知的人：</div>
                                             <MemberChosenList choseHandle={this.memberChoseHandle} memberList={this.state.memberList}/>
                                             <div className="button-warp" >
-                                                <div className="save-btn" onClick={this.createDiscussHandle}>发表</div>
+                                                <div className="save-btn" onClick={()=>{setTimeout(this.createDiscussHandle.bind(this),400)}}>发表</div>
                                                 <div className="cancel-btn" onClick={() => { this.setState({ createDiscussContent: '',createDiscussChosen: false }) }}>取消</div>
                                             </div>
                                         </div>
