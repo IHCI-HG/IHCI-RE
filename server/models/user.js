@@ -49,7 +49,12 @@ userSchema.statics = {
         }
     },
     createUser: async function(username, password, userInfo = {}) {
-        const result = await this.findOne({username: username}).exec()
+        if(username === null){
+            var result = await this.findOne({unionid:userInfo.unionid}).exec()
+        }
+        else{
+            var result = await this.findOne({username: username}).exec()
+        }
         if(result) {
             return null
         } else {
@@ -71,10 +76,6 @@ userSchema.statics = {
     },
     findByUserId: async function(userId) {
         const result = await this.findById(userId)
-        return result
-    },
-    findByOldId: async function(oldId) {
-        const result = await this.findOne({oldId: oldId}).exec()
         return result
     },
     baseInfoById: async function(userId) {
