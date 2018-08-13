@@ -117,182 +117,51 @@ export default class Person extends React.Component{
         hasMail: false,
         sendMailEnabled: true,
 
-        loginBlock:'',
         username:'',
         password:'',
-        createUsername: '',
-        createPassword: '',
-        createConfirmPassword:'',
         infoCheck:{
-            createUsernameEmpty: true,
-            createPasswordEmpty:true,
-            createConfirmPasswordEmpty: true,
-            usernameEmpty:true,
-            passwordEmpty:true
+            illegalUsername:false,
+            illegalPassword:false
         },
     }
 
-    setTologinHandle = () => {
-        if(this.state.loginBlock !=="login"){
-            this.setState({
-                loginBlock:"login"
-              });
-        }else{
-            this.setState({
-                loginBlock:''
-            });
-        }
-
-        
-    }
-    setTosignUpHandle = () => {
-        if(this.state.loginBlock !=="signUp"){
-            this.setState({
-                loginBlock:"signUp"
-            });
-        }else{
-            this.setState({
-                loginBlock:''
-            });
-        }    
-    }
+    
     usernameHandle = (e) => {
         const username = e.target.value;
-        var usernameEmpty = true;
+        var illegalUsername = true;
+        /*
         if(username){
             usernameEmpty = false
         }else{
             usernameEmpty = true
-        }
+        }*/
         this.setState({  
             username: e.target.value,
             infoCheck:{
                 ...this.state.infoCheck,
-                usernameEmpty:usernameEmpty
+                illegalUsername:illegalUsername
             }
         })
     }
     passwordHandle = (e) => {
         const password = e.target.value
-        var passwordEmpty = true
+        var illegalPassword = true
+        /*
         if(password){
             passwordEmpty = false
         }else{
             passwordEmpty = true
         }
+        */
         this.setState({
             password: password,
             infoCheck:{
                 ...this.state.infoCheck,
-                passwordEmpty:passwordEmpty
+                illegalPassword:illegalPassword
             }
         })
     }
-    createUsernameHandle = (e) => {
-        const createUsername = e.target.value
-        var createUsernameEmpty = true
-        if(createUsername){
-            createUsernameEmpty = false
-        }else{
-            createUsernameEmpty = true
-        }
-        this.setState({
-            createUsername: createUsername,
-            infoCheck:{
-                ...this.state.infoCheck,
-                createUsernameEmpty:createUsernameEmpty
-            }
-        })
-    }
-    createPasswordHandle = (e) =>{
-        const createPassword = e.target.value
-        var createPasswordEmpty = true
-        if(createPassword){
-            createPasswordEmpty = false
-        }else{
-            createPasswordEmpty = true
-        }
-        this.setState({
-            createPassword: createPassword,
-            infoCheck:{
-                ...this.state.infoCheck,
-                createPasswordEmpty:createPasswordEmpty
-            }
-        })
-    }
-    createConfirmPasswordHandle = (e) =>{
-        const confirmPassword = e.target.value
-        var createConfirmPasswordEmpty = true
-        if(confirmPassword){
-            createConfirmPasswordEmpty = false
-        }else{
-            createConfirmPasswordEmpty = true
-        }
-        this.setState({
-            createConfirmPassword:e.target.value,
-            infoCheck:{
-                ...this.state.infoCheck,
-                createConfirmPasswordEmpty:createConfirmPasswordEmpty
-            }
-        })
-    }
-    loginHandle = async () => {
-        if(this.state.infoCheck.usernameEmpty){
-            window.toast("用户名为空")
-            return
-        }
-        if(this.state.infoCheck.passwordEmpty){
-            window.toast("密码为空")
-            return
-        }
-
-        const result = await authApi(this.state.username, this.state.password, this.state.userObj.unionid)
-        if(result.state.code === 0) {
-            window.toast("成功")
-            setTimeout(() => {
-                location.href = '/person'
-            }, 1000)   
-        } else {
-            window.toast(result.state.msg || "失败")
-        }
-    }
-    signUpHandle = async () => {
-        if(this.state.infoCheck.createUsernameEmpty){
-            window.toast("用户名为空")
-            return
-        }
-        if(this.state.infoCheck.createPasswordEmpty){
-            window.toast("密码为空")
-            return
-        }
-        if(this.state.infoCheck.createConfirmPasswordEmpty){
-            window.toast("确认密码为空")
-            return 
-        }
-        if(this.state.createPassword !== this.state.createConfirmPassword){
-            window.toast("两次输入密码不同")
-            return
-        }
-        const result = await api('/api/user/SignUpAndBindWx', {
-            method: 'POST',
-            body: {
-                userInfo: {
-                    username: this.state.createUsername,
-                    password: this.state.createPassword,
-                    unionid: this.state.userObj.unionid,
-                }
-            }
-        })
-        if(result.state.code === 0) {
-            window.toast("注册成功")
-            setTimeout(() => {
-                location.href = '/person'
-            }, 300);
-        }
-        else{
-            window.toast(result.state.msg || "注册失败")
-        }
-    }
+    
     headImgInputHandle = (e) => {
         this.setState({
             personInfo: {
@@ -383,7 +252,6 @@ export default class Person extends React.Component{
         })
     }
 
-
     openWxLoginHandle = () => {
         this.setState({
             showWxLogin: true
@@ -448,8 +316,15 @@ export default class Person extends React.Component{
                 originPersonInfo: this.state.originPersonInfo,
             }
         })
+        const result2 = await api('api/fillUsernameAndPwd',{
+            method: 'POST',
+            body: {
+                username:this.state.username,
+                password:this.state.password,
+            }
+        })
         console.log(result1)
-        if(result.state.code === 0) {
+        if(result.state.code === 0 && result2.state.code ===0) {
             if(INIT_DATA.userObj.personInfo){
                 window.toast("设置成功")
             }
@@ -601,36 +476,14 @@ export default class Person extends React.Component{
                         <div className="create-btn" onClick={this.openFileInput}> 上传图片 </div>
                     </div>
                 </div>
-                
                 {
-                    !this.state.userObj.username?
-                    <div className="auth-nav"> 
-                       <div className = "auth-nav-item" onClick={this.setTologinHandle}>绑定已有平台账号</div>
-                       <div className = "auth-nav-item" onClick={this.setTosignUpHandle}>注册平台账号</div>
-                    </div>
-                       :"" 
-                }
-                {
-                    this.state.loginBlock === "login"?
-                    <div className="loginBlock">
-                    <div className ="login-desc">Enter username: </div>
-                    <input className="login-input" value={this.state.username} onChange={this.usernameHandle}></input>
-                    <div className ="login-desc">Enter password: </div>
-                    <input className="login-input" type="password" value={this.state.password} onChange={this.passwordHandle}></input>
-                    <div className="login-btn" onClick={this.loginHandle}>LoginAndBind</div>
-                    </div>
-                    :""
-                }
-                {
-                    this.state.loginBlock === "signUp"?
-                    <div className="signBlock">
-                    <div className="login-desc">Your username: </div>
-                    <input className="login-input" value={this.state.createUsername} onChange={this.createUsernameHandle}></input>
-                    <div className = "login-desc">Your password: </div>
-                    <input className="login-input" type="password" value={this.state.createPassword} onChange={this.createPasswordHandle}></input>
-                    <div className="login-desc">Confirm Password: </div>
-                    <input className="login-input" type="password" value={this.state.createConfirmPassword} onChange={this.createConfirmPasswordHandle}></input>
-                    <div className="login-btn" onClick={this.signUpHandle}>SignUpAndBind</div>
+                    !this.state.username ?
+                    <div className = "edit-con">
+                    <div className = "before">账号：</div>
+                    <input className = "input-edit" value={this.state.username} onChange={this.usernameHandle}></input>
+                    <br/>
+                    <div className = "before">密码：</div>
+                    <input className="input-edit" type="password" value={this.state.password} onChange={this.passwordHandle}></input>
                     </div>
                     :""
                 }
