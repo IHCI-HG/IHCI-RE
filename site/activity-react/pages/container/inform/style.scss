@@ -92,13 +92,21 @@
                 }
             }
         }
-        .group-div{
+        .group-div {
             position: relative;
         }
-        .read-box{
+        .group-box{
            position: absolute;
            top:35px;
         }
+        .item-div{
+            position: relative;
+        }
+        .item-box{
+            position: absolute;
+            top:25px; 
+        }
+
         .group-line {
             
             display: flex;
@@ -127,6 +135,7 @@
     display: flex;
     align-items: flex-start;
     margin-bottom: 20px;
+    margin-left: 35px;
     cursor: pointer;
     .head-img {
         flex-shrink: 0;

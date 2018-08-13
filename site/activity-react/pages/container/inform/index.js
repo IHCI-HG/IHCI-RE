@@ -376,14 +376,14 @@ groupInfoRead = (id) =>{
                                                 return (
                                                     <div className="group-div" key={'group-line-' + timeKey + teamKey}>
                                                         {/* 分组线 */}
-                                                        <div className="read-box"><ReadBox choseHandle={this.groupInfoRead} item={teamKey}/></div>
+                                                        <div className="group-box"><ReadBox choseHandle={this.groupInfoRead} item={teamKey}/></div>
                                                         <div className="group-line">{showList[timeKey][teamKey].teamName}</div>
                                                         {
                                                             showList[timeKey][teamKey].infsList.map((item) => {
                                                                 // console.log(item)
                                                                 return (
-                                                                    <div key={item.noticeId}>
-                                                                    {/* <ReadBox  key={'read-box-' + item.noticeId}  choseHandle={this.groupInfoRead} item={item}/> */}
+                                                                    <div className="item-div" key={item.noticeId}>
+                                                                    <div className="item-box"><ReadBox choseHandle={this.groupInfoRead} item={item}/></div>
                                                                     <InformItem locationTo={this.locationTo} key={'inform-' + item.noticeId} {...item} onClick={() => {}}/>
                                                                     </div>
                                                                 )
