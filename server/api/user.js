@@ -161,9 +161,6 @@ const loginAndBindWx = async (req, res, next) => {
         var userId = result1._id.toString()
         delete result1._id
         await UserDB.updateUser(userId,result1)
-        findResult.teamList.map(async(item)=>{
-            await teamDB.delMember(item.teamId,wxUserId)
-        })
         result1.teamList.map(async(item)=>{
             const team = teamDB.findByTeamId(item.teamId).toObject()
             const isMember = team.memberList.filter((user)=>{
@@ -172,6 +169,9 @@ const loginAndBindWx = async (req, res, next) => {
             if(isMember === []){
                 await teamDB.addMember(item.teamId,userId,item.role)
             }
+        })
+        findResult.teamList.map(async(item)=>{
+            await teamDB.delMember(item.teamId,wxUserId)
         })
         req.rSession.userId = userId
         resProcessor.jsonp(req, res, {
