@@ -107,21 +107,37 @@ const changeTopicCreator = async (req, res, next) => {
         let result2 = []
         let result3 = []
         timelineObj.map(async(item)=>{
-            item.creator = personInfo
+            item.creator.headImg = personInfo.headImg
+            item.creator.name = personInfo.name
+            item.creator.phone = personInfo.phone
+            item.creator.mail = personInfo.mail
             await timelineDB.updateTimeline(item._id, item)
         })
         discussObj.map(async(item,index)=>{
-            item.creator = personInfo
+            item.creator.headImg = personInfo.headImg
+            item.creator.name = personInfo.name
+            item.creator.phone = personInfo.phone
+            item.creator.mail = personInfo.mail
             result3[index] = await discussDB.updateDiscuss(item._id, item)
             result2[index] = await topicDB.updateDiscuss(item.topicId,item._id,item.content,item.fileList,personInfo)
         })
         let topicObj = await topicDB.findByTopicCreatorId(userId)
         topicObj.map(async(item,index)=>{
-            item.creator = personInfo
+            item.creator.headImg = personInfo.headImg
+            item.creator.name = personInfo.name
+            item.creator.phone = personInfo.phone
+            item.creator.mail = personInfo.mail
             result[index] = await topicDB.updateTopic(item._id, item)
             result1[index] = await teamDB.updateTopic(item.team, item._id, item)
         })
-        
+        let userObj = await userDB.findByUserId(userId)
+        userObj.noticeList.map(async(item)=>{
+            item.creator.headImg = personInfo.headImg
+            item.creator.name = personInfo.name
+            item.creator.phone = personInfo.phone
+            item.creator.mail = personInfo.mail
+        })
+        await userDB.updateUser(userId,userObj)
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
             data: {
@@ -177,7 +193,17 @@ const editTopic = async (req, res, next) => {
         const teamObj = await teamDB.findByTeamId(teamId)
         await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'EDIT_TOPIC', result1._id, result1.title, result1)
         //todo 还要在timeline表中增加项目
+        console.log(result1);
+        if(informList && informList.length) {
+            //replyTopicTemplate(informList, result1)
 
+            //添加通知
+            informList.map((item) => {
+                userDB.addEditTopicNotice(item, result1, teamObj.name)
+            })
+            //notificationMail(informList, result1, "修改了讨论")
+
+        }
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
             data: {
@@ -282,6 +308,7 @@ const editDiscuss = async (req, res, next) => {
         discussObj.fileList = fileList || discussObj.fileList;
 
         const result = await discussDB.updateDiscuss(discussId, discussObj)
+        console.log(result)
         await topicDB.updateDiscuss(topicId, discussId, content,discussObj.fileList,discussObj.creator)
 
         const userObj = await userDB.baseInfoById(userId)
@@ -289,7 +316,16 @@ const editDiscuss = async (req, res, next) => {
         const teamObj = await teamDB.findByTeamId(teamId)
         await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'EDIT_REPLY', result._id, topicObj.title, result)
         console.log(teamId, teamObj.name, userObj, 'EDIT_REPLY', result._id, topicObj.title, result)
+        
+        if(informList && informList.length) {
+            //replyTopicTemplate(informList, result)
+            //添加通知
+            informList.map((item) => {
+                userDB.addEditReplyNotice(item, result, teamObj.name)
+            })
+            //notificationMail(informList, result, "编辑了回复")
 
+        }
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
             data: result

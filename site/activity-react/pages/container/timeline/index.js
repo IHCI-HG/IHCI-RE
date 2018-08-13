@@ -100,8 +100,8 @@ class TimelineItem extends React.PureComponent{
 
         'COPY_TASK': '复制了任务：',
         'MOVE_TASK': '移动了任务：',
-        'EDIT_TOPIC': '编辑了回复：',
-        'EDIT_REPLY': '编辑了话题：',
+        'EDIT_TOPIC': '编辑了话题：',
+        'EDIT_REPLY': '编辑了回复：',
         'CREATE_TASKLIST':'创建了清单：',
         'DELETE_TASKLIST':'删除了清单：',
 

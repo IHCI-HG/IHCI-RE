@@ -1,7 +1,8 @@
 var _ = require('underscore'),
     resProcessor = require('../components/res-processor/res-processor'),
     proxy = require('../components/proxy/proxy'),
-    conf = require('../conf');
+    conf = require('../conf'),
+    envi = require('../components/envi/envi');
 const crypto = require('crypto-js');
 
 
@@ -144,20 +145,22 @@ const loginAndBindWx = async (req, res, next) => {
         return
     }
     const result = await UserDB.authJudge(username, password)
-    const result1 = (await UserDB.findByUsername(username)).toObject()
-    result1.username = username
-    result1.password = password
-    result1.unionid = unionid
-    result1.oldId = result1._id.toString()
-    delete result1._id
+    
     if(result) {
-        await UserDB.delUserByUsername(username)
         const findResult = await UserDB.findByUnionId(unionid)
+        const wxUserId = findResult._id
+        const userDBresult = await UserDB.delUserById(wxUserId)
+        const result1 = (await UserDB.findByUsername(username)).toObject()
+        result1.username = username
+        result1.password = password
+        result1.unionid = unionid
+        result1.wxUserInfo = findResult.wxUserInfo
         result1.noticeList = [...result1.noticeList, ...findResult.noticeList]
         result1.teamList = [...result1.teamList, ...findResult.teamList]
-        const userId = findResult._id
-        const userDBresult = await UserDB.updateUser(userId, result1)
-        req.rSession.userId = findResult._id
+        var userId = result1._id.toString()
+        delete result1._id
+        await UserDB.updateUser(userId,result1)    
+        req.rSession.userId = userId
         resProcessor.jsonp(req, res, {
             state: { code: 0 },
             data: {
@@ -245,6 +248,7 @@ const setUserInfo = async (req, res, next) => {
     const result = await UserDB.updateUser(userId, {
         personInfo: personInfoObj
     })
+    console.log(result)
     if(result) {
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '设置成功' },
@@ -338,7 +342,11 @@ const unbindWechat = async (req, res, next) => {
             unionid: '',
             openid: '',
             subState: false,
+            wxUserInfo: null,
         })
+        if(envi.isWeixin(req)&&result.unionid===''){
+            req.rSession.userId = undefined
+        }
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '设置成功' },
             data: {
