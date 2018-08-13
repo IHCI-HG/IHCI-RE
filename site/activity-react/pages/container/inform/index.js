@@ -4,6 +4,7 @@ import './style.scss'
 import api from '../../../utils/api';
 import { timeParse, formatDate } from '../../../utils/util'
 import Page from '../../../components/page'
+import ReadBox from '../../container/readBox'
 
 const newInformItemNum = 5
 const moreInformItemNum = 3
@@ -348,6 +349,9 @@ export default class Infs extends React.Component{
 //</div>
 //<div className="group-line">{showList[timeKey][teamKey].teamName}</div>
 
+groupInfoRead = (id) =>{
+    console.log(id)
+}
       render() {
         const showList = this.state.showList
         const userId = this.props.personInfo._id
@@ -368,16 +372,20 @@ export default class Infs extends React.Component{
                                         {
                                             showList[timeKey].teamKeyList.map((teamKey) => {
                                                 // console.log(showList[timeKey][teamKey].teamName)
+                                                //choseHandle={this.memberChoseHandle}
                                                 return (
-                                                    <div key={'group-line-' + timeKey + teamKey}>
+                                                    <div className="group-div" key={'group-line-' + timeKey + teamKey}>
                                                         {/* 分组线 */}
+                                                        <div className="read-box"><ReadBox choseHandle={this.groupInfoRead} item={teamKey}/></div>
                                                         <div className="group-line">{showList[timeKey][teamKey].teamName}</div>
                                                         {
                                                             showList[timeKey][teamKey].infsList.map((item) => {
                                                                 // console.log(item)
                                                                 return (
-
+                                                                    <div key={item.noticeId}>
+                                                                    {/* <ReadBox  key={'read-box-' + item.noticeId}  choseHandle={this.groupInfoRead} item={item}/> */}
                                                                     <InformItem locationTo={this.locationTo} key={'inform-' + item.noticeId} {...item} onClick={() => {}}/>
+                                                                    </div>
                                                                 )
                                                             })
                                                         }

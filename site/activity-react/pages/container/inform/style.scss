@@ -92,8 +92,15 @@
                 }
             }
         }
-
+        .group-div{
+            position: relative;
+        }
+        .read-box{
+           position: absolute;
+           top:35px;
+        }
         .group-line {
+            
             display: flex;
             align-items: center;
             padding: 36px 0 44px 10px;
@@ -106,6 +113,7 @@
                 flex-grow: 1;
                 border-bottom: 1px solid #e6e6e6; /*no*/
                 margin-right: 20px;
+                margin-left: 30px
             }
         }
         .infs-list {
