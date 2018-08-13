@@ -2,9 +2,8 @@
 # git pull
 
 # # 清除旧代码
-# rm -rf public 
-# rm -rf dest
-
+rm -rf dest
+rm -rf dest.zip
 # 编译服务器代码 
 gulp
 
@@ -13,3 +12,5 @@ npm run build
 
 # 复制文件到执行目录
 cp -r public/ dest/public
+
+zip -q -r dest.zip dest
