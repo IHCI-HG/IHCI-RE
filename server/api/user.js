@@ -20,6 +20,7 @@ import {
 } from '../components/wx-utils/wx-utils'
 
 var mongoose = require('mongoose')
+var teamDB = mongoose.model('team')
 var UserDB = mongoose.model('user')
 var followerDB = mongoose.model('follower')
 const sortByCreateTime = function(a,b){
@@ -159,7 +160,19 @@ const loginAndBindWx = async (req, res, next) => {
         result1.teamList = [...result1.teamList, ...findResult.teamList]
         var userId = result1._id.toString()
         delete result1._id
-        await UserDB.updateUser(userId,result1)    
+        await UserDB.updateUser(userId,result1)
+        result1.teamList.map(async(item)=>{
+            const team = teamDB.findByTeamId(item.teamId).toObject()
+            const isMember = team.memberList.filter((user)=>{
+                return user.userId===userId
+            })
+            if(isMember === []){
+                await teamDB.addMember(item.teamId,userId,item.role)
+            }
+        })
+        findResult.teamList.map(async(item)=>{
+            await teamDB.delMember(item.teamId,wxUserId)
+        })
         req.rSession.userId = userId
         resProcessor.jsonp(req, res, {
             state: { code: 0 },
@@ -347,7 +360,6 @@ const unbindWechat = async (req, res, next) => {
         if(envi.isWeixin(req)&&result.unionid===''){
             req.rSession.userId = undefined
         }
-        res.redirect('/person')
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '设置成功' },
             data: {

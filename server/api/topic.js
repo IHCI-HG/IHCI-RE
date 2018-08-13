@@ -27,6 +27,8 @@ const createTopic = async (req, res, next) => {
     const informList = req.body.informList
     const userId = req.rSession.userId
 
+    console.log("req.body:   "+req.body.informList);
+
 
     if(!topicName || !topicContent) {
         resProcessor.jsonp(req, res, {
@@ -44,7 +46,7 @@ const createTopic = async (req, res, next) => {
         await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'CREATE_TOPIC', result._id, result.title, result)
 
         //如果有需要通知的人，则走微信模板消息下发流程
-        console.log(informList)
+        console.log("informList:"+informList)
         if(informList && informList.length) {
             createTopicTemplate(informList, result)
 
@@ -58,11 +60,11 @@ const createTopic = async (req, res, next) => {
             //     userDB.addCreateNotice(reader, result)
 
             // })
-            console.log('\n\n')
-            console.log(userObj.teamList)
-            console.log('\n\n')
-            console.log(userObj.noticeList)
-            console.log('\n\n')
+            // console.log('\n\n')
+            // console.log("teamList:"+ userObj.teamList)
+            // console.log('\n\n')
+            // console.log("noticeList:"+userObj.noticeList)
+            // console.log('\n\n')
             notificationMail(informList, result, "创建了讨论")
         }
 
@@ -306,7 +308,7 @@ const editDiscuss = async (req, res, next) => {
         discussObj.fileList = fileList || discussObj.fileList;
 
         const result = await discussDB.updateDiscuss(discussId, discussObj)
-        console.log(result)
+        //console.log(result)
         await topicDB.updateDiscuss(topicId, discussId, content,discussObj.fileList,discussObj.creator)
 
         const userObj = await userDB.baseInfoById(userId)

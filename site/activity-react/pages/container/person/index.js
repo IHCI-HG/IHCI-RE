@@ -39,7 +39,7 @@ export default class Person extends React.Component{
             })
         }
 
-        if(this.props.location.query.alreadyBind) {
+        if(this.props.location.query.alreadyBind&&INIT_DATA.userObj.wxUserInfo) {
             window.toast("该微信号已经绑定")
             history.pushState({}, {}, '/person')
         }
@@ -634,6 +634,7 @@ export default class Person extends React.Component{
                     </div>
                     :""
                 }
+                {
                 <div className="edit-con">
                     <div className="before">微信</div>
 
@@ -653,14 +654,14 @@ export default class Person extends React.Component{
                     
                     }
                 </div>
-
+                }
+                {this.state.userObj.unionid ?
                 <div className="edit-con">
-                    {this.state.userObj.unionid ?<div className="before">服务号</div>:""}
-                    {this.state.userObj.unionid ? ( !INIT_DATA.isWeixin && !this.state.userObj.subState ? <div className="bind-wx ">未关注</div> : <div className="bind-wx act">已关注</div>):""} 
-                    {this.state.userObj.unionid && !INIT_DATA.isWeixin && !this.state.userObj.subState && <div className='after'>需要<div className='follow-btn' onClick={this.openFollowDialogHandle}>关注服务号</div>才能接受讨论消息提醒</div>}
-                    
-                </div>
-
+                    <div className="before">服务号</div>:""
+                    {!INIT_DATA.isWeixin && !this.state.userObj.subState ? <div className="bind-wx ">未关注</div> : <div className="bind-wx act">已关注</div>}
+                    {!INIT_DATA.isWeixin && !this.state.userObj.subState && <div className='after'>需要<div className='follow-btn' onClick={this.openFollowDialogHandle}>关注服务号</div>才能接受讨论消息提醒</div>}   
+                </div>:""
+                }
                 <div className="edit-con">
                     <div className="before">名字</div>
                     <input type="text" onChange={this.nameInputHandle} className="input-edit"  value={this.state.personInfo.name}/>
@@ -718,7 +719,7 @@ export default class Person extends React.Component{
                 }
 
                 {
-                    this.state.showFollow && <FollowDialog closeHandle={this.closeFollowDialogHandle}/>
+                    this.state.showFollow && <FollowDialog subState = {this.userObj.subState} closeHandle={this.closeFollowDialogHandle}/>
                 }
 
             </Page>

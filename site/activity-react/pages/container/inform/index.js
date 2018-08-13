@@ -14,6 +14,7 @@ class InformItem extends React.PureComponent{
     typeMap = {
         'CREATE_TOPIC': '创建了讨论：',
         'REPLY_TOPIC': '回复了讨论：',
+        'CREATE_TASK': '创建任务：',
         'EDIT_TOPIC': '修改了讨论: ',
         'EDIT_REPLY': '编辑了回复: ',
     }
@@ -30,11 +31,14 @@ class InformItem extends React.PureComponent{
                 }
             })
             // console.log(result)
+
             this.setState( () => {
               if (this.props.type == 'CREATE_TOPIC')
                 this.props.locationTo('/discuss/topic/' + this.props.topicId)
               if (this.props.type == 'REPLY_TOPIC')
-                this.props.locationTo('/discuss/topic/' + this.props.topicId)
+                this.props.locationTo('/discuss/topic/' + this.props.topicId)            
+              if (this.props.type == 'CREATE_TASK')
+                this.props.locationTo('/todo/' + this.props.noticeId)
               if(this.props.type == 'EDIT_TOPIC')
               this.props.locationTo('/discuss/topic/' + this.props.topicId)
               if(this.props.type == 'EDIT_REPLY')
@@ -126,6 +130,7 @@ export default class Infs extends React.Component{
       typeMap = {
           'CREATE_TOPIC': '创建了讨论：',
           'REPLY_TOPIC': '回复了讨论：',
+          'CREATE_TASK': '创建任务',
           'EDIT_TOPIC': '修改了讨论：',
           'EDIT_REPLY': '编辑了回复: ',
       }

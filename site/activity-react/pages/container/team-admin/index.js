@@ -3,6 +3,7 @@ import './style.scss'
 import api from '../../../utils/api';
 import Page from '../../../components/page'
 import fileUploader from '../../../utils/file-uploader';
+import {create} from '../../../../../server/components/uuid/uuid'
 
 export default class TeamAdmin extends React.Component{
     componentDidMount = async() => {
@@ -210,16 +211,15 @@ export default class TeamAdmin extends React.Component{
     
     uploadFileHandle = async (e) => {
         var file = e.target.files[0];
-
         var arr = file.name.split('.')
         var type = arr.pop()
         if(type != 'jpg' && type != 'jpeg' && type != 'png') {
             window.toast("文件格式必须是JPG，JPEG或PNG")
             return 
         }
-        var newFile = new File([file],this.teamId+file.name)
-
-        var ossKey = Date.now()+'/'+newFile.name
+        var nameParts = file.name.split('.')
+        var ossKey = this.teamId + '/' + create() + '.' + nameParts[nameParts.length-1]
+        var newFile = new File([file],ossKey)
         var succeeded;
         const uploadResult = fileUploader(newFile,ossKey)
         await uploadResult.then(function(val) {
