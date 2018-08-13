@@ -287,7 +287,11 @@ const createTask = async (req, res, next) => {
     const tasklistId = req.body.listId || "";
     const taskDeadline = req.body.ddl || "";
     const taskHeader = req.body.assigneeId || "";
-    console.log(userId)
+    const taskId = req.body.taskId
+
+    const informList = req.body.informList;
+
+    console.log("userId:   "+userId)
 
     if (!taskTitle) {
         resProcessor.jsonp(req, res, {
@@ -301,9 +305,14 @@ const createTask = async (req, res, next) => {
         const userObj = await userDB.findByUserId(userId);
         const simpleUser = {
             _id: userObj._id,
-            name: userObj.username
+            //name: userObj.username
+            name: userObj.personInfo.name,
+            headImg: userObj.personInfo.headImg,
+            
         }
         const result = await taskDB.createTask(taskTitle, taskContent, simpleUser, fileList, teamId, tasklistId, taskDeadline, taskHeader);
+
+        const taskOb = await taskDB.findByTaskId(taskId)
 
         //6.28
         if (teamId) {
@@ -311,6 +320,8 @@ const createTask = async (req, res, next) => {
             const baseInfoObj = await userDB.baseInfoById(userId)
             await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'CREATE_TASK', result._id, result.title, result)
         }
+
+
 
         if (tasklistId) {
             //如果是有清单的则在清单中添加
@@ -344,6 +355,14 @@ const createTask = async (req, res, next) => {
             const user = await userDB.findByUserId(taskHeader)
             const headername = user.username
             createTaskTemplate(headerList, result, headername)
+
+            //网页通知
+            const teamObj = await teamDB.findByTeamId(teamId);
+
+            console.log("informList:"+informList)      
+            await Promise.all(headerList.map(async (item) => {
+                await userDB.addCreateTask(item, result, teamObj.title)
+            }));
         }
 
         resProcessor.jsonp(req, res, {
