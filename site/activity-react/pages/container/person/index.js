@@ -39,7 +39,7 @@ export default class Person extends React.Component{
             })
         }
 
-        if(this.props.location.query.alreadyBind) {
+        if(this.props.location.query.alreadyBind&&INIT_DATA.userObj.wxUserInfo) {
             window.toast("该微信号已经绑定")
             history.pushState({}, {}, '/person')
         }

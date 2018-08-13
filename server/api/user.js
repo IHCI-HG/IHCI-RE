@@ -347,7 +347,6 @@ const unbindWechat = async (req, res, next) => {
         if(envi.isWeixin(req)&&result.unionid===''){
             req.rSession.userId = undefined
         }
-        res.redirect('/person')
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '设置成功' },
             data: {
