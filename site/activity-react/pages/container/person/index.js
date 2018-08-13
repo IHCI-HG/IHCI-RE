@@ -657,13 +657,13 @@ export default class Person extends React.Component{
                 }
                 {this.state.userObj.unionid ?
                 <div className="edit-con">
-                    <div className="before">服务号</div>:""
-                    {!INIT_DATA.isWeixin && !this.state.userObj.subState ? <div className="bind-wx ">未关注</div> : <div className="bind-wx act">已关注</div>}
-                    {!INIT_DATA.isWeixin && !this.state.userObj.subState && <div className='after'>需要<div className='follow-btn' onClick={this.openFollowDialogHandle}>关注服务号</div>才能接受讨论消息提醒</div>}   
+                    <div className="before">服务号</div>
+                    {!this.state.userObj.subState ? <div className="bind-wx ">未关注</div> : <div className="bind-wx act">已关注</div>}
+                    {!this.state.userObj.subState && <div className='after'>需要<div className='follow-btn' onClick={this.openFollowDialogHandle}>关注服务号</div>才能接受讨论消息提醒</div>}   
                 </div>:""
                 }
                 <div className="edit-con">
-                    <div className="before">名字</div>
+                    <div className="before">姓名</div>
                     <input type="text" onChange={this.nameInputHandle} className="input-edit"  value={this.state.personInfo.name}/>
                     {this.state.infoCheck.illegalName && <div className='after error'>名字以不超过12个的英文、汉字、数字、下划线与短横构成，并以中文或英文开头</div>}
                 </div>
@@ -713,7 +713,7 @@ export default class Person extends React.Component{
                 {
                     !INIT_DATA.isWeixin&&<div className="save-btn" onClick={this.logOutHandle}>登出</div>
                 }
-                <div className="save-btn" onClick={()=>{location.href = '/team-management'}}>团队管理</div>
+                
                 {
                     this.state.showWxLogin && <WxLoginDialog state="bind" closeHandle={this.closeWxLoginHandle}/>
                 }
