@@ -41,7 +41,6 @@ class InformItem extends React.PureComponent{
                 this.props.locationTo('/discuss/topic/' + this.props.topicId)            
               if (this.props.type == 'CREATE_TASK')
                 this.props.locationTo('/todo/' + this.props.noticeId)
-                this.props.locationTo('/discuss/topic/' + this.props.topicId)
               if(this.props.type == 'EDIT_TOPIC')
               this.props.locationTo('/discuss/topic/' + this.props.topicId)
               if(this.props.type == 'EDIT_REPLY')

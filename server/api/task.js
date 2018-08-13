@@ -307,6 +307,8 @@ const createTask = async (req, res, next) => {
             _id: userObj._id,
             //name: userObj.username
             name: userObj.personInfo.name,
+            headImg: userObj.personInfo.headImg,
+            
         }
         const result = await taskDB.createTask(taskTitle, taskContent, simpleUser, fileList, teamId, tasklistId, taskDeadline, taskHeader);
 
