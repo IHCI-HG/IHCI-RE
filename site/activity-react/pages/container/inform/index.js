@@ -16,6 +16,7 @@ class InformItem extends React.PureComponent{
     typeMap = {
         'CREATE_TOPIC': '创建了讨论：',
         'REPLY_TOPIC': '回复了讨论：',
+        'CREATE_TASK': '创建任务：',
     }
     changeReadState = async () => {
         const queryNoticeId = this.props.noticeId
@@ -30,11 +31,14 @@ class InformItem extends React.PureComponent{
                 }
             })
             // console.log(result)
+
             this.setState( () => {
               if (this.props.type == 'CREATE_TOPIC')
                 this.props.locationTo('/discuss/topic/' + this.props.noticeId)
               if (this.props.type == 'REPLY_TOPIC')
-                this.props.locationTo('/discuss/topic/' + this.props.topicId)
+                this.props.locationTo('/discuss/topic/' + this.props.topicId)            
+              if (this.props.type == 'CREATE_TASK')
+                this.props.locationTo('/todo/' + this.props.noticeId)
             })
 
     }
@@ -44,7 +48,7 @@ class InformItem extends React.PureComponent{
     }
     render(){
 
-      switch (this.props.type){
+      switch (this.props.type){       
         case 'CREATE_TOPIC':
             return (
                 <div className='infs-item-wrap' key={"infs-item-wrap-" + this.props._id} onClick={() => {this.toReadStateHandle()}}>
@@ -87,6 +91,22 @@ class InformItem extends React.PureComponent{
 
                 </div>
               )
+                //通知指派任务
+                case 'CREATE_TASK': 
+                return (
+                    <div className='infs-item-wrap' key={"infs-item-wrap-" + this.props._id} onClick={() => {this.toReadStateHandle()}}>
+                    <div className="date">{formatDate(this.props.create_time, 'MM月dd日')}</div>
+                      <img src={this.props.creator.headImg} alt="" className="head-img" />
+                      <div className='news-con'>
+                          <div className="des-line">
+                              <span className="name">{this.props.creator.name}</span>
+                              <span className="type">{this.typeMap[this.props.type]}</span>
+                              <span className="topic">{this.props.noticeTitle}</span>
+                              <span className="header"> 将任务指派给了你</span>
+                          </div>                              
+                      </div>
+                    </div>
+                )
               break;
           default:
               return ''
@@ -187,6 +207,7 @@ export default class Infs extends React.Component{
       typeMap = {
           'CREATE_TOPIC': '创建了讨论：',
           'REPLY_TOPIC': '回复了讨论：',
+          'CREATE_TASK': '创建任务',
       }
       state = {
           // type: create, reply

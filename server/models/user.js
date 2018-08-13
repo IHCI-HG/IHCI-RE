@@ -250,6 +250,29 @@ userSchema.statics = {
         ).exec()
     },
 
+    //task 通知
+    addCreateTask: async function(userId, taskObj, teamName) {
+        return this.update(
+            { _id: userId },
+            {
+                $addToSet: {
+                    noticeList: {
+                        create_time: taskObj.create_time,
+                        noticeId: taskObj._id,
+                        teamId: taskObj.team,
+                        teamName: teamName,
+                        creator: taskObj.creator,
+                        noticeTitle: taskObj.title,
+                        noticeContent: taskObj.content,
+                        type: "CREATE_TASK",
+                        readState: false,
+                    }
+                }
+            }
+        ).exec()
+    },
+
+
     // findNotice: async function(userId, noticeId){
     // ß
     //   const user = await this.find({$and:[{_id: userId}, {"noticeList.noticeId": notice}]}).exec()
