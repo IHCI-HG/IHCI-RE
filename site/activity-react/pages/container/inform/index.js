@@ -8,10 +8,7 @@ import ReadBox from '../../container/readBox'
 
 const newInformItemNum = 5
 const moreInformItemNum = 3
-//import { Router, Route, Link, browserHistory } from 'react-router'
-//import routerConf from '../router'
-//import Test from '../../test'
-//import TestEditor from '../../test-editor'
+
 class InformItem extends React.PureComponent{
 
     typeMap = {
@@ -45,16 +42,10 @@ class InformItem extends React.PureComponent{
             })
 
     }
-    toReadStateHandle = () => {
-
-       this.changeReadState()
-    }
     render(){
 
-      switch (this.props.type){
-        case 'CREATE_TOPIC':
             return (
-                <div className='infs-item-wrap' key={"infs-item-wrap-" + this.props._id} onClick={() => {this.toReadStateHandle()}}>
+                <div className='infs-item-wrap' key={"infs-item-wrap-" + this.props._id} onClick={() => {this.changeReadState()}}>
                 <div className="date">{formatDate(this.props.create_time, 'MM月dd日')}</div>
                   <img src={this.props.creator.headImg} alt="" className="head-img" />
 
@@ -66,86 +57,30 @@ class InformItem extends React.PureComponent{
                       </div>
                       <div className="BraftEditor-container">
                         <div className="content public-DraftEditor-content BraftEditor-content"  dangerouslySetInnerHTML={{__html: this.props.noticeContent}}>{}</div>
-                      </div>
-                      
+                      </div>                   
                   </div>
-
-
                 </div>
           )
-        case 'REPLY_TOPIC':
-            return (
-                <div className='infs-item-wrap' key={"infs-item-wrap-" + this.props._id} onClick={() => {this.toReadStateHandle()}}>
-                    <div className="date">{formatDate(this.props.create_time, 'MM月dd日')}</div>
-                    <img src={this.props.creator.headImg} alt="" className="head-img" />
-
-                    <div className="infs-con">
-                        <div className="des-line">
-                            <span className="name">{this.props.creator.name}</span>
-                            <span className="type">{this.typeMap[this.props.type]}</span>
-                            <span className="topic">{this.props.noticeTitle}</span>
-                        </div>
-
-                        <div className="BraftEditor-container">
-                            <div className="content public-DraftEditor-content BraftEditor-content"  dangerouslySetInnerHTML={{__html: this.props.noticeContent}}>{}</div>
-                        </div>
-                    </div>
-
-
-                </div>
-              )
-              case 'EDIT_TOPIC':
-              return (
-                <div className='infs-item-wrap' key={"infs-item-wrap-" + this.props._id} onClick={() => {this.toReadStateHandle()}}>
-                    <div className="date">{formatDate(this.props.create_time, 'MM月dd日')}</div>
-                    <img src={this.props.creator.headImg} alt="" className="head-img" />
-
-                    <div className="infs-con">
-                        <div className="des-line">
-                            <span className="name">{this.props.creator.name}</span>
-                            <span className="type">{this.typeMap[this.props.type]}</span>
-                            <span className="topic">{this.props.noticeTitle}</span>
-                        </div>
-
-                        <div className="BraftEditor-container">
-                            <div className="content public-DraftEditor-content BraftEditor-content"  dangerouslySetInnerHTML={{__html: this.props.noticeContent}}>{}</div>
-                        </div>
-                    </div>
-
-
-                </div>
-              )
-              case 'EDIT_REPLY':
-              return (
-                <div className='infs-item-wrap' key={"infs-item-wrap-" + this.props._id} onClick={() => {this.toReadStateHandle()}}>
-                    <div className="date">{formatDate(this.props.create_time, 'MM月dd日')}</div>
-                    <img src={this.props.creator.headImg} alt="" className="head-img" />
-
-                    <div className="infs-con">
-                        <div className="des-line">
-                            <span className="name">{this.props.creator.name}</span>
-                            <span className="type">{this.typeMap[this.props.type]}</span>
-                            <span className="topic">{this.props.noticeTitle}</span>
-                        </div>
-
-                        <div className="BraftEditor-container">
-                            <div className="content public-DraftEditor-content BraftEditor-content"  dangerouslySetInnerHTML={{__html: this.props.noticeContent}}>{}</div>
-                        </div>
-                    </div>
-
-
-                </div>
-              )
-              break;
-          default:
-              return ''
-      }
-    }
+        
+        }
 }
 export default class Infs extends React.Component{
-      componentWillMount = async() => {
 
-      }
+    state = {
+        unreadList: [],
+        isreadList: [],
+
+        activeTag: 'unread',
+        //???
+        showList: {
+            keyList : [],
+        },
+        readState:'',
+        //下拉更多
+        noResult: false,
+        noMoreResult: false,
+    }
+   
       componentDidMount = async() => {
 
         await this.initUnreadList()
@@ -239,37 +174,7 @@ export default class Infs extends React.Component{
           'EDIT_TOPIC': '修改了讨论：',
           'EDIT_REPLY': '编辑了回复: ',
       }
-      state = {
-          // type: create, reply
-          unreadList: [],
-          isreadList: [],
-
-          activeTag: 'unread',
-          showList: {
-              keyList : [],
-          },
-          readState:'',
-          noResult: false,
-          noMoreResult: false,
-      }
-
-  //    changeReadState ＝ async () => {
-          // const queryUserId = this.props.userId
-          // const queryNoticeId = this.props.noticeId
-
-        // const result = await api('/api/user/readNotice', {
-        //     method: 'POST',
-        //     body:{
-        //       // userId: queryUserId ? queryUserId : '',
-        //       // noticeId: queryNoticeId ? queryNoticeId : '',
-        //   }
-        // })
-   // const result = await api('/api/user/showReadList',{
-   //   method:'POST',
-   //   body:{}
-   // })
-   //    }
-
+     
       initIsreadList = async () => {
 
               const result = await api('/api/user/showReadList', {
@@ -288,12 +193,6 @@ export default class Infs extends React.Component{
               }, () =>{
                 this.appendToShowList(this.state.isreadList)
               })
-            //   if(result.data.length<newInformItemNum){
-            //     this.setState({
-            //       noResult: true
-            //     })
-            //   }
-            //   console.log(result)
           }
 
 
@@ -335,20 +234,21 @@ export default class Infs extends React.Component{
           })
 
       }
-  //  readStateHandle = () => {
-//      this.changeReadState()
-  //  }
-//<StateChoseItem key={'state' + this.readState} routerTo={this.routerTo} />
-//<div className="readStateChosen">
-//<div onClick={() => {location.href = '/inform?readState=unread'; this.getUnreadInform}} locationTo={this.locationTo}>
-  //  <div className={this.state.activeTag == 'unread'?'read-tag-item act':'read-tag-item'}>未读</div>
-//</div>
-//<div onClick={() => {location.href = '/inform?readState=isread'; this.getIsreadInform}} locationTo={this.locationTo}>
-  //  <div className={this.state.activeTag == 'isread'?'read-tag-item act':'read-tag-item'}>已读</div>
-//</div>
-//</div>
-//<div className="group-line">{showList[timeKey][teamKey].teamName}</div>
+ 
+changeReadState = async (item) => {
+    const queryNoticeId = item.noticeId
+    let rState = true
+    //this.state.queryUserId = userId?userId:'i dont get'
+        const result = await api('/api/user/readNotice', {
+            method: 'POST',
+            body:{
+              noticeId: queryNoticeId? queryNoticeId: '',
+              readState: rState
+              //userId: queryUserId? queryUserId: ''
+            }
+        })
 
+}
 groupInfoRead = (id) =>{
     console.log(id)
 }
@@ -363,6 +263,7 @@ groupInfoRead = (id) =>{
                 <div className="readStateChosen">
                     <div className={this.state.activeTag == 'unread'?'read-tag-item act':'read-tag-item'} onClick={this.toReadHandle.bind(this,"unread")}>未读</div>
                     <div className={this.state.activeTag == 'isread'?'read-tag-item act':'read-tag-item'} onClick={this.toReadHandle.bind(this,"isread")}>已读</div>
+                    <div className='read-tag-item'>标记为已读</div>
                 </div>
                         {
 
@@ -383,7 +284,7 @@ groupInfoRead = (id) =>{
                                                                 // console.log(item)
                                                                 return (
                                                                     <div className="item-div" key={item.noticeId}>
-                                                                    <div className="item-box"><ReadBox choseHandle={this.groupInfoRead} item={item}/></div>
+                                                                    <div className="item-box"><ReadBox choseHandle={this.changeReadState} item={item}/></div>
                                                                     <InformItem locationTo={this.locationTo} key={'inform-' + item.noticeId} {...item} onClick={() => {}}/>
                                                                     </div>
                                                                 )

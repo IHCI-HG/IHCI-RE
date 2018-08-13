@@ -5,7 +5,6 @@ import './style.scss'
 class ReadBox extends React.Component{
     render() {
             const item = this.props.item
-            console.log(item)
                         return (
                             <div key={"read-box-"+ item} className="read-box-item"  onClick={() => {this.props.choseHandle(item)}}>
                                 <div className="check-box">
