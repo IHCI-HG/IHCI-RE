@@ -306,7 +306,7 @@ const editDiscuss = async (req, res, next) => {
         discussObj.fileList = fileList || discussObj.fileList;
 
         const result = await discussDB.updateDiscuss(discussId, discussObj)
-        console.log(result)
+        //console.log(result)
         await topicDB.updateDiscuss(topicId, discussId, content,discussObj.fileList,discussObj.creator)
 
         const userObj = await userDB.baseInfoById(userId)
