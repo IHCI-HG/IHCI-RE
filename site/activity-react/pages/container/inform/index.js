@@ -71,10 +71,6 @@ export default class Infs extends React.Component{
         isreadList: [],
 
         activeTag: 'unread',
-        //???
-        showList: {
-            keyList : [],
-        },
         readState:'',
         //下拉更多
         noResult: false,
@@ -91,18 +87,15 @@ export default class Infs extends React.Component{
       }
 
       getMoreUnreadData = async () => {
-        const lastStamp = this.state.lastStamp
         const result = await api('/api/user/showUnreadList', {
             method: 'POST',
             body:{
-                timeStamp: lastStamp? lastStamp: '',
+                timeStamp: '',
             }
       })
       const unreadlist = result.data
       this.setState({
-          unreadList: unreadlist
-        }, () =>{
-          this.appendToShowList(unreadlist)
+          unreadList: this.state.unreadList.concat(unreadlist)
         })
         if(result.data.length<moreInformItemNum){
           this.setState({
@@ -113,18 +106,15 @@ export default class Infs extends React.Component{
       }
 
       getMoreIsreadData = async () => {
-        const lastStamp = this.state.lastStamp
         const result = await api('/api/user/showReadList', {
             method: 'POST',
             body:{
-              timeStamp: lastStamp? lastStamp: '',
+              timeStamp: '',
             }
         })
-        const readlist = result.data
+        const isreadList = result.data
         this.setState({
-            isreadList: readlist
-        }, () =>{
-            this.appendToShowList(readlist)
+            isreadList: this.state.isreadList.concat(isreadList)
         })
         if(result.data.length<moreInformItemNum){
           this.setState({
@@ -133,41 +123,6 @@ export default class Infs extends React.Component{
         }
       }
 
-      appendToShowList = (list) => {
-          let showList = this.state.showList
-          var listLength = list.length
-          if(listLength > 0){
-            list.map((item) => {
-              var timeKey = timeParse(item.create_time)
-              if(!showList[timeKey]) {
-                  showList.keyList.push(timeKey)
-                  showList[timeKey] = {}
-                  showList[timeKey].teamKeyList = []
-              }
-              if(!showList[timeKey][item.teamId]) {
-                  showList[timeKey].teamKeyList.push(item.teamId)
-                  showList[timeKey][item.teamId] = {}
-                  showList[timeKey][item.teamId].teamName = item.teamName
-                  showList[timeKey][item.teamId].infsList = []
-              }
-              showList[timeKey][item.teamId].infsList.push(item)
-          })
-            this.setState({
-              showList: showList,
-              lastStamp: list[listLength - 1].create_time,
-            })
-        } else if (showList.keyList.length ==0){
-          this.setState({
-            noResult: true,
-          })
-        }else{
-          this.setState({
-            noMoreResult: true,
-          })
-        }
-        //   console.log(showList)
-
-      }
       typeMap = {
           'CREATE_TOPIC': '创建了讨论：',
           'REPLY_TOPIC': '回复了讨论：',
@@ -181,17 +136,9 @@ export default class Infs extends React.Component{
                   method: 'POST',
                   body:{}
               })
-
-              const readlist = result.data
+              console.log(result.data)
               this.setState({
-                showList: {
-                    keyList : [],
-                },
-                  isreadList: readlist,
-                  noResult: false,
-                  noMoreResult: false,
-              }, () =>{
-                this.appendToShowList(this.state.isreadList)
+                  isreadList: result.data
               })
           }
 
@@ -202,21 +149,46 @@ export default class Infs extends React.Component{
                 method: 'POST',
                 body:{}
             })
+            const unreadList = result.data
+            const teamList = []
+            var flag
+            for(let i=0;i<unreadList.length;i++){
+                flag = false
+                if(teamList.length==0){
+                teamList.push(unreadList[i].teamId)
+                }else{
+                    for(let j=0;j<teamList.length;j++){
+                        if(teamList[j]===unreadList[i].teamId){
+                            flag = true
+                            break
+                        }
+                    }
+                    if(flag === false){
+                        teamList.push(unreadList[i].teamId)
+                    }
+                }
+            }
+            console.log(teamList)
+            const teamUnreadObj = []
+            for(let i=0;i<teamList.length;i++){
+                var unreadArray = unreadList.filter(function(item){
+                    if(item.teamId === teamList[i]){
+                        return true
+                    }
+                })
+
+                teamUnreadObj.push({
+                    teamId : teamList[i],
+                    unreadArray
+                })
+                
+            }
+            console.log(teamUnreadObj)
+
             this.setState({
-              showList: {
-                  keyList : [],
-              },
-                unreadList: result.data,
-                noResult: false,
-                noMoreResult: false,
-            }, () =>{
-              this.appendToShowList(this.state.unreadList)
+                unreadList: teamUnreadObj
             })
-            // if(result.data.length<newInformItemNum){
-            //   this.setState({
-            //     noMoreResult: true
-            //   })
-            // }
+            
         }
 
     getMoreHandle = (actTag) => {
@@ -253,10 +225,12 @@ groupInfoRead = (id) =>{
     console.log(id)
 }
       render() {
-        const showList = this.state.showList
+        const unreadList = this.state.unreadList
+        const isreadList = this.state.isreadList
         const userId = this.props.personInfo._id
+        console.log('unreadList',unreadList)
+        console.log('isreadList',isreadList)
 
-        // console.log(this.state)
           return (
             <Page className="infs-page">
             <div className='page-wrap'>
@@ -265,39 +239,27 @@ groupInfoRead = (id) =>{
                     <div className={this.state.activeTag == 'isread'?'read-tag-item act':'read-tag-item'} onClick={this.toReadHandle.bind(this,"isread")}>已读</div>
                     <div className='read-tag-item'>标记为已读</div>
                 </div>
-                        {
-
-                            showList.keyList.map((timeKey) => {
+                    {this.state.activeTag == 'unread'?
+                    unreadList.map((team) => {
                                 return (
-                                    <div className="infs-day" key={'time-group-' + timeKey}>
+                                    <div className="infs-day" key={'time-group-' + team.teamId}>  
+                                                    
+                                        <div className="group-box"><ReadBox choseHandle={this.groupInfoRead} item={team.id}/></div>
+                                        <div className="group-line">{team.unreadArray[0].teamName}</div>
                                         {
-                                            showList[timeKey].teamKeyList.map((teamKey) => {
-                                                // console.log(showList[timeKey][teamKey].teamName)
-                                                //choseHandle={this.memberChoseHandle}
-                                                return (
-                                                    <div className="group-div" key={'group-line-' + timeKey + teamKey}>
-                                                        {/* 分组线 */}
-                                                        <div className="group-box"><ReadBox choseHandle={this.groupInfoRead} item={teamKey}/></div>
-                                                        <div className="group-line">{showList[timeKey][teamKey].teamName}</div>
-                                                        {
-                                                            showList[timeKey][teamKey].infsList.map((item) => {
-                                                                // console.log(item)
-                                                                return (
-                                                                    <div className="item-div" key={item.noticeId}>
-                                                                    <div className="item-box"><ReadBox choseHandle={this.changeReadState} item={item}/></div>
-                                                                    <InformItem locationTo={this.locationTo} key={'inform-' + item.noticeId} {...item} onClick={() => {}}/>
-                                                                    </div>
-                                                                )
-                                                            })
-                                                        }
-                                                    </div>
-                                                )
-                                            })
-                                        }
-                                    </div>
-                                )
-                            })
-                        }
+                                        team.unreadArray.map((item)=>{
+                                            return(
+                                            <div className="item-div" key={item.noticeId}>
+                                            <div className="item-box"><ReadBox choseHandle={this.changeReadState} item={item}/></div>
+                                            <InformItem locationTo={this.locationTo} key={'inform-' + item.noticeId} {...item} onClick={() => {}}/>
+                                            </div>
+                                            )
+                                        })
+                                        
+                                        }                    
+                                </div>)                       
+                    }):<div>bye</div>}
+
                         {this.state.noResult && <div className='null-info'>无通知</div>}
                         <div className='load-more-bar'>
                             {!this.state.noResult && !this.state.noMoreResult && <div className="load-more" onClick={this.getMoreHandle.bind(this,this.state.activeTag)}>

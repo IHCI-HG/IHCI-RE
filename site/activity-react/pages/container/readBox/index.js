@@ -5,10 +5,11 @@ import './style.scss'
 class ReadBox extends React.Component{
     render() {
             const item = this.props.item
+
                         return (
                             <div key={"read-box-"+ item} className="read-box-item"  onClick={() => {this.props.choseHandle(item)}}>
                                 <div className="check-box">
-                                    {item.readState ? <span className='iconfont icon-right'> </span> : <span className='iconfont icon-right hidden'> </span>}
+                                    {item ? <span className='iconfont icon-right'> </span> : <span className='iconfont icon-right hidden'> </span>}
                                 </div>
                             </div>
                         )
