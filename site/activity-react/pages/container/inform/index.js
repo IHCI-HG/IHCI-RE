@@ -76,6 +76,7 @@ export default class Infs extends React.Component{
 
         activeTag: 'unread',
         readState:'',
+        lastStamp:'',
         //下拉更多
         noResult: false,
         noMoreResult: false,
@@ -90,23 +91,78 @@ export default class Infs extends React.Component{
           this.props.router.push(url)
       }
 
+      
       getMoreUnreadData = async () => {
+        const lastStamp = this.state.lastStamp
         const result = await api('/api/user/showUnreadList', {
             method: 'POST',
             body:{
-                timeStamp: '',
+                timeStamp: lastStamp? lastStamp: '',
             }
       })
+      console.log(lastStamp)
+      console.log(result)
       const unreadlist = result.data
-      this.setState({
-          unreadList: this.state.unreadList.concat(unreadlist)
-        })
-        if(result.data.length<moreInformItemNum){
+      this.appendUnreadList(unreadlist)
+      }
+
+      appendUnreadList = (list) =>{
+        if(!list||list.length === 0){
           this.setState({
-            noMoreResult: true
-            
+            noMoreResult:true
           })
+          return 
         }
+        const unreadList = this.state.unreadList
+        console.log(unreadList)
+        var flag = false
+        for(let i=0;i<list.length;i++){
+            flag = false
+            for(let j=0;j<unreadList.length;j++){
+                if(list[i].teamId === unreadList[j].teamId){
+                    unreadList[j].unreadArray.push(list[i])
+                    flag = true
+                    break
+                }
+            }
+            if(flag === false){
+                unreadList.push({
+                    teamId:list[i].teamId,
+                    unreadArray:[list[i]]
+                })
+            }
+        }
+        this.setState({
+            unreadList:unreadList,
+            lastStamp: list[list.length - 1].create_time
+        })
+
+        
+    }
+
+      appendIsReadList = (list) =>{
+        if(!list||list.length === 0){
+            noMoreResult = true
+            return 
+          }
+          const isreadList  = this.state.isreadList
+          var flag = false
+          for(let i=0;i<list.length;i++){
+              flag = false
+              for(let j=0;j<isreadList.length;j++){
+                  if(list[i].teamId === isreadList[j].teamId){
+                      isreadList[j].isreadArray.push(list[i])
+                      flag = true
+                      break
+                  }
+              }
+              if(flag === false){
+                isreadList.push({
+                      teamId:list[i].teamId,
+                      isreadArray:[list[i]]
+                  })
+              }
+          }
       }
 
       getMoreIsreadData = async () => {
@@ -191,16 +247,19 @@ export default class Infs extends React.Component{
             console.log(teamUnreadObj)
 
             this.setState({
-                unreadList: teamUnreadObj
+                unreadList: teamUnreadObj,
+                lastStamp:unreadList[unreadList.length-1].create_time
             })
             
         }
 
     getMoreHandle = (actTag) => {
+        console.log(actTag)
           if (actTag == "unread")
               this.getMoreUnreadData()
           else this.getMoreIsreadData()
     }
+
     toReadHandle = (readState) => {
           if (readState=="unread")
               this.initUnreadList()
