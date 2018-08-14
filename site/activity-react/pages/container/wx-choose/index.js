@@ -74,12 +74,12 @@ export default class wxChoose extends React.Component{
 
         const result = await authApi(this.state.username, this.state.password, this.state.openid)
         if(result.state.code === 0) {
-            window.toast("成功")
+            window.toast("欢迎回到iHCI平台")
             setTimeout(() => {
                 location.href = '/team'
             }, 1000)   
         } else {
-            window.toast(result.state.msg || "失败")
+            window.toast(result.state.msg || "请重新输入")
         }
     }
     enterHandle = async () =>{
@@ -91,6 +91,8 @@ export default class wxChoose extends React.Component{
        })
        if(result.state.code === 0){
            window.toast("请您完善个人信息")
+       } else {
+           window.toast(result.state.msg ||"失败")
        }
     }
     render () {
