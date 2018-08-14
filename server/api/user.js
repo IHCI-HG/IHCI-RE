@@ -70,7 +70,7 @@ const signUp = async (req, res, next) => {
     });
 }
 
-const signUpAndBindWx = async (req, res, next) => {
+const fillUsernameAndPwd = async (req, res, next) => {
     const userInfo = req.body.userInfo
     const userId = req.rSession.userId
     if(!userInfo.username || !userInfo.password || !userInfo.unionid) {
@@ -568,5 +568,5 @@ module.exports = [
     ['POST', '/api/user/readNotice', apiAuth, readNotice],
     //['POST', '/api/user/getUserId', apiAuth, getUserId],
     ['POST', '/api/user/loginAndBindWx', apiAuth, loginAndBindWx],
-    ['POST', '/api/user/SignUpAndBindWx', apiAuth, signUpAndBindWx],
+    ['POST', '/api/user/fillUsernameAndPwd', apiAuth, fillUsernameAndPwd],
 ];

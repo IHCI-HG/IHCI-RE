@@ -657,7 +657,7 @@ export default class Person extends React.Component{
                 }
                 {this.state.userObj.unionid ?
                 <div className="edit-con">
-                    <div className="before">服务号</div>:""
+                    <div className="before">服务号</div>
                     {!INIT_DATA.isWeixin && !this.state.userObj.subState ? <div className="bind-wx ">未关注</div> : <div className="bind-wx act">已关注</div>}
                     {!INIT_DATA.isWeixin && !this.state.userObj.subState && <div className='after'>需要<div className='follow-btn' onClick={this.openFollowDialogHandle}>关注服务号</div>才能接受讨论消息提醒</div>}   
                 </div>:""
