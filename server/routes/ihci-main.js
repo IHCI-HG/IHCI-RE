@@ -46,7 +46,12 @@ const routerAuthJudge = async (req, res, next) => {
     }
     next()
 }
-
+const wxJudge = async (req, res, next) => {
+    if(! envi.isWeixin(req)){
+        res.redirect('/')
+    }
+    next()
+}
 async function address(req, res, next) {
     var filePath = path.resolve(__dirname, '../../public/activity/page/address/full.html'),
     options = {
@@ -200,14 +205,13 @@ const silentAuth = async(req, res, next) => {
             //     res.redirect('/person')
             // }
             // else{
-            //     if(urlObj.pathname==='/'){
-            //         res.redirect('/team')
-            //     }
-            //     else{
-            //         next()
-            //     }
-            // }   
-            next()
+            if(urlObj.pathname==='/'){
+                res.redirect('/team')
+            }
+            else{
+                next()
+            }
+            // }
         }
     }
     else{
@@ -220,7 +224,7 @@ module.exports = [
     ['GET', '/', clientParams(), silentAuth, mainPage],
     // ['GET', '/', clientParams(), mainPage],
     ['GET', '/activate', clientParams(), pageHandle()],
-    ['GET','/wx-choose',clientParams(),pageHandle()],
+    ['GET','/wx-choose',clientParams(), wxJudge, pageHandle()],
     ['GET', '/auth', clientParams(), wxAuthCodeHandle , mainPage],
 
     ['GET', '/team', clientParams(), routerAuthJudge, pageHandle() ],
