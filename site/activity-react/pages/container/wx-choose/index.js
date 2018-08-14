@@ -17,7 +17,7 @@ export default class wxChoose extends React.Component{
     componentDidMount = () => {
        this.setState({
            openid:this.props.location.query.openid
-       });
+       })
     }
     setTologinHandle = () => {
         if(this.state.loginBlock !=="login"){
@@ -76,13 +76,23 @@ export default class wxChoose extends React.Component{
         if(result.state.code === 0) {
             window.toast("成功")
             setTimeout(() => {
-                location.href = '/person'
+                location.href = '/team'
             }, 1000)   
         } else {
             window.toast(result.state.msg || "失败")
         }
     }
-    
+    enterHandle = async () =>{
+       const result = await api('/api/user/wxEnter',{
+           method:'POST',
+           body:{
+               openid:this.state.openid
+           }
+       })
+       if(result.state.code === 0){
+           window.toast("请您完善个人信息")
+       }
+    }
     render () {
         return(
         <Page>
@@ -92,7 +102,7 @@ export default class wxChoose extends React.Component{
                <div className = "auth-header">欢迎来到iHCI平台</div>
                <div className = "login-desc">iHCI平台介绍</div>
                <div className = "auth-nav-item" onClick={this.setTologinHandle}>绑定账号</div>
-               <div className = "auth-nav-item" onClick={()=>{location.href = '/'}}>直接进入平台</div>
+               <div className = "auth-nav-item" onClick={this.enterHandle}>直接进入平台</div>
             </div>
             :""
             }

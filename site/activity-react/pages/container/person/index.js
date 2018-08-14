@@ -508,7 +508,7 @@ export default class Person extends React.Component{
                     {
 
                         !!this.state.userObj.unionid ? 
-                        (!!this.state.userObj.username?
+                        (!!this.state.userObj.username && !INIT_DATA.isWeixin?
                         <div className="band" onClick={this.unbindHandle}>解绑</div>:"")
                         :
                         <div className="band" onClick={this.openWxLoginHandle}>绑定</div>
