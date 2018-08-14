@@ -5,7 +5,7 @@ import api from '../../../utils/api';
 
 export default class wxChoose extends React.Component{
     state = {
-        unionid:String,
+        openid:String,
         loginBlock:'',
         username:'',
         password:'',
@@ -16,7 +16,7 @@ export default class wxChoose extends React.Component{
     }
     componentDidMount = () => {
        this.setState({
-           unionid:this.props.location.query.unionid
+           openid:this.props.location.query.openid
        });
     }
     setTologinHandle = () => {
@@ -72,7 +72,7 @@ export default class wxChoose extends React.Component{
             return
         }
 
-        const result = await authApi(this.state.username, this.state.password, this.state.unionid)
+        const result = await authApi(this.state.username, this.state.password, this.state.openid)
         if(result.state.code === 0) {
             window.toast("成功")
             setTimeout(() => {
