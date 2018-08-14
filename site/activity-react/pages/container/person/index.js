@@ -324,7 +324,7 @@ export default class Person extends React.Component{
                 originPersonInfo: this.state.originPersonInfo,
             }
         })
-        const result2 = await api('api/fillUsernameAndPwd',{
+        const result2 = await api('/api/user/fillUsernameAndPwd',{
             method: 'POST',
             body: {
                 username:this.state.username,
