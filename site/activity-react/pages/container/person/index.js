@@ -7,6 +7,7 @@ import FollowDialog from '../../../components/follow-dialog'
 import api, { authApi } from '../../../utils/api';
 export default class Person extends React.Component{
     componentDidMount = async() => {
+        this.initFollower()
         this.personInfo = {}
         this.originPersonInfo = {}
         if(INIT_DATA.userObj) {
@@ -57,6 +58,13 @@ export default class Person extends React.Component{
 
     }
 
+    initFollower = async() => {
+        const result = await api('/follower', {
+            method: 'POST',
+            body: {}
+        })
+        //console.log(result)
+    }
     initdataAllFilled = () => {
         if (!INIT_DATA.userObj.personInfo){
             return false
@@ -477,7 +485,7 @@ export default class Person extends React.Component{
                     </div>
                 </div>
                 {
-                    !this.state.username ?
+                    !this.state.userObj.username ?
                     <div className = "edit-con">
                     <div className = "before">账号：</div>
                     <input className = "input-edit" value={this.state.username} onChange={this.usernameHandle}></input>
