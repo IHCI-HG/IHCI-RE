@@ -278,6 +278,7 @@ const setUserInfo = async (req, res, next) => {
 }
 
 const IfBeforeSub = async function(userId, unionid){
+    
     const result = await followerDB.findByUnionId(unionid)
     if(result){
        const userObj = await UserDB.updateUser(userId, {

@@ -35,6 +35,6 @@ var follower = async function(req, res, next) {
 
 
 module.exports = [
-    ['GET', '/follower', follower],
+    // ['GET', '/follower', follower],
     ['POST', '/follower', follower],
 ];

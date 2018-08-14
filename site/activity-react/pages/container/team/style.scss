@@ -15,6 +15,21 @@
             color:#444;
         }
     }
+    .manage{
+        cursor: pointer;
+        right: 60px;
+        top: 120px;
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        font-size: 22px;
+        color: #666;
+        font-weight: bold;
+        &:hover{
+            color:#444;
+        }
+    }
     .main{
         padding: 0.4rem 0.4rem;
     }
