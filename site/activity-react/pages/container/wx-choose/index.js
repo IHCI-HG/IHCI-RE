@@ -81,22 +81,29 @@ export default class wxChoose extends React.Component{
     
     render () {
         return(
-        <Page>   
+        <Page>
+            {
+                this.state.loginBlock !== "login"?
             <div className="auth-nav"> 
-               <div className = "auth-nav-item" onClick={this.setTologinHandle}>绑定已有平台账号</div>
-               {
-                   this.state.loginBlock === "login"?
-                   <div className="loginBlock">
-                   <div className ="login-desc">Enter username: </div>
-                   <input className="login-input" value={this.state.username} onChange={this.usernameHandle}></input>
-                   <div className ="login-desc">Enter password: </div>
-                   <input className="login-input" type="password" value={this.state.password} onChange={this.passwordHandle}></input>
-                   <div className="login-btn" onClick={this.loginHandle}>LoginAndBind</div>
-                   </div>
-                :""
-        }
+               <div className = "auth-header">欢迎来到iHCI平台</div>
+               <div className = "auth-nav-item" onClick={this.setTologinHandle}>绑定账号</div>
                <div className = "auth-nav-item" onClick={()=>{location.href = '/'}}>直接进入平台</div>
             </div>
+            :""
+            }
+            {
+                   this.state.loginBlock === "login"?
+                   <div className="loginBlock">
+                   <div className = "auth-header">绑定已有账号</div>
+                   <div className ="login-desc">账号: </div>
+                   <input className="login-input" value={this.state.username} onChange={this.usernameHandle}></input>
+                   <div className ="login-desc">密码: </div>
+                   <input className="login-input" type="password" value={this.state.password} onChange={this.passwordHandle}></input>
+                   <div className="login-btn" onClick={this.loginHandle}>确定</div>
+                   <div className="login-btn" onClick={this.setTologinHandle}>取消</div>
+                   </div>
+                :""
+            }
     </Page>
     )
     
