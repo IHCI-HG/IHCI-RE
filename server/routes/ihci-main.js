@@ -178,15 +178,7 @@ const silentAuth = async(req, res, next) => {
                     }
                 }
                 else{
-                    const result2 = await UserDB.createUser(null,null,{
-                        unionid:result1.unionid,
-                        wxUserInfo:result1
-                    })
-                    const findUser = await UserDB.findByUnionId(result1.unionid)
-                    if(findUser){
-                        req.rSession.userId = findUser._id
-                    }
-                    res.redirect('/person')
+                    res.redirect(`/wx-choose?openid=${result.openid}`)
                 }
             }
             else{
@@ -195,26 +187,27 @@ const silentAuth = async(req, res, next) => {
             }
         }
         if(req.rSession.userId){
-            const result = await UserDB.findByUserId(req.rSession.userId)
-            if(!result.unionid||result.unionid===''){
-                const result2 = await UserDB.createUser(null,null,{
-                    unionid:result1.unionid,
-                    wxUserInfo:result1
-                })
-                const findUser = await UserDB.findByUnionId(result1.unionid)
-                if(findUser){
-                    req.rSession.userId = findUser._id
-                }
-                res.redirect('/person')
-            }
-            else{
-                if(urlObj.pathname==='/'){
-                    res.redirect('/team')
-                }
-                else{
-                    next()
-                }
-            }   
+            // const result = await UserDB.findByUserId(req.rSession.userId)
+            // if(!result.unionid||result.unionid===''){
+            //     const result2 = await UserDB.createUser(null,null,{
+            //         unionid:result1.unionid,
+            //         wxUserInfo:result1
+            //     })
+            //     const findUser = await UserDB.findByUnionId(result1.unionid)
+            //     if(findUser){
+            //         req.rSession.userId = findUser._id
+            //     }
+            //     res.redirect('/person')
+            // }
+            // else{
+            //     if(urlObj.pathname==='/'){
+            //         res.redirect('/team')
+            //     }
+            //     else{
+            //         next()
+            //     }
+            // }   
+            next()
         }
     }
     else{
