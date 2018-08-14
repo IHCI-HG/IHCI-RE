@@ -5,6 +5,7 @@ import api from '../../../utils/api';
 
 export default class wxChoose extends React.Component{
     state = {
+        unionid:String,
         loginBlock:'',
         username:'',
         password:'',
@@ -14,6 +15,9 @@ export default class wxChoose extends React.Component{
         },
     }
     componentDidMount = () => {
+       this.setState({
+           unionid:this.props.location.query.unionid
+       });
     }
     setTologinHandle = () => {
         if(this.state.loginBlock !=="login"){
@@ -68,7 +72,7 @@ export default class wxChoose extends React.Component{
             return
         }
 
-        const result = await authApi(this.state.username, this.state.password, this.state.userObj.unionid)
+        const result = await authApi(this.state.username, this.state.password, this.state.unionid)
         if(result.state.code === 0) {
             window.toast("成功")
             setTimeout(() => {
@@ -83,9 +87,10 @@ export default class wxChoose extends React.Component{
         return(
         <Page>
             {
-                this.state.loginBlock !== "login"?
+                this.state.loginBlock === ''?
             <div className="auth-nav"> 
                <div className = "auth-header">欢迎来到iHCI平台</div>
+               <div className = "login-desc">iHCI平台介绍</div>
                <div className = "auth-nav-item" onClick={this.setTologinHandle}>绑定账号</div>
                <div className = "auth-nav-item" onClick={()=>{location.href = '/'}}>直接进入平台</div>
             </div>
@@ -105,7 +110,6 @@ export default class wxChoose extends React.Component{
                 :""
             }
     </Page>
-    )
-    
+    )   
     }  
 }
