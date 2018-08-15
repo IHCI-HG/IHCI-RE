@@ -19,6 +19,9 @@ export default class IhciJoin extends React.Component{
             illegalName: false,
         },
     }
+    componentWillMount = () => {
+
+    }
     componentDidMount = () => {
         //var textData = require('../../../text.json');
         this.setState({
@@ -147,7 +150,7 @@ export default class IhciJoin extends React.Component{
             <Page title = {"加入iHCI"} className = "enter-page">
               <div className = "title">关于iHCI</div>
               <div className = "desc">iHCI的详情</div>
-              <div className = "header">加入iHCI</div>
+              <div className = "head">加入iHCI</div>
               <div className="edit-con">
                     <div className="before">姓名</div>
                     <input type="text" onChange={this.nameInputHandle} className="input-edit"  value={this.state.personInfo.name}/>

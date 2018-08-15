@@ -3,9 +3,22 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    .title{}
+    .desc{
+        width:400px;
+        height:100px;
+    }
+    .head{
+        width:400px;
+        padding: 0 10px;
+        font-size:30px;
+        margin:20px;
+        font-weight: bold;
+    }
     .before {
         width: 100px;
         color: #666;
+        margin-top: 20px;
     }
     .error{
         color: #f00;
