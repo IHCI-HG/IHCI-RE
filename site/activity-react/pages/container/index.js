@@ -11,7 +11,8 @@ import Team from './team'
 import ActivateMail from './activate-mail'
 import TeamJoin from './team-join'
 import WxCode from './wxcode'
-import wxChoose from './wx-choose';
+import WxChoose from './wx-choose'
+import IhciJoin from './ihci-join';
 
 class App extends React.Component{
     state = {
@@ -292,8 +293,12 @@ const routeConfig = [
     },
     {
         path: '/wx-choose',
-        component: wxChoose 
+        component: WxChoose 
     },
+    {
+        path: '/ihci-join',
+        component: IhciJoin
+    }
 ]
 
 render(<Router routes={routeConfig} history={browserHistory}/>, document.getElementById('app'));

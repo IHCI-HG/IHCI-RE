@@ -4,7 +4,7 @@ import Page from '../../../components/page'
 import WxLoginDialog from '../../../components/wx-login-dialog'
 import fileUploader from '../../../utils/file-uploader';
 import FollowDialog from '../../../components/follow-dialog'
-import api, { authApi } from '../../../utils/api';
+import api from '../../../utils/api';
 export default class Person extends React.Component{
     componentDidMount = async() => {
         this.initFollower()

@@ -70,19 +70,19 @@ const signUp = async (req, res, next) => {
 }
 
 const fillUsernameAndPwd = async (req, res, next) => {
-    const userInfo = req.body.userInfo
+    const username = req.body.username
+    const password = req.body.password
     const userId = req.rSession.userId
-    if(!userInfo.username || !userInfo.password || !userInfo.unionid) {
+    if(!username || !password) {
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: "参数不全"},
             data: {}
         });
         return
     }
-    const findUser = await UserDB.findByUnionId(userInfo.unionid)
     const result = await UserDB.updateUser(userId,{
-        username: userInfo.username,
-        password: crypto.SHA256(userInfo.password).toString()
+        username: username,
+        password: crypto.SHA256(password).toString()
     })
     if(!result) {
         resProcessor.jsonp(req, res, {
@@ -162,7 +162,6 @@ const loginAndBindWx = async (req, res, next) => {
         var userId = result1._id.toString()
         await UserDB.updateUser(userId,result1)
         req.rSession.userId = userId
-        res.redirect('/team')
         resProcessor.jsonp(req, res, {
             state: { code: 0 },
             data: {
@@ -556,7 +555,6 @@ const wxEnter = async (req, res, next) => {
         if(findUser){
             req.rSession.userId = findUser._id
         }
-        res.redirect('/person')
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '登陆成功' },
@@ -566,7 +564,7 @@ const wxEnter = async (req, res, next) => {
         });
     } catch (error) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '解绑失败' },
+            state: { code: 1, msg: '登陆失败' },
             data: {}
         });
         console.error(error)
@@ -598,5 +596,5 @@ module.exports = [
     //['POST', '/api/user/getUserId', apiAuth, getUserId],
     ['POST', '/api/user/loginAndBindWx', apiAuth, loginAndBindWx],
     ['POST', '/api/user/fillUsernameAndPwd', apiAuth, fillUsernameAndPwd],
-    ['POST', '/api/user/wxEnter', apiAuth, wxEnter],
+    ['POST', '/api/user/wxEnter', wxEnter],
 ];
