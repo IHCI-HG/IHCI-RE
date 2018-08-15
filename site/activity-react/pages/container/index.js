@@ -53,8 +53,6 @@ class App extends React.Component{
         this.setState({
           showRemindCount: result.data.length
         })
-
-        console.log("inform:   " + result);
     }
 
 
@@ -262,7 +260,7 @@ class App extends React.Component{
                         <div className='remind'>
                             <span className='iconfont icon-remind' onClick={this.routerHandle.bind(this, '/inform')}></span>
                             
-                            {this.state.showRemindCount>0 && <span className="redPoint">{this.state.showRemindCount}</span>}
+                            {this.state.showRemindCount>0 && <span className="redPoint" onClick={this.routerHandle.bind(this, '/inform')} >{this.state.showRemindCount}</span>}
                             
                         </div>
                     </div>
