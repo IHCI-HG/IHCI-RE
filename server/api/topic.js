@@ -303,25 +303,25 @@ const editDiscuss = async (req, res, next) => {
     }
     try {
         var discussObj = (await discussDB.findTaskDiscuss(discussId)).toObject();
-        delete discussObj._id;
+        //delete discussObj._id;
         discussObj.content = content;
         discussObj.fileList = fileList || discussObj.fileList;
 
         const result = await discussDB.updateDiscuss(discussId, discussObj)
-        //console.log(result)
+        console.log(result)
         await topicDB.updateDiscuss(topicId, discussId, content,discussObj.fileList,discussObj.creator)
 
         const userObj = await userDB.baseInfoById(userId)
         const topicObj = await topicDB.findByTopicId(topicId)
         const teamObj = await teamDB.findByTeamId(teamId)
-        await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'EDIT_REPLY', result._id, topicObj.title, result)
+        await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'EDIT_REPLY', result._id, topicObj.title, discussObj)
         console.log(teamId, teamObj.name, userObj, 'EDIT_REPLY', result._id, topicObj.title, result)
         
         if(informList && informList.length) {
             //replyTopicTemplate(informList, result)
             //添加通知
-            informList.map((item) => {
-                userDB.addEditReplyNotice(item, result, teamObj.name)
+            await informList.map((item) => {
+                userDB.addEditReplyNotice(item, discussObj, teamObj.name)
             })
             //notificationMail(informList, result, "编辑了回复")
 

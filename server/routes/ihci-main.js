@@ -46,7 +46,12 @@ const routerAuthJudge = async (req, res, next) => {
     }
     next()
 }
-
+const wxJudge = async (req, res, next) => {
+    if(! envi.isWeixin(req)){
+        res.redirect('/')
+    }
+    next()
+}
 async function address(req, res, next) {
     var filePath = path.resolve(__dirname, '../../public/activity/page/address/full.html'),
     options = {
@@ -178,15 +183,7 @@ const silentAuth = async(req, res, next) => {
                     }
                 }
                 else{
-                    const result2 = await UserDB.createUser(null,null,{
-                        unionid:result1.unionid,
-                        wxUserInfo:result1
-                    })
-                    const findUser = await UserDB.findByUnionId(result1.unionid)
-                    if(findUser){
-                        req.rSession.userId = findUser._id
-                    }
-                    res.redirect('/person')
+                    res.redirect(`/wx-choose?openid=${result.openid}`)
                 }
             }
             else{
@@ -195,26 +192,26 @@ const silentAuth = async(req, res, next) => {
             }
         }
         if(req.rSession.userId){
-            const result = await UserDB.findByUserId(req.rSession.userId)
-            if(!result.unionid||result.unionid===''){
-                const result2 = await UserDB.createUser(null,null,{
-                    unionid:result1.unionid,
-                    wxUserInfo:result1
-                })
-                const findUser = await UserDB.findByUnionId(result1.unionid)
-                if(findUser){
-                    req.rSession.userId = findUser._id
-                }
-                res.redirect('/person')
+            // const result = await UserDB.findByUserId(req.rSession.userId)
+            // if(!result.unionid||result.unionid===''){
+            //     const result2 = await UserDB.createUser(null,null,{
+            //         unionid:result1.unionid,
+            //         wxUserInfo:result1
+            //     })
+            //     const findUser = await UserDB.findByUnionId(result1.unionid)
+            //     if(findUser){
+            //         req.rSession.userId = findUser._id
+            //     }
+            //     res.redirect('/person')
+            // }
+            // else{
+            if(urlObj.pathname==='/'){
+                res.redirect('/team')
             }
             else{
-                if(urlObj.pathname==='/'){
-                    res.redirect('/team')
-                }
-                else{
-                    next()
-                }
-            }   
+                next()
+            }
+            // }
         }
     }
     else{
@@ -227,7 +224,7 @@ module.exports = [
     ['GET', '/', clientParams(), silentAuth, mainPage],
     // ['GET', '/', clientParams(), mainPage],
     ['GET', '/activate', clientParams(), pageHandle()],
-
+    ['GET','/wx-choose',clientParams(), wxJudge, pageHandle()],
     ['GET', '/auth', clientParams(), wxAuthCodeHandle , mainPage],
 
     ['GET', '/team', clientParams(), routerAuthJudge, pageHandle() ],
