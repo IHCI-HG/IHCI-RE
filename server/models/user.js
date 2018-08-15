@@ -294,6 +294,20 @@ userSchema.statics = {
             {new: true}
         ).exec()
     },
+    // readNoticeArray:async function(userId,isReadNoticeArray){
+    //     console.log('test'+userId)
+    //     console.log(isReadNoticeArray)
+    //     try{
+    //     return this.update(
+    //         {_id:userId,"noticeList.noticeId":{$in:isReadNoticeArray}},
+    //         {$set:{"noticeList.$.readState": true}},
+    //         {upsert:false},
+    //         {multi:true}
+    //     ) 
+    // }catch(err){
+    //     console.log(err)
+    // }
+    // },
 
     //task 通知
     addCreateTask: async function(userId, taskObj, teamName) {

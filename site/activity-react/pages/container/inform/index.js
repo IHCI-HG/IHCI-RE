@@ -100,8 +100,6 @@ export default class Infs extends React.Component{
                 timeStamp: lastStamp? lastStamp: '',
             }
       })
-      console.log(lastStamp)
-      console.log(result)
       const unreadlist = result.data
       this.appendUnreadList(unreadlist)
       }
@@ -114,7 +112,6 @@ export default class Infs extends React.Component{
           return 
         }
         const unreadList = this.state.unreadList
-        console.log(unreadList)
         var flag = false
         for(let i=0;i<list.length;i++){
             flag = false
@@ -197,7 +194,7 @@ export default class Infs extends React.Component{
                   method: 'POST',
                   body:{}
               })
-              console.log(result.data)
+
               this.setState({
                   isreadList: result.data
               })
@@ -229,7 +226,7 @@ export default class Infs extends React.Component{
                     }
                 }
             }
-            console.log(teamList)
+
             const teamUnreadObj = []
             for(let i=0;i<teamList.length;i++){
                 var unreadArray = unreadList.filter(function(item){
@@ -240,11 +237,12 @@ export default class Infs extends React.Component{
 
                 teamUnreadObj.push({
                     teamId : teamList[i],
-                    unreadArray
+                    unreadArray,
+                    readState:false
                 })
                 
             }
-            console.log(teamUnreadObj)
+
 
             this.setState({
                 unreadList: teamUnreadObj,
@@ -254,7 +252,7 @@ export default class Infs extends React.Component{
         }
 
     getMoreHandle = (actTag) => {
-        console.log(actTag)
+
           if (actTag == "unread")
               this.getMoreUnreadData()
           else this.getMoreIsreadData()
@@ -285,15 +283,89 @@ changeReadState = async (item) => {
         })
 
 }
-groupInfoRead = (id) =>{
-    console.log(id)
+groupInfoRead = (item) =>{
+    const unreadList = this.state.unreadList
+    for(let i=0;i<unreadList.length;i++){
+        if(unreadList[i].teamId === item.teamId){
+            unreadList[i].readState = !unreadList[i].readState 
+            for(let j=0;j<unreadList[i].unreadArray.length;j++){
+                unreadList[i].unreadArray[j].readState = unreadList[i].readState
+            }
+            break
+        }
+    }
+    this.setState({
+        unreadList:unreadList
+    })
 }
+itemInfoRead = (item) =>{
+
+    const unreadList = this.state.unreadList
+
+    
+
+    for(let i=0;i<unreadList.length;i++){
+        if(unreadList[i].teamId === item.teamId){
+            
+            for(let j=0;j<unreadList[i].unreadArray.length;j++){
+                if(unreadList[i].unreadArray[j].noticeId === item.noticeId){
+                    unreadList[i].unreadArray[j].readState = !unreadList[i].unreadArray[j].readState
+                    break
+                }
+            }
+            break
+        }
+    }
+
+    for(let i=0;i<unreadList.length;i++){  
+        var flag = true        
+            for(let j=0;j<unreadList[i].unreadArray.length;j++){
+
+                if(unreadList[i].unreadArray[j].readState === false){
+                    flag = false
+                    break
+                }
+            }
+            unreadList[i].readState = flag  
+           
+        }
+    
+
+    this.setState({
+        unreadList:unreadList
+    })
+}
+markToRead = async() =>{
+    var unreadList = this.state.unreadList
+    const isReadNoticeArray = []
+ 
+    for(let i=0;i<unreadList.length;i++){
+        for(let j=unreadList[i].unreadArray.length-1;j>=0;j--){
+            if(unreadList[i].unreadArray[j].readState === true){
+                isReadNoticeArray.push(unreadList[i].unreadArray[j].noticeId)
+                unreadList[i].unreadArray.splice(j,1)
+            }
+        }
+        
+    }
+    this.setState({
+        unreadList:unreadList
+    })
+
+    const result = await api('/api/user/readNoticeArray', {
+        method: 'POST',
+        body:{
+          isReadNoticeArray: isReadNoticeArray,
+        }
+    })
+    
+    
+}
+
       render() {
         const unreadList = this.state.unreadList
         const isreadList = this.state.isreadList
         const userId = this.props.personInfo._id
-        console.log('unreadList',unreadList)
-        console.log('isreadList',isreadList)
 
           return (
             <Page className="infs-page">
@@ -301,20 +373,23 @@ groupInfoRead = (id) =>{
                 <div className="readStateChosen">
                     <div className={this.state.activeTag == 'unread'?'read-tag-item act':'read-tag-item'} onClick={this.toReadHandle.bind(this,"unread")}>未读</div>
                     <div className={this.state.activeTag == 'isread'?'read-tag-item act':'read-tag-item'} onClick={this.toReadHandle.bind(this,"isread")}>已读</div>
-                    <div className='read-tag-item'>标记为已读</div>
+                    <div className='read-tag-item' onClick={this.markToRead}>标记为已读</div>
                 </div>
                     {this.state.activeTag == 'unread'?
                     unreadList.map((team) => {
+                                if(team.unreadArray[0]){
+
                                 return (
+                                    
                                     <div className="infs-day" key={'time-group-' + team.teamId}>  
                                                     
-                                        <div className="group-box"><ReadBox choseHandle={this.groupInfoRead} item={team.id}/></div>
+                                        <div className="group-box"><ReadBox type='group' choseHandle={this.groupInfoRead} item={team}/></div>
                                         <div className="group-line">{team.unreadArray[0].teamName}</div>
                                         {
                                         team.unreadArray.map((item)=>{
                                             return(
                                             <div className="item-div" key={item.noticeId}>
-                                            <div className="item-box"><ReadBox choseHandle={this.changeReadState} item={item}/></div>
+                                            <div className="item-box"><ReadBox  type='item' choseHandle={this.itemInfoRead} item={item}/></div>
                                             <InformItem locationTo={this.locationTo} key={'inform-' + item.noticeId} {...item} onClick={() => {}}/>
                                             </div>
                                             )
@@ -322,7 +397,7 @@ groupInfoRead = (id) =>{
                                         
                                         }                    
                                 </div>)                       
-                    }):<div>bye</div>}
+                    }}):<div>bye</div>}
 
                         {this.state.noResult && <div className='null-info'>无通知</div>}
                         <div className='load-more-bar'>
