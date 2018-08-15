@@ -3,7 +3,9 @@ import './style.scss'
 import Page from '../../../components/page'
 import api, { authApi } from '../../../utils/api';
 
-export default class wxChoose extends React.Component{
+
+
+export default class WxChoose extends React.Component{
     state = {
         openid:String,
         loginBlock:'',
@@ -14,7 +16,11 @@ export default class wxChoose extends React.Component{
             passwordEmpty:true
         },
     }
+    componentWillMount = () => {
+        
+    }
     componentDidMount = () => {
+       //var textData = require('../../../text.json');
        this.setState({
            openid:this.props.location.query.openid
        })
@@ -64,7 +70,7 @@ export default class wxChoose extends React.Component{
     }
     loginHandle = async () => {
         if(this.state.infoCheck.usernameEmpty){
-            window.toast("用户名为空")
+            window.toast("账号为空")
             return
         }
         if(this.state.infoCheck.passwordEmpty){
@@ -83,17 +89,11 @@ export default class wxChoose extends React.Component{
         }
     }
     enterHandle = async () =>{
-       const result = await api('/api/user/wxEnter',{
-           method:'POST',
-           body:{
-               openid:this.state.openid
-           }
-       })
-       if(result.state.code === 0){
-           window.toast("请您完善个人信息")
-       } else {
-           window.toast(result.state.msg ||"失败")
-       }
+        window.toast("请完善个人信息")
+        setTimeout(() => {
+            location.href = `/ihci-join?openid=${this.state.openid}`
+        }, 1000)
+
     }
     render () {
         return(

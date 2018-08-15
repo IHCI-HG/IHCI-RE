@@ -75,12 +75,19 @@ export default class Infs extends React.Component{
         unreadList: [],
         isreadList: [],
 
+        unreadLastStamp:'',
+        isreadLastStamp:'',
+
+        unreadNoMoreResult: false,
+        isreadNoMoreResult: false,
+        
+
         activeTag: 'unread',
         readState:'',
-        lastStamp:'',
-        //下拉更多
-        noResult: false,
-        noMoreResult: false,
+        
+        
+        unreadNoResult: false,
+        isreadNoResult: false
     }
    
       componentDidMount = async() => {
@@ -94,21 +101,51 @@ export default class Infs extends React.Component{
 
       
       getMoreUnreadData = async () => {
-        const lastStamp = this.state.lastStamp
+        const unreadLastStamp = this.state.unreadLastStamp
         const result = await api('/api/user/showUnreadList', {
             method: 'POST',
             body:{
-                timeStamp: lastStamp? lastStamp: '',
+                timeStamp: unreadLastStamp? unreadLastStamp: '',
             }
       })
       const unreadlist = result.data
       this.appendUnreadList(unreadlist)
       }
-
+      appendIsreadList = (list) =>{
+        if(!list||list.length === 0){
+            this.setState({
+              isreadNoMoreResult:true
+            })
+            return 
+          }
+          const isreadList = this.state.isreadList
+          var flag = false
+          for(let i=0;i<list.length;i++){
+              flag = false
+              for(let j=0;j<isreadList.length;j++){
+                  if(list[i].teamId === isreadList[j].teamId){
+                      isreadList[j].isreadArray.push(list[i])
+                      flag = true
+                      break
+                  }
+              }
+              if(flag === false){
+                  isreadList.push({
+                      teamId:list[i].teamId,
+                      isreadArray:[list[i]]
+                  })
+              }
+          }
+          this.setState({
+              isreadList:isreadList,
+              isreadLastStamp: list[list.length - 1].create_time
+          })
+  
+      }
       appendUnreadList = (list) =>{
         if(!list||list.length === 0){
           this.setState({
-            noMoreResult:true
+            unreadNoMoreResult:true
           })
           return 
         }
@@ -132,7 +169,7 @@ export default class Infs extends React.Component{
         }
         this.setState({
             unreadList:unreadList,
-            lastStamp: list[list.length - 1].create_time
+            unreadLastStamp: list[list.length - 1].create_time
         })
 
         
@@ -164,22 +201,17 @@ export default class Infs extends React.Component{
       }
 
       getMoreIsreadData = async () => {
+        const isreadLastStamp = this.state.isreadLastStamp
+        
         const result = await api('/api/user/showReadList', {
             method: 'POST',
             body:{
-              timeStamp: '',
+                timeStamp: isreadLastStamp? isreadLastStamp: '',
             }
         })
-        const isreadList = result.data
-        this.setState({
-            isreadList: this.state.isreadList.concat(isreadList)
-        })
-        if(result.data.length<moreInformItemNum){
-          this.setState({
-            noMoreResult: true
-          })
+        const isreadlist = result.data
+        this.appendIsreadList(isreadlist)
         }
-      }
 
       typeMap = {
           'CREATE_TOPIC': '创建了讨论：',
@@ -196,9 +228,54 @@ export default class Infs extends React.Component{
                   method: 'POST',
                   body:{}
               })
-
+              
+              const isreadList = result.data
+              console.log(isreadList)
+              if(!isreadList||isreadList.length === 0){
+                this.setState({
+                    isreadNoResult:true
+                })                
+                return
+            }
+              const teamList = []
+              var flag
+              for(let i=0;i<isreadList.length;i++){
+                  flag = false
+                  if(teamList.length==0){
+                  teamList.push(isreadList[i].teamId)
+                  }else{
+                      for(let j=0;j<teamList.length;j++){
+                          if(teamList[j]===isreadList[i].teamId){
+                              flag = true
+                              break
+                          }
+                      }
+                      if(flag === false){
+                          teamList.push(isreadList[i].teamId)
+                      }
+                  }
+              }
+  
+              const teamUnreadObj = []
+              for(let i=0;i<teamList.length;i++){
+                  var isreadArray = isreadList.filter(function(item){
+                      if(item.teamId === teamList[i]){
+                          return true
+                      }
+                  })
+  
+                  teamUnreadObj.push({
+                      teamId : teamList[i],
+                      isreadArray,
+                      readState:true
+                  })
+                  
+              }
+  
+  
               this.setState({
-                  isreadList: result.data
+                  isreadList: teamUnreadObj,
+                  isreadLastStamp:isreadList[isreadList.length-1].create_time
               })
           }
 
@@ -210,6 +287,12 @@ export default class Infs extends React.Component{
                 body:{}
             })
             const unreadList = result.data
+            if(!unreadList||unreadList.length === 0){
+                this.setState({
+                    unreadNoResult:true
+                })
+                return
+            }
             const teamList = []
             var flag
             for(let i=0;i<unreadList.length;i++){
@@ -248,7 +331,7 @@ export default class Infs extends React.Component{
 
             this.setState({
                 unreadList: teamUnreadObj,
-                lastStamp:unreadList[unreadList.length-1].create_time
+                unreadLastStamp : unreadList[unreadList.length-1].create_time
             })
             
         }
@@ -270,21 +353,7 @@ export default class Infs extends React.Component{
           })
 
       }
- 
-changeReadState = async (item) => {
-    const queryNoticeId = item.noticeId
-    let rState = true
-    //this.state.queryUserId = userId?userId:'i dont get'
-        const result = await api('/api/user/readNotice', {
-            method: 'POST',
-            body:{
-              noticeId: queryNoticeId? queryNoticeId: '',
-              readState: rState
-              //userId: queryUserId? queryUserId: ''
-            }
-        })
 
-}
 groupInfoRead = (item) =>{
     const unreadList = this.state.unreadList
     for(let i=0;i<unreadList.length;i++){
@@ -367,6 +436,7 @@ markToRead = async() =>{
       render() {
         const unreadList = this.state.unreadList
         const isreadList = this.state.isreadList
+        console.log(isreadList)
         const userId = this.props.personInfo._id
 
           return (
@@ -399,15 +469,44 @@ markToRead = async() =>{
                                         
                                         }                    
                                 </div>)                       
-                    }}):<div>bye</div>}
+                    }}):
+                    isreadList.map((team) => {
+                        if(team.isreadArray[0]){
+                            return(
+                        <div className="infs-day" key={'time-group-' + team.teamId}>  
+                        
+                            <div className="group-line">{team.isreadArray[0].teamName}</div>
+                            {
+                            team.isreadArray.map((item)=>{
+                                return(
+                                <div className="item-div" key={item.noticeId}>
+                                <InformItem locationTo={this.locationTo} key={'inform-' + item.noticeId} {...item} />
+                                </div>
+                                )
+                            })
+                            
+                            }                    
+                    </div>
+                      )}})
+                    }
 
-                        {this.state.noResult && <div className='null-info'>无通知</div>}
+                       
+                        {this.state.activeTag == 'unread'?
                         <div className='load-more-bar'>
-                            {!this.state.noResult && !this.state.noMoreResult && <div className="load-more" onClick={this.getMoreHandle.bind(this,this.state.activeTag)}>
-                                点击加载更多
-                            </div>}
-                            {this.state.noMoreResult && <div className="no-more-result-alert">没有更多通知！</div>}
-                        </div>
+                        {this.state.unreadNoResult && <div className='null-info'>无通知</div>}
+                        {!this.state.unreadNoResult && !this.state.unreadNoMoreResult && <div className="load-more" onClick={this.getMoreHandle.bind(this,this.state.activeTag)}>
+                            点击加载更多
+                        </div>}
+                        {this.state.unreadNoMoreResult && <div className="no-more-result-alert">没有更多通知！</div>}
+                    </div>:
+                        <div className='load-more-bar'>
+                        {this.state.isreadNoResult && <div className='null-info'>无通知</div>}
+                        {!this.state.isreadNoResult && !this.state.isreadNoMoreResult && <div className="load-more" onClick={this.getMoreHandle.bind(this,this.state.activeTag)}>
+                            点击加载更多
+                        </div>}
+                        {this.state.isreadNoMoreResult && <div className="no-more-result-alert">没有更多通知！</div>}
+                    </div>}
+                        
                       </div>
               </Page>
           )

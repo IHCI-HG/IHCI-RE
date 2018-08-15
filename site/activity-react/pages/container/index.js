@@ -11,7 +11,8 @@ import Team from './team'
 import ActivateMail from './activate-mail'
 import TeamJoin from './team-join'
 import WxCode from './wxcode'
-import wxChoose from './wx-choose';
+import WxChoose from './wx-choose'
+import IhciJoin from './ihci-join';
 
 class App extends React.Component{
     state = {
@@ -53,8 +54,6 @@ class App extends React.Component{
         this.setState({
           showRemindCount: result.data.length
         })
-
-        console.log("inform:   " + result);
     }
 
 
@@ -262,7 +261,7 @@ class App extends React.Component{
                         <div className='remind'>
                             <span className='iconfont icon-remind' onClick={this.routerHandle.bind(this, '/inform')}></span>
                             
-                            {this.state.showRemindCount>0 && <span className="redPoint">{this.state.showRemindCount}</span>}
+                            {this.state.showRemindCount>0 && <span className="redPoint" onClick={this.routerHandle.bind(this, '/inform')} >{this.state.showRemindCount}</span>}
                             
                         </div>
                     </div>
@@ -294,8 +293,12 @@ const routeConfig = [
     },
     {
         path: '/wx-choose',
-        component: wxChoose 
+        component: WxChoose 
     },
+    {
+        path: '/ihci-join',
+        component: IhciJoin
+    }
 ]
 
 render(<Router routes={routeConfig} history={browserHistory}/>, document.getElementById('app'));

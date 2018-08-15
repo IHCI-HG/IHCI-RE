@@ -1,0 +1,50 @@
+{
+    "textData":[
+        {
+            "key": "wx-choose-1",
+            "content":"欢迎回到iHCI平台"
+        },{
+            "key": "wx-choose-2",
+            "content":"请重新输入"
+        },{
+            "key":"wx-choose-3",
+            "content":"请您完善个人信息"
+        },{
+            "key":"wx-choose-4",
+            "content":"欢迎来到iHCI平台"
+        },{
+            "key":"wx-choose-5",
+            "content":"iHCI平台介绍"
+        },{
+            "key":"wx-choose-6",
+            "content":"绑定账号"
+        },{
+            "key":"wx-choose-7",
+            "content":"直接进入平台"
+        },{
+            "key":"wx-choose-8",
+            "content":"绑定已有账号"
+        },{
+            "key":"ihci-join-1",
+            "content":"欢迎来到iHCI平台"
+        },{
+            "key":"ihci-join-2",
+            "content":"关于iHCI"
+        },{
+            "key":"ihci-join-3",
+            "content":"iHCI的详情"
+        },{
+            "key":"ihci-join-4",
+            "content":"加入iHCI"
+        },{
+            "key":"ihci-join-5",
+            "content":"名字以不超过12个的英文、汉字、数字、下划线与短横构成，并以中文或英文开头"
+        },{
+            "key":"ihci-join-6",
+            "content":"格式错误,请填写正确格式的邮件地址"
+        },{
+            "key":"ihci-join-7",
+            "content":"格式错误,请填写正确格式的电话号码"
+        }
+    ]
+}

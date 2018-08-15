@@ -162,6 +162,7 @@ const silentAuth = async(req, res, next) => {
     if(envi.isWeixin(req)){
         //静默授权
         var urlObj = url.parse(req.url,true)
+        console.log(urlObj)
         if(!req.rSession.userId&&!urlObj.query.code){
             res.redirect(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx87136e7c8133efe3&redirect_uri=http%3A%2F%2Fwww.animita.cn${urlObj.pathname.substr(0,urlObj.pathname.length)}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`)
         }
@@ -192,26 +193,12 @@ const silentAuth = async(req, res, next) => {
             }
         }
         if(req.rSession.userId){
-            // const result = await UserDB.findByUserId(req.rSession.userId)
-            // if(!result.unionid||result.unionid===''){
-            //     const result2 = await UserDB.createUser(null,null,{
-            //         unionid:result1.unionid,
-            //         wxUserInfo:result1
-            //     })
-            //     const findUser = await UserDB.findByUnionId(result1.unionid)
-            //     if(findUser){
-            //         req.rSession.userId = findUser._id
-            //     }
-            //     res.redirect('/person')
-            // }
-            // else{
             if(urlObj.pathname==='/'){
                 res.redirect('/team')
             }
             else{
                 next()
             }
-            // }
         }
     }
     else{
@@ -224,7 +211,10 @@ module.exports = [
     ['GET', '/', clientParams(), silentAuth, mainPage],
     // ['GET', '/', clientParams(), mainPage],
     ['GET', '/activate', clientParams(), pageHandle()],
+    
     ['GET','/wx-choose',clientParams(), wxJudge, pageHandle()],
+    ['GET','/ihci-join',clientParams(), pageHandle()],
+
     ['GET', '/auth', clientParams(), wxAuthCodeHandle , mainPage],
 
     ['GET', '/team', clientParams(), routerAuthJudge, pageHandle() ],
