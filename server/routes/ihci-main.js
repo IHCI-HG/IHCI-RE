@@ -224,7 +224,10 @@ module.exports = [
     ['GET', '/', clientParams(), silentAuth, mainPage],
     // ['GET', '/', clientParams(), mainPage],
     ['GET', '/activate', clientParams(), pageHandle()],
+    
     ['GET','/wx-choose',clientParams(), wxJudge, pageHandle()],
+    ['GET','/ihci-join',clientParams(), pageHandle()],
+
     ['GET', '/auth', clientParams(), wxAuthCodeHandle , mainPage],
 
     ['GET', '/team', clientParams(), routerAuthJudge, pageHandle() ],
