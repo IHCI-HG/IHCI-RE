@@ -914,18 +914,18 @@ const addCheckitem = async (req, res, next) => {
 
             console.log('result1:   '+ result1)
 
-            // await Promise.all(headerList.map(async (item) => {
-            //     await userDB.addCheckitem(item, result1, teamObj.title);
-            // }))
+            await Promise.all(headerList.map(async (item) => {
+                await userDB.addCheckitem(item, result1, teamObj.title);
+            }))
 
 
             // await Promise.all(headerList.map(async (item) => {
             //     await userDB.addCheckitem(item, result1.checkitemList[len-1], teamObj.title);
             // }))
 
-            await Promise.all(headerList.map(async (item) => {
-                await userDB.addCheckitem(item, checkitem, teamObj.title)
-            }))
+            // await Promise.all(headerList.map(async (item) => {
+            //     await userDB.addCheckitem(item, checkitem, teamObj.title)
+            // }))
         }
 
         resProcessor.jsonp(req, res, {
