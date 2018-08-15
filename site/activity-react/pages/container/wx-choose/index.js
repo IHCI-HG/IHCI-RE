@@ -1,7 +1,7 @@
 import * as React from 'react';
 import './style.scss'
 import Page from '../../../components/page'
-import api from '../../../utils/api';
+import api, { authApi } from '../../../utils/api';
 
 export default class wxChoose extends React.Component{
     state = {
@@ -91,7 +91,10 @@ export default class wxChoose extends React.Component{
        })
        if(result.state.code === 0){
            window.toast("请您完善个人信息")
-       } else {
+           setTimeout(() => {
+            location.href = '/person'
+        }, 1000)
+        } else {
            window.toast(result.state.msg ||"失败")
        }
     }
