@@ -839,7 +839,9 @@ export default class TeamDetail extends React.Component {
                             <input type="text"
                                 className="topic-name"
                                 onChange={this.topicNameInputHandle}
-                                value={this.state.topicName} placeholder="话题" />
+                                value={this.state.topicName} 
+                                placeholder="话题" 
+                                autoFocus/>
                             <Editor handleContentChange={this.handleTopicContentChange.bind(this)}
                                 handleFileUpload={this.topicFileUploadHandle.bind(this)}
                                 deleteFile={this.deleteFile.bind(this)}
