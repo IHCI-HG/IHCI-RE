@@ -5,6 +5,10 @@ import WxLoginDialog from '../../../components/wx-login-dialog'
 import fileUploader from '../../../utils/file-uploader';
 import FollowDialog from '../../../components/follow-dialog'
 import api, { authApi } from '../../../utils/api';
+
+import {Person as staticText} from '../../../commen/static-text'
+
+
 export default class Person extends React.Component{
     componentDidMount = async() => {
         this.personInfo = {}
@@ -238,11 +242,13 @@ export default class Person extends React.Component{
     }
     loginHandle = async () => {
         if(this.state.infoCheck.usernameEmpty){
-            window.toast("用户名为空")
+            // window.toast("用户名为空")
+            window.toast(staticText.PERSON_INFO_CHECK.CREATE_USERNAME_EMPTY);
             return
         }
         if(this.state.infoCheck.passwordEmpty){
-            window.toast("密码为空")
+            // window.toast("密码为空")
+            window.toast(staticText.PERSON_INFO_CHECK.CREATE_PASSWORD_EMPTY);
             return
         }
 
