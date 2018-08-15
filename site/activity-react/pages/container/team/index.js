@@ -128,7 +128,6 @@ export default class Team extends React.Component{
                 <div className="page-wrap">
                     <div className="main">
                         <div className="carete" onClick={() => {this.locationTo('/team-create')}}> 创建团队 </div>
-                        <div className="manage" onClick={() => {this.locationTo('/team-management')}}> 退出团队</div>
                         <div className="head" onClick={this.starHandle}>星标团队</div>
                         <div className="team-list">
                             {   

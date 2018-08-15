@@ -484,8 +484,11 @@ export default class Person extends React.Component{
         return (
             <Page title={"个人设置"} className="person-edit-page page-wrap">
                 <input className='file-input-hidden' type="file" ref={(fileInput) => this.fileInput = fileInput} onChange={this.uploadFileHandle}></input>
+                <div className = "header">
                 <div className="title">个人设置</div>
-
+                <div className="manage" onClick={() => {location.href = '/team-management'}}> 退出团队</div>
+                </div>
+                
                 <div className="head-edit">
                     <div className="left">
                         <img src={this.state.personInfo.headImg} className='head-img' />

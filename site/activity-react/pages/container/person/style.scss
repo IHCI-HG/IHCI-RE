@@ -1,12 +1,21 @@
 .person-edit-page {
     padding: 0 30px;
     margin-top: 40px;
-
-    .title {
-        padding: 40px 0;
-        font-size: 30px;
-        font-weight: bold;
+    .header{
+        display:flex;
+        justify-content:space-between;
+        .title {
+            padding: 40px 0;
+            font-size: 30px;
+            font-weight: bold;
+        }
+        .manage{
+            margin-top:20px;
+            font-size: 10px;
+            cursor: pointer;
+        }
     }
+    
     .create-btn {
         display: inline-block;
         font-size: 16px;
