@@ -331,6 +331,51 @@ userSchema.statics = {
         ).exec()
     },
 
+    // addCheckitem: async function(userId, result, teamName) {
+    //     var len = result.checkitemList.length;
+    //     const checkitemObj = result.checkitemList[len-1]
+    //     return this.update(
+    //         { _id: userId },
+    //         {
+    //             $addToSet: {
+    //                 noticeList: {
+    //                     create_time: checkitemObj.create_time,
+    //                     noticeId: checkitemObj._id,
+    //                     //teamId: checkItemObj.team,
+    //                     //teamName: checkitemObj,
+    //                     //creator: result.creator,
+    //                     creator: checkitemObj.creator,
+    //                     noticeTitle: checkitemObj.content,
+    //                     noticeContent: checkitemObj.content,
+    //                     type: "CREATE_CHECK_ITEM",
+    //                     readState: false,
+    //                 }
+    //             }
+    //         }
+    //     ).exec()
+    // },
+
+    addCheckitem: async function(userId, checkitemObj, teamName) {
+        return this.update(
+            { _id: userId },
+            {
+                $addToSet: {
+                    noticeList: {
+                        create_time: checkitemObj.create_time,
+                        noticeId: checkitemObj._id,
+                        //teamId: checkItemObj.team,
+                        //teamName: checkitemObj,
+                        creator: checkitemObj.creator,
+                        noticeTitle: checkitemObj.content,
+                        noticeContent: checkitemObj.content,
+                        type: "CREATE_CHECK_ITEM",
+                        readState: false,
+                    }
+                }
+            }
+        ).exec()
+    },
+
 
     // findNotice: async function(userId, noticeId){
     // ß

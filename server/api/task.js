@@ -312,6 +312,7 @@ const createTask = async (req, res, next) => {
         }
         const result = await taskDB.createTask(taskTitle, taskContent, simpleUser, fileList, teamId, tasklistId, taskDeadline, taskHeader);
 
+        console.log('result:  '+ result);
         const taskOb = await taskDB.findByTaskId(taskId)
 
         //6.28
@@ -356,9 +357,12 @@ const createTask = async (req, res, next) => {
             const headername = user.username
             createTaskTemplate(headerList, result, headername)
 
+
+
+            
             //网页通知
             const teamObj = await teamDB.findByTeamId(teamId);
-
+// console.log('eeeee/n/n'+teamObj.title)
             console.log("informList:"+informList)      
             await Promise.all(headerList.map(async (item) => {
                 await userDB.addCreateTask(item, result, teamObj.title)
@@ -835,6 +839,9 @@ const addCheckitem = async (req, res, next) => {
     const content = req.body.name;
     const header = req.body.assigneeId || "";
     const deadline = req.body.ddl || "";
+    const _id = req.body._id;
+    const create_time = Date.now;
+    
     console.log('assigneeId', header)
 
     const userId = req.rSession.userId;
@@ -848,14 +855,25 @@ const addCheckitem = async (req, res, next) => {
     }
 
     try {
+
+        
         const taskObj = await taskDB.findByTaskId(taskId);
         const userObj = await userDB.findByUserId(userId);
 
+
         const checkitem = {
             content: content,
-            creator: userObj,
+            creator: userObj.personInfo,
             header: header || "",
-            deadline: deadline || ""
+            deadline: deadline || "",
+            _id: _id,
+            //headImg: userObj.personInfo.headImg,
+            create_time: create_time || "",    
+        }
+        const simpleUser = {
+            _id: userObj._id,
+            name: userObj.personInfo.name,
+            headImg: userObj.personInfo.headImg,       
         }
 
 
@@ -881,6 +899,8 @@ const addCheckitem = async (req, res, next) => {
             taskId: taskId,
         }
 
+        console.log('result1  :'+result1)//有checkItemList[1]...
+
         if (checkitem.header) {
             //todo 给负责人下发微信模板
             const headerObj = await userDB.findByUserId(checkitem.header)
@@ -888,6 +908,24 @@ const addCheckitem = async (req, res, next) => {
             const headerList = []
             headerList.push(checkitem.header)
             createCheckitemTemplate(headerList, lastCheckitem, headername)
+
+            // 网页通知
+            console.log('7777:     ' + headerList+'/n/n/n');//userid
+
+            console.log('result1:   '+ result1)
+
+            // await Promise.all(headerList.map(async (item) => {
+            //     await userDB.addCheckitem(item, result1, teamObj.title);
+            // }))
+
+
+            // await Promise.all(headerList.map(async (item) => {
+            //     await userDB.addCheckitem(item, result1.checkitemList[len-1], teamObj.title);
+            // }))
+
+            await Promise.all(headerList.map(async (item) => {
+                await userDB.addCheckitem(item, checkitem, teamObj.title)
+            }))
         }
 
         resProcessor.jsonp(req, res, {
