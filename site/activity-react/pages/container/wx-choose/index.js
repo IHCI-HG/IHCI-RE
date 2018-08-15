@@ -1,7 +1,7 @@
 import * as React from 'react';
 import './style.scss'
 import Page from '../../../components/page'
-import api from '../../../utils/api';
+import api, { authApi } from '../../../utils/api';
 
 export default class wxChoose extends React.Component{
     state = {
