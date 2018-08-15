@@ -249,7 +249,6 @@ const setUserInfo = async (req, res, next) => {
     const result = await UserDB.updateUser(userId, {
         personInfo: personInfoObj
     })
-    console.log(result)
     if(result) {
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '设置成功' },
@@ -494,7 +493,6 @@ const showUnreadList = async (req, res, next) => {
     })
   //  result = db.result1.find().sort({create_time: -1}
     result.sort(sortByCreateTime)
-    console.log(result);
     const Result = []
 
     if(!timeStamp){
@@ -523,7 +521,6 @@ const readNotice = async (req, res, next) => {
     const readState = req.body.readState
 
     const result = await UserDB.readNotice(userId, noticeId, readState)
-    console.log("dwdwwdw",result);
 
   //  const Result = await UserDB.findNotice( userId,noticeId)
 
@@ -531,6 +528,19 @@ const readNotice = async (req, res, next) => {
         state: { code: 0 },
         data: {}
     });
+}
+const readNoticeArray = async(req,res,next) =>{
+    console.log('come in')
+    const userId = req.rSession.userId
+    const isReadNoticeArray = req.body.isReadNoticeArray
+    try{
+        for(let i=0;i<isReadNoticeArray.length;i++){
+            await UserDB.readNotice(userId, isReadNoticeArray[i], true)
+        }
+    }catch(err){
+        console.error(err)
+    }
+    
 }
 
 const wxEnter = async (req, res, next) => {
@@ -582,6 +592,7 @@ module.exports = [
     ['POST', '/api/user/showUnreadList', apiAuth, showUnreadList],
 
     ['POST', '/api/user/readNotice', apiAuth, readNotice],
+    ['POST', '/api/user/readNoticeArray', apiAuth, readNoticeArray],
     //['POST', '/api/user/getUserId', apiAuth, getUserId],
     ['POST', '/api/user/loginAndBindWx', apiAuth, loginAndBindWx],
     ['POST', '/api/user/fillUsernameAndPwd', apiAuth, fillUsernameAndPwd],

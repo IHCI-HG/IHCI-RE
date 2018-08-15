@@ -129,7 +129,8 @@ export default class Person extends React.Component{
         password:'',
         infoCheck:{
             illegalUsername:false,
-            illegalPassword:false
+            illegalPassword:false,
+            isChangeUsername:false,
         },
     }
 
@@ -147,7 +148,8 @@ export default class Person extends React.Component{
             username: e.target.value,
             infoCheck:{
                 ...this.state.infoCheck,
-                illegalUsername:illegalUsername
+                illegalUsername:illegalUsername,
+                isChangeUsername:true
             }
         })
     }
@@ -165,7 +167,8 @@ export default class Person extends React.Component{
             password: password,
             infoCheck:{
                 ...this.state.infoCheck,
-                illegalPassword:illegalPassword
+                illegalPassword:illegalPassword,
+                isChangeUsername:true
             }
         })
     }
@@ -203,7 +206,7 @@ export default class Person extends React.Component{
     }
 
     isPhoneNumber = (phoneNumber) => {
-        const reg = /^0?(13[0-9]|15[0-3,5-9]|17[0,3,5-8]|18[0-9]|14[57]|19[89])[0-9]{8}$/;
+        const reg =/^(86)?(13[0-9]|15[0-35-9]|17[035-8]|18[0-9]|14[57]|19[89])[0-9]{8}$/;
         return reg.test(phoneNumber);
     }
 
@@ -324,15 +327,22 @@ export default class Person extends React.Component{
                 originPersonInfo: this.state.originPersonInfo,
             }
         })
-        const result2 = await api('/api/user/fillUsernameAndPwd',{
-            method: 'POST',
-            body: {
-                username:this.state.username,
-                password:this.state.password,
+        if(this.state.infoCheck.isChangeUsername){
+            const result2 = await api('/api/user/fillUsernameAndPwd',{
+                method: 'POST',
+                body: {
+                    username:this.state.username,
+                    password:this.state.password,
+                }
+            })
+            if(result2.state.code === 0){
+            }else{
+                window.toast(result.state.msg ||"设置失败，请稍后再试")
             }
-        })
+        }
+        
         console.log(result1)
-        if(result.state.code === 0 && result2.state.code ===0) {
+        if(result.state.code === 0) {
             if(INIT_DATA.userObj.personInfo){
                 window.toast("设置成功")
             }
