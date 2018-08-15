@@ -4,7 +4,7 @@ import Page from '../../../components/page'
 import WxLoginDialog from '../../../components/wx-login-dialog'
 import fileUploader from '../../../utils/file-uploader';
 import FollowDialog from '../../../components/follow-dialog'
-import api, { authApi } from '../../../utils/api';
+import api from '../../../utils/api';
 export default class Person extends React.Component{
     componentDidMount = async() => {
         this.initFollower()
@@ -206,7 +206,7 @@ export default class Person extends React.Component{
     }
 
     isPhoneNumber = (phoneNumber) => {
-        const reg = /^0?(13[0-9]|15[0-3,5-9]|17[0,3,5-8]|18[0-9]|14[57]|19[89])[0-9]{8}$/;
+        const reg =/^(86)?(13[0-9]|15[0-35-9]|17[035-8]|18[0-9]|14[57]|19[89])[0-9]{8}$/;
         return reg.test(phoneNumber);
     }
 

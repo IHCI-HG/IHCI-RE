@@ -717,12 +717,12 @@ export default class TeamDetail extends React.Component {
     }
 
     renameHandle = (item) => {
-        // this.setState({
-        //     renameId: item._id,
-        //     renameName:item.name
-        // })
-        this.state.renameId = item._id
-        this.state.renameName = item.name
+        this.setState({
+            renameId: item._id,
+            renameName:item.name
+        })
+        // this.state.renameId = item._id
+        // this.state.renameName = item.name
         // this.state.renameId = item._id
         // this.state.renameName = item.name
         this.initTeamFile()
@@ -839,7 +839,9 @@ export default class TeamDetail extends React.Component {
                             <input type="text"
                                 className="topic-name"
                                 onChange={this.topicNameInputHandle}
-                                value={this.state.topicName} placeholder="话题" />
+                                value={this.state.topicName} 
+                                placeholder="话题" 
+                                autoFocus/>
                             <Editor handleContentChange={this.handleTopicContentChange.bind(this)}
                                 handleFileUpload={this.topicFileUploadHandle.bind(this)}
                                 deleteFile={this.deleteFile.bind(this)}

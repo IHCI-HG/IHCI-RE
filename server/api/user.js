@@ -70,19 +70,19 @@ const signUp = async (req, res, next) => {
 }
 
 const fillUsernameAndPwd = async (req, res, next) => {
-    const userInfo = req.body.userInfo
+    const username = req.body.username
+    const password = req.body.password
     const userId = req.rSession.userId
-    if(!userInfo.username || !userInfo.password || !userInfo.unionid) {
+    if(!username || !password) {
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: "参数不全"},
             data: {}
         });
         return
     }
-    const findUser = await UserDB.findByUnionId(userInfo.unionid)
     const result = await UserDB.updateUser(userId,{
-        username: userInfo.username,
-        password: crypto.SHA256(userInfo.password).toString()
+        username: username,
+        password: crypto.SHA256(password).toString()
     })
     if(!result) {
         resProcessor.jsonp(req, res, {
@@ -162,7 +162,6 @@ const loginAndBindWx = async (req, res, next) => {
         var userId = result1._id.toString()
         await UserDB.updateUser(userId,result1)
         req.rSession.userId = userId
-        res.redirect('/team')
         resProcessor.jsonp(req, res, {
             state: { code: 0 },
             data: {
@@ -250,7 +249,6 @@ const setUserInfo = async (req, res, next) => {
     const result = await UserDB.updateUser(userId, {
         personInfo: personInfoObj
     })
-    console.log(result)
     if(result) {
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '设置成功' },
@@ -495,7 +493,6 @@ const showUnreadList = async (req, res, next) => {
     })
   //  result = db.result1.find().sort({create_time: -1}
     result.sort(sortByCreateTime)
-    console.log(result);
     const Result = []
 
     if(!timeStamp){
@@ -524,7 +521,6 @@ const readNotice = async (req, res, next) => {
     const readState = req.body.readState
 
     const result = await UserDB.readNotice(userId, noticeId, readState)
-    console.log("dwdwwdw",result);
 
   //  const Result = await UserDB.findNotice( userId,noticeId)
 
@@ -532,6 +528,19 @@ const readNotice = async (req, res, next) => {
         state: { code: 0 },
         data: {}
     });
+}
+const readNoticeArray = async(req,res,next) =>{
+    console.log('come in')
+    const userId = req.rSession.userId
+    const isReadNoticeArray = req.body.isReadNoticeArray
+    try{
+        for(let i=0;i<isReadNoticeArray.length;i++){
+            await UserDB.readNotice(userId, isReadNoticeArray[i], true)
+        }
+    }catch(err){
+        console.error(err)
+    }
+    
 }
 
 const wxEnter = async (req, res, next) => {
@@ -546,7 +555,6 @@ const wxEnter = async (req, res, next) => {
         if(findUser){
             req.rSession.userId = findUser._id
         }
-        res.redirect('/person')
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '登陆成功' },
@@ -556,7 +564,7 @@ const wxEnter = async (req, res, next) => {
         });
     } catch (error) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '解绑失败' },
+            state: { code: 1, msg: '登陆失败' },
             data: {}
         });
         console.error(error)
@@ -584,8 +592,9 @@ module.exports = [
     ['POST', '/api/user/showUnreadList', apiAuth, showUnreadList],
 
     ['POST', '/api/user/readNotice', apiAuth, readNotice],
+    ['POST', '/api/user/readNoticeArray', apiAuth, readNoticeArray],
     //['POST', '/api/user/getUserId', apiAuth, getUserId],
     ['POST', '/api/user/loginAndBindWx', apiAuth, loginAndBindWx],
     ['POST', '/api/user/fillUsernameAndPwd', apiAuth, fillUsernameAndPwd],
-    ['POST', '/api/user/wxEnter', apiAuth, wxEnter],
+    ['POST', '/api/user/wxEnter', wxEnter],
 ];

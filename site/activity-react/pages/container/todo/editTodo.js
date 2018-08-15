@@ -126,7 +126,9 @@ class EditTodo extends React.Component {
                            className="dashed-input"
                            placeholder={_props.createInput}
                            defaultValue={_props.value?_props.value:''}
-                           onKeyDown={(event)=>{if(event.keyCode== "13"){this.handleConfirm()}}}>
+                           onKeyDown={(event)=>{if(event.keyCode== "13"){this.handleConfirm()}}}
+                           autoFocus>
+                           
                     </input>
                     <ItemLabel assigneeId = {this.state.assigneeId}
                                date = {this.state.date}
