@@ -17,7 +17,7 @@ class InformItem extends React.PureComponent{
         'CREATE_TASK': '创建任务：',
         'EDIT_TOPIC': '修改了讨论: ',
         'EDIT_REPLY': '编辑了回复: ',
-        'CREATE_CHECK_ITEM': '创建了检查项'
+        'CREATE_CHECK_ITEM': '创建了检查项: '
     }
     changeReadState = async () => {
         const queryNoticeId = this.props.noticeId
@@ -219,7 +219,7 @@ export default class Infs extends React.Component{
           'CREATE_TASK': '创建任务',
           'EDIT_TOPIC': '修改了讨论：',
           'EDIT_REPLY': '编辑了回复: ',
-          'CREATE_CHECK_ITEM': '创建了检查项'
+          'CREATE_CHECK_ITEM': '创建了检查项: '
       }
      
       initIsreadList = async () => {
