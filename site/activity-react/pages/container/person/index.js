@@ -102,6 +102,7 @@ export default class Person extends React.Component{
     state = {
         showWxLogin: false,
         showFollow: false,
+        showUsenamePwd:false,
         userObj: {},
         personInfo: {
             name: '',
@@ -130,7 +131,6 @@ export default class Person extends React.Component{
         infoCheck:{
             illegalUsername:false,
             illegalPassword:false,
-            isChangeUsername:false,
         },
     }
 
@@ -149,7 +149,6 @@ export default class Person extends React.Component{
             infoCheck:{
                 ...this.state.infoCheck,
                 illegalUsername:illegalUsername,
-                isChangeUsername:true
             }
         })
     }
@@ -168,7 +167,6 @@ export default class Person extends React.Component{
             infoCheck:{
                 ...this.state.infoCheck,
                 illegalPassword:illegalPassword,
-                isChangeUsername:true
             }
         })
     }
@@ -327,19 +325,7 @@ export default class Person extends React.Component{
                 originPersonInfo: this.state.originPersonInfo,
             }
         })
-        if(this.state.infoCheck.isChangeUsername){
-            const result2 = await api('/api/user/fillUsernameAndPwd',{
-                method: 'POST',
-                body: {
-                    username:this.state.username,
-                    password:this.state.password,
-                }
-            })
-            if(result2.state.code === 0){
-            }else{
-                window.toast(result.state.msg ||"设置失败，请稍后再试")
-            }
-        }
+        
         
         console.log(result1)
         if(result.state.code === 0) {
@@ -478,7 +464,24 @@ export default class Person extends React.Component{
             confirmEditMail: true,
         })
     }
-    
+    UsernamePwdHandle = () => {
+        this.setState({
+            showUsenamePwd:true
+        })
+    }
+    SaveUsenamePwdHandle = async () => {
+            const result = await api('/api/user/fillUsernameAndPwd',{
+                method: 'POST',
+                body: {
+                    username:this.state.username,
+                    password:this.state.password,
+                }
+            })
+            if(result.state.code === 0){
+            }else{
+                window.toast(result.state.msg ||"设置失败，请稍后再试")
+            }
+    }
     render() {
         // let personInfo = this.state.personInfo
         return (
@@ -498,13 +501,21 @@ export default class Person extends React.Component{
                     </div>
                 </div>
                 {
-                    !this.state.userObj.username ?
+                    !this.state.userObj.username?
+                    <div className = "edit-con">
+                    <div className = "after">尚未设置账号密码，请</div><div className = "follow-btn" onClick = {this.UsernamePwdHandle}>设置账号密码</div>
+                    </div>
+                    :""
+                }
+                {
+                    this.state.showUsenamePwd?
                     <div className = "edit-con">
                     <div className = "before">账号：</div>
-                    <input className = "input-edit" value={this.state.username} onChange={this.usernameHandle}></input>
+                    <input className = "input-edit" value = {this.state.username} onChange = {this.usernameHandle}></input>
                     <br/>
                     <div className = "before">密码：</div>
-                    <input className="input-edit" type="password" value={this.state.password} onChange={this.passwordHandle}></input>
+                    <input className = "input-edit" type = "password" value = {this.state.password} onChange = {this.passwordHandle}></input>
+                    <div className = "save-btn" onClick = {this.SaveUsenamePwdHandle}>确定</div>
                     </div>
                     :""
                 }
