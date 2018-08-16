@@ -181,7 +181,7 @@ export default class Person extends React.Component{
     }
 
     isName = (name) => {
-        const reg = /^[\u4E00-\u9FA5A-Za-z]{1}[\u4E00-\u9FA5A-Za-z0-9_\-]{0,11}$/;
+        const reg = /^[\u4E00-\u9FA5]{1}[\u4E00-\u9FA5\-]{0,11}$/;
         return reg.test(name);
     }
 
@@ -558,7 +558,7 @@ export default class Person extends React.Component{
                 <div className="edit-con">
                     <div className="before">姓名</div>
                     <input type="text" onChange={this.nameInputHandle} className="input-edit"  value={this.state.personInfo.name}/>
-                    {this.state.infoCheck.illegalName && <div className='after error'>名字以不超过12个的英文、汉字、数字、下划线与短横构成，并以中文或英文开头</div>}
+                    {this.state.infoCheck.illegalName && <div className='after error'>加入iHCI要求实名</div>}
                 </div>
 
                 <div className="edit-con">

@@ -155,6 +155,9 @@ export default class IhciJoin extends React.Component{
         })
         if(result.state.code === 0){
             window.toast(staticText.RESPONSE_MESSAGE.WELCOME_IHCI_MSG)
+            setTimeout(() => {
+                location.href = '/team'
+            }, 1000)
         } else {
             window.toast(result.state.msg ||staticText.RESPONSE_MESSAGE.SUBMIT_ERROR_MSG)
         }
