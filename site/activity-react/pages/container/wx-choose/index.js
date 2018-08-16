@@ -2,6 +2,7 @@ import * as React from 'react';
 import './style.scss'
 import Page from '../../../components/page'
 import api, { authApi } from '../../../utils/api';
+import {WxChoose as staticText} from '../../../commen/static-text'
 
 
 
@@ -70,26 +71,26 @@ export default class WxChoose extends React.Component{
     }
     loginHandle = async () => {
         if(this.state.infoCheck.usernameEmpty){
-            window.toast("账号为空")
+            window.toast(staticText.PERSON_INFO_CHECK.ENTER_USERNAME_EMPTY)
             return
         }
         if(this.state.infoCheck.passwordEmpty){
-            window.toast("密码为空")
+            window.toast(staticText.PERSON_INFO_CHECK.ENTER_PASSWORD_EMPTY)
             return
         }
 
         const result = await authApi(this.state.username, this.state.password, this.state.openid)
         if(result.state.code === 0) {
-            window.toast("欢迎回到iHCI平台")
+            window.toast(staticText.RESPONSE_MESSAGE.WELCOME_BACK_MSG)
             setTimeout(() => {
                 location.href = '/team'
             }, 1000)   
         } else {
-            window.toast(result.state.msg || "请重新输入")
+            window.toast(result.state.msg || staticText.RESPONSE_MESSAGE.SUBMIT_ERROR_MSG)
         }
     }
     enterHandle = async () =>{
-        window.toast("请完善个人信息")
+        window.toast(staticText.RESPONSE_MESSAGE.COMPLETE_PERSON_INFO)
         setTimeout(() => {
             location.href = `/ihci-join?openid=${this.state.openid}`
         }, 1000)
@@ -101,23 +102,23 @@ export default class WxChoose extends React.Component{
             {
                 this.state.loginBlock === ''?
             <div className="auth-nav"> 
-               <div className = "auth-header">欢迎来到iHCI平台</div>
-               <div className = "login-desc">iHCI平台介绍</div>
-               <div className = "auth-nav-item" onClick={this.setTologinHandle}>绑定账号</div>
-               <div className = "auth-nav-item" onClick={this.enterHandle}>直接进入平台</div>
+               <div className = "auth-header">{staticText.PAGE_INFO.CHOOSE_BLOCK_TITLE}</div>
+               <div className = "login-desc">{staticText.PAGE_INFO.PAGE_IHCI_DESC}</div>
+               <div className = "auth-nav-item" onClick={this.setTologinHandle}>{staticText.BUTTON_TEXT.BIND_ACCOUNT_BUTTON}</div>
+               <div className = "auth-nav-item" onClick={this.enterHandle}>{staticText.BUTTON_TEXT.ENTER_IHCI_BUTTON}</div>
             </div>
             :""
             }
             {
                    this.state.loginBlock === "login"?
                    <div className="loginBlock">
-                   <div className = "auth-header">绑定已有账号</div>
-                   <div className ="login-desc">账号: </div>
+                   <div className = "auth-header">{staticText.PAGE_INFO.ACCOUNT_BLOCK_TITLE}</div>
+                   <div className ="login-desc">{staticText.LABEL_TEXT.USERNAME_LABEL_TEXT}</div>
                    <input className="login-input" value={this.state.username} onChange={this.usernameHandle}></input>
-                   <div className ="login-desc">密码: </div>
+                   <div className ="login-desc">{staticText.LABEL_TEXT.PASSWORD_LABEL_TEXT}</div>
                    <input className="login-input" type="password" value={this.state.password} onChange={this.passwordHandle}></input>
-                   <div className="login-btn" onClick={this.loginHandle}>确定</div>
-                   <div className="login-btn" onClick={this.setTologinHandle}>取消</div>
+                   <div className="login-btn" onClick={this.loginHandle}>{staticText.BUTTON_TEXT.SUBMIT_BUTTON}</div>
+                   <div className="login-btn" onClick={this.setTologinHandle}>{staticText.BUTTON_TEXT.CANCEL_BUTTON}</div>
                    </div>
                 :""
             }
