@@ -16,6 +16,9 @@ export default class WxChoose extends React.Component{
             passwordEmpty:true
         },
     }
+    componentWillMount = () => {
+        
+    }
     componentDidMount = () => {
        //var textData = require('../../../text.json');
        this.setState({
