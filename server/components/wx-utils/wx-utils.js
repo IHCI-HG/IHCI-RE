@@ -419,7 +419,7 @@ export const createCheckitemTemplate = async function (headerList, checkitemObj,
                 'http://www.animita.cn/todo/' + checkitemObj._id,
                 {
                     "first": {
-                        "value": checkitemObj.creator.username + " 将检查项指派给" + headername,
+                        "value": checkitemObj.creator.name + " 将检查项指派给" + headername,
                     },
                     "keyword1": {
                         "value": checkitemObj.content,
@@ -481,7 +481,7 @@ export const delCheckHeaderTemplate = async function (headerList, checkitemObj, 
                 'http://www.animita.cn/todo/' + checkitemObj._id,
                 {
                     "first": {
-                        "value": checkitemObj.creator.username + " 取消了分配给" + headername + "的检查项",
+                        "value": checkitemObj.creator.name + " 取消了分配给" + headername + "的检查项",
                     },
                     "keyword1": {
                         "value": checkitemObj.content,

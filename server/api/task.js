@@ -886,6 +886,7 @@ const addCheckitem = async (req, res, next) => {
 
         const lastCheckitem = result1.checkitemList[result1.checkitemList.length - 1]
         var checkitemDdl = ""
+        console.log("last:    "+ lastCheckitem.creator.name)
         if(lastCheckitem.deadline) {
             console.log(lastCheckitem.deadline)
             const date = new Date(lastCheckitem.deadline)
