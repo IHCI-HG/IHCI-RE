@@ -18,9 +18,10 @@ var activityApi = require('../api/activity');
 
 var mongoose = require('mongoose')
 
-var TestDB = mongoose.model('test')
 var UserDB = mongoose.model('user')
-var TeamDB = mongoose.model('team')
+var teamDB = mongoose.model('team')
+var topicDB = mongoose.model('topic')
+var taskDB = mongoose.model('task')
 
 import {
     pub_codeToAccessToken,
@@ -142,7 +143,7 @@ const joinTeam = async (req, res, next) => {
     const userId = req.rSession.userId
     const teamId = req.params.teamId
 
-    const teamObj = await TeamDB.findByTeamId(teamId)
+    const teamObj = await teamDB.findByTeamId(teamId)
 
     const initData = {
         login: false,
@@ -206,6 +207,42 @@ const silentAuth = async(req, res, next) => {
     }
 }
 
+const userAuthJudge = async(req, res, next) => {
+    var userId = req.rSession.userId
+    if(req.url.indexOf('/discuss/topic/')!== -1){
+        const topicId = req.url.split('/')[3]
+        const topicObj = await topicDB.findByTopicId(topicId)
+        var teamId = topicObj.team
+    }
+    if(req.url.indexOf('/files/')!== -1||req.url.indexOf('/team/')!== -1||req.url.indexOf('/team-admin/')!== -1||req.url.indexOf('/completed/')!== -1){
+        var teamId = req.url.split('/')[2]
+    }
+    if(req.url.indexOf('/todo/')!==-1){
+        const taskId = req.url.split('/')[2]
+        const taskObj = await taskDB.findByTaskId(taskId)
+        var teamId = taskObj.teamId
+    }
+    const teamObj = await teamDB.findByTeamId(teamId)
+    var auth = []
+    if(req.url === '/team-admin/:teamId'){
+        auth = teamObj.memberList.filter((item)=>{
+            return item.userId === userId && item.role === 'creator'
+        })
+    }
+    else{
+        auth = teamObj.memberList.filter((item)=>{
+            return item.userId === userId
+        })
+    }
+    if(auth.length === 0){
+        //提示权限不足
+        res.redirect('/team')
+    }
+    else{
+        next()
+    }
+}
+
 module.exports = [
     // 主页
     ['GET', '/', clientParams(), silentAuth, mainPage],
@@ -218,23 +255,22 @@ module.exports = [
     ['GET', '/auth', clientParams(), wxAuthCodeHandle , mainPage],
 
     ['GET', '/team', clientParams(), routerAuthJudge, pageHandle() ],
-    ['GET', '/files/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
+    ['GET', '/files/:teamId', clientParams(), routerAuthJudge, userAuthJudge, pageHandle() ],
     ['GET', '/sign', clientParams(), routerAuthJudge, pageHandle() ],
 
-    ['GET', '/team/:id', clientParams(), silentAuth, routerAuthJudge, pageHandle() ],
-    ['GET', '/todo/:id', clientParams(), silentAuth, routerAuthJudge, pageHandle() ],
-    ['GET', '/team-edit/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
-    ['GET', '/team-admin/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
+    ['GET', '/team/:id', clientParams(), silentAuth, routerAuthJudge, userAuthJudge, pageHandle() ],
+    ['GET', '/todo/:id', clientParams(), silentAuth, routerAuthJudge, userAuthJudge, pageHandle() ],
+    ['GET', '/team-admin/:teamId', clientParams(), routerAuthJudge, userAuthJudge, pageHandle() ],
     ['GET', '/team-management',clientParams(), routerAuthJudge, pageHandle()],
     ['GET', '/team-join/:teamId', clientParams(), silentAuth, joinTeam, pageHandle() ],
 
     ['GET', '/team-create', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/person', clientParams(), routerAuthJudge, personSeting, pageHandle() ],
-    ['GET', '/discuss/topic/:id', clientParams(), silentAuth, routerAuthJudge, pageHandle() ],
+    ['GET', '/discuss/topic/:id', clientParams(), silentAuth, routerAuthJudge, userAuthJudge, pageHandle() ],
     ['GET', '/timeline', clientParams(), silentAuth,    routerAuthJudge, pageHandle() ],
     ['GET', '/member', clientParams(),   routerAuthJudge, pageHandle() ],
     ['GET', '/search', clientParams(),   routerAuthJudge, pageHandle() ],
-    ['GET', '/completed/:id', clientParams(), silentAuth, routerAuthJudge, pageHandle() ],
+    ['GET', '/completed/:id', clientParams(), silentAuth, routerAuthJudge, userAuthJudge,pageHandle() ],
     ['GET', '/inform', clientParams(),   routerAuthJudge, personSeting, pageHandle() ],
     ['GET', '/wxcode', clientParams(),  pageHandle() ],
 ];

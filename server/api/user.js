@@ -148,25 +148,19 @@ const loginAndBindWx = async (req, res, next) => {
     
     if(result) {
         const wxUserInfo = await pub_openidToUserInfo(openid)
-        // const findResult = await UserDB.findByUnionId(unionid)
-        // const wxUserId = findResult._id
-        // const userDBresult = await UserDB.delUserById(wxUserId)
         const result1 = (await UserDB.findByUsername(username)).toObject()
-        // result1.username = username
-        // result1.password = password
+        var userId = result1._id
         result1.unionid = wxUserInfo.unionid
         result1.openid = openid
         result1.wxUserInfo = wxUserInfo
-        // result1.noticeList = [...result1.noticeList, ...findResult.noticeList]
-        // result1.teamList = [...result1.teamList, ...findResult.teamList]
-        var userId = result1._id.toString()
-        await UserDB.updateUser(userId,result1)
+        const result2 = await UserDB.updateUser(userId,result1)
+        const flag = await IfBeforeSub(userId, wxUserInfo.unionid)
         req.rSession.userId = userId
         resProcessor.jsonp(req, res, {
             state: { code: 0 },
             data: {
                 sysTime: new Date().getTime(),
-                userPo: result
+                userPo: result2
             }
         });
     } else {
@@ -545,14 +539,31 @@ const readNoticeArray = async(req,res,next) =>{
 
 const wxEnter = async (req, res, next) => {
     const openid = req.body.openid
+    const personInfo = {
+        name:req.body.name,
+        phone:req.body.phone,
+        mail:req.body.mail
+    }
+    if(!openid || !personInfo.name || !personInfo.phone || !personInfo.mail) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: "参数不全" },
+            data: {}
+        });
+        return
+    }
     try {
         var result1 = await pub_openidToUserInfo(openid)
         const result2 = await UserDB.createUser(null,null,{
             unionid:result1.unionid,
-            wxUserInfo:result1
+            wxUserInfo:result1,
+            personInfo:{
+                ...personInfo,
+                headImg:result1.headimgurl
+            }
         })
         const findUser = await UserDB.findByUnionId(result1.unionid)
-        if(findUser){
+        if(findUser){   
+            const flag = await IfBeforeSub(findUser._id, result1.unionid)
             req.rSession.userId = findUser._id
         }
 
@@ -594,7 +605,7 @@ module.exports = [
     ['POST', '/api/user/readNotice', apiAuth, readNotice],
     ['POST', '/api/user/readNoticeArray', apiAuth, readNoticeArray],
     //['POST', '/api/user/getUserId', apiAuth, getUserId],
-    ['POST', '/api/user/loginAndBindWx', apiAuth, loginAndBindWx],
+    ['POST', '/api/user/loginAndBindWx', loginAndBindWx],
     ['POST', '/api/user/fillUsernameAndPwd', apiAuth, fillUsernameAndPwd],
     ['POST', '/api/user/wxEnter', wxEnter],
 ];
