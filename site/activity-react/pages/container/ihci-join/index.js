@@ -137,6 +137,9 @@ export default class IhciJoin extends React.Component{
         })
         if(result.state.code === 0){
             window.toast("欢迎来到iHCI平台")
+            setTimeout(() => {
+                location.href = '/team'
+            }, 1000)
         } else {
             window.toast(result.state.msg ||"操作失败，请稍后重试")
         }

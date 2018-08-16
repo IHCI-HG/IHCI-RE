@@ -590,7 +590,7 @@ export default class Person extends React.Component{
                 }
 
                 {
-                    this.state.showFollow && <FollowDialog subState = {this.userObj.subState} closeHandle={this.closeFollowDialogHandle}/>
+                    this.state.showFollow && <FollowDialog subState = {this.state.userObj.subState} closeHandle={this.closeFollowDialogHandle}/>
                 }
 
             </Page>
