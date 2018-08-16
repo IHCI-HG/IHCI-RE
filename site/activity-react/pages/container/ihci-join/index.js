@@ -2,7 +2,7 @@ import * as React from 'react';
 import './style.scss'
 import Page from '../../../components/page'
 import api, { authApi } from '../../../utils/api';
-
+import {IhciJoin as staticText} from '../../../commen/static-text'
 
 export default class IhciJoin extends React.Component{
 
@@ -14,6 +14,9 @@ export default class IhciJoin extends React.Component{
             mail: '',
         },
         infoCheck:{
+            nameEmpty:true,
+            phoneEmpty:true,
+            emailEmpty:true,
             illegalEmailAddress: false,
             illegalPhoneNumber:false,
             illegalName: false,
@@ -47,6 +50,7 @@ export default class IhciJoin extends React.Component{
             infoCheck: {
                 ...this.state.infoCheck,
                 illegalName: illegalName,
+                nameEmpty:false,
             },
         })
     }
@@ -70,6 +74,7 @@ export default class IhciJoin extends React.Component{
             infoCheck: {
                 ...this.state.infoCheck,
                 illegalPhoneNumber: illegalPhoneNumber,
+                phoneEmpty:false,
             },
         })
     }
@@ -94,6 +99,7 @@ export default class IhciJoin extends React.Component{
             infoCheck: {
                 ...this.state.infoCheck,
                 illegalEmailAddress: illegalEmailAddress,
+                emailEmpty:false,
             },
         })
     }
@@ -129,6 +135,15 @@ export default class IhciJoin extends React.Component{
         return false
     }
     enterHandle = async () =>{
+        if(this.state.infoCheck.nameEmpty){
+            window.toast(staticText.PERSON_INFO_CHECK.CREATE_NAME_EMPTY)
+        }
+        if(this.state.infoCheck.phoneEmpty){
+            window.toast(staticText.PERSON_INFO_CHECK.CREATE_PHONE_EMPTY)
+        }
+        if(this.state.infoCheck.emailEmpty){
+            window.toast(staticText.PERSON_INFO_CHECK.CREATE_EMAIL_EMPTY)
+        }
         const result = await api('/api/user/wxEnter',{
             method:'POST',
             body:{
@@ -139,40 +154,40 @@ export default class IhciJoin extends React.Component{
             }
         })
         if(result.state.code === 0){
-            window.toast("欢迎来到iHCI平台")
+            window.toast(staticText.RESPONSE_MESSAGE.WELCOME_IHCI_MSG)
             setTimeout(() => {
                 location.href = '/team'
             }, 1000)
         } else {
-            window.toast(result.state.msg ||"操作失败，请稍后重试")
+            window.toast(result.state.msg ||staticText.RESPONSE_MESSAGE.SUBMIT_ERROR_MSG)
         }
     }
 
     render () {
         return (
-            <Page title = {"加入iHCI"} className = "enter-page">
-              <div className = "title">关于iHCI</div>
-              <div className = "desc">iHCI的详情</div>
-              <div className = "head">加入iHCI</div>
+            <Page title = {staticText.PAGE_INFO.JOIN__BLOCK_TITLE} className = "enter-page">
+              <div className = "title">{staticText.PAGE_INFO.PAGE_TITLE}</div>
+              <div className = "desc">{staticText.PAGE_INFO.PAGE_IHCI_DESC}</div>
+              <div className = "head">{staticText.PAGE_INFO.JOIN_BLOCK_TITLE}</div>
               <div className="edit-con">
-                    <div className="before">姓名</div>
+                    <div className="before">{staticText.LABEL_TEXT.NAME_LABEL_TEXT}</div>
                     <input type="text" onChange={this.nameInputHandle} className="input-edit"  value={this.state.personInfo.name}/>
-                    {this.state.infoCheck.illegalName && <div className='after error'>名字以不超过12个的英文、汉字、数字、下划线与短横构成，并以中文或英文开头</div>}
+                    {this.state.infoCheck.illegalName && <div className='after error'>{staticText.PERSON_INFO_CHECK.CREATE_NAME_ILLEGAL}</div>}
                 </div>
 
                 <div className="edit-con">    
-                    <div className="before">邮箱</div>
+                    <div className="before">{staticText.LABEL_TEXT.EMAIL_LABEL_TEXT}</div>
                     <input type="text" onChange={this.mailInputHandle} className="input-edit" value={this.state.personInfo.mail}/>
-                    {this.state.infoCheck.illegalEmailAddress && <div className='after error'>格式错误,请填写正确格式的邮件地址</div>}
+                    {this.state.infoCheck.illegalEmailAddress && <div className='after error'>{staticText.PERSON_INFO_CHECK.CREATE_EMAIL_ILLEGAL}</div>}
                         
                 </div>
 
                 <div className="edit-con">
-                    <div className="before">手机</div>
+                    <div className="before">{staticText.LABEL_TEXT.PHONE_LABEL_TEXT}</div>
                     <input type="text" onChange={this.phoneInputHandle} className="input-edit" value={this.state.personInfo.phone}/>
-                    {this.state.infoCheck.illegalPhoneNumber && <div className='after error'>格式错误,请填写正确格式的电话号码</div>}
+                    {this.state.infoCheck.illegalPhoneNumber && <div className='after error'>{staticText.PERSON_INFO_CHECK.CREATE_PHONE_ILLEGAL}</div>}
                 </div>
-                <div className = "enter-btn" onClick = {this.enterHandle}>加入</div>
+                <div className = "enter-btn" onClick = {this.enterHandle}>{staticText.BUTTON_TEXT.ENTER_IHCI_BUTTON}</div>
             </Page>
         )
     }
