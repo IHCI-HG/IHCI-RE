@@ -352,9 +352,11 @@ const createTask = async (req, res, next) => {
         headerList.push(taskHeader)
 
         //todo 有负责人，走微信模板下发流程
+        console.log('taskHeader',taskHeader)
         if (taskHeader) {
             const user = await userDB.findByUserId(taskHeader)
             const headername = user.username
+            console.log('headername',headername)
             createTaskTemplate(headerList, result, headername)
 
 
