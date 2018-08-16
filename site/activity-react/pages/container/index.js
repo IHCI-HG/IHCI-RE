@@ -256,13 +256,17 @@ class App extends React.Component{
                         onMouseLeave={this.handleMouseOut}
                         >                           
                             <img className="head-img" src={this.state.headImg} />                               
-                        </div>                
-
+                        </div>          
+                   
                         <div className='remind'>
-                            <span className='iconfont icon-remind' onClick={this.routerHandle.bind(this, '/inform')}></span>
-                            
-                            {this.state.showRemindCount>0 && <span className="redPoint" onClick={this.routerHandle.bind(this, '/inform')} >{this.state.showRemindCount}</span>}
-                            
+                            <div className={this.state.showRemindCount > 0 ? 'shake' : ''}>
+                            <span className='iconfont icon-remind'  onClick={this.routerHandle.bind(this, '/inform')}></span>                           
+                            {
+                                this.state.showRemindCount > 0 
+                                && 
+                                <span className="redPoint" onClick={this.routerHandle.bind(this, '/inform')} >{this.state.showRemindCount}</span>
+                            }   
+                            </div>
                         </div>
                     </div>
 
