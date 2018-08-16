@@ -151,7 +151,6 @@ const loginAndBindWx = async (req, res, next) => {
         const result1 = (await UserDB.findByUsername(username)).toObject()
         var userId = result1._id
         result1.unionid = wxUserInfo.unionid
-        result1.openid = openid
         result1.wxUserInfo = wxUserInfo
         const result2 = await UserDB.updateUser(userId,result1)
         const flag = await IfBeforeSub(userId, wxUserInfo.unionid)
@@ -313,9 +312,10 @@ const wxLogin = async (req, res, next) => {
                 } else {
                     const result = await UserDB.createUser(null,null,{
                         unionid:unionid,
-                        wxUserInfo:userInfo
+                        wxUserInfo:userInfo,
                     })
-                    req.rSession.userId = result._id   
+                    req.rSession.userId = result._id
+                    const flag = await IfBeforeSub(result._id, unionid)   
                     res.redirect('/person');                 
                 }
             } else {
