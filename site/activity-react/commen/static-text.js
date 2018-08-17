@@ -105,3 +105,4 @@ const Person = {
 }
 module.exports.WxChoose = WxChoose
 module.exports.IhciJoin = IhciJoin
+module.exports.Person = Person
