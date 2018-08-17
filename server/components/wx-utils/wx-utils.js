@@ -306,12 +306,15 @@ export const createTaskTemplate = async function (headerList, taskObj, headernam
                     },
                     "keyword1": {
                         "value": taskObj.title,
+                        "color":"#173177"
                     },
                     "keyword2": {
                         "value": formatDate(new Date()),
+                        "color":"#173177"
                     },
                     "keyword3": {
                         "value": taskObj.content,
+                        "color":"#173177"
                     },
                     "remark": {
                         "value": "点击查看",
