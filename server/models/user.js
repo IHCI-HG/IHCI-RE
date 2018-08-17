@@ -208,7 +208,7 @@ userSchema.statics = {
                         create_time: Obj.create_time,
                         noticeId: mongoose.Types.ObjectId(),
                         topicId:Obj._id.toString(),
-                        teamId: Obj.team,
+                        teamId: Obj.team?Obj.team:Obj.teamId,
                         teamName: teamName,
                         creator: Obj.creator,
                         noticeTitle: Obj.title,

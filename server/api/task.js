@@ -920,6 +920,7 @@ const addCheckitem = async (req, res, next) => {
 
             const obj = {
                 creator:result1.creator,
+                team:result1.teamId,
                 create_time:result1.checkitemList[result1.checkitemList.length-1].create_time,
                 _id:result1.checkitemList[result1.checkitemList.length-1]._id,
                 title:result1.checkitemList[result1.checkitemList.length-1].content,
