@@ -185,7 +185,11 @@ const silentAuth = async(req, res, next) => {
                     }
                 }
                 else{
-                    res.redirect(`/wx-choose?openid=${result.openid}`)
+                    if(req.url.indexOf('/team-join/')!== -1){
+                        res.redirect(`/wx-choose?openid=${result.openid}&teamjoin=${req.url.split('/')[2]}`)
+                    }else{
+                        res.redirect(`/wx-choose?openid=${result.openid}`)
+                    }
                 }
             }
             else{
