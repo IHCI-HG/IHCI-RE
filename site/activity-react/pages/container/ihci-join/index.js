@@ -28,7 +28,8 @@ export default class IhciJoin extends React.Component{
     componentDidMount = () => {
         //var textData = require('../../../text.json');
         this.setState({
-            openid:this.props.location.query.openid
+            openid:this.props.location.query.openid,
+            teamjoin:this.props.location.query.teamjoin
         })
      }
     isName = (name) => {
@@ -156,7 +157,11 @@ export default class IhciJoin extends React.Component{
         if(result.state.code === 0){
             window.toast(staticText.RESPONSE_MESSAGE.WELCOME_IHCI_MSG)
             setTimeout(() => {
-                location.href = '/team'
+                if(this.state.teamjoin){
+                    location.href = `/team-join/${this.state.teamjoin}`                    
+                }else{
+                    location.href = '/team'
+                }
             }, 1000)
         } else {
             window.toast(result.state.msg ||staticText.RESPONSE_MESSAGE.SUBMIT_ERROR_MSG)
@@ -166,28 +171,31 @@ export default class IhciJoin extends React.Component{
     render () {
         return (
             <Page title = {staticText.PAGE_INFO.JOIN__BLOCK_TITLE} className = "enter-page">
-              <div className = "title">{staticText.PAGE_INFO.PAGE_TITLE}</div>
-              <div className = "desc">{staticText.PAGE_INFO.PAGE_IHCI_DESC}</div>
-              <div className = "head">{staticText.PAGE_INFO.JOIN_BLOCK_TITLE}</div>
-              <div className="edit-con">
-                    <div className="before">{staticText.LABEL_TEXT.SET_NAME}</div>
-                    <input type="text" onChange={this.nameInputHandle} className="input-edit"  value={this.state.personInfo.name}/>
-                    {this.state.infoCheck.illegalName && <div className='after error'>{staticText.PERSON_INFO_CHECK.CREATE_NAME_ILLEGAL}</div>}
-                </div>
+                <div className="join-table">
+                    <div className = "title">{staticText.PAGE_INFO.PAGE_TITLE}</div>
+                    <div className = "desc">{staticText.PAGE_INFO.PAGE_IHCI_DESC}</div>
+                    <div className = "head">{staticText.PAGE_INFO.JOIN_BLOCK_TITLE}</div>
+                    <div className="edit-con">
+                            <div className="before">{staticText.LABEL_TEXT.SET_NAME}</div>
+                            <input type="text" onChange={this.nameInputHandle} className="input-edit"  value={this.state.personInfo.name}/>
+                            {this.state.infoCheck.illegalName && <div className='after error'>{staticText.PERSON_INFO_CHECK.CREATE_NAME_ILLEGAL}</div>}
+                        </div>
 
-                <div className="edit-con">    
-                    <div className="before">{staticText.LABEL_TEXT.SET_EMAIL}</div>
-                    <input type="text" onChange={this.mailInputHandle} className="input-edit" value={this.state.personInfo.mail}/>
-                    {this.state.infoCheck.illegalEmailAddress && <div className='after error'>{staticText.PERSON_INFO_CHECK.CREATE_EMAIL_ILLEGAL}</div>}
-                        
-                </div>
+                        <div className="edit-con">    
+                            <div className="before">{staticText.LABEL_TEXT.SET_EMAIL}</div>
+                            <input type="text" onChange={this.mailInputHandle} className="input-edit" value={this.state.personInfo.mail}/>
+                            {this.state.infoCheck.illegalEmailAddress && <div className='after error'>{staticText.PERSON_INFO_CHECK.CREATE_EMAIL_ILLEGAL}</div>}
+                                
+                        </div>
 
-                <div className="edit-con">
-                    <div className="before">{staticText.LABEL_TEXT.SET_PHONE}</div>
-                    <input type="text" onChange={this.phoneInputHandle} className="input-edit" value={this.state.personInfo.phone}/>
-                    {this.state.infoCheck.illegalPhoneNumber && <div className='after error'>{staticText.PERSON_INFO_CHECK.CREATE_PHONE_ILLEGAL}</div>}
+                        <div className="edit-con">
+                            <div className="before">{staticText.LABEL_TEXT.SET_PHONE}</div>
+                            <input type="text" onChange={this.phoneInputHandle} className="input-edit" value={this.state.personInfo.phone}/>
+                            {this.state.infoCheck.illegalPhoneNumber && <div className='after error'>{staticText.PERSON_INFO_CHECK.CREATE_PHONE_ILLEGAL}</div>}
+                        </div>
+                    <div className = "enter-btn" onClick = {this.enterHandle}>{staticText.BUTTON_TEXT.ENTER_IHCI}</div>
                 </div>
-                <div className = "enter-btn" onClick = {this.enterHandle}>{staticText.BUTTON_TEXT.ENTER_IHCI}</div>
+              
             </Page>
         )
     }

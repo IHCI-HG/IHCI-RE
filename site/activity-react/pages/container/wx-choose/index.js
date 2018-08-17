@@ -9,6 +9,7 @@ import {WxChoose as staticText} from '../../../commen/static-text'
 export default class WxChoose extends React.Component{
     state = {
         openid:String,
+        teamjoin:String,
         loginBlock:'',
         username:'',
         password:'',
@@ -23,7 +24,8 @@ export default class WxChoose extends React.Component{
     componentDidMount = () => {
        //var textData = require('../../../text.json');
        this.setState({
-           openid:this.props.location.query.openid
+           openid:this.props.location.query.openid,
+           teamjoin:this.props.location.query.teamjoin
        })
     }
     setTologinHandle = () => {
@@ -92,7 +94,11 @@ export default class WxChoose extends React.Component{
     enterHandle = () =>{
         window.toast(staticText.RESPONSE_MESSAGE.COMPLETE_PERSON_INFO)
         setTimeout(() => {
-            location.href = `/ihci-join?openid=${this.state.openid}`
+            if(this.state.teamjoin){
+                location.href = `/ihci-join?openid=${this.state.openid}&teamjoin=${this.state.teamjoin}`
+            }else{
+                location.href = `/ihci-join?openid=${this.state.openid}`
+            }
         }, 1000)
 
     }

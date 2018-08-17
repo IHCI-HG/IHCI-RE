@@ -30,8 +30,8 @@ const IhciJoin = {
         CREATE_PHONE_EMPTY: "手机号为空",
         CREATE_EMAIL_EMPTY: "邮箱为空",
         CREATE_NAME_ILLEGAL: "名字以不超过12个的英文、汉字、数字、下划线与短横构成，并以中文或英文开头",
-        CREATE_PHONE_ILLEGAL: "格式错误,请填写正确格式的邮件地址",
-        CREATE_EMAIL_ILLEGAL: "格式错误,请填写正确格式的电话号码",
+        CREATE_EMAIL_ILLEGAL: "格式错误,请填写正确格式的邮件地址",
+        CREATE_PHONE_ILLEGAL: "格式错误,请填写正确格式的电话号码",
     },
     RESPONSE_MESSAGE :{
         WELCOME_IHCI_MSG: "欢迎来到iHCI平台",
