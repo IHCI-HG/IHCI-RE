@@ -93,7 +93,7 @@ export const pub_getAccessToken = async function () {
     const data = await result.json()
     console.log(data)
     if (data.access_token) {
-        redisPromiseSet('pub_access_token', data.access_token, (data.expires_in || 200) - 200)
+        await redisPromiseSet('pub_access_token', data.access_token, (data.expires_in || 200) - 200)
         return data.access_token
     }
 

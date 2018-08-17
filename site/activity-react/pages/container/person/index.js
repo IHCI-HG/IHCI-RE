@@ -11,7 +11,6 @@ import {Person as staticText} from '../../../commen/static-text'
 
 export default class Person extends React.Component{
     componentDidMount = async() => {
-        this.initFollower()
         this.personInfo = {}
         this.originPersonInfo = {}
         if(INIT_DATA.userObj) {
@@ -62,13 +61,6 @@ export default class Person extends React.Component{
 
     }
 
-    initFollower = async() => {
-        const result = await api('/follower', {
-            method: 'POST',
-            body: {}
-        })
-        //console.log(result)
-    }
     initdataAllFilled = () => {
         if (!INIT_DATA.userObj.personInfo){
             return false
@@ -654,8 +646,8 @@ export default class Person extends React.Component{
                 {this.state.userObj.unionid ?
                 <div className="edit-con">
                     <div className="before">服务号</div>
-                    {!this.state.userObj.subState ? <div className="bind-wx ">未关注</div> : <div className="bind-wx act">已关注</div>}
-                    {!this.state.userObj.subState && <div className='after'>需要<div className='follow-btn' onClick={this.openFollowDialogHandle}>关注服务号</div>才能接受讨论消息提醒</div>}   
+                    {!this.state.userObj.openid ? <div className="bind-wx ">未关注</div> : <div className="bind-wx act">已关注</div>}
+                    {!this.state.userObj.openid && <div className='after'>需要<div className='follow-btn' onClick={this.openFollowDialogHandle}>关注服务号</div>才能接受讨论消息提醒</div>}   
                 </div>:""
                 }
                 <div className="edit-con">
@@ -715,7 +707,7 @@ export default class Person extends React.Component{
                 }
 
                 {
-                    this.state.showFollow && <FollowDialog subState = {this.state.userObj.subState} closeHandle={this.closeFollowDialogHandle}/>
+                    this.state.showFollow && <FollowDialog subState = {this.state.userObj.openid?true:false} closeHandle={this.closeFollowDialogHandle}/>
                 }
 
             </Page>

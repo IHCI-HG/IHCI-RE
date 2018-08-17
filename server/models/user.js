@@ -28,7 +28,6 @@ const userSchema = new mongoose.Schema({
     teamList: [mongoose.Schema.Types.Mixed],
     openid: String,
     unionid: { type: String, index: true },
-    subState: Boolean,
     wxUserInfo: mongoose.Schema.Types.Mixed,
     mailCode :String,
     mailLimitTime :String,

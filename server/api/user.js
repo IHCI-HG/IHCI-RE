@@ -263,7 +263,6 @@ const IfBeforeSub = async function(userId, unionid){
     if(result){
        const userObj = await UserDB.updateUser(userId, {
             openid: result.openid,
-            subState: true
         })
       return true
     }
