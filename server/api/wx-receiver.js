@@ -31,7 +31,7 @@ var subscribeEventHandle = async (openid) => {
                 await UserDB.updateUser(userObj._id, {
                     openid: wxUserInfo.openid,
                     subState: true
-                })               
+                })          
             } 
             pub_pushTemplateMsg(openid, 'YH-TY6g0sbVJgC5Ppk-cBDvLlFCfQxRm61QKj7IOSV4', 'www.animita.cn', {
                 "first": {

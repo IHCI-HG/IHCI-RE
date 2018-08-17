@@ -18,9 +18,10 @@ var activityApi = require('../api/activity');
 
 var mongoose = require('mongoose')
 
-var TestDB = mongoose.model('test')
 var UserDB = mongoose.model('user')
-var TeamDB = mongoose.model('team')
+var teamDB = mongoose.model('team')
+var topicDB = mongoose.model('topic')
+var taskDB = mongoose.model('task')
 
 import {
     pub_codeToAccessToken,
@@ -46,7 +47,12 @@ const routerAuthJudge = async (req, res, next) => {
     }
     next()
 }
-
+const wxJudge = async (req, res, next) => {
+    if(! envi.isWeixin(req)){
+        res.redirect('/')
+    }
+    next()
+}
 async function address(req, res, next) {
     var filePath = path.resolve(__dirname, '../../public/activity/page/address/full.html'),
     options = {
@@ -123,18 +129,11 @@ const wxAuthCodeHandle = async (req, res, next) => {
 const personSeting = async (req, res, next) => {
     const userId = req.rSession.userId
     const userObj = await UserDB.findById(userId)
-    if(!userObj){
-        var newUserObj = await UserDB.findByOldId(userId)
-        req.rSession.userId = newUserObj._id
-    }
     if(userObj) {
         userObj.password = undefined
     }
-    if(newUserObj){
-        newUserObj.password = undefined
-    }
     req.INIT_DATA = {
-        userObj: userObj || newUserObj,
+        userObj: userObj,
         isWeixin: envi.isWeixin(req)
     }
     next()
@@ -144,7 +143,7 @@ const joinTeam = async (req, res, next) => {
     const userId = req.rSession.userId
     const teamId = req.params.teamId
 
-    const teamObj = await TeamDB.findByTeamId(teamId)
+    const teamObj = await teamDB.findByTeamId(teamId)
 
     const initData = {
         login: false,
@@ -163,42 +162,89 @@ const joinTeam = async (req, res, next) => {
 const silentAuth = async(req, res, next) => {
     if(envi.isWeixin(req)){
         //静默授权
-        res.redirect('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx87136e7c8133efe3&redirect_uri=http%3A%2F%2Fwww.animita.cn&response_type=code&scope=snsapi_base&state=123#wechat_redirect')
         var urlObj = url.parse(req.url,true)
-        var code = urlObj.query.code
-        const result = await pub_codeToAccessToken(code)
-        if(result.openid){
-            var result1 = await pub_openidToUserInfo(result.openid)
+        console.log(urlObj)
+        if(!req.rSession.userId&&!urlObj.query.code){
+            res.redirect(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx87136e7c8133efe3&redirect_uri=http%3A%2F%2Fwww.animita.cn${urlObj.pathname.substr(0,urlObj.pathname.length)}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`)
         }
-        if(result1.unionid) {
-            const findUser = await UserDB.findByUnionId(result1.unionid)
-            if(findUser){
-                req.rSession.userId = findUser._id
-                if(urlObj.pathname === '/'){
-                    res.redirect('/team')
-                }
-                else{
-                    res.redirect(urlObj.pathname)
-                }
+        if(!req.rSession.userId&&urlObj.query.code){
+            var code = urlObj.query.code
+            const result = await pub_codeToAccessToken(code)
+            if(result.openid){
+                var result1 = await pub_openidToUserInfo(result.openid)
             }
-            else{
-                const result2 = await UserDB.createUser(null,null,{
-                    unionid:result1.unionid,
-                    wxUserInfo:result1
-                })
+            if(result1.unionid) {
                 const findUser = await UserDB.findByUnionId(result1.unionid)
                 if(findUser){
                     req.rSession.userId = findUser._id
+                    if(urlObj.pathname === '/'){
+                        res.redirect('/team')
+                    }
+                    else{
+                        res.redirect(urlObj.pathname)
+                    }
                 }
-                res.redirect('/person')
+                else{
+                    if(req.url.indexOf('/team-join/')!== -1){
+                        res.redirect(`/wx-choose?openid=${result.openid}&teamjoin=${req.url.split('/')[2]}`)
+                    }else{
+                        res.redirect(`/wx-choose?openid=${result.openid}`)
+                    }
+                }
+            }
+            else{
+                res.redirect('/wxcode')
+                //关注公众号
             }
         }
-        else{
-            res.redirect('/wxcode')
-            //关注公众号
+        if(req.rSession.userId){
+            if(urlObj.pathname==='/'){
+                res.redirect('/team')
+            }
+            else{
+                next()
+            }
         }
     }
-    next()
+    else{
+        next()
+    }
+}
+
+const userAuthJudge = async(req, res, next) => {
+    var userId = req.rSession.userId
+    if(req.url.indexOf('/discuss/topic/')!== -1){
+        const topicId = req.url.split('/')[3]
+        const topicObj = await topicDB.findByTopicId(topicId)
+        var teamId = topicObj.team
+    }
+    if(req.url.indexOf('/files/')!== -1||req.url.indexOf('/team/')!== -1||req.url.indexOf('/team-admin/')!== -1||req.url.indexOf('/completed/')!== -1){
+        var teamId = req.url.split('/')[2]
+    }
+    if(req.url.indexOf('/todo/')!==-1){
+        const taskId = req.url.split('/')[2]
+        const taskObj = await taskDB.findByTaskId(taskId)
+        var teamId = taskObj.teamId
+    }
+    const teamObj = await teamDB.findByTeamId(teamId)
+    var auth = []
+    if(req.url === '/team-admin/:teamId'){
+        auth = teamObj.memberList.filter((item)=>{
+            return item.userId === userId && item.role === 'creator'
+        })
+    }
+    else{
+        auth = teamObj.memberList.filter((item)=>{
+            return item.userId === userId
+        })
+    }
+    if(auth.length === 0){
+        //提示权限不足
+        res.redirect('/team')
+    }
+    else{
+        next()
+    }
 }
 
 module.exports = [
@@ -206,27 +252,29 @@ module.exports = [
     ['GET', '/', clientParams(), silentAuth, mainPage],
     // ['GET', '/', clientParams(), mainPage],
     ['GET', '/activate', clientParams(), pageHandle()],
+    
+    ['GET','/wx-choose',clientParams(), wxJudge, pageHandle()],
+    ['GET','/ihci-join',clientParams(), pageHandle()],
 
     ['GET', '/auth', clientParams(), wxAuthCodeHandle , mainPage],
 
     ['GET', '/team', clientParams(), routerAuthJudge, pageHandle() ],
-    ['GET', '/files/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
+    ['GET', '/files/:teamId', clientParams(), routerAuthJudge, userAuthJudge, pageHandle() ],
     ['GET', '/sign', clientParams(), routerAuthJudge, pageHandle() ],
 
-    ['GET', '/team/:id', clientParams(), routerAuthJudge, silentAuth, pageHandle() ],
-    ['GET', '/todo/:id', clientParams(), routerAuthJudge, silentAuth, pageHandle() ],
-    ['GET', '/team-edit/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
-    ['GET', '/team-admin/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
+    ['GET', '/team/:id', clientParams(), silentAuth, routerAuthJudge, userAuthJudge, pageHandle() ],
+    ['GET', '/todo/:id', clientParams(), silentAuth, routerAuthJudge, userAuthJudge, pageHandle() ],
+    ['GET', '/team-admin/:teamId', clientParams(), routerAuthJudge, userAuthJudge, pageHandle() ],
     ['GET', '/team-management',clientParams(), routerAuthJudge, pageHandle()],
-    ['GET', '/team-join/:teamId', clientParams(), joinTeam, pageHandle() ],
+    ['GET', '/team-join/:teamId', clientParams(), silentAuth, joinTeam, pageHandle() ],
 
     ['GET', '/team-create', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/person', clientParams(), routerAuthJudge, personSeting, pageHandle() ],
-    ['GET', '/discuss/topic/:id', clientParams(), routerAuthJudge, silentAuth, pageHandle() ],
-    ['GET', '/timeline', clientParams(),    routerAuthJudge, silentAuth, pageHandle() ],
+    ['GET', '/discuss/topic/:id', clientParams(), silentAuth, routerAuthJudge, userAuthJudge, pageHandle() ],
+    ['GET', '/timeline', clientParams(), silentAuth,    routerAuthJudge, pageHandle() ],
     ['GET', '/member', clientParams(),   routerAuthJudge, pageHandle() ],
     ['GET', '/search', clientParams(),   routerAuthJudge, pageHandle() ],
-    ['GET', '/completed/:id', clientParams(), routerAuthJudge, silentAuth, pageHandle() ],
+    ['GET', '/completed/:id', clientParams(), silentAuth, routerAuthJudge, userAuthJudge,pageHandle() ],
     ['GET', '/inform', clientParams(),   routerAuthJudge, personSeting, pageHandle() ],
     ['GET', '/wxcode', clientParams(),  pageHandle() ],
 ];

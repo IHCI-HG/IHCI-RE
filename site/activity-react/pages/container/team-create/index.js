@@ -11,7 +11,7 @@ export default class TeamCreate extends React.Component{
 
     state = {
         name: '',
-        teamImg: 'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=471192784,4234473862&fm=27&gp=0.jpg',
+        teamImg: require('../DefaultTeam.jpg'),
         desc: '',
         infoCheck:{
             teamNameEmpty:true

@@ -32,7 +32,6 @@ const userSchema = new mongoose.Schema({
     wxUserInfo: mongoose.Schema.Types.Mixed,
     mailCode :String,
     mailLimitTime :String,
-    oldId :String,
     isLive : { type: Boolean, default: false},
     noticeList: [mongoose.Schema.Types.Mixed],
 })
@@ -50,7 +49,12 @@ userSchema.statics = {
         }
     },
     createUser: async function(username, password, userInfo = {}) {
-        const result = await this.findOne({username: username}).exec()
+        if(username === null){
+            var result = await this.findOne({unionid:userInfo.unionid}).exec()
+        }
+        else{
+            var result = await this.findOne({username: username}).exec()
+        }
         if(result) {
             return null
         } else {
@@ -72,10 +76,6 @@ userSchema.statics = {
     },
     findByUserId: async function(userId) {
         const result = await this.findById(userId)
-        return result
-    },
-    findByOldId: async function(oldId) {
-        const result = await this.findOne({oldId: oldId}).exec()
         return result
     },
     baseInfoById: async function(userId) {
@@ -125,8 +125,8 @@ userSchema.statics = {
             return []
         }
     },
-    delUserByUsername: async function(username){
-        const result = await this.remove({ username: username }).exec()
+    delUserById: async function(_id){
+        const result = await this.remove({ _id: _id }).exec()
         return result
     },
 
@@ -176,19 +176,7 @@ userSchema.statics = {
         ).exec()
     },
 
-    // markTeam: async function(userId, teamId, markState) {
-    //     return this.update(
-    //         {_id: userId, "teamList.teamId": teamId},
-    //         {$set: { "teamList.$.marked": markState}},
-    //     ).exec()
-    // },
-
-    // changeMemberRole: async function(teamId, userId, role) {
-    //     return this.update(
-    //         {_id: teamId, "memberList.userId": userId},
-    //         {$set: { "memberList.$.role": role}},
-    //     ).exec()
-    // },
+    
 
     changeTeamRole: async function(userId, teamId, role) {
         return this.update(
@@ -198,21 +186,22 @@ userSchema.statics = {
     },
 
 
-    //topic相关
-    addCreateNotice: async function(userId, topicObj, teamName) {
+    //所有的通知
+    addCreateNotice: async function(userId, Obj, teamName,type) {
         return this.update(
             { _id: userId },
             {
                 $addToSet: {
                     noticeList: {
-                        create_time: topicObj.create_time,
-                        noticeId: topicObj._id,
-                        teamId: topicObj.team,
+                        create_time: Obj.create_time,
+                        noticeId: mongoose.Types.ObjectId(),
+                        topicId:Obj._id.toString(),
+                        teamId: Obj.team?Obj.team:Obj.teamId,
                         teamName: teamName,
-                        creator: topicObj.creator,
-                        noticeTitle: topicObj.title,
-                        noticeContent: topicObj.content,
-                        type: "CREATE_TOPIC",
+                        creator: Obj.creator,
+                        noticeTitle: Obj.title,
+                        noticeContent: Obj.content,
+                        type: type,
                         readState: false,
                     }
                 }
@@ -227,7 +216,8 @@ userSchema.statics = {
                 $addToSet: {
                     noticeList: {
                         create_time: discussObj.create_time,
-                        noticeId: discussObj._id,
+                        noticeId: mongoose.Types.ObjectId(),
+                        discussId:discussObj._id.toString(),
                         teamId: discussObj.teamId,
                         teamName: teamName,
                         topicId: discussObj.topicId,
@@ -235,6 +225,49 @@ userSchema.statics = {
                         noticeTitle: discussObj.title,
                         noticeContent: discussObj.content,
                         type: "REPLY_TOPIC",
+                        readState: false,
+                    }
+                }
+            }
+        ).exec()
+    },
+    addEditTopicNotice: async function(userId, topicObj, teamName) {
+        return this.update(
+            { _id: userId },
+            {
+                $addToSet: {
+                    noticeList: {
+                        create_time: topicObj.create_time,
+                        noticeId: mongoose.Types.ObjectId(),
+                        topicId:topicObj._id.toString(),
+                        teamId: topicObj.team,
+                        teamName: teamName,
+                        creator: topicObj.creator,
+                        noticeTitle: topicObj.title,
+                        noticeContent: topicObj.content,
+                        type: "EDIT_TOPIC",
+                        readState: false,
+                    }
+                }
+            }
+        ).exec()
+    },
+    addEditReplyNotice: async function(userId, discussObj, teamName) {
+        return this.update(
+            { _id: userId },
+            {
+                $addToSet: {
+                    noticeList: {
+                        create_time: discussObj.create_time,
+                        noticeId: mongoose.Types.ObjectId(),
+                        discussId:discussObj._id.toString(),
+                        teamId: discussObj.teamId,
+                        teamName: teamName,
+                        topicId: discussObj.topicId,
+                        creator: discussObj.creator,
+                        noticeTitle: discussObj.title,
+                        noticeContent: discussObj.content,
+                        type: "EDIT_REPLY",
                         readState: false,
                     }
                 }
@@ -249,28 +282,10 @@ userSchema.statics = {
             {new: true}
         ).exec()
     },
+    
+    
 
-    // findNotice: async function(userId, noticeId){
-    // ß
-    //   const user = await this.find({$and:[{_id: userId}, {"noticeList.noticeId": notice}]}).exec()
-    //   console.log(user);
-    //   return user
-    // }
-
-    // findReadNotice: function(userId) {
-    //     const user = this.find({userId: userId})
-    //     return user.noticeList.find({readState: true}).sort({create_time: -1}).exec()
-    // },
-
-    // findUnreadNotice: function(userId) {
-    //     const user = this.find({userId: userId})
-    //     return user.noticeList.find({readState: false}).sort({create_time: -1}).exec()
-    // },
-
-    // findUnreadNotice: function(userId) {
-    //     const user = this.find({userId: userId})
-    //     return user.noticeList.find({readState: false}).sort({create_time: -1}).exec()
-    // },
+    
 
 }
 

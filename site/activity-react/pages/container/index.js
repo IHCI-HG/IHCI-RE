@@ -11,6 +11,8 @@ import Team from './team'
 import ActivateMail from './activate-mail'
 import TeamJoin from './team-join'
 import WxCode from './wxcode'
+import WxChoose from './wx-choose'
+import IhciJoin from './ihci-join';
 
 class App extends React.Component{
     state = {
@@ -18,7 +20,7 @@ class App extends React.Component{
         menuName: '',
         menuEmail: '',
 
-        headImg: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnregyyDrMvhEDpfC4wFetzykulWRVMGF-jp7RXIIqZ5ffEdawIA',
+        headImg: require('./DefaultImage.jpg'),
         infoImg: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1529474819406&di=267791f485fba8aa30e0adc8f0eede6b&imgtype=0&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimgad%2Fpic%2Fitem%2Fb8014a90f603738d6c070f19b81bb051f819ecb8.jpg',
         personInfo: {
             teamList: []
@@ -28,8 +30,13 @@ class App extends React.Component{
         menuSetBgColor: '',
         menuCreateBgColor: '',
         menuQuitBgColor: '',
+
+        showRemindCount: '',
         
     }
+
+
+
     handleMouseOut = this.handleMouseOut.bind(this);
     handleMouseOver = this.handleMouseOver.bind(this);
     handleSetMouseOver = this.handleSetMouseOver.bind(this);
@@ -38,6 +45,18 @@ class App extends React.Component{
     handleCreateMouseOut = this.handleCreateMouseOut.bind(this);
     handleQuitMouseOver = this.handleQuitMouseOver.bind(this);
     handleQuitMouseOut = this.handleQuitMouseOut.bind(this);
+
+    initUnreadList = async () => {
+        const result = await api('/api/user/showUnreadList', {
+            method: 'POST',
+            body:{}
+        })
+        this.setState({
+          showRemindCount: result.data.length
+        })
+    }
+
+
 
     handleMouseOver() {
         this.setState({
@@ -87,6 +106,8 @@ class App extends React.Component{
     }
     componentDidMount = async() => {
         this.activeTagHandle(this.props.location.pathname)
+  
+        await this.initUnreadList()
     }
 
     setHeadImg = async () => {
@@ -235,10 +256,17 @@ class App extends React.Component{
                         onMouseLeave={this.handleMouseOut}
                         >                           
                             <img className="head-img" src={this.state.headImg} />                               
-                        </div>                
-
+                        </div>          
+                   
                         <div className='remind'>
-                            <span className='iconfont icon-remind' onClick={this.routerHandle.bind(this, '/inform')}></span>
+                            <div className={this.state.showRemindCount > 0 ? 'shake' : ''}>
+                            <span className='iconfont icon-remind'  onClick={this.routerHandle.bind(this, '/inform')}></span>                           
+                            {
+                                this.state.showRemindCount > 0 
+                                && 
+                                <span className="redPoint" onClick={this.routerHandle.bind(this, '/inform')} >{this.state.showRemindCount}</span>
+                            }   
+                            </div>
                         </div>
                     </div>
 
@@ -267,6 +295,14 @@ const routeConfig = [
         path: '/wxcode',
         component: WxCode 
     },
+    {
+        path: '/wx-choose',
+        component: WxChoose 
+    },
+    {
+        path: '/ihci-join',
+        component: IhciJoin
+    }
 ]
 
 render(<Router routes={routeConfig} history={browserHistory}/>, document.getElementById('app'));

@@ -11,6 +11,7 @@ import {Person as staticText} from '../../../commen/static-text'
 
 export default class Person extends React.Component{
     componentDidMount = async() => {
+        this.initFollower()
         this.personInfo = {}
         this.originPersonInfo = {}
         if(INIT_DATA.userObj) {
@@ -21,13 +22,13 @@ export default class Person extends React.Component{
                     name: '',
                     mail: '',
                     phone: '',
-                    headImg: INIT_DATA.userObj && INIT_DATA.userObj.wxUserInfo && INIT_DATA.userObj.wxUserInfo.headimgurl || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnregyyDrMvhEDpfC4wFetzykulWRVMGF-jp7RXIIqZ5ffEdawIA',
+                    headImg: INIT_DATA.userObj && INIT_DATA.userObj.wxUserInfo && INIT_DATA.userObj.wxUserInfo.headimgurl || require('../DefaultImage.jpg'),
                 },
                 originPersonInfo: INIT_DATA.userObj.personInfo || {
                     name: '',
                     mail: '',
                     phone: '',
-                    headImg: INIT_DATA.userObj && INIT_DATA.userObj.wxUserInfo && INIT_DATA.userObj.wxUserInfo.headimgurl || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnregyyDrMvhEDpfC4wFetzykulWRVMGF-jp7RXIIqZ5ffEdawIA',
+                    headImg: INIT_DATA.userObj && INIT_DATA.userObj.wxUserInfo && INIT_DATA.userObj.wxUserInfo.headimgurl || require('../DefaultImage.jpg'),
                 }
             })
         } else {
@@ -61,6 +62,13 @@ export default class Person extends React.Component{
 
     }
 
+    initFollower = async() => {
+        const result = await api('/follower', {
+            method: 'POST',
+            body: {}
+        })
+        //console.log(result)
+    }
     initdataAllFilled = () => {
         if (!INIT_DATA.userObj.personInfo){
             return false
@@ -98,6 +106,7 @@ export default class Person extends React.Component{
     state = {
         showWxLogin: false,
         showFollow: false,
+        showUsenamePwd:false,
         userObj: {},
         personInfo: {
             name: '',
@@ -121,73 +130,47 @@ export default class Person extends React.Component{
         hasMail: false,
         sendMailEnabled: true,
 
-        loginBlock:'',
         username:'',
         password:'',
-        createUsername: '',
-        createPassword: '',
-        createConfirmPassword:'',
         infoCheck:{
-            createUsernameEmpty: true,
-            createPasswordEmpty:true,
-            createConfirmPasswordEmpty: true,
-            usernameEmpty:true,
-            passwordEmpty:true
+            illegalUsername:false,
+            illegalPassword:false,
         },
     }
 
-    setTologinHandle = () => {
-        if(this.state.loginBlock !=="login"){
-            this.setState({
-                loginBlock:"login"
-              });
-        }else{
-            this.setState({
-                loginBlock:''
-            });
-        }
-
-        
-    }
-    setTosignUpHandle = () => {
-        if(this.state.loginBlock !=="signUp"){
-            this.setState({
-                loginBlock:"signUp"
-            });
-        }else{
-            this.setState({
-                loginBlock:''
-            });
-        }    
-    }
+    
     usernameHandle = (e) => {
         const username = e.target.value;
-        var usernameEmpty = true;
+        var illegalUsername = true;
+        /*
         if(username){
             usernameEmpty = false
         }else{
             usernameEmpty = true
-        }
+        }*/
         this.setState({  
             username: e.target.value,
             infoCheck:{
                 ...this.state.infoCheck,
-                usernameEmpty:usernameEmpty
+                illegalUsername:illegalUsername,
             }
         })
     }
     passwordHandle = (e) => {
         const password = e.target.value
-        var passwordEmpty = true
+        var illegalPassword = true
+        /*
         if(password){
             passwordEmpty = false
         }else{
             passwordEmpty = true
         }
+        */
         this.setState({
             password: password,
             infoCheck:{
                 ...this.state.infoCheck,
+                illegalPassword:illegalPassword,
                 passwordEmpty:passwordEmpty
             }
         })
@@ -289,16 +272,8 @@ export default class Person extends React.Component{
                 }
             }
         })
-        if(result.state.code === 0) {
-            window.toast("注册成功")
-            setTimeout(() => {
-                location.href = '/person'
-            }, 300);
-        }
-        else{
-            window.toast(result.state.msg || "注册失败")
-        }
     }
+    
     headImgInputHandle = (e) => {
         this.setState({
             personInfo: {
@@ -309,7 +284,7 @@ export default class Person extends React.Component{
     }
 
     isName = (name) => {
-        const reg = /^[\u4E00-\u9FA5A-Za-z]{1}[\u4E00-\u9FA5A-Za-z0-9_\-]{0,11}$/;
+        const reg = /^[\u4E00-\u9FA5]{1}[\u4E00-\u9FA5\-]{0,11}$/;
         return reg.test(name);
     }
 
@@ -332,7 +307,7 @@ export default class Person extends React.Component{
     }
 
     isPhoneNumber = (phoneNumber) => {
-        const reg = /^0?(13[0-9]|15[0-3,5-9]|17[0,3,5-8]|18[0-9]|14[57]|19[89])[0-9]{8}$/;
+        const reg =/^(86)?(13[0-9]|15[0-35-9]|17[035-8]|18[0-9]|14[57]|19[89])[0-9]{8}$/;
         return reg.test(phoneNumber);
     }
 
@@ -388,7 +363,6 @@ export default class Person extends React.Component{
             showFollow: false
         })
     }
-
 
     openWxLoginHandle = () => {
         this.setState({
@@ -454,6 +428,8 @@ export default class Person extends React.Component{
                 originPersonInfo: this.state.originPersonInfo,
             }
         })
+        
+        
         console.log(result1)
         if(result.state.code === 0) {
             if(INIT_DATA.userObj.personInfo){
@@ -591,14 +567,42 @@ export default class Person extends React.Component{
             confirmEditMail: true,
         })
     }
-    
+    UsernamePwdHandle = () => {
+        this.setState({
+            showUsenamePwd:true
+        })
+    }
+    SaveUsenamePwdHandle = async () => {
+            const result = await api('/api/user/fillUsernameAndPwd',{
+                method: 'POST',
+                body: {
+                    username:this.state.username,
+                    password:this.state.password,
+                }
+            })
+            if(result.state.code === 0){
+                window.toast("设置成功")
+                this.setState({
+                    showUsenamePwd:false
+                })
+                setTimeout(() => {
+                    window.location.reload()
+                }, 500);
+                
+            }else{
+                window.toast(result.state.msg ||"设置失败，请稍后再试")
+            }
+    }
     render() {
         // let personInfo = this.state.personInfo
         return (
             <Page title={"个人设置"} className="person-edit-page page-wrap">
                 <input className='file-input-hidden' type="file" ref={(fileInput) => this.fileInput = fileInput} onChange={this.uploadFileHandle}></input>
+                <div className = "header">
                 <div className="title">个人设置</div>
-
+                <div className="manage" onClick={() => {location.href = '/team-management'}}> 退出团队</div>
+                </div>
+                
                 <div className="head-edit">
                     <div className="left">
                         <img src={this.state.personInfo.headImg} className='head-img' />
@@ -607,39 +611,26 @@ export default class Person extends React.Component{
                         <div className="create-btn" onClick={this.openFileInput}> 上传图片 </div>
                     </div>
                 </div>
-                
                 {
                     !this.state.userObj.username?
-                    <div className="auth-nav"> 
-                       <div className = "auth-nav-item" onClick={this.setTologinHandle}>绑定已有平台账号</div>
-                       <div className = "auth-nav-item" onClick={this.setTosignUpHandle}>注册平台账号</div>
-                    </div>
-                       :"" 
-                }
-                {
-                    this.state.loginBlock === "login"?
-                    <div className="loginBlock">
-                    <div className ="login-desc">Enter username: </div>
-                    <input className="login-input" value={this.state.username} onChange={this.usernameHandle}></input>
-                    <div className ="login-desc">Enter password: </div>
-                    <input className="login-input" type="password" value={this.state.password} onChange={this.passwordHandle}></input>
-                    <div className="login-btn" onClick={this.loginHandle}>LoginAndBind</div>
+                    <div className = "edit-con">
+                    <div className = "after">尚未设置账号密码，请</div><div className = "follow-btn" onClick = {this.UsernamePwdHandle}>设置账号密码</div>
                     </div>
                     :""
                 }
                 {
-                    this.state.loginBlock === "signUp"?
-                    <div className="signBlock">
-                    <div className="login-desc">Your username: </div>
-                    <input className="login-input" value={this.state.createUsername} onChange={this.createUsernameHandle}></input>
-                    <div className = "login-desc">Your password: </div>
-                    <input className="login-input" type="password" value={this.state.createPassword} onChange={this.createPasswordHandle}></input>
-                    <div className="login-desc">Confirm Password: </div>
-                    <input className="login-input" type="password" value={this.state.createConfirmPassword} onChange={this.createConfirmPasswordHandle}></input>
-                    <div className="login-btn" onClick={this.signUpHandle}>SignUpAndBind</div>
+                    this.state.showUsenamePwd?
+                    <div className = "edit-con">
+                    <div className = "before">账号：</div>
+                    <input className = "input-edit" value = {this.state.username} onChange = {this.usernameHandle}></input>
+                    <br/>
+                    <div className = "before">密码：</div>
+                    <input className = "input-edit" type = "password" value = {this.state.password} onChange = {this.passwordHandle}></input>
+                    <div className = "save-btn" onClick = {this.SaveUsenamePwdHandle}>确定</div>
                     </div>
                     :""
                 }
+                {
                 <div className="edit-con">
                     <div className="before">微信</div>
 
@@ -652,29 +643,25 @@ export default class Person extends React.Component{
                     {
 
                         !!this.state.userObj.unionid ? 
-                        (!!this.state.userObj.username?
+                        (!!this.state.userObj.username && !INIT_DATA.isWeixin?
                         <div className="band" onClick={this.unbindHandle}>解绑</div>:"")
                         :
                         <div className="band" onClick={this.openWxLoginHandle}>绑定</div>
                     
                     }
                 </div>
-
+                }
+                {this.state.userObj.unionid ?
                 <div className="edit-con">
                     <div className="before">服务号</div>
-
-                    { !!this.state.userObj.subState ? <div className="bind-wx act">已关注</div> : <div className="bind-wx">未关注</div> }
-
-                    {!!!this.state.userObj.subState && <div className='after'>需要<div className='follow-btn' onClick={this.openFollowDialogHandle}>关注服务号</div>才能接受讨论消息提醒</div>}
-
-
-
-                </div>
-
+                    {!this.state.userObj.subState ? <div className="bind-wx ">未关注</div> : <div className="bind-wx act">已关注</div>}
+                    {!this.state.userObj.subState && <div className='after'>需要<div className='follow-btn' onClick={this.openFollowDialogHandle}>关注服务号</div>才能接受讨论消息提醒</div>}   
+                </div>:""
+                }
                 <div className="edit-con">
-                    <div className="before">名字</div>
+                    <div className="before">姓名</div>
                     <input type="text" onChange={this.nameInputHandle} className="input-edit"  value={this.state.personInfo.name}/>
-                    {this.state.infoCheck.illegalName && <div className='after error'>名字以不超过12个的英文、汉字、数字、下划线与短横构成，并以中文或英文开头</div>}
+                    {this.state.infoCheck.illegalName && <div className='after error'>加入iHCI要求实名</div>}
                 </div>
 
                 <div className="edit-con">
@@ -722,13 +709,13 @@ export default class Person extends React.Component{
                 {
                     !INIT_DATA.isWeixin&&<div className="save-btn" onClick={this.logOutHandle}>登出</div>
                 }
-                <div className="save-btn" onClick={()=>{location.href = '/team-management'}}>团队管理</div>
+                
                 {
                     this.state.showWxLogin && <WxLoginDialog state="bind" closeHandle={this.closeWxLoginHandle}/>
                 }
 
                 {
-                    this.state.showFollow && <FollowDialog closeHandle={this.closeFollowDialogHandle}/>
+                    this.state.showFollow && <FollowDialog subState = {this.state.userObj.subState} closeHandle={this.closeFollowDialogHandle}/>
                 }
 
             </Page>

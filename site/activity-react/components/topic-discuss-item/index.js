@@ -85,7 +85,7 @@ class TopicDiscussItem extends React.Component {
                             attachments={this.state.discussAttachments}>
                         </Editor>
                         <div className="infrom">请选择要通知的人：</div>
-                        <MemberChosenList choseHandle={this.memberChoseHandle} memberList={this.props.memberList}/>
+                        <MemberChosenList choseHandle={(tarId) =>{this.props.memberChoseHandle(tarId)}} memberList={this.props.memberList}/>
                         <div className="button-warp">
                             <div className="save-btn" 
                                 onClick={() => { 

@@ -35,7 +35,8 @@ class EditTodoList extends React.Component {
                            className="dashed-input"
                            placeholder="输入清单名"
                            defaultValue={_props.defaultValue}
-                           onKeyDown = {(event)=>{if(event.keyCode== "13"){this.handleConfirm()}}}>
+                           onKeyDown = {(event)=>{if(event.keyCode== "13"){this.handleConfirm()}}}
+                           autoFocus >
                     </input>
                     <div className="buttons">
                         <button className="confirm"
