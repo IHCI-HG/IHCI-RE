@@ -150,12 +150,13 @@ export const pub_pushTemplateMsg = async function (openid, templateId, url, data
 // 点击参与讨论
 // 点击: /discuss/topic/+topicId
 export const createTopicTemplate = async function (userIdList, topicObj) {
-   
+    console.log("=====================")
     const openidList = await userDB.openidList(userIdList)
   
     const content = topicObj.content.split("<")[1].split(">")[1]
     openidList.map((item) => {
       
+        console.log(topicObj._id)
         if (typeof item.openid == 'string') {
             pub_pushTemplateMsg(
                 item.openid,
@@ -193,6 +194,7 @@ export const createTopicTemplate = async function (userIdList, topicObj) {
 // 点击参与讨论
 // 点击: /discuss/topic/+topicId
 export const replyTopicTemplate = async function (userIdList, discussObj) {
+    console.log("--------------------------")
     const openidList = await userDB.openidList(userIdList)
     const content = discussObj.content.split("<")[1].split(">")[1]
 
