@@ -355,7 +355,8 @@ const createTask = async (req, res, next) => {
         console.log('taskHeader',taskHeader)
         if (taskHeader) {
             const user = await userDB.findByUserId(taskHeader)
-            const headername = user.username
+            console.log(user)
+            const headername = user.personInfo.name
             console.log('headername',headername)
             createTaskTemplate(headerList, result, headername)
 
@@ -363,11 +364,11 @@ const createTask = async (req, res, next) => {
 
             
             //网页通知
+            console.log(teamId+"???????")
             const teamObj = await teamDB.findByTeamId(teamId);
-// console.log('eeeee/n/n'+teamObj.title)
-            console.log("informList:"+informList)      
+            console.log(teamObj.name+"!!!!!")
             await Promise.all(headerList.map(async (item) => {
-                await userDB.addCreateTask(item, result, teamObj.title)
+                await userDB.addCreateNotice(item, result, teamObj.name,"CREATE_TASK")
             }));
         }
 
@@ -917,8 +918,16 @@ const addCheckitem = async (req, res, next) => {
 
             console.log('result1:   '+ result1)
 
+            const obj = {
+                creator:result1.creator,
+                create_time:result1.checkitemList[result1.checkitemList.length-1].create_time,
+                _id:result1.checkitemList[result1.checkitemList.length-1]._id,
+                title:result1.checkitemList[result1.checkitemList.length-1].content,
+            }
+            console.log(obj)
+
             await Promise.all(headerList.map(async (item) => {
-                await userDB.addCheckitem(item, result1, teamObj.title);
+                await userDB.addCreateNotice(item, obj, teamObj.name,"CREATE_CHECK_ITEM");
             }))
 
 

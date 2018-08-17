@@ -52,19 +52,9 @@ const createTopic = async (req, res, next) => {
 
             //添加通知\
             await Promise.all(informList.map(async (item) => {
-                await userDB.addCreateNotice(item, result, teamObj.name)
+                await userDB.addCreateNotice(item, result, teamObj.name,"CREATE_TOPIC")
               }));
 
-            // informList.map((item) => {
-            //     const reader = userDB.findByUserId(item)
-            //     userDB.addCreateNotice(reader, result)
-
-            // })
-            // console.log('\n\n')
-            // console.log("teamList:"+ userObj.teamList)
-            // console.log('\n\n')
-            // console.log("noticeList:"+userObj.noticeList)
-            // console.log('\n\n')
             notificationMail(informList, result, "创建了讨论")
         }
 

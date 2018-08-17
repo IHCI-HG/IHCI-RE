@@ -298,7 +298,7 @@ export const createTaskTemplate = async function (headerList, taskObj, headernam
                 'http://www.animita.cn/todo/' + taskObj.id,
                 {
                     "first": {
-                        "value": taskObj.creator.name + " 将任务指派给" + headername,
+                        "value": taskObj.creator.name + " 将任务指派给 " + headername,
                     },
                     "keyword1": {
                         "value": taskObj.title,

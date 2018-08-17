@@ -199,21 +199,21 @@ userSchema.statics = {
 
 
     //topic相关
-    addCreateNotice: async function(userId, topicObj, teamName) {
+    addCreateNotice: async function(userId, Obj, teamName,type) {
         return this.update(
             { _id: userId },
             {
                 $addToSet: {
                     noticeList: {
-                        create_time: topicObj.create_time,
+                        create_time: Obj.create_time,
                         noticeId: mongoose.Types.ObjectId(),
-                        topicId:topicObj._id.toString(),
-                        teamId: topicObj.team,
+                        topicId:Obj._id.toString(),
+                        teamId: Obj.team,
                         teamName: teamName,
-                        creator: topicObj.creator,
-                        noticeTitle: topicObj.title,
-                        noticeContent: topicObj.content,
-                        type: "CREATE_TOPIC",
+                        creator: Obj.creator,
+                        noticeTitle: Obj.title,
+                        noticeContent: Obj.content,
+                        type: type,
                         readState: false,
                     }
                 }
@@ -294,110 +294,10 @@ userSchema.statics = {
             {new: true}
         ).exec()
     },
-    // readNoticeArray:async function(userId,isReadNoticeArray){
-    //     console.log('test'+userId)
-    //     console.log(isReadNoticeArray)
-    //     try{
-    //     return this.update(
-    //         {_id:userId,"noticeList.noticeId":{$in:isReadNoticeArray}},
-    //         {$set:{"noticeList.$.readState": true}},
-    //         {upsert:false},
-    //         {multi:true}
-    //     ) 
-    // }catch(err){
-    //     console.log(err)
-    // }
-    // },
+    
+    
 
-    //task 通知
-    addCreateTask: async function(userId, taskObj, teamName) {
-        return this.update(
-            { _id: userId },
-            {
-                $addToSet: {
-                    noticeList: {
-                        create_time: taskObj.create_time,
-                        noticeId: taskObj._id,
-                        teamId: taskObj.team,
-                        teamName: teamName,
-                        creator: taskObj.creator,
-                        noticeTitle: taskObj.title,
-                        noticeContent: taskObj.content,
-                        type: "CREATE_TASK",
-                        readState: false,
-                    }
-                }
-            }
-        ).exec()
-    },
-
-    addCheckitem: async function(userId, result, teamName) {
-        var len = result.checkitemList.length;
-        const checkitemObj = result.checkitemList[len-1]
-        return this.update(
-            { _id: userId },
-            {
-                $addToSet: {
-                    noticeList: {
-                        create_time: checkitemObj.create_time,
-                        noticeId: checkitemObj._id,
-                        //teamId: checkItemObj.team,
-                        //teamName: checkitemObj,
-                        //creator: result.creator,
-                        creator: checkitemObj.creator,
-                        noticeTitle: checkitemObj.content,
-                        noticeContent: checkitemObj.content,
-                        type: "CREATE_CHECK_ITEM",
-                        readState: false,
-                    }
-                }
-            }
-        ).exec()
-    },
-
-    // addCheckitem: async function(userId, checkitemObj, teamName) {
-    //     return this.update(
-    //         { _id: userId },
-    //         {
-    //             $addToSet: {
-    //                 noticeList: {
-    //                     create_time: checkitemObj.create_time,
-    //                     noticeId: checkitemObj._id,
-    //                     //teamId: checkItemObj.team,
-    //                     //teamName: checkitemObj,
-    //                     creator: checkitemObj.creator,
-    //                     noticeTitle: checkitemObj.content,
-    //                     noticeContent: checkitemObj.content,
-    //                     type: "CREATE_CHECK_ITEM",
-    //                     readState: false,
-    //                 }
-    //             }
-    //         }
-    //     ).exec()
-    // },
-
-
-    // findNotice: async function(userId, noticeId){
-    // ß
-    //   const user = await this.find({$and:[{_id: userId}, {"noticeList.noticeId": notice}]}).exec()
-    //   console.log(user);
-    //   return user
-    // }
-
-    // findReadNotice: function(userId) {
-    //     const user = this.find({userId: userId})
-    //     return user.noticeList.find({readState: true}).sort({create_time: -1}).exec()
-    // },
-
-    // findUnreadNotice: function(userId) {
-    //     const user = this.find({userId: userId})
-    //     return user.noticeList.find({readState: false}).sort({create_time: -1}).exec()
-    // },
-
-    // findUnreadNotice: function(userId) {
-    //     const user = this.find({userId: userId})
-    //     return user.noticeList.find({readState: false}).sort({create_time: -1}).exec()
-    // },
+    
 
 }
 
