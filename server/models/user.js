@@ -176,19 +176,7 @@ userSchema.statics = {
         ).exec()
     },
 
-    // markTeam: async function(userId, teamId, markState) {
-    //     return this.update(
-    //         {_id: userId, "teamList.teamId": teamId},
-    //         {$set: { "teamList.$.marked": markState}},
-    //     ).exec()
-    // },
-
-    // changeMemberRole: async function(teamId, userId, role) {
-    //     return this.update(
-    //         {_id: teamId, "memberList.userId": userId},
-    //         {$set: { "memberList.$.role": role}},
-    //     ).exec()
-    // },
+    
 
     changeTeamRole: async function(userId, teamId, role) {
         return this.update(
@@ -198,7 +186,7 @@ userSchema.statics = {
     },
 
 
-    //topic相关
+    //所有的通知
     addCreateNotice: async function(userId, Obj, teamName,type) {
         return this.update(
             { _id: userId },

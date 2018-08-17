@@ -119,6 +119,8 @@ export const pub_accessTokenToFollowerList = async function(){
 
 // 服务号推送模板消息通用方法
 export const pub_pushTemplateMsg = async function (openid, templateId, url, data) {
+    console.log("..........................")
+    console.log("come in")
  
     const accseeToken = await pub_getAccessToken()
    
@@ -133,7 +135,8 @@ export const pub_pushTemplateMsg = async function (openid, templateId, url, data
     })
 
     const resultJson = await result.json()
-    console.log(resultJson)
+    console.log('resultJson',resultJson)
+    console.log("..........................")
     return resultJson
 }
 
@@ -283,6 +286,7 @@ export const admitIntoTeam = async function (userIdList, teamObj) {
 
 
 export const createTaskTemplate = async function (headerList, taskObj, headername) {
+    console.log("########################")
     console.log(headername)
     const openidList = await userDB.openidList(headerList)
    
@@ -317,6 +321,8 @@ export const createTaskTemplate = async function (headerList, taskObj, headernam
             
         }
     })
+   
+    
 }
 
 export const delTaskTemplate = async function (headerList, taskObj) {
@@ -418,8 +424,10 @@ export const compTaskTemplate = async function (creatorId, taskObj , headername)
 
 
 export const createCheckitemTemplate = async function (headerList, checkitemObj, headername) {
+    console.log("********************")
     const openidList = await userDB.openidList(headerList)
-    const content = checkitemObj.content.split("<")[1].split(">")[1]
+ 
+    
 
     openidList.map((item) => {
         if (typeof item.openid == 'string') {
@@ -432,7 +440,7 @@ export const createCheckitemTemplate = async function (headerList, checkitemObj,
                         "value": checkitemObj.creator.name + " 将检查项指派给" + headername,
                     },
                     "keyword1": {
-                        "value": content,
+                        "value": checkitemObj.content,
                     },
                     "keyword2": {
                         "value": formatDate(new Date()),
