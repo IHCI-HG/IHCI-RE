@@ -238,7 +238,7 @@ const findTasklistById = async (req, res, next) => {
         // result["checkItemNum"] = checkitemNum;
         // result["checkItemDoneNum"] = checkitemDoneNum;
 
-        console.log(result);
+
         const taskarr = []
         for (var i = 0; i < result.taskList.length; i++) {
             const userObj = await userDB.findByUserId(result.taskList[i].header);
@@ -291,7 +291,7 @@ const createTask = async (req, res, next) => {
 
     const informList = req.body.informList;
 
-    console.log("userId:   "+userId)
+
 
     if (!taskTitle) {
         resProcessor.jsonp(req, res, {
@@ -312,7 +312,7 @@ const createTask = async (req, res, next) => {
         }
         const result = await taskDB.createTask(taskTitle, taskContent, simpleUser, fileList, teamId, tasklistId, taskDeadline, taskHeader);
 
-        console.log('result:  '+ result);
+     
         const taskOb = await taskDB.findByTaskId(taskId)
 
         //6.28
@@ -352,20 +352,23 @@ const createTask = async (req, res, next) => {
         headerList.push(taskHeader)
 
         //todo 有负责人，走微信模板下发流程
+ 
         if (taskHeader) {
             const user = await userDB.findByUserId(taskHeader)
-            const headername = user.username
+
+            const headername = user.personInfo.name
+        
             createTaskTemplate(headerList, result, headername)
 
 
 
             
             //网页通知
+       
             const teamObj = await teamDB.findByTeamId(teamId);
-// console.log('eeeee/n/n'+teamObj.title)
-            console.log("informList:"+informList)      
+           
             await Promise.all(headerList.map(async (item) => {
-                await userDB.addCreateTask(item, result, teamObj.title)
+                await userDB.addCreateNotice(item, result, teamObj.name,"CREATE_TASK")
             }));
         }
 
@@ -401,7 +404,7 @@ const delTask = async (req, res, next) => {
     try {
         const taskObj = await taskDB.findByTaskId(taskId)
         const result = await taskDB.delTaskById(taskId);
-        console.log(result);
+      
         if (result.ok == 1) {
             if (tasklistId) {
                 await tasklistDB.delTask(tasklistId, taskId);
@@ -411,7 +414,7 @@ const delTask = async (req, res, next) => {
 
             const headerList = []
             headerList.push(taskObj.header)
-            console.log(taskObj.header)
+          
             if (taskObj.header) {
                 delTaskTemplate(headerList, taskObj)
             }
@@ -538,7 +541,7 @@ const editTask = async (req, res, next) => {
             if (task.header) {
                 const headerObj = await userDB.findByUserId(task.header);
                 const headername = headerObj.username;
-                console.log(headername)
+              
                 const creatorId = []
                 creatorId.push(taskObj.creator._id)
                 compTaskTemplate(creatorId, taskObj, headername)
@@ -647,7 +650,7 @@ const changeTaskIndex = async (req, res, next) => {
     const taskId = req.body.taskId;
     const teamId = req.body.teamId;
     const index = req.body.index;
-    console.log(req.body)
+
     if (!taskId || !teamId || !index.toString()) {
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: "参数不全" },
@@ -686,7 +689,7 @@ const changeTaskList = async (req, res, next) => {
     const listIdTo = req.body.listIdTo;
     const listIdFrom = req.body.listIdFrom;
     const userId = req.rSession.userId;
-    console.log(req.body)
+
     if (!taskId) {
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: "参数不全" },
@@ -842,7 +845,7 @@ const addCheckitem = async (req, res, next) => {
     const _id = req.body._id;
     const create_time = Date.now;
     
-    console.log('assigneeId', header)
+
 
     const userId = req.rSession.userId;
 
@@ -886,8 +889,9 @@ const addCheckitem = async (req, res, next) => {
 
         const lastCheckitem = result1.checkitemList[result1.checkitemList.length - 1]
         var checkitemDdl = ""
+       
         if(lastCheckitem.deadline) {
-            console.log(lastCheckitem.deadline)
+    
             const date = new Date(lastCheckitem.deadline)
             checkitemDdl = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
         }
@@ -899,7 +903,6 @@ const addCheckitem = async (req, res, next) => {
             taskId: taskId,
         }
 
-        console.log('result1  :'+result1)//有checkItemList[1]...
 
         if (checkitem.header) {
             //todo 给负责人下发微信模板
@@ -910,12 +913,19 @@ const addCheckitem = async (req, res, next) => {
             createCheckitemTemplate(headerList, lastCheckitem, headername)
 
             // 网页通知
-            console.log('7777:     ' + headerList+'/n/n/n');//userid
 
-            console.log('result1:   '+ result1)
+
+            const obj = {
+                creator:result1.creator,
+                team:result1.teamId,
+                create_time:result1.checkitemList[result1.checkitemList.length-1].create_time,
+                _id:result1.checkitemList[result1.checkitemList.length-1]._id,
+                title:result1.checkitemList[result1.checkitemList.length-1].content,
+            }
+ 
 
             await Promise.all(headerList.map(async (item) => {
-                await userDB.addCheckitem(item, result1, teamObj.title);
+                await userDB.addCreateNotice(item, obj, teamObj.name,"CREATE_CHECK_ITEM");
             }))
 
 
@@ -1157,8 +1167,8 @@ const editCheckitem = async (req, res, next) => {
             checkitemObj.deadline = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
         }
 
-        //7.6
-        console.log("7777777777777",editCheckitem.ddl)
+
+
         if(editCheckitem.ddl)
         {
             const teamObj = await teamDB.findByTeamId(teamId);
@@ -1215,9 +1225,7 @@ const taskCopy = async (req, res, next) => {
         var tasklistId = copyObj.tasklistId;
         delete copyObj._id;
 
-        console.log("......................................................")
-        console.log(copyObj);
-        console.log(".......................................................")
+
 
         for (var i = 0; i < copyCount; i++) {
             const taskObj = await taskDB.create(copyObj);
@@ -1225,8 +1233,7 @@ const taskCopy = async (req, res, next) => {
 
             const baseInfoObj = await userDB.baseInfoById(userId);
             const teamObj = await teamDB.findByTeamId(teamId);
-            console.log(teamObj)
-            console.log("id",teamId)
+
             await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'COPY_TASK', taskObj._id, taskObj.title, taskObj);
 
             if (tasklistId) {
@@ -1368,7 +1375,6 @@ const createDiscuss = async (req, res, next) => {
         //6.28
         await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'REPLY_TASK', result._id, result.title, result);
 
-        console.log(result)
 
         //如果有需要通知的人，则走微信模板消息下发流程
         if (informList && informList.length) {
@@ -1422,7 +1428,7 @@ const editDiscuss = async (req, res, next) => {
         //todo 还要在timeline表中增加项目
 
         //如果有需要通知的人，则走微信模板消息下发流程
-        console.log(result)
+
         if (informList && informList.length) {
             replyTopicTemplate(informList, result)
         }

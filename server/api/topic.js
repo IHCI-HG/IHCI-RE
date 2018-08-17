@@ -27,7 +27,6 @@ const createTopic = async (req, res, next) => {
     const informList = req.body.informList
     const userId = req.rSession.userId
 
-    console.log("req.body:   "+req.body.informList);
 
 
     if(!topicName || !topicContent) {
@@ -46,25 +45,15 @@ const createTopic = async (req, res, next) => {
         await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'CREATE_TOPIC', result._id, result.title, result)
 
         //如果有需要通知的人，则走微信模板消息下发流程
-        console.log("informList:"+informList)
+
         if(informList && informList.length) {
             createTopicTemplate(informList, result)
 
             //添加通知\
             await Promise.all(informList.map(async (item) => {
-                await userDB.addCreateNotice(item, result, teamObj.name)
+                await userDB.addCreateNotice(item, result, teamObj.name,"CREATE_TOPIC")
               }));
 
-            // informList.map((item) => {
-            //     const reader = userDB.findByUserId(item)
-            //     userDB.addCreateNotice(reader, result)
-
-            // })
-            // console.log('\n\n')
-            // console.log("teamList:"+ userObj.teamList)
-            // console.log('\n\n')
-            // console.log("noticeList:"+userObj.noticeList)
-            // console.log('\n\n')
             notificationMail(informList, result, "创建了讨论")
         }
 
@@ -193,7 +182,7 @@ const editTopic = async (req, res, next) => {
         const teamObj = await teamDB.findByTeamId(teamId)
         await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'EDIT_TOPIC', result1._id, result1.title, result1)
         //todo 还要在timeline表中增加项目
-        console.log(result1);
+  
         if(informList && informList.length) {
             //replyTopicTemplate(informList, result1)
 
@@ -308,14 +297,14 @@ const editDiscuss = async (req, res, next) => {
         discussObj.fileList = fileList || discussObj.fileList;
 
         const result = await discussDB.updateDiscuss(discussId, discussObj)
-        console.log(result)
+  
         await topicDB.updateDiscuss(topicId, discussId, content,discussObj.fileList,discussObj.creator)
 
         const userObj = await userDB.baseInfoById(userId)
         const topicObj = await topicDB.findByTopicId(topicId)
         const teamObj = await teamDB.findByTeamId(teamId)
         await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'EDIT_REPLY', result._id, topicObj.title, discussObj)
-        console.log(teamId, teamObj.name, userObj, 'EDIT_REPLY', result._id, topicObj.title, result)
+   
         
         if(informList && informList.length) {
             //replyTopicTemplate(informList, result)
@@ -426,9 +415,7 @@ const getMoreTopic = async (req,res,next) =>{
     const teamId = req.query.teamId;
     const currentPage = req.query.currentPage;
 
-    //test
-    console.log("/api/topic/251");
-    console.log(req.query);
+
 
     if(!teamId || currentPage <= 0) {
         resProcessor.jsonp(req, res, {

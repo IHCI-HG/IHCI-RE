@@ -14,14 +14,14 @@ const WxChoose = {
         ACCOUNT_BLOCK_TITLE:"绑定已有账号",
     },
     LABEL_TEXT:{
-        USERNAME_LABEL_TEXT:"账号: ",
-        PASSWORD_LABEL_TEXT:"密码: ",
+        SET_USERNAME:"账号: ",
+        SET_PASSWORD:"密码: ",
     },
     BUTTON_TEXT:{
-        BIND_ACCOUNT_BUTTON:"绑定账号",
-        ENTER_IHCI_BUTTON:"直接进入平台",
-        SUBMIT_BUTTON:"确定",
-        CANCEL_BUTTON:"取消"
+        BIND_ACCOUNT:"绑定账号",
+        ENTER_IHCI:"直接进入平台",
+        SUBMIT:"确定",
+        CANCEL:"取消"
     },
 }
 const IhciJoin = {
@@ -43,14 +43,65 @@ const IhciJoin = {
         JOIN_BLOCK_TITLE: "加入iHCI",
     },
     LABEL_TEXT: {
-        NAME_LABEL_TEXT: "姓名: ",
-        EMAIL_LABEL_TEXT: "邮箱: ",
-        PHONE_LABEL_TEXT: "手机: ",
+        SET_NAME: "姓名: ",
+        SET_EMAIL: "邮箱: ",
+        SET_PHONE: "手机: ",
     },
     BUTTON_TEXT: {
-        ENTER_IHCI_BUTTON: "加入",
+        ENTER_IHCI: "加入",
     }
 
+}
+const Person = {
+    PERSON_INFO_CHECK: {
+        PERSON_INFO_ILLEGAL:"设置失败，请检查格式",
+        IMAGE_ILLEGAL: "文件格式必须是JPG，JPEG或PNG",
+        CREATE_NAME_ILLEGAL: "加入iHCI要求实名",      
+
+    },
+    RESPONSE_MESSAGE: {
+        SET__SUCCESS: "设置成功",
+        SET_FAIL: "设置失败，请稍后再试",
+        FIRST_SET_INFO_SUCCESS: "设置成功，已发送使用说明邮件，请检查邮箱",
+        BIND_WX_FAIL: "解绑失败",
+        UPLOAD_IMAGE_FAIL: "上传图片失败",
+        UPLOAD_IMAGE_SUCCESS: "上传图片成功",
+        ACTIVATE_MAIL_WAIT: "请不要重复提交激活请求，请等待60s后再尝试发送",
+        ASKTO_SET_MAIL: "邮箱未设置，请先修改邮箱",
+        ACTIVATE_MAIL_SUCCESS: "已发送激活邮件，请检查邮箱",
+        ACTIVATE_MAIL_FAIL: "激活邮件发送失败，请稍后再试",
+        SET_ACCOUNT_SUCCESS: "设置成功",
+    },
+    PAGE_INFO: {
+        PAGE_TITLE: "个人设置",
+    },
+    LABEL_TEXT: {
+        SET_ACCOUNT: "尚未设置账号密码，请",
+        SET_USENAME: "账号：",
+        SET_PASSWORD: "密码：",
+        WX_BLOCK_TITLE: "微信",
+        WX_BOUND: "已绑定",
+        WX_NOT_BOUND: "未绑定",
+        WX_UNBIND: "解绑",
+        FOLLOW_BLOCK_TITLE: "服务号",
+        NOT_FOLLOW: "未关注",
+        FOLLOWED: "已关注",
+        FOLLOW_NOTICE_A: "需要",
+        FOLLOW_NOTICE_B: "才能接受讨论消息提醒",
+        SET_NAME: "姓名",
+        EMAIL_BLOCK_TITLE: "邮箱",
+        SET_EMAIL: "修改邮箱",   
+    },
+    BUTTON_TEXT: {
+        TEAM_EXIT: "退出团队",
+        UPLOAD_IMAGE: "上传图片",
+        SET_ACCOUNT: "设置账号密码",
+        SUBMIT: "确定",
+        FOLLOW: "关注服务号",
+
+
+
+    }
 }
 module.exports.WxChoose = WxChoose
 module.exports.IhciJoin = IhciJoin
