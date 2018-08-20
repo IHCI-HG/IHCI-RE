@@ -478,10 +478,23 @@ const editTask = async (req, res, next) => {
         task.content = editTask.desc || taskObj.content;
         task.fileList = editTask.fileList || taskObj.fileList;
         task.deadline = editTask.ddl || taskObj.deadline;
+
+
         if (editTask.assigneeId) {
             task.header = editTask.assigneeId   
-            //7.6
+
+           
+            //7.6      
             await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'CHANGE_TASK_HEADER', taskObj._id, taskObj.title, task);
+            
+            // const result =  await taskDB.updateTask(taskId, task);//之前的result
+            // console.log("## "+result);
+            const headerList = [];
+            headerList.push(task.header);
+
+            // headerList.map((item) => {
+            //     userDB.editTaskHeader(item, result, teamObj.name)
+            // })
         }else{
             task.header = undefined
             await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'CHANGE_TASK_HEADER', taskObj._id, taskObj.title, task);
@@ -511,7 +524,12 @@ const editTask = async (req, res, next) => {
         }
 
 
-        const result1 = await taskDB.updateTask(taskId, task);
+        
+
+        const result1 = await taskDB.updateTask(taskId, editTask);
+
+        console.log("$$  "+ result1)//更改后的result
+
         if (tasklistId) {
             await tasklistDB.updateTask(tasklistId, taskId, task);
         } else {
@@ -524,7 +542,14 @@ const editTask = async (req, res, next) => {
                 const headerObj = await userDB.findByUserId(editTask.assigneeId);
                 const headername = headerObj.username;
                 const headerList = []
+
                 headerList.push(editTask.assigneeId)
+
+                // 更改header 但是更改的创建者要改变
+                await Promise.all(headerList.map(async (item) => {
+                    await userDB.editNotice(item, result1, teamObj.name,'CHANGE_TASK_HEADER')
+                }));
+
                 createTaskTemplate(headerList, taskObj, headername)
             }
             if ((editTask.assigneeId === null && taskObj.header) || (editTask.assigneeId && taskObj.header)) {
