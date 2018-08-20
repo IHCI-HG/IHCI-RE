@@ -4,10 +4,13 @@ import Page from '../../../components/page'
 import WxLoginDialog from '../../../components/wx-login-dialog'
 import fileUploader from '../../../utils/file-uploader';
 import FollowDialog from '../../../components/follow-dialog'
-import api from '../../../utils/api';
+import api, { authApi } from '../../../utils/api';
+
+import {Person as staticText} from '../../../commen/static-text'
+
+
 export default class Person extends React.Component{
     componentDidMount = async() => {
-        this.initFollower()
         this.personInfo = {}
         this.originPersonInfo = {}
         if(INIT_DATA.userObj) {
@@ -58,13 +61,6 @@ export default class Person extends React.Component{
 
     }
 
-    initFollower = async() => {
-        const result = await api('/follower', {
-            method: 'POST',
-            body: {}
-        })
-        //console.log(result)
-    }
     initdataAllFilled = () => {
         if (!INIT_DATA.userObj.personInfo){
             return false
@@ -167,6 +163,105 @@ export default class Person extends React.Component{
             infoCheck:{
                 ...this.state.infoCheck,
                 illegalPassword:illegalPassword,
+                passwordEmpty:passwordEmpty
+            }
+        })
+    }
+    createUsernameHandle = (e) => {
+        const createUsername = e.target.value
+        var createUsernameEmpty = true
+        if(createUsername){
+            createUsernameEmpty = false
+        }else{
+            createUsernameEmpty = true
+        }
+        this.setState({
+            createUsername: createUsername,
+            infoCheck:{
+                ...this.state.infoCheck,
+                createUsernameEmpty:createUsernameEmpty
+            }
+        })
+    }
+    createPasswordHandle = (e) =>{
+        const createPassword = e.target.value
+        var createPasswordEmpty = true
+        if(createPassword){
+            createPasswordEmpty = false
+        }else{
+            createPasswordEmpty = true
+        }
+        this.setState({
+            createPassword: createPassword,
+            infoCheck:{
+                ...this.state.infoCheck,
+                createPasswordEmpty:createPasswordEmpty
+            }
+        })
+    }
+    createConfirmPasswordHandle = (e) =>{
+        const confirmPassword = e.target.value
+        var createConfirmPasswordEmpty = true
+        if(confirmPassword){
+            createConfirmPasswordEmpty = false
+        }else{
+            createConfirmPasswordEmpty = true
+        }
+        this.setState({
+            createConfirmPassword:e.target.value,
+            infoCheck:{
+                ...this.state.infoCheck,
+                createConfirmPasswordEmpty:createConfirmPasswordEmpty
+            }
+        })
+    }
+    loginHandle = async () => {
+        if(this.state.infoCheck.usernameEmpty){
+            // window.toast("用户名为空")
+            window.toast(staticText.PERSON_INFO_CHECK.CREATE_USERNAME_EMPTY);
+            return
+        }
+        if(this.state.infoCheck.passwordEmpty){
+            // window.toast("密码为空")
+            window.toast(staticText.PERSON_INFO_CHECK.CREATE_PASSWORD_EMPTY);
+            return
+        }
+
+        const result = await authApi(this.state.username, this.state.password, this.state.userObj.unionid)
+        if(result.state.code === 0) {
+            window.toast("成功")
+            setTimeout(() => {
+                location.href = '/person'
+            }, 1000)   
+        } else {
+            window.toast(result.state.msg || "失败")
+        }
+    }
+    signUpHandle = async () => {
+        if(this.state.infoCheck.createUsernameEmpty){
+            window.toast("用户名为空")
+            return
+        }
+        if(this.state.infoCheck.createPasswordEmpty){
+            window.toast("密码为空")
+            return
+        }
+        if(this.state.infoCheck.createConfirmPasswordEmpty){
+            window.toast("确认密码为空")
+            return 
+        }
+        if(this.state.createPassword !== this.state.createConfirmPassword){
+            window.toast("两次输入密码不同")
+            return
+        }
+        const result = await api('/api/user/SignUpAndBindWx', {
+            method: 'POST',
+            body: {
+                userInfo: {
+                    username: this.state.createUsername,
+                    password: this.state.createPassword,
+                    unionid: this.state.userObj.unionid,
+                }
             }
         })
     }
@@ -551,8 +646,8 @@ export default class Person extends React.Component{
                 {this.state.userObj.unionid ?
                 <div className="edit-con">
                     <div className="before">服务号</div>
-                    {!this.state.userObj.subState ? <div className="bind-wx ">未关注</div> : <div className="bind-wx act">已关注</div>}
-                    {!this.state.userObj.subState && <div className='after'>需要<div className='follow-btn' onClick={this.openFollowDialogHandle}>关注服务号</div>才能接受讨论消息提醒</div>}   
+                    {!this.state.userObj.openid ? <div className="bind-wx ">未关注</div> : <div className="bind-wx act">已关注</div>}
+                    {!this.state.userObj.openid && <div className='after'>需要<div className='follow-btn' onClick={this.openFollowDialogHandle}>关注服务号</div>才能接受讨论消息提醒</div>}   
                 </div>:""
                 }
                 <div className="edit-con">
@@ -612,7 +707,7 @@ export default class Person extends React.Component{
                 }
 
                 {
-                    this.state.showFollow && <FollowDialog subState = {this.state.userObj.subState} closeHandle={this.closeFollowDialogHandle}/>
+                    this.state.showFollow && <FollowDialog subState = {this.state.userObj.openid?true:false} closeHandle={this.closeFollowDialogHandle}/>
                 }
 
             </Page>
