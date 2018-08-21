@@ -293,7 +293,7 @@ const updateFolderName = async (req, res, next) => {
 
 
 module.exports = [
-    ['GET', '/api/getOssStsToken', apiAuth, getOssStsToken],
+    ['GET', '/api/getOssStsToken', apiAuth,   getOssStsToken],
     ['POST','/api/file/createFile',apiAuth, createFile],
     ['POST','/api/file/createFolder',apiAuth, createFolder],
     ['POST','/api/file/downloadFile',apiAuth, downloadFile],

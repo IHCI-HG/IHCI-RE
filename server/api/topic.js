@@ -570,7 +570,7 @@ module.exports = [
     //6.22
     ['GET','/api/topic/getMoreTopic', apiAuth,getMoreTopic],
 
-    ['POST', '/api/topic/createTopic', apiAuth, createTopic],
+    ['POST', '/api/topic/createTopic', apiAuth, memberAuth, createTopic],
     ['POST', '/api/topic/editTopic', apiAuth, editTopic],
     ['POST', '/api/topic/createDiscuss', apiAuth, createDiscuss],
     ['POST', '/api/topic/editDiscuss', apiAuth, editDiscuss],
