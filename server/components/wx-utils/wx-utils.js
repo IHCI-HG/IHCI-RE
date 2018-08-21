@@ -285,6 +285,25 @@ export const admitIntoTeam = async function (userIdList, teamObj) {
     })
 }
 
+export const closeToDDLTemplate = async function (headerList,taskObj){
+    const openidList = await userDB.openidList(headerList)
+
+    openidList.map((item)=>{
+        if(typeof item.openid == 'string'){
+            pub_pushTemplateMsg(
+                item.openid,
+                'p6pZBXX0SaqODRDZgY_3NqyIAK0mYN9HXYq6yMLyA04',
+                'http://www.animita.cn/todo/' + taskObj.id,
+                {
+                    "first": {
+                        "value": taskObj.title + " 即将到截止日期 " 
+                    }
+                }
+            )
+        }
+    })
+
+}
 
 
 export const createTaskTemplate = async function (headerList, taskObj, headername) {
