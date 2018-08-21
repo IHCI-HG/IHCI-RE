@@ -88,10 +88,10 @@ class TopicDiscussItem extends React.Component {
                         <MemberChosenList choseHandle={(tarId) =>{this.props.memberChoseHandle(tarId)}} memberList={this.props.memberList}/>
                         <div className="button-warp">
                             <div className="save-btn" 
-                                onClick={() => { 
+                                onClick={() => { setTimeout(()=>{
                                     this.props.saveEditHandle(this.props._id, this.state.content,this.state.discussAttachments,this.state.discussAttachmentsArr,this.state.discussOssKeyArr); 
                                     this.setState({ editState: false }) 
-                                    }}>保存</div>
+                                },400)}}>保存</div>
                             <div className="cancel-btn" onClick={() => { this.setState({ editState: false }) }}>取消</div>
                         </div>
                     </div>
