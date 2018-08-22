@@ -371,7 +371,7 @@ module.exports = [
     ['POST','/api/file/moveFolder',apiAuth, moveFolder],
     ['POST','/api/file/delFile',apiAuth, delFile],
     ['POST','/api/file/delFolder',apiAuth, delFolder],
-    ['POST','/api/file/updateFileName',apiAuth, updateFileName],//
-    ['POST','/api/file/updateFolderName',apiAuth,updateFolderName],//
+    ['POST','/api/file/updateFileName',apiAuth, updateFileName],
+    ['POST','/api/file/updateFolderName',apiAuth,updateFolderName],
     
 ];

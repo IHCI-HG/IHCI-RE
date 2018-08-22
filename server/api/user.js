@@ -593,7 +593,7 @@ module.exports = [
 
     ['GET','/api/getSMS',getSMS],
 
-    ['GET', '/api/getMyInfo',apiAuth, getMyInfo],
+    ['POST', '/api/getMyInfo',apiAuth, getMyInfo],
     ['POST', '/api/getUserInfo',apiAuth, getUserInfo],
     ['POST', '/api/userInfoList',apiAuth, userInfoList],
 
