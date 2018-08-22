@@ -16,10 +16,10 @@ export default class TeamManagement extends React.Component{
     getTeamList  = async() => {
         
         const result = await api('/api/getMyInfo', {
-            method: 'GET',
-            body: {}
+            method: 'POST',
+            body: {}    
         })
-        const teamList = result.data.teamList
+        const teamList = result.data.userObj.teamList
         this.setState({
             teamList: teamList
         })

@@ -111,15 +111,18 @@ class App extends React.Component{
     }
 
     setHeadImg = async () => {
-        const result = await api('/api/getMyInfo')
-        if(result.data && result.data.personInfo && result.data.personInfo.headImg) {
+        const result = await api('/api/getMyInfo',{
+            method: 'POST',
+            body: {}
+        })
+        if(result.data.userObj && result.data.userObj.personInfo && result.data.userObj.personInfo.headImg) {
             this.setState({
-                headImg: result.data.personInfo.headImg,
-                menuName: result.data.personInfo.name,
-                menuEmail: result.data.personInfo.mail,
+                headImg: result.data.userObj.personInfo.headImg,
+                menuName: result.data.userObj.personInfo.name,
+                menuEmail: result.data.userObj.personInfo.mail,
                 personInfo: {
-                    ...result.data,
-                    ...result.data.personInfo,
+                    ...result.data.userObj,
+                    ...result.data.userObj.personInfo,
                 },
             })
         }

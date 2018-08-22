@@ -212,16 +212,16 @@ export default class Task extends React.Component{
 
     initTeamList = async () => {
         const result = await api('/api/getMyInfo', {
-            method: 'GET',
+            method: 'POST',
             body: {}
         })
         const user={}
-        user.headImg = result.data.personInfo.headImg
-        user.name = result.data.personInfo.name
+        user.headImg = result.data.userObj.personInfo.headImg
+        user.name = result.data.userObj.personInfo.name
         this.setState({
             user:user
         })
-        const teamList = result.data.teamList
+        const teamList = result.data.userObj.teamList
         console.log(result)
         /*
         teamList.map((item, index)=>{
@@ -234,11 +234,11 @@ export default class Task extends React.Component{
             moveTeamList: teamList,
         })
         const result1 = await api('/api/getMyInfo', {
-            method: 'GET',
+            method: 'POST',
             body: {}
         })
         this.setState({
-            copyTeamList: result1.data.teamList,
+            copyTeamList: result1.data.userObj.userObjteamList,
         })
     }
 
@@ -377,13 +377,11 @@ export default class Task extends React.Component{
                 const result1 = await api('/api/file/createFile', {
                     method: 'POST',
                     body: {
-                        fileInfo: {
-                            teamId: this.state.todo.teamId,
-                            size: item.size,
-                            dir: '/',
-                            fileName: item.name,
-                            ossKey: this.state.ossKeyArr[index],
-                        }
+                        teamId: this.state.todo.teamId,
+                        size: item.size,
+                        dir: '/',
+                        fileName: item.name,
+                        ossKey: this.state.ossKeyArr[index],
                     }
                 })
                 if (result1.state.code === 0) {
@@ -442,13 +440,11 @@ export default class Task extends React.Component{
                 const result1 = await api('/api/file/createFile', {
                     method: 'POST',
                     body: {
-                        fileInfo: {
-                            teamId: this.state.todo.teamId,
-                            size: item.size,
-                            dir: '/',
-                            fileName: item.name,
-                            ossKey: ossArr[index],
-                        }
+                        teamId: this.state.todo.teamId,
+                        size: item.size,
+                        dir: '/',
+                        fileName: item.name,
+                        ossKey: ossArr[index],
                     }
                 })
                 if (result1.state.code === 0) {
@@ -694,13 +690,11 @@ export default class Task extends React.Component{
                     const result1 = await api('/api/file/createFile', {
                         method: 'POST',
                         body: {
-                            fileInfo: {
-                                teamId: this.state.todo.teamId,
-                                size: item.size,
-                                dir: '/',
-                                fileName: item.name,
-                                ossKey: todoInfo.ossKeyArr[index],
-                            }
+                            teamId: this.state.todo.teamId,
+                            size: item.size,
+                            dir: '/',
+                            fileName: item.name,
+                            ossKey: todoInfo.ossKeyArr[index],
                         }
                     })
                     if (result1.state.code === 0) {
@@ -992,12 +986,10 @@ export default class Task extends React.Component{
         const result = await api('/api/file/moveFile', {
             method: 'POST',
             body: {
-                fileInfo: {
-                    teamId: this.state.todo.teamId,
-                    dir: item.dir,
-                    fileName: item.fileName,
-                    tarDir: tarDir,
-                }
+                teamId: this.state.todo.teamId,
+                dir: item.dir,
+                fileName: item.fileName,
+                tarDir: tarDir,
             }
         })
         if(result.state.code === 0){

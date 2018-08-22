@@ -53,7 +53,7 @@ const getOssStsToken = async (req, res, next) => {
     } catch (error) {
         console.log(error);
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: ''
         });
     }
@@ -74,12 +74,21 @@ const getOssClient = async () => {
 
 
 const createFile = async (req, res, next) => {
-
-    const fileInfo = req.body.fileInfo || {} 
-    const userId = req.rSession.userId
+    const teamId = req.body.teamId
+    const dir = req.body.dir
+    const fileName = req.body.fileName
+    const ossKey = req.body.ossKey
+    const size = req.body.size
+    if(!teamId||!dir||!fileName) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 3000, msg: "参数不全" },
+            data: {}
+        });
+        return
+    }
 
     try {
-        let fileObj = await file.createFile(fileInfo.teamId,fileInfo.dir,fileInfo.fileName,fileInfo.ossKey,fileInfo.size)
+        let fileObj = await file.createFile(teamId,dir,fileName,ossKey,size)
 
         resProcessor.jsonp(req, res, {
             state: {code: 0,msg: "Successfully created file"},
@@ -88,8 +97,9 @@ const createFile = async (req, res, next) => {
             }
         });
     } catch (error) {
+        console.log(error)
         resProcessor.jsonp(req, res, {
-            state: {code: 1,msg: error},
+            state: {code: 1000,msg:'操作失败' },
             data: {},
             info: fileInfo,
         });
@@ -97,11 +107,19 @@ const createFile = async (req, res, next) => {
 }
 
 const createFolder = async (req, res, next) => {
-    const folderInfo = req.body.folderInfo || {}
-    const userId = req.rSession.userId
+    const teamId = req.body.teamId
+    const dir = req.body.dir
+    const folderName = req.body.folderName
+    if(!teamId||!dir||!folderName) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 3000, msg: "参数不全" },
+            data: {}
+        });
+        return
+    }
 
     try {
-        let folderObj = await file.createFolder(folderInfo.teamId,folderInfo.dir,folderInfo.folderName)
+        let folderObj = await file.createFolder(teamId,dir,folderName)
 
         resProcessor.jsonp(req, res, {
             state: {code: 0,msg: "Successfully created folder"},
@@ -110,8 +128,9 @@ const createFolder = async (req, res, next) => {
             }
         })
     } catch (error) {
+        console.log(error)
         resProcessor.jsonp(req, res, {
-            state: {code: 1,msg: error},
+            state: {code: 1000,msg:'操作失败' },
             data: {},
             info: folderInfo,
         })
@@ -119,12 +138,13 @@ const createFolder = async (req, res, next) => {
 }
 
 const getDirFileList = async (req, res, next) => {
-    const dirInfo = req.body.dirInfo || {} 
+    const teamId = req.body.teamId
+    const dir = req.body.dir
     const userId = req.rSession.userId
 
     try {
 
-        let fileList = await file.getDirFileList(dirInfo.teamId,dirInfo.dir)
+        let fileList = await file.getDirFileList(teamId,dir)
 
         resProcessor.jsonp(req, res, {
             state: {code: 0,msg: "Successfully got list of files"},
@@ -133,8 +153,9 @@ const getDirFileList = async (req, res, next) => {
             }
         });
     } catch (error) {
+        console.log(error)
         resProcessor.jsonp(req, res, {
-            state: {code: 1,msg: error},
+            state: {code: 1000,msg:'操作失败' },
             data: {},
             info: dirInfo,
         });
@@ -171,10 +192,19 @@ const downloadFile = async (req, res, next) => {
 }
 
 const moveFile = async (req, res, next) => {
-    const fileInfo = req.body.fileInfo || {} 
-
+    const teamId = req.body.teamId
+    const dir = req.body.dir
+    const fileName = req.body.fileName
+    const tarDir = req.body.tarDir
+    if(!teamId||!dir||!fileName||!tarDir) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 3000, msg: "参数不全" },
+            data: {}
+        });
+        return
+    }
     try {
-        await file.moveFile(fileInfo.teamId,fileInfo.dir,fileInfo.fileName,fileInfo.tarDir)
+        await file.moveFile(teamId,dir,fileName,tarDir)
 
         resProcessor.jsonp(req, res, {
             state: {code: 0,msg: "Successfully moved file"},
@@ -183,7 +213,7 @@ const moveFile = async (req, res, next) => {
     } catch (error) {
         console.log(error)
         resProcessor.jsonp(req, res, {
-            state: {code: 1,msg: error},
+            state: {code: 1000,msg:'操作失败' },
             data: {},
             info: fileInfo,
         });
@@ -191,11 +221,19 @@ const moveFile = async (req, res, next) => {
 }
 
 const moveFolder = async (req, res, next) => {
-    const folderInfo = req.body.folderInfo || {} 
-    console.log(folderInfo)
-
+    const teamId = req.body.teamId
+    const dir = req.body.dir
+    const folderName = req.body.folderName
+    const tarDir = req.body.tarDir
+    if(!teamId||!dir||!folderName||!tarDir) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 3000, msg: "参数不全" },
+            data: {}
+        });
+        return
+    }
     try {
-        await file.moveFolder(folderInfo.teamId, folderInfo.dir, folderInfo.folderName,folderInfo.tarDir)
+        await file.moveFolder(teamId, dir, folderName, tarDir)
         
         resProcessor.jsonp(req, res, {
             state: {code: 0,msg: "Successfully moved folder"},
@@ -204,7 +242,7 @@ const moveFolder = async (req, res, next) => {
     } catch (error) {
         console.log(error) 
         resProcessor.jsonp(req, res, {
-            state: {code: 1, msg: error},
+            state: {code: 1000, msg:'操作失败' },
             data: {},
             info: folderInfo
         })
@@ -212,10 +250,18 @@ const moveFolder = async (req, res, next) => {
 }
 
 const delFile = async (req, res, next) => {
-    const fileInfo = req.body.fileInfo || {}
-
+    const teamId = req.body.teamId
+    const dir = req.body.dir
+    const fileName = req.body.fileName
+    if(!teamId||!dir||!fileName) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 3000, msg: "参数不全" },
+            data: {}
+        });
+        return
+    }
     try{
-        await file.delFile(fileInfo.teamId,fileInfo.dir,fileInfo.fileName)
+        await file.delFile(teamId,dir,fileName)
 
         resProcessor.jsonp(req, res, {
             state: {code: 0, msg: "Successfully deleted file"},
@@ -224,7 +270,7 @@ const delFile = async (req, res, next) => {
     } catch (error) {
         console.log(error) 
         resProcessor.jsonp(req, res, {
-            state: {code: 1,msg: error},
+            state: {code: 1000,msg: '操作失败' },
             data: {},
             info: fileInfo
         })
@@ -232,10 +278,18 @@ const delFile = async (req, res, next) => {
 }
 
 const delFolder = async (req, res, next) => {
-    const folderInfo = req.body.folderInfo || {}
-
+    const teamId = req.body.teamId
+    const dir = req.body.dir
+    const folderName = req.body.folderName
+    if(!teamId||!dir||!folderName) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 3000, msg: "参数不全" },
+            data: {}
+        });
+        return
+    }
     try{
-        await file.delFolder(folderInfo.teamId,folderInfo.dir,folderInfo.folderName)
+        await file.delFolder(teamId,dir,folderName)
 
         resProcessor.jsonp(req, res, {
             state: {code: 0, msg: "Successfully deleted folder"},
@@ -244,7 +298,7 @@ const delFolder = async (req, res, next) => {
     } catch (error) {
         console.log(error) 
         resProcessor.jsonp(req, res, {
-            state: {code: 1,msg: error},
+            state: {code: 1000,msg:'操作失败' },
             data: {},
             info: folderInfo
         })
@@ -252,10 +306,19 @@ const delFolder = async (req, res, next) => {
 }
 
 const updateFileName = async (req, res, next) => {
-    const fileInfo = req.body.fileInfo
+    const teamId = req.body.teamId
+    const dir = req.body.dir
+    const fileName = req.body.fileName
     const tarName = req.body.tarName
+    if(!teamId||!dir||!fileName||!tarName) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 3000, msg: "参数不全" },
+            data: {}
+        });
+        return
+    }
     try {
-        await file.updateFileName(fileInfo.teamId, fileInfo.dir, fileInfo.fileName, tarName)
+        await file.updateFileName(teamId, dir, fileName, tarName)
 
         resProcessor.jsonp(req, res, {
             state: {code: 0, msg: "Successfully updated name"},
@@ -264,18 +327,25 @@ const updateFileName = async (req, res, next) => {
     } catch (error) {
         console.log(error) 
         resProcessor.jsonp(req, res, {
-            state: {code: 1, msg: error},
+            state: {code: 1000, msg:'操作失败' },
             data: {},
-            info: fileInfo
         })
     }
 }
 const updateFolderName = async (req, res, next) => {
-    const folderInfo = req.body.folderInfo
+    const teamId = req.body.teamId
+    const dir = req.body.dir
+    const folderName = req.body.folderName
     const tarName = req.body.tarName
-
+    if(!teamId||!dir||!folderName||!tarName) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 3000, msg: "参数不全" },
+            data: {}
+        });
+        return
+    }
     try {
-        await file.updateFolderName(folderInfo.teamId, folderInfo.dir, folderInfo.folderName, tarName)
+        await file.updateFolderName(teamId, dir, folderName, tarName)
 
         resProcessor.jsonp(req, res, {
             state: {code: 0, msg: "Successfully updated name"},
@@ -284,16 +354,15 @@ const updateFolderName = async (req, res, next) => {
     } catch (error) {
         console.log(error) 
         resProcessor.jsonp(req, res, {
-            state: {code: 1, msg: error},
+            state: {code: 1000, msg:'操作失败' },
             data: {},
-            info: folderInfo
         })
     }
 }
 
 
 module.exports = [
-    ['GET', '/api/getOssStsToken', apiAuth, getOssStsToken],
+    ['POST', '/api/getOssStsToken', apiAuth, getOssStsToken],
     ['POST','/api/file/createFile',apiAuth, createFile],
     ['POST','/api/file/createFolder',apiAuth, createFolder],
     ['POST','/api/file/downloadFile',apiAuth, downloadFile],
@@ -302,7 +371,7 @@ module.exports = [
     ['POST','/api/file/moveFolder',apiAuth, moveFolder],
     ['POST','/api/file/delFile',apiAuth, delFile],
     ['POST','/api/file/delFolder',apiAuth, delFolder],
-    ['POST','/api/file/updateFileName',apiAuth, updateFileName],
-    ['POST','/api/file/updateFolderName',apiAuth,updateFolderName],
+    ['POST','/api/file/updateFileName',apiAuth, updateFileName],//
+    ['POST','/api/file/updateFolderName',apiAuth,updateFolderName],//
     
 ];

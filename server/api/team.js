@@ -446,7 +446,7 @@ const teamInfoList = async (req, res, next) => {
 
 // 直接返回团队的成员列表
 const memberList = async (req, res, next) => {
-    const teamId = req.query.teamId
+    const teamId = req.body.teamId
     if (!teamId) {
         resProcessor.jsonp(req, res, {
             state: { code: 3000, msg: "参数不全" },

@@ -176,15 +176,18 @@ const loginAndBindWx = async (req, res, next) => {
 const getMyInfo = async (req, res, next) => {
     const userID = req.rSession.userId
     const result = await UserDB.findByUserId(userID)
+
+    console.log("*****"    + result)
     if(result) {
         result.password = undefined
         resProcessor.jsonp(req, res, {
-            state: { code: 0 },
-            data: result
+            state: { code: 0, msg: '请求成功' },
+            //data: { teamObj:result }
+            data: {userObj:result}
         });
     } else {
         resProcessor.jsonp(req, res, {
-            state: { code: 1 , msg: '未知错误'},
+            state: { code: 1000, msg: '操作失败'},
             data: {}
         });
     }
@@ -204,7 +207,7 @@ const getUserInfo = async (req, res, next) => {
     
         resProcessor.jsonp(req, res, {
             state: { code: 0 },
-            data: result
+            data: {userObj:result}
         });
     } catch (error){
         resProcessor.jsonp(req, res, {
@@ -587,9 +590,13 @@ const wxEnter = async (req, res, next) => {
 module.exports = [
     ['GET', '/api/base/sys-time', sysTime],
 
+<<<<<<< HEAD
     ['GET','/api/getSMS',getSMS],
 
     ['GET', '/api/getMyInfo',apiAuth, getMyInfo],
+=======
+    ['POST', '/api/getMyInfo',apiAuth, getMyInfo],
+>>>>>>> 28b65fbf644719a8c644c433b0ef01ff17c96d78
     ['POST', '/api/getUserInfo',apiAuth, getUserInfo],
     ['POST', '/api/userInfoList',apiAuth, userInfoList],
 

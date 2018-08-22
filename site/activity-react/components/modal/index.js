@@ -68,10 +68,8 @@ export default class Modal extends React.Component {
         const result = await api('/api/file/getDirFileList', {
             method: 'POST',
             body: {
-                dirInfo: {
-                    teamId: this.teamId,
-                    dir: this.curDir,
-                }
+                teamId: this.teamId,
+                dir: this.curDir,
             }
         })
         if (result && result.data && result.data.fileList) {

@@ -31,62 +31,40 @@ const returnAll = async (req, res, next) => {
 // 如果传了teamID，就返回该teamID的动态，如果没有传，就返回该用户全部的动态
 const returnTimeline = async (req, res, next) => {
     const teamId = req.body.teamId
-    const currentPage = req.body.currentPage;
-    const personId = req.body.userId
     const timeStamp = req.body.timeStamp
     const userId = req.rSession.userId 
     const teamIdList = []
-    const result = []
-    if(teamId) {
-        teamIdList.push(teamId)
-        const allTimeline = await timelineDB.findByTeamIdList(teamIdList)
-        allTimeline.map((item)=>{
-            result.push(item)
-        })
-    } else if(personId){
-        const userObj = await userDB.findById(userId)
-        userObj.teamList.map((item) => {
-            teamIdList.push(item.teamId)
-        })
-        const allTimeline = await timelineDB.findByTeamIdList(teamIdList)
-        const personTimeline = []
-        allTimeline.map((item)=>{
-            if(item.creator._id==personId){
-                personTimeline.push(item)
+    try{
+        if(teamId) {
+            if(!timeStamp){
+                var result = await timelineDB.firstReturnByTeam(teamId)
+            }else{
+                var result = await timelineDB.returnByTimeStampAndTeam(teamId,timeStamp)
             }
-        })
-        personTimeline.map((item)=>{
-            result.push(item)
-        })
-    }
-      else {
-        const userObj = await userDB.findById(userId)
-        userObj.teamList.map((item) => {
-            teamIdList.push(item.teamId) 
-        })
-        const allTimeline = await timelineDB.findByTeamIdList(teamIdList)
-        allTimeline.map((item)=>{
-            result.push(item)
-        })
-    }
-    const Result = []
-    if(!timeStamp){
-        result.map((item, index)=>{
-            if(index<20){
-                Result.push(item)
+        } 
+          else {
+            const userObj = await userDB.findById(userId)
+            userObj.teamList.map((item) => {
+                teamIdList.push({teamId: item.teamId}) 
+            })
+            if(!timeStamp){
+                var result = await timelineDB.firstReturnByTeamIdList(teamIdList)  
+            }else{
+                var result = await timelineDB.returnByTimeStampAndTeamIdList(teamIdList,timeStamp)
             }
-        })              
-    }else{
-        result.map((item)=>{
-            if(Result.length<10&&item.create_time<timeStamp){
-                Result.push(item)
-            }
-        })
+        }
+        resProcessor.jsonp(req, res, {
+            state: { code: 0 },
+            data: result
+        });
     }
-    resProcessor.jsonp(req, res, {
-        state: { code: 0 },
-        data: Result
-    });
+    catch (error) {
+        console.error(error);
+        resProcessor.jsonp(req, res, {
+            state: { code: 1000, msg: '操作失败' },
+            data: {}
+        });
+    }
 }
 
 module.exports = [
