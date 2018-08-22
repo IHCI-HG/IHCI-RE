@@ -261,6 +261,7 @@ export default class Timeline extends React.Component{
                 userId: queryPerson ? queryPerson : '',
             }
         })
+        console.log(result)
         this.setState({
             newsList: result.data,
             memberJumped: !!queryPerson ? !!queryPerson : false,
@@ -297,6 +298,7 @@ export default class Timeline extends React.Component{
                 timeStamp: lastStamp? lastStamp: '',
             }
         })
+        console.log(result)
         this.setState({
             newsList: result.data
         }, () => {
