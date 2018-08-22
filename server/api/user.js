@@ -35,7 +35,8 @@ var sysTime = function(req, res, next) {
 };
 
 const getSMS = async () =>{
-    const phone = '13226653553'
+    //测试使用，手机号码直接填入phone就可以发送短信
+    const phone = ''
     await sendSMS(phone)
 }
 
