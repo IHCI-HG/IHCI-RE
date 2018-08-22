@@ -18,7 +18,7 @@ export default class TeamAdmin extends React.Component{
                 teamId: teamId
             }
         })
-        const teamObj = result.data
+        const teamObj = result.data.teamObj
         this.teamInfo = teamObj
         this.setState({
             name: teamObj.name,
@@ -29,7 +29,7 @@ export default class TeamAdmin extends React.Component{
 
         const memberList = []
         const memberIDList = []
-        result.data.memberList.map((item) => {
+        result.data.teamObj.memberList.map((item) => {
             memberIDList.push(item.userId)
         })
 

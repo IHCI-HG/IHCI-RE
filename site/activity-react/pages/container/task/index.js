@@ -63,7 +63,7 @@ class Task extends React.Component{
         const curUserId = this.props.curUserId
 
 
-        result.data.memberList.map((item) => {  // 判断是否是创建者 ？
+        result.data.teamObj.memberList.map((item) => {  // 判断是否是创建者 ？
             memberIDList.push(item.userId)
         })
         const memberResult = await api('/api/userInfoList', {
@@ -74,7 +74,7 @@ class Task extends React.Component{
         memberResult.data.map((item, idx) => {
             memberList.push({
                 ...item,
-                ...result.data.memberList[idx],
+                ...result.data.teamObj.memberList[idx],
                 chosen: false,
             })
         })
@@ -85,21 +85,22 @@ class Task extends React.Component{
 
     initTodoListArr = async () => {
         const resp = await api('/api/team/taskList', {
-            method: 'GET',
+            method: 'POST',
             body: {
                 teamId: this.teamId
             }
         })
+        console.log(resp)
         let todoListArr = this.state.todoListArr
         //未分类列表
         let unclassifiedList = []
         let unclassified = {}
         let todoList = []
-        if (resp.data.taskList == undefined) {
-            resp.data.taskList = []
+        if (resp.data.taskObj.taskList == undefined) {
+            resp.data.taskObj.taskList = []
         }
          //普通任务项都加到未分类列表中
-        resp.data.taskList.map((item) => {
+        resp.data.taskObj.taskList.map((item) => {
             if(item.state === false){
                 let todoItem = {}
                 todoItem.id = item.id
@@ -115,11 +116,11 @@ class Task extends React.Component{
         })
          //未分类对象的列表是未分类列表
         unclassified.list = unclassifiedList
-        if (resp.data.tasklistList == undefined) {
-            resp.data.tasklistList = []
+        if (resp.data.taskObj.tasklistList == undefined) {
+            resp.data.taskObj.tasklistList = []
         }
         //清单对象加入到todoList数组中
-        resp.data.tasklistList.map((item) => {
+        resp.data.taskObj.tasklistList.map((item) => {
             let todoListItem = {}
             todoListItem.id = item._id
             todoListItem.name = item.name
@@ -172,8 +173,8 @@ class Task extends React.Component{
                 })
                 if (result.state.code === 0) {
                     let createTodo = {
-                        id: result.data.id,
-                        name: result.data.name,
+                        id: result.data.taskList.id,
+                        name: result.data.taskList.name,
                         list: [],
                     }
                     let todoListArr = this.state.todoListArr
@@ -205,14 +206,14 @@ class Task extends React.Component{
             // 返回用户名的显示依赖assigneeId
             if (result.state.code === 0) {
                 let todo = {
-                    listId: result.data.listId,
-                    id: result.data.id,
-                    name: result.data.title,
-                    desc: result.data.content,
+                    listId: result.data.taskObj.listId,
+                    id: result.data.taskObj.id,
+                    name: result.data.taskObj.title,
+                    desc: result.data.taskObj.content,
                     assignee: {
-                        id: result.data.header,
+                        id: result.data.taskObj.header,
                     },
-                    ddl: result.data.deadline,
+                    ddl: result.data.taskObj.deadline,
                     checkItemDoneNum: 0,
                     // checkItemNum: 0,
                     hasDone: false,
@@ -248,9 +249,9 @@ class Task extends React.Component{
             const doneList = this.state.doneList
             const todolist = todoListArr[lIndex]
             const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
-            todoItem.hasDone = resp.data.state
-            todoItem.listId = resp.data.listId
-            todoItem.completeTime = resp.data.completed_time
+            todoItem.hasDone = resp.data.taskObj.state
+            todoItem.listId = resp.data.taskObj.listId
+            todoItem.completeTime = resp.data.taskObj.completed_time
             // ...更新完成时间赋值
             todolist.list[itemIndex] = todoItem
             if(!doneList.find((item)=>{return todoItem.id === item.id})){
@@ -282,9 +283,9 @@ class Task extends React.Component{
                 const todoListArr = this.state.todoListArr
                 const todolist = todoListArr[lIndex]
                 const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
-                todoItem.name = resp.data.title
-                todoItem.ddl = resp.data.deadline
-                todoItem.assignee.id = resp.data.header
+                todoItem.name = resp.data.taskObj.title
+                todoItem.ddl = resp.data.taskObj.deadline
+                todoItem.assignee.id = resp.data.taskObj.header
                 todolist.list[itemIndex] = todoItem
                 this.setState({ todoListArr })
             }
@@ -314,7 +315,7 @@ class Task extends React.Component{
             const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
             // fix bug: 这里进行过短路优化
             todoItem.assignee = {}
-            todoItem.assignee.id = resp.data.header
+            todoItem.assignee.id = resp.data.taskObj.header
             todolist.list[itemIndex] = todoItem
             this.setState({ todoListArr })
             return resp
@@ -337,7 +338,7 @@ class Task extends React.Component{
             const todoListArr = this.state.todoListArr
             const todolist = todoListArr[lIndex]
             const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
-            todoItem.ddl = resp.data.deadline
+            todoItem.ddl = resp.data.taskObj.deadline
             this.setState({ todoListArr })
             return resp
         }
@@ -393,7 +394,7 @@ class Task extends React.Component{
                 }
             })
             if (resp.state.code === 0) {
-                todoListArr[index].name = resp.data.name
+                todoListArr[index].name = resp.data.editTasklist.name
                 this.setState({ todoListArr })
             }
             return resp

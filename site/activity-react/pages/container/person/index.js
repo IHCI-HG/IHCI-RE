@@ -44,7 +44,7 @@ export default class Person extends React.Component{
         }
 
         if(this.props.location.query.alreadyBind) {
-            window.toast("该微信号已经绑定")
+            window.toast(staticText.RESPONSE_MESSAGE.BIND_WX_FAIL)
             history.pushState({}, {}, '/person')
         }
         // else if (!this.initdataAllFilled()){
@@ -404,7 +404,7 @@ export default class Person extends React.Component{
         var infoCheckIllegal = this.infoCheckIllegal()
 
         if (infoCheckIllegal){
-            window.toast("设置失败，请检查格式")
+            window.toast(staticText.PERSON_INFO_CHECK.PERSON_INFO_ILLEGAL)
             return
         }
         const result = await api('/api/setUserInfo', {
@@ -425,13 +425,13 @@ export default class Person extends React.Component{
         console.log(result1)
         if(result.state.code === 0) {
             if(INIT_DATA.userObj.personInfo){
-                window.toast("设置成功")
+                window.toast(staticText.RESPONSE_MESSAGE.SET__SUCCESS)
             }
             setTimeout(() => {
                 location.href = '/team'
             }, 500);
         } else {
-            window.toast("设置失败，请稍后再试")
+            window.toast(staticText.RESPONSE_MESSAGE.SET_FAIL)
         }
         if(!INIT_DATA.userObj.personInfo){
             const result = await api('/api/manual', {
@@ -442,7 +442,7 @@ export default class Person extends React.Component{
             })
     
             if(result.state.code === 0) {
-                window.toast("设置成功，已发送使用说明邮件，请检查邮箱")
+                window.toast(staticText.RESPONSE_MESSAGE.FIRST_SET_INFO_SUCCESS)
             }
         }
     }
@@ -469,7 +469,7 @@ export default class Person extends React.Component{
         if(result.state.code === 0) {
             location.href = location.href
         } else {
-            window.toast("解绑失败")
+            window.toast(staticText.RESPONSE_MESSAGE.UNBIND_WX_FAIL)
         }
     }
     
@@ -486,7 +486,7 @@ export default class Person extends React.Component{
         var type = arr.pop()
         type = type.toLowerCase()
         if(type != 'jpg' && type != 'jpeg' && type != 'png') {
-            window.toast("文件格式必须是JPG，JPEG或PNG")
+            window.toast(staticText.PERSON_INFO_CHECK.IMAGE_ILLEGAL)
             return 
         }
         var newFile = new File([file],this.state.userObj._id+file.name)
@@ -502,11 +502,11 @@ export default class Person extends React.Component{
         })
 
         if(succeeded === 0) {
-            window.toast("上传图片失败")
+            window.toast(staticText.RESPONSE_MESSAGE.UPLOAD_IMAGE_FAIL)
             return
         } 
 
-        window.toast("上传图片成功")
+        window.toast(staticText.RESPONSE_MESSAGE.UPLOAD_IMAGE_SUCCESS)
         this.setState({
             personInfo: {
                 ...this.state.personInfo,
@@ -519,13 +519,13 @@ export default class Person extends React.Component{
 
     activateMailHandle = async() => {
         if(!this.state.sendMailEnabled){
-            window.toast("请不要重复提交激活请求，请等待60s后再尝试发送")
+            window.toast(staticText.RESPONSE_MESSAGE.ACTIVATE_MAIL_WAIT)
             return
         }
 
         if (this.state.personInfo.mail.length <= 0)
         {
-            window.toast("邮箱未设置，请先修改邮箱")
+            window.toast(staticText.RESPONSE_MESSAGE.ASKTO_SET_MAIL)
             return
         }
 
@@ -537,9 +537,9 @@ export default class Person extends React.Component{
         })
 
         if(result.state.code === 0) {
-            window.toast("已发送激活邮件，请检查邮箱")
+            window.toast(staticText.RESPONSE_MESSAGE.ACTIVATE_MAIL_SUCCESS)
         } else {
-            window.toast("激活邮件发送失败，请稍后再试")
+            window.toast(staticText.RESPONSE_MESSAGE.ACTIVATE_MAIL_FAIL)
         }
 
         this.setState({
@@ -573,7 +573,7 @@ export default class Person extends React.Component{
                 }
             })
             if(result.state.code === 0){
-                window.toast("设置成功")
+                window.toast(staticText.RESPONSE_MESSAGE.SET_SUCCESS)
                 this.setState({
                     showUsenamePwd:false
                 })
@@ -582,17 +582,17 @@ export default class Person extends React.Component{
                 }, 500);
                 
             }else{
-                window.toast(result.state.msg ||"设置失败，请稍后再试")
+                window.toast(result.state.msg ||staticText.RESPONSE_MESSAGE.SET_FAIL)
             }
     }
     render() {
         // let personInfo = this.state.personInfo
         return (
-            <Page title={"个人设置"} className="person-edit-page page-wrap">
+            <Page title={staticText.PAGE_INFO.PAGE_TITLE} className="person-edit-page page-wrap">
                 <input className='file-input-hidden' type="file" ref={(fileInput) => this.fileInput = fileInput} onChange={this.uploadFileHandle}></input>
                 <div className = "header">
-                <div className="title">个人设置</div>
-                <div className="manage" onClick={() => {location.href = '/team-management'}}> 退出团队</div>
+                <div className="title">{staticText.PAGE_INFO.PAGE_TITLE}</div>
+                <div className="manage" onClick={() => {location.href = '/team-management'}}>{staticText.BUTTON_TEXT.TEAM_EXIT}</div>
                 </div>
                 
                 <div className="head-edit">
@@ -600,13 +600,13 @@ export default class Person extends React.Component{
                         <img src={this.state.personInfo.headImg} className='head-img' />
                     </div>
                     <div className="right">
-                        <div className="create-btn" onClick={this.openFileInput}> 上传图片 </div>
+                        <div className="create-btn" onClick={this.openFileInput}>{staticText.BUTTON_TEXT.UPLOAD_IMAGE}</div>
                     </div>
                 </div>
                 {
                     !this.state.userObj.username?
                     <div className = "edit-con">
-                    <div className = "after">尚未设置账号密码，请</div><div className = "follow-btn" onClick = {this.UsernamePwdHandle}>设置账号密码</div>
+                    <div className = "after">尚未设置账号密码，请</div><div className = "follow-btn" onClick = {this.UsernamePwdHandle}>{staticText.BUTTON_TEXT.SET_ACCOUNT}</div>
                     </div>
                     :""
                 }
@@ -618,7 +618,7 @@ export default class Person extends React.Component{
                     <br/>
                     <div className = "before">密码：</div>
                     <input className = "input-edit" type = "password" value = {this.state.password} onChange = {this.passwordHandle}></input>
-                    <div className = "save-btn" onClick = {this.SaveUsenamePwdHandle}>确定</div>
+                    <div className = "save-btn" onClick = {this.SaveUsenamePwdHandle}>{staticText.BUTTON_TEXT.SUBMIT}</div>
                     </div>
                     :""
                 }

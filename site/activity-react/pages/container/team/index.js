@@ -67,7 +67,7 @@ export default class Team extends React.Component{
                 teamIdList: teamIdList
             }
         })
-        const teamInfoList = listResult.data
+        const teamInfoList = listResult.data.teamInfoList
 
         teamList.map((item, idx) => {
             teamList[idx] = {
