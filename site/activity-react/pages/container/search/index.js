@@ -242,6 +242,7 @@ export default class SearchResult extends React.Component{
                 type: queryType ? queryType : '',
             }
         })
+        console.log(result)
         this.setState({
             resultList: result.data
         }, () => {
