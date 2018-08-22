@@ -374,8 +374,7 @@ const createTask = async (req, res, next) => {
         }
        
         if(taskHeader&&!!deadline){
-            
-            var timeTask=setInterval(()=>{
+            var timeTask=setInterval(async()=>{
                 console.log("come in")
                 console.log(deadline)
                 var d = new Date()
@@ -390,6 +389,10 @@ const createTask = async (req, res, next) => {
                     console.log("close to time out!!!!!!")
                     closeToDDLTemplate(headerList,taskObj)
                     clearInterval(timeTask)
+                    const teamObj = await teamDB.findByTeamId(teamId);   
+                    await Promise.all(headerList.map(async (item) => {
+                        await userDB.addCreateNotice(item, result, teamObj.name,"CLOSE_TO_DDL")
+                    }));
                     }
                     if(day>ddl.date){
                         console.log("time out!!!")
