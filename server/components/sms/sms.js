@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 
-=======
->>>>>>> d2541709ec43996fc99da68cbfef7ef73787f6dc
 const SMSClient = require('@alicloud/sms-sdk')
 
 var conf = require('../../conf')
