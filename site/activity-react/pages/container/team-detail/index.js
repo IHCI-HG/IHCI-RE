@@ -167,7 +167,7 @@ export default class TeamDetail extends React.Component {
             method: 'POST',
             body: {
                 teamId: this.teamId,
-                name: this.state.topicName,
+                title: this.state.topicName,
                 content: this.state.topicContent,
                 fileList: this.state.topicAttachments,
                 informList: informList,
@@ -178,7 +178,7 @@ export default class TeamDetail extends React.Component {
             const topicList = this.state.topicList
             const time = new Date().getTime()
             topicList.unshift({
-                _id: result.data._id,
+                _id: result.data.topicObj._id,
                 creator: this.props.personInfo,
                 title: this.state.topicName,
                 content: this.state.topicContent,
