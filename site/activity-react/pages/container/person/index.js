@@ -425,7 +425,7 @@ export default class Person extends React.Component{
         console.log(result1)
         if(result.state.code === 0) {
             if(INIT_DATA.userObj.personInfo){
-                window.toast(staticText.RESPONSE_MESSAGE.SET__SUCCESS)
+                window.toast(staticText.RESPONSE_MESSAGE.SET_SUCCESS)
             }
             setTimeout(() => {
                 location.href = '/team'
