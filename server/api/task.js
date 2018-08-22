@@ -823,11 +823,7 @@ const taskInfo = async (req, res, next) => {
 
         if (!taskObj) {
             resProcessor.jsonp(req, res, {
-<<<<<<< HEAD
-                state: { code: 3001, msg: "无效的id" },
-=======
                 state: { code: 3001, msg: "任务不存在" },
->>>>>>> 8ad8fd2cc352240b8edc22385cfb8df93d4df791
                 data: {}
             })
         }
