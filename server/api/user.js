@@ -4,7 +4,7 @@ var _ = require('underscore'),
     conf = require('../conf'),
     envi = require('../components/envi/envi');
 const crypto = require('crypto-js');
-
+const {sendSMS} = require('../components/sms/sms');
 
 import fetch from 'isomorphic-fetch';
 import lo from 'lodash';
@@ -34,7 +34,10 @@ var sysTime = function(req, res, next) {
     });
 };
 
-
+const getSMS = async () =>{
+    const phone = '13226653553'
+    await sendSMS(phone)
+}
 
 const signUp = async (req, res, next) => {
     const userInfo = req.body.userInfo
@@ -583,6 +586,8 @@ const wxEnter = async (req, res, next) => {
 
 module.exports = [
     ['GET', '/api/base/sys-time', sysTime],
+
+    ['GET','/api/getSMS',getSMS],
 
     ['GET', '/api/getMyInfo',apiAuth, getMyInfo],
     ['POST', '/api/getUserInfo',apiAuth, getUserInfo],
