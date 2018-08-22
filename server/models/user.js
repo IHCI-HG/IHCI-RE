@@ -273,6 +273,30 @@ userSchema.statics = {
             }
         ).exec()
     },
+
+    editNotice: async function(userId, Obj, teamName, type) {
+        return this.update(
+            { _id: userId },
+            {
+                $addToSet: {
+                    noticeList: {
+                        create_time: Obj.create_time,
+                        noticeId: mongoose.Types.ObjectId(),
+                        topicId:Obj._id.toString(),
+                        teamId: Obj.team?Obj.team:Obj.teamId,
+                        teamName: teamName,
+                        creator: Obj.creator,
+                        noticeTitle: Obj.title,
+                        noticeContent: Obj.content,
+                        type: type,
+                        readState: false,
+                    }
+                }
+            }
+        ).exec()
+    },
+    
+
     readNotice: async function(userId, noticeId, readState) {
         const notice = mongoose.Types.ObjectId(noticeId)
         return this.update(

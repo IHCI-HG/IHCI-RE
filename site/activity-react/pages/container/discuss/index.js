@@ -102,10 +102,10 @@ export default class Discuss extends React.Component{
         }
 
         const teamInfo = {}
-        teamInfo._id = result.data._id 
-        teamInfo.name = result.data.name
-        teamInfo.teamImg = result.data.teamImg
-        teamInfo.desc = result.data.teamDes
+        teamInfo._id = result.data.teamObj._id 
+        teamInfo.name = result.data.teamObj.name
+        teamInfo.teamImg = result.data.teamObj.teamImg
+        teamInfo.desc = result.data.teamObj.teamDes
 
 
         const memberList = []
@@ -114,7 +114,7 @@ export default class Discuss extends React.Component{
         const curUserId = this.props.personInfo._id
 
         let isCreator = false
-        result.data.memberList.map((item) => {
+        result.data.teamObj.memberList.map((item) => {
             if(item.userId == curUserId) {
                 isCreator = true
             }

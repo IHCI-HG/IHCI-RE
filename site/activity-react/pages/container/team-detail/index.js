@@ -86,10 +86,10 @@ export default class TeamDetail extends React.Component {
             window.toast('团队内容加载出错')
         }
         const teamInfo = {}
-        teamInfo._id = result.data._id
-        teamInfo.name = result.data.name
-        teamInfo.teamImg = result.data.teamImg
-        teamInfo.desc = result.data.teamDes
+        teamInfo._id = result.data.teamObj._id
+        teamInfo.name = result.data.teamObj.name
+        teamInfo.teamImg = result.data.teamObj.teamImg
+        teamInfo.desc = result.data.teamObj.teamDes
 
 
         const memberList = []
@@ -99,7 +99,7 @@ export default class TeamDetail extends React.Component {
 
         let isCreator = ''
 
-        result.data.memberList.map((item) => {  // 判断是否是创建者 ？
+        result.data.teamObj.memberList.map((item) => {  // 判断是否是创建者 ？
             if (item.userId == curUserId) {
                 isCreator = item.role
             }
@@ -114,7 +114,7 @@ export default class TeamDetail extends React.Component {
         memberResult.data.map((item, idx) => {
             memberList.push({
                 ...item,
-                ...result.data.memberList[idx],
+                ...result.data.teamObj.memberList[idx],
                 chosen: false,
             })
         })
@@ -122,7 +122,7 @@ export default class TeamDetail extends React.Component {
             isCreator: isCreator,
             teamInfo: teamInfo,
             memberList: memberList,
-            topicList: sortByCreateTime(result.data.topicList)
+            topicList: sortByCreateTime(result.data.teamObj.topicList)
         })
     }
 
@@ -274,14 +274,14 @@ export default class TeamDetail extends React.Component {
             // 返回用户名的显示依赖assigneeId
             if (result.state.code === 0) {
                 let todo = {
-                    listId: result.data.listId,
-                    id: result.data.id,
-                    name: result.data.title,
-                    desc: result.data.content,
+                    listId: result.data.taskObj.listId,
+                    id: result.data.taskObj.id,
+                    name: result.data.taskObj.title,
+                    desc: result.data.taskObj.content,
                     assignee: {
-                        id: result.data.header,
+                        id: result.data.taskObj.header,
                     },
-                    ddl: result.data.deadline,
+                    ddl: result.data.taskObj.deadline,
                     checkItemDoneNum: 0,
                     // checkItemNum: 0,
                     hasDone: false,
@@ -321,9 +321,9 @@ export default class TeamDetail extends React.Component {
                 const todoListArr = this.state.todoListArr
                 const todolist = todoListArr[lIndex]
                 const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
-                todoItem.name = resp.data.title
-                todoItem.ddl = resp.data.deadline
-                todoItem.assignee.id = resp.data.header
+                todoItem.name = resp.data.taskObj.title
+                todoItem.ddl = resp.data.taskObj.deadline
+                todoItem.assignee.id = resp.data.taskObj.header
                 todolist.list[itemIndex] = todoItem
                 todolist.list = todolist.list.slice()
                 this.setState({ todoListArr })
@@ -350,8 +350,8 @@ export default class TeamDetail extends React.Component {
             const todoListArr = this.state.todoListArr
             const todolist = todoListArr[lIndex]
             const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
-            todoItem.hasDone = resp.data.state
-            todoItem.completeTime = resp.data.completed_time
+            todoItem.hasDone = resp.data.taskObj.state
+            todoItem.completeTime = resp.data.taskObj.completed_time
             // ...更新完成时间赋值
             todolist.list[itemIndex] = todoItem
             todolist.list = todolist.list.slice()
@@ -378,7 +378,7 @@ export default class TeamDetail extends React.Component {
             const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
             // fix bug: 这里进行过短路优化
             todoItem.assignee = {}
-            todoItem.assignee.id = resp.data.header
+            todoItem.assignee.id = resp.data.taskObj.header
             todolist.list[itemIndex] = todoItem
             todolist.list = todolist.list.slice()
             this.setState({ todoListArr })
@@ -402,7 +402,7 @@ export default class TeamDetail extends React.Component {
             const todoListArr = this.state.todoListArr
             const todolist = todoListArr[lIndex]
             const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
-            todoItem.ddl = resp.data.deadline
+            todoItem.ddl = resp.data.taskObj.deadline
             todolist.list = todolist.list.slice()
             this.setState({ todoListArr })
             return resp
@@ -452,8 +452,8 @@ export default class TeamDetail extends React.Component {
                 })
                 if (result.state.code === 0) {
                     let createTodo = {
-                        id: result.data.id,
-                        name: result.data.name,
+                        id: result.data.taskList.id,
+                        name: result.data.taskList.name,
                         list: [],
                     }
                     let todoListArr = this.state.todoListArr
@@ -495,7 +495,7 @@ export default class TeamDetail extends React.Component {
                 }
             })
             if (resp.state.code === 0) {
-                todoListArr[index].name = resp.data.name
+                todoListArr[index].name = resp.data.editTasklist.name
                 this.setState({ todoListArr: todoListArr.slice() })
             }
             return resp
