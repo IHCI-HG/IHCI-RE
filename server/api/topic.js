@@ -21,7 +21,7 @@ var timelineDB = mongoose.model('timeline')
 
 const createTopic = async (req, res, next) => {
     const teamId = req.body.teamId
-    const title = req.body.name
+    const title = req.body.title
     const topicContent = req.body.content
     const topicFileList = req.body.fileList
     const informList = req.body.informList
