@@ -590,13 +590,9 @@ const wxEnter = async (req, res, next) => {
 module.exports = [
     ['GET', '/api/base/sys-time', sysTime],
 
-<<<<<<< HEAD
     ['GET','/api/getSMS',getSMS],
 
-    ['GET', '/api/getMyInfo',apiAuth, getMyInfo],
-=======
     ['POST', '/api/getMyInfo',apiAuth, getMyInfo],
->>>>>>> 28b65fbf644719a8c644c433b0ef01ff17c96d78
     ['POST', '/api/getUserInfo',apiAuth, getUserInfo],
     ['POST', '/api/userInfoList',apiAuth, userInfoList],
 
