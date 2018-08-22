@@ -19,12 +19,12 @@ class TopicItem extends React.PureComponent {
     }
     initPageInfo = async () => {
         const result = await api('/api/topic/get', {
-            method: 'GET',
+            method: 'POST',
             body: {
                 topicId: this.props._id
             }
         })
-        const discussList = result.data.discussList
+        const discussList = result.data.topicObj.discussList
         this.setState({
             discussList:discussList
         })

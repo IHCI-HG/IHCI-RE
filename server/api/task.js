@@ -9,6 +9,7 @@ import {
     createTopicTemplate,
     replyTopicTemplate,
     createTaskTemplate,
+    closeToDDLTemplate,
     delTaskTemplate,
     delHeaderTemplate,
     compTaskTemplate,
@@ -18,6 +19,7 @@ import {
     compCheckitemTemplate
 } from '../components/wx-utils/wx-utils'
 import { dayLeft } from '../../site/activity-react/utils/util';
+import { clearInterval } from 'timers';
 
 var mongoose = require('mongoose')
 
@@ -337,9 +339,15 @@ const createTask = async (req, res, next) => {
         }
 
         var deadline = ""
+        var ddl = {}
         if(result.deadline) {
             const date = result.deadline
             deadline = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
+            ddl={
+                year:date.getFullYear(),
+                month:date.getMonth()+1,
+                date:date.getDate()
+            }
         }
 
         const taskObj = {
@@ -360,22 +368,45 @@ const createTask = async (req, res, next) => {
  
         if (taskHeader) {
             const user = await userDB.findByUserId(taskHeader)
-
-            const headername = user.personInfo.name
-        
+            const headername = user.personInfo.name    
             createTaskTemplate(headerList, result, headername)
 
-
-
-            
-            //网页通知
-       
-            const teamObj = await teamDB.findByTeamId(teamId);
-           
+            //网页通知    
+            const teamObj = await teamDB.findByTeamId(teamId);          
             await Promise.all(headerList.map(async (item) => {
                 await userDB.addCreateNotice(item, result, teamObj.name,"CREATE_TASK")
             }));
         }
+       
+        if(taskHeader&&!!deadline){
+            var timeTask=setInterval(async()=>{
+                console.log("come in")
+                console.log(deadline)
+                var d = new Date()
+                var day=d.getDate()
+                var month=d.getMonth() + 1
+                var year=d.getFullYear()
+                console.log(year,ddl.year)
+                console.log(month,ddl.month)
+                console.log(day,ddl.date-1)
+                if(year === ddl.year&&month === ddl.month ){
+                    if(day >= ddl.date-1&&day<=ddl.date){
+                    console.log("close to time out!!!!!!")
+                    closeToDDLTemplate(headerList,taskObj)
+                    clearInterval(timeTask)
+                    const teamObj = await teamDB.findByTeamId(teamId);   
+                    await Promise.all(headerList.map(async (item) => {
+                        await userDB.addCreateNotice(item, result, teamObj.name,"CLOSE_TO_DDL")
+                    }));
+                    }
+                    if(day>ddl.date){
+                        console.log("time out!!!")
+                        clearInterval(timeTask)
+                    }
+                }
+            },1000);
+        }
+        
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
@@ -485,10 +516,23 @@ const editTask = async (req, res, next) => {
         task.content = editTask.desc || taskObj.content;
         task.fileList = editTask.fileList || taskObj.fileList;
         task.deadline = editTask.ddl || taskObj.deadline;
+
+
         if (editTask.assigneeId) {
             task.header = editTask.assigneeId   
-            //7.6
+
+           
+            //7.6      
             await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'CHANGE_TASK_HEADER', taskObj._id, taskObj.title, task);
+            
+            // const result =  await taskDB.updateTask(taskId, task);//之前的result
+            // console.log("## "+result);
+            const headerList = [];
+            headerList.push(task.header);
+
+            // headerList.map((item) => {
+            //     userDB.editTaskHeader(item, result, teamObj.name)
+            // })
         }else{
             task.header = undefined
             await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'CHANGE_TASK_HEADER', taskObj._id, taskObj.title, task);
@@ -518,7 +562,12 @@ const editTask = async (req, res, next) => {
         }
 
 
-        const result1 = await taskDB.updateTask(taskId, task);
+        
+
+        const result1 = await taskDB.updateTask(taskId, editTask);
+
+        console.log("$$  "+ result1)//更改后的result
+
         if (tasklistId) {
             await tasklistDB.updateTask(tasklistId, taskId, task);
         } else {
@@ -531,7 +580,14 @@ const editTask = async (req, res, next) => {
                 const headerObj = await userDB.findByUserId(editTask.assigneeId);
                 const headername = headerObj.username;
                 const headerList = []
+
                 headerList.push(editTask.assigneeId)
+
+                // 更改header 但是更改的创建者要改变
+                await Promise.all(headerList.map(async (item) => {
+                    await userDB.editNotice(item, result1, teamObj.name,'CHANGE_TASK_HEADER')
+                }));
+
                 createTaskTemplate(headerList, taskObj, headername)
             }
             if ((editTask.assigneeId === null && taskObj.header) || (editTask.assigneeId && taskObj.header)) {
