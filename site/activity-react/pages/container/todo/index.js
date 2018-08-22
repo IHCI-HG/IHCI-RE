@@ -212,16 +212,16 @@ export default class Task extends React.Component{
 
     initTeamList = async () => {
         const result = await api('/api/getMyInfo', {
-            method: 'GET',
+            method: 'POST',
             body: {}
         })
         const user={}
-        user.headImg = result.data.personInfo.headImg
-        user.name = result.data.personInfo.name
+        user.headImg = result.data.userObj.personInfo.headImg
+        user.name = result.data.userObj.personInfo.name
         this.setState({
             user:user
         })
-        const teamList = result.data.teamList
+        const teamList = result.data.userObj.teamList
         console.log(result)
         /*
         teamList.map((item, index)=>{
@@ -234,11 +234,11 @@ export default class Task extends React.Component{
             moveTeamList: teamList,
         })
         const result1 = await api('/api/getMyInfo', {
-            method: 'GET',
+            method: 'POST',
             body: {}
         })
         this.setState({
-            copyTeamList: result1.data.teamList,
+            copyTeamList: result1.data.userObj.userObjteamList,
         })
     }
 

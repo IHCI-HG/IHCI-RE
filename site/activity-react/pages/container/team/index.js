@@ -52,10 +52,10 @@ export default class Team extends React.Component{
 
     initTeamList = async () => {
         const result = await api('/api/getMyInfo', {
-            method: 'GET',
+            method: 'POST',
             body: {}
         })
-        const teamList = result.data.teamList
+        const teamList = result.data.userObj.teamList
         const teamIdList = []
         teamList.map((item) => {
             teamIdList.push(item.teamId)

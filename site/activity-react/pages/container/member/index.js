@@ -46,9 +46,9 @@ export default class Members extends React.Component{
 
     initTeamList = async () => {
         const result = await api('/api/getMyInfo')
-        if(result.data) {
+        if(result.data.userObj) {
             this.setState({
-                teamList: result.data.teamList,
+                teamList: result.data.userObj.teamList,
             })
         }
     }

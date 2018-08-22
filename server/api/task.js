@@ -770,7 +770,7 @@ const taskInfo = async (req, res, next) => {
 
     if (!taskId) {
         resProcessor.jsonp(req, res, {
-            state: { code: 0, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -781,7 +781,7 @@ const taskInfo = async (req, res, next) => {
 
         if (!taskObj) {
             resProcessor.jsonp(req, res, {
-                state: { code: 1, msg: "任务不存在" },
+                state: { code: 3001, msg: "无效的id" },
                 data: {}
             })
         }
@@ -854,7 +854,7 @@ const taskInfo = async (req, res, next) => {
         })
     } catch (error) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
         console.error(error);
@@ -876,7 +876,7 @@ const addCheckitem = async (req, res, next) => {
 
     if (!taskId || !content) {
         resProcessor.jsonp(req, res, {
-            state: { code: 0, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -969,7 +969,7 @@ const addCheckitem = async (req, res, next) => {
         })
     } catch (error) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
         console.error(error);
@@ -984,7 +984,7 @@ const dropCheckitem = async (req, res, next) => {
 
     if (!taskId || !checkitemId) {
         resProcessor.jsonp(req, res, {
-            state: { code: 0, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -1033,7 +1033,7 @@ const dropCheckitem = async (req, res, next) => {
 
     } catch (error) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
         console.error(error);
@@ -1048,7 +1048,7 @@ const findCheckitem = async (req, res, next) => {
 
     if (!checkitemId || !taskId) {
         resProcessor.jsonp(req, res, {
-            state: { code: 0, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -1083,7 +1083,7 @@ const findCheckitem = async (req, res, next) => {
         })
     } catch (error) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
         console.error(error);
@@ -1100,7 +1100,7 @@ const editCheckitem = async (req, res, next) => {
 
     if (!checkitemId || !editCheckitem) {
         resProcessor.jsonp(req, res, {
-            state: { code: 0, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -1221,7 +1221,7 @@ const editCheckitem = async (req, res, next) => {
         })
     } catch (error) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
         console.error(error);
@@ -1238,7 +1238,7 @@ const taskCopy = async (req, res, next) => {
 
     if (!taskId || copyCount <= 0) {
         resProcessor.jsonp(req, res, {
-            state: { code: 0, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -1277,7 +1277,7 @@ const taskCopy = async (req, res, next) => {
 
     } catch (error) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
         console.error(error);
@@ -1293,7 +1293,7 @@ const taskMove = async (req, res, next) => {
 
     if (!taskId || !teamIdMoveTo) {
         resProcessor.jsonp(req, res, {
-            state: { code: 0, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -1352,7 +1352,7 @@ const taskMove = async (req, res, next) => {
         });
     } catch (error) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
         console.error(error);
@@ -1376,7 +1376,7 @@ const createDiscuss = async (req, res, next) => {
 
     if (!teamId || !taskId || !content) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -1413,7 +1413,7 @@ const createDiscuss = async (req, res, next) => {
     } catch (error) {
         console.error(error);
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
     }
@@ -1434,7 +1434,7 @@ const editDiscuss = async (req, res, next) => {
 
     if (!discussId || !taskId || !content) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -1465,7 +1465,7 @@ const editDiscuss = async (req, res, next) => {
     } catch (error) {
         console.error(error);
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
     }
@@ -1488,7 +1488,7 @@ const delDiscuss = async (req, res, next) => {
 
     if (!teamId || !taskId || !discussId) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -1516,7 +1516,7 @@ const delDiscuss = async (req, res, next) => {
     } catch (error) {
         console.error(error);
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
     }
@@ -1532,7 +1532,7 @@ const findDiscuss = async (req, res, next) => {
 
     if (!taskId || !currentPage) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -1557,7 +1557,7 @@ const findDiscuss = async (req, res, next) => {
         })
     } catch (error) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
         console.error(error);
