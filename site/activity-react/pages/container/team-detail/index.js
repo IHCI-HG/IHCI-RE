@@ -61,10 +61,8 @@ export default class TeamDetail extends React.Component {
         const result = await api('/api/file/getDirFileList', {
             method: 'POST',
             body: {
-                dirInfo: {
-                    teamId: this.teamId,
-                    dir: '/',
-                }
+                teamId: this.teamId,
+                dir: '/',
             }
         })
         if (result && result.data && result.data.fileList) {
@@ -147,13 +145,11 @@ export default class TeamDetail extends React.Component {
             const result1 = await api('/api/file/createFile', {
                 method: 'POST',
                 body: {
-                    fileInfo: {
-                        teamId: this.teamId,
-                        size: this.state.attachmentsArg.size,
-                        dir: '/',
-                        fileName: this.state.attachmentsArg.name,
-                        ossKey: this.state.ossKeyArg,
-                    }
+                    teamId: this.teamId,
+                    size: this.state.attachmentsArg.size,
+                    dir: '/',
+                    fileName: this.state.attachmentsArg.name,
+                    ossKey: this.state.ossKeyArg,
                 }
             })
             if (result1.state.code === 0) {
@@ -532,11 +528,9 @@ export default class TeamDetail extends React.Component {
         const result = await api('/api/file/createFolder', {
             method: 'POST',
             body: {
-                folderInfo: {
-                    teamId: this.teamId,
-                    dir: '/',
-                    folderName: this.state.createFolderName
-                }
+                teamId: this.teamId,
+                dir: '/',
+                folderName: this.state.createFolderName
             }
         })
 
@@ -592,13 +586,11 @@ export default class TeamDetail extends React.Component {
         const result = await api('/api/file/createFile', {
             method: 'POST',
             body: {
-                fileInfo: {
-                    teamId: this.teamId,
-                    size: file.size,
-                    dir: '/',
-                    fileName: file.name,
-                    ossKey: ossKey,
-                }
+                teamId: this.teamId,
+                size: file.size,
+                dir: '/',
+                fileName: file.name,
+                ossKey: ossKey,
             }
         })
         if (result.state.code === 0) {
@@ -625,11 +617,9 @@ export default class TeamDetail extends React.Component {
             const result = await api('/api/file/delFile', {
                 method: 'POST',
                 body: {
-                    fileInfo: {
-                        teamId: this.teamId,
-                        dir: '/',
-                        fileName: name
-                    }
+                    teamId: this.teamId,
+                    dir: '/',
+                    fileName: name
                 }
             })
         }
@@ -637,11 +627,9 @@ export default class TeamDetail extends React.Component {
             const result = await api('/api/file/delFolder', {
                 method: 'POST',
                 body: {
-                    folderInfo: {
-                        teamId: this.teamId,
-                        dir: '/',
-                        folderName: name
-                    }
+                    teamId: this.teamId,
+                    dir: '/',
+                    folderName: name
                 }
             })
         }
@@ -654,7 +642,7 @@ export default class TeamDetail extends React.Component {
     }
 
     folderClickHandle = (dir) => {
-        location.href = '/files/' + this.teamId + '?dir=/' + dir
+        location.href = '/files/' + this.teamId + '/?dir=/' + dir
     }
     
     moveHandle = async (item, tarDir) => {
@@ -662,12 +650,10 @@ export default class TeamDetail extends React.Component {
             const result = await api('/api/file/moveFile', {
                 method: 'POST',
                 body: {
-                    fileInfo: {
-                        teamId: this.teamId,
-                        dir: '/',
-                        fileName: this.state.moveItem.name,
-                        tarDir: tarDir,
-                    }
+                    teamId: this.teamId,
+                    dir: '/',
+                    fileName: this.state.moveItem.name,
+                    tarDir: tarDir,
                 }
             })
 
@@ -681,12 +667,10 @@ export default class TeamDetail extends React.Component {
             const result = await api('/api/file/moveFolder', {
                 method: 'POST',
                 body: {
-                    folderInfo: {
-                        teamId: this.teamId,
-                        dir: '/',
-                        folderName: this.state.moveItem.name,
-                        tarDir: tarDir,
-                    }
+                    teamId: this.teamId,
+                    dir: '/',
+                    folderName: this.state.moveItem.name,
+                    tarDir: tarDir,
                 }
             })
 
@@ -745,11 +729,9 @@ export default class TeamDetail extends React.Component {
             const result = await api('/api/file/updateFileName', {
                 method: 'POST',
                 body: {
-                    fileInfo: {
-                        teamId: this.teamId,
-                        dir: '/',
-                        fileName: item.name,
-                    },
+                    teamId: this.teamId,
+                    dir: '/',
+                    fileName: item.name,
                     tarName: this.state.renameName,
                 }
             })
@@ -767,11 +749,9 @@ export default class TeamDetail extends React.Component {
             const result = await api('/api/file/updateFolderName', {
                 method: 'POST',
                 body: {
-                    folderInfo: {
-                        teamId: this.teamId,
-                        dir: '/',
-                        folderName: item.name,
-                    },
+                    teamId: this.teamId,
+                    dir: '/',
+                    folderName: item.name,
                     tarName: this.state.renameName,
                 }
             })

@@ -34,61 +34,37 @@ const returnTimeline = async (req, res, next) => {
     const timeStamp = req.body.timeStamp
     const userId = req.rSession.userId 
     const teamIdList = []
-    if(teamId) {
-        if(!timeStamp){
-            var result = await timelineDB.firstReturnByTeam(teamId)
-        }else{
-            var result = await timelineDB.returnByTimeStampAndTeam(teamId,timeStamp)
+    try{
+        if(teamId) {
+            if(!timeStamp){
+                var result = await timelineDB.firstReturnByTeam(teamId)
+            }else{
+                var result = await timelineDB.returnByTimeStampAndTeam(teamId,timeStamp)
+            }
+        } 
+          else {
+            const userObj = await userDB.findById(userId)
+            userObj.teamList.map((item) => {
+                teamIdList.push({teamId: item.teamId}) 
+            })
+            if(!timeStamp){
+                var result = await timelineDB.firstReturnByTeamIdList(teamIdList)  
+            }else{
+                var result = await timelineDB.returnByTimeStampAndTeamIdList(teamIdList,timeStamp)
+            }
         }
-    } 
-    // else if(personId){
-    //     const userObj = await userDB.findById(userId)
-    //     userObj.teamList.map((item) => {
-    //         teamIdList.push(item.teamId)
-    //     })
-    //     const allTimeline = await timelineDB.findByTeamIdList(teamIdList)
-    //     const personTimeline = []
-    //     allTimeline.map((item)=>{
-    //         if(item.creator._id==personId){
-    //             personTimeline.push(item)
-    //         }
-    //     })
-    //     personTimeline.map((item)=>{
-    //         result.push(item)
-    //     })
-    // }
-      else {
-        const userObj = await userDB.findById(userId)
-        userObj.teamList.map((item) => {
-            teamIdList.push({teamId: item.teamId}) 
-        })
-        if(!timeStamp){
-            var result = await timelineDB.firstReturnByTeamIdList(teamIdList)  
-        }else{
-            var result = await timelineDB.returnByTimeStampAndTeamIdList(teamIdList,timeStamp)
-        }
-        // const allTimeline = await timelineDB.findByTeamIdList(teamIdList)
-        // allTimeline.map((item)=>{
-        //     result.push(item)
-        // })
+        resProcessor.jsonp(req, res, {
+            state: { code: 0 },
+            data: result
+        });
     }
-    // if(!timeStamp){
-    //     result.map((item, index)=>{
-    //         if(index<20){
-    //             Result.push(item)
-    //         }
-    //     })              
-    // }else{
-    //     result.map((item)=>{
-    //         if(Result.length<10&&item.create_time<timeStamp){
-    //             Result.push(item)
-    //         }
-    //     })
-    // }
-    resProcessor.jsonp(req, res, {
-        state: { code: 0 },
-        data: result
-    });
+    catch (error) {
+        console.error(error);
+        resProcessor.jsonp(req, res, {
+            state: { code: 1000, msg: '操作失败' },
+            data: {}
+        });
+    }
 }
 
 module.exports = [

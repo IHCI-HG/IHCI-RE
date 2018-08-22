@@ -377,13 +377,11 @@ export default class Task extends React.Component{
                 const result1 = await api('/api/file/createFile', {
                     method: 'POST',
                     body: {
-                        fileInfo: {
-                            teamId: this.state.todo.teamId,
-                            size: item.size,
-                            dir: '/',
-                            fileName: item.name,
-                            ossKey: this.state.ossKeyArr[index],
-                        }
+                        teamId: this.state.todo.teamId,
+                        size: item.size,
+                        dir: '/',
+                        fileName: item.name,
+                        ossKey: this.state.ossKeyArr[index],
                     }
                 })
                 if (result1.state.code === 0) {
@@ -442,13 +440,11 @@ export default class Task extends React.Component{
                 const result1 = await api('/api/file/createFile', {
                     method: 'POST',
                     body: {
-                        fileInfo: {
-                            teamId: this.state.todo.teamId,
-                            size: item.size,
-                            dir: '/',
-                            fileName: item.name,
-                            ossKey: ossArr[index],
-                        }
+                        teamId: this.state.todo.teamId,
+                        size: item.size,
+                        dir: '/',
+                        fileName: item.name,
+                        ossKey: ossArr[index],
                     }
                 })
                 if (result1.state.code === 0) {
@@ -694,13 +690,11 @@ export default class Task extends React.Component{
                     const result1 = await api('/api/file/createFile', {
                         method: 'POST',
                         body: {
-                            fileInfo: {
-                                teamId: this.state.todo.teamId,
-                                size: item.size,
-                                dir: '/',
-                                fileName: item.name,
-                                ossKey: todoInfo.ossKeyArr[index],
-                            }
+                            teamId: this.state.todo.teamId,
+                            size: item.size,
+                            dir: '/',
+                            fileName: item.name,
+                            ossKey: todoInfo.ossKeyArr[index],
                         }
                     })
                     if (result1.state.code === 0) {
@@ -992,12 +986,10 @@ export default class Task extends React.Component{
         const result = await api('/api/file/moveFile', {
             method: 'POST',
             body: {
-                fileInfo: {
-                    teamId: this.state.todo.teamId,
-                    dir: item.dir,
-                    fileName: item.fileName,
-                    tarDir: tarDir,
-                }
+                teamId: this.state.todo.teamId,
+                dir: item.dir,
+                fileName: item.fileName,
+                tarDir: tarDir,
             }
         })
         if(result.state.code === 0){
