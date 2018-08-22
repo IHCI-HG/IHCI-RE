@@ -11,6 +11,7 @@ import {Person as staticText} from '../../../commen/static-text'
 
 export default class Person extends React.Component{
     componentDidMount = async() => {
+       
         this.personInfo = {}
         this.originPersonInfo = {}
         if(INIT_DATA.userObj) {

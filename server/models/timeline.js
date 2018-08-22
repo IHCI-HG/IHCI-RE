@@ -131,6 +131,18 @@ timelineSchema.statics = {
             return []
         }
     },
+    
+    findByTeamIdList: function(teamIdList) {
+        const queryList = []
+        teamIdList.map((item) => {
+            queryList.push({teamId: item})
+        })
+        if(queryList && queryList.length) {
+            return this.find({$or: queryList}).sort({create_time: -1}).exec()
+        } else {
+            return []
+        }
+    },
 }
 
 mongoose.model('timeline', timelineSchema);

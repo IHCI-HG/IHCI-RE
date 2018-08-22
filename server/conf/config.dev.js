@@ -39,6 +39,9 @@ var config = {
         'bucket': 'arluber',
     },
 
+    'smsAppId':'LTAIgR6dj6jHXHYY',
+    'smsAppSe':'KItFh8WqT8OpQXEIaAm8pCGQ6g33t9',
+
     // mail: 'http://localhost:5000',
     mailOrigin: 'http://localhost:5000',
     mail: {
