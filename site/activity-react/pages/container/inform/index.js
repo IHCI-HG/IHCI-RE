@@ -19,8 +19,12 @@ class InformItem extends React.PureComponent{
         'EDIT_REPLY': '编辑了回复: ',
         'CREATE_CHECK_ITEM': '创建了检查项: ',
         'CHANGE_TASK_HEADER':'更改了任务: ',
+        'CLOSE_TO_DDL':'有即将到截止日期的任务: ',
+        'CREATE_CHECK_ITEM': '创建了检查项: '
     }
     changeReadState = async () => {
+        console.log(this.props)
+        
         const queryNoticeId = this.props.noticeId
         let rState = true
         //this.state.queryUserId = userId?userId:'i dont get'
@@ -40,7 +44,9 @@ class InformItem extends React.PureComponent{
               if (this.props.type == 'REPLY_TOPIC')
                 this.props.locationTo('/discuss/topic/' + this.props.topicId)            
               if (this.props.type == 'CREATE_TASK')
-                this.props.locationTo('/todo/' + this.props.noticeId)
+                this.props.locationTo('/todo/' + this.props.topicId)
+              if(this.props.type == 'CLOSE_TO_DDL')
+                this.props.locationTo('/todo/' + this.props.topicId)
               if(this.props.type == 'EDIT_TOPIC')
               this.props.locationTo('/discuss/topic/' + this.props.topicId)
               if(this.props.type == 'EDIT_REPLY')
@@ -219,6 +225,7 @@ export default class Infs extends React.Component{
           'REPLY_TOPIC': '回复了讨论：',
           'CREATE_TASK': '创建任务',
           'EDIT_TOPIC': '修改了讨论：',
+          'CLOSE_TO_DDL':'有即将到截止日期的任务: ',
           'EDIT_REPLY': '编辑了回复: ',
           'CREATE_CHECK_ITEM': '创建了检查项: ',
           'CHANGE_TASK_HEADER':'更改了任务',

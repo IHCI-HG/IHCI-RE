@@ -9,6 +9,7 @@ import {
     createTopicTemplate,
     replyTopicTemplate,
     createTaskTemplate,
+    closeToDDLTemplate,
     delTaskTemplate,
     delHeaderTemplate,
     compTaskTemplate,
@@ -18,6 +19,7 @@ import {
     compCheckitemTemplate
 } from '../components/wx-utils/wx-utils'
 import { dayLeft } from '../../site/activity-react/utils/util';
+import { clearInterval } from 'timers';
 
 var mongoose = require('mongoose')
 
@@ -37,7 +39,7 @@ const createTasklist = async (req, res, next) => {
 
     if (!listname || !teamId) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -62,11 +64,13 @@ const createTasklist = async (req, res, next) => {
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
-            data: result
+            data: {
+                taskList: result
+            }
         })
     } catch (error) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
         console.error(error);
@@ -88,7 +92,7 @@ const updateTasklist = async (req, res, next) => {
 
     if (!listId) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -103,17 +107,19 @@ const updateTasklist = async (req, res, next) => {
         if (result.ok) {
             resProcessor.jsonp(req, res, {
                 state: { code: 0, msg: '请求成功' },
-                data: editTasklist
+                data: {
+                    editTasklist:editTasklist
+                }
             })
         } else {
             resProcessor.jsonp(req, res, {
-                state: { code: 1, msg: '操作失败' },
+                state: { code: 1000, msg: '操作失败' },
                 data: {}
             });
         }
     } catch (error) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
         console.error(error);
@@ -128,7 +134,7 @@ const delTasklist = async (req, res, next) => {
 
     if (!listId) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -151,11 +157,11 @@ const delTasklist = async (req, res, next) => {
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
-            data: result
+            data: {}
         })
     } catch (error) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
         console.error(error);
@@ -168,7 +174,7 @@ const changeTaskListIndex = async (req, res, next) => {
     const index = req.body.index;
     if (!listId || !teamId ||!index.toString()) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -177,7 +183,7 @@ const changeTaskListIndex = async (req, res, next) => {
         let team = await teamDB.findByTeamId(teamId)
         if (!team) {
             resProcessor.jsonp(req, res, {
-                state: { code: 1, msg: '团队不存在' },
+                state: { code: 3001, msg: '团队不存在' },
                 data: {}
             });
             return
@@ -195,12 +201,13 @@ const changeTaskListIndex = async (req, res, next) => {
         
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
-            data: task
+            data: {}
         })
 
     } catch (error) {
+        console.error(error)
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: error },
+            state: { code: 1000, msg: error },
             data: {}
         });
     }
@@ -208,11 +215,11 @@ const changeTaskListIndex = async (req, res, next) => {
 
 const findTasklistById = async (req, res, next) => {
     const userId = req.rSession.userId;
-    const listId = req.query.listId;
+    const listId = req.body.listId;
 
     if (!listId) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -269,7 +276,7 @@ const findTasklistById = async (req, res, next) => {
         })
     } catch (error) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
         console.error(error);
@@ -295,7 +302,7 @@ const createTask = async (req, res, next) => {
 
     if (!taskTitle) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -332,9 +339,15 @@ const createTask = async (req, res, next) => {
         }
 
         var deadline = ""
+        var ddl = {}
         if(result.deadline) {
             const date = result.deadline
             deadline = (date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()).replace(/([\-\: ])(\d{1})(?!\d)/g,'$10$2')
+            ddl={
+                year:date.getFullYear(),
+                month:date.getMonth()+1,
+                date:date.getDate()
+            }
         }
 
         const taskObj = {
@@ -355,31 +368,56 @@ const createTask = async (req, res, next) => {
  
         if (taskHeader) {
             const user = await userDB.findByUserId(taskHeader)
-
-            const headername = user.personInfo.name
-        
+            const headername = user.personInfo.name    
             createTaskTemplate(headerList, result, headername)
 
-
-
-            
-            //网页通知
-       
-            const teamObj = await teamDB.findByTeamId(teamId);
-           
+            //网页通知    
+            const teamObj = await teamDB.findByTeamId(teamId);          
             await Promise.all(headerList.map(async (item) => {
                 await userDB.addCreateNotice(item, result, teamObj.name,"CREATE_TASK")
             }));
         }
+       
+        if(taskHeader&&!!deadline){
+            var timeTask=setInterval(async()=>{
+                console.log("come in")
+                console.log(deadline)
+                var d = new Date()
+                var day=d.getDate()
+                var month=d.getMonth() + 1
+                var year=d.getFullYear()
+                console.log(year,ddl.year)
+                console.log(month,ddl.month)
+                console.log(day,ddl.date-1)
+                if(year === ddl.year&&month === ddl.month ){
+                    if(day >= ddl.date-1&&day<=ddl.date){
+                    console.log("close to time out!!!!!!")
+                    closeToDDLTemplate(headerList,taskObj)
+                    clearInterval(timeTask)
+                    const teamObj = await teamDB.findByTeamId(teamId);   
+                    await Promise.all(headerList.map(async (item) => {
+                        await userDB.addCreateNotice(item, result, teamObj.name,"CLOSE_TO_DDL")
+                    }));
+                    }
+                    if(day>ddl.date){
+                        console.log("time out!!!")
+                        clearInterval(timeTask)
+                    }
+                }
+            },1000);
+        }
+        
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
-            data: taskObj
+            data: {
+                taskObj: taskObj
+            }
         })
 
     } catch (error) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
         console.error(error);
@@ -395,7 +433,7 @@ const delTask = async (req, res, next) => {
 
     if (!taskId) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -426,18 +464,18 @@ const delTask = async (req, res, next) => {
 
             resProcessor.jsonp(req, res, {
                 state: { code: 0, msg: '请求成功' },
-                data: result
+                data: {}
             })
         } else {
             resProcessor.jsonp(req, res, {
-                state: { code: 1, msg: '操作失败' },
+                state: { code: 1000, msg: '操作失败' },
                 data: {}
             });
             console.error(error);
         }
     } catch (error) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
         console.error(error);
@@ -454,7 +492,7 @@ const editTask = async (req, res, next) => {
 
     if (!taskId || !editTask) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -468,7 +506,7 @@ const editTask = async (req, res, next) => {
 
         if (!taskObj) {
             resProcessor.jsonp(req, res, {
-                state: { code: 1, msg: "任务不存在" },
+                state: { code: 3001, msg: "任务不存在" },
                 data: {}
             })
         }
@@ -599,12 +637,12 @@ const editTask = async (req, res, next) => {
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
-            data: task
+            data: {taskObj: task}
         })
 
     } catch (error) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
         console.error(error);
@@ -622,7 +660,7 @@ const changeTaskDir = async (req, res, next) => {
     const userId = req.rSession.userId;
     if (!taskId || !fileName ||!newDir) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -635,7 +673,7 @@ const changeTaskDir = async (req, res, next) => {
 
         if (!taskObj) {
             resProcessor.jsonp(req, res, {
-                state: { code: 1, msg: "任务不存在" },
+                state: { code: 3001, msg: "任务不存在" },
                 data: {}
             })
         }
@@ -660,10 +698,13 @@ const changeTaskDir = async (req, res, next) => {
         // }
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
-            data: task
+            data: {
+                taskObj: task
+            }
         })
 
     } catch (error) {
+        console.error(error)
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: '操作失败' },
             data: {}
@@ -678,7 +719,7 @@ const changeTaskIndex = async (req, res, next) => {
 
     if (!taskId || !teamId || !index.toString()) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -702,8 +743,9 @@ const changeTaskIndex = async (req, res, next) => {
         })
 
     } catch (error) {
+        console.error(error)
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: error },
+            state: { code: 1000, msg: error },
             data: {}
         });
     }
@@ -717,7 +759,7 @@ const changeTaskList = async (req, res, next) => {
 
     if (!taskId) {
         resProcessor.jsonp(req, res, {
-            state: { code: 0, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -757,7 +799,7 @@ const changeTaskList = async (req, res, next) => {
         });
     } catch (error) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
         console.error(error);
@@ -765,7 +807,7 @@ const changeTaskList = async (req, res, next) => {
 }
 
 const taskInfo = async (req, res, next) => {
-    const taskId = req.query.taskId
+    const taskId = req.body.taskId
     const userId = req.rSession.userId
 
     if (!taskId) {
@@ -781,7 +823,11 @@ const taskInfo = async (req, res, next) => {
 
         if (!taskObj) {
             resProcessor.jsonp(req, res, {
+<<<<<<< HEAD
                 state: { code: 3001, msg: "无效的id" },
+=======
+                state: { code: 3001, msg: "任务不存在" },
+>>>>>>> 8ad8fd2cc352240b8edc22385cfb8df93d4df791
                 data: {}
             })
         }
@@ -850,7 +896,9 @@ const taskInfo = async (req, res, next) => {
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
-            data: result
+            data: {
+                taskInfo: result
+            }
         })
     } catch (error) {
         resProcessor.jsonp(req, res, {
@@ -965,7 +1013,9 @@ const addCheckitem = async (req, res, next) => {
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
-            data: checkitemObj
+            data: {
+                checkitemObj: checkitemObj
+            }
         })
     } catch (error) {
         resProcessor.jsonp(req, res, {
@@ -1026,7 +1076,9 @@ const dropCheckitem = async (req, res, next) => {
         if (result1.ok == 1) {
             resProcessor.jsonp(req, res, {
                 state: { code: 0, msg: '请求成功' },
-                data: checkitemObj
+                data: {
+                    checkitemObj: checkitemObj
+                }
             })
         }
 
@@ -1041,8 +1093,8 @@ const dropCheckitem = async (req, res, next) => {
 }
 
 const findCheckitem = async (req, res, next) => {
-    const taskId = req.query.todoId;
-    const checkitemId = req.query.checkitemId;
+    const taskId = req.body.todoId;
+    const checkitemId = req.body.checkitemId;
 
     const userId = req.rSession.userId;
 
@@ -1079,7 +1131,9 @@ const findCheckitem = async (req, res, next) => {
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
-            data: checkitemObj
+            data: {
+                checkitemObj: checkitemObj
+            }
         })
     } catch (error) {
         resProcessor.jsonp(req, res, {
@@ -1217,7 +1271,9 @@ const editCheckitem = async (req, res, next) => {
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
-            data: checkitemObj
+            data: {
+                checkitemObj: checkitemObj
+            }
         })
     } catch (error) {
         resProcessor.jsonp(req, res, {
@@ -1272,7 +1328,9 @@ const taskCopy = async (req, res, next) => {
         }
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
-            data: returnObj
+            data: {
+                returnObj: returnObj
+            }
         });
 
     } catch (error) {
@@ -1348,7 +1406,9 @@ const taskMove = async (req, res, next) => {
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
-            data: result
+            data: {
+                taskObj: result
+            }
         });
     } catch (error) {
         resProcessor.jsonp(req, res, {
@@ -1408,7 +1468,9 @@ const createDiscuss = async (req, res, next) => {
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
-            data: result
+            data: {
+                discussObj: result
+            }
         });
     } catch (error) {
         console.error(error);
@@ -1460,7 +1522,9 @@ const editDiscuss = async (req, res, next) => {
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
-            data: result
+            data: {
+                discussObj: result
+            }
         });
     } catch (error) {
         console.error(error);
@@ -1553,7 +1617,9 @@ const findDiscuss = async (req, res, next) => {
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
-            data: discussList
+            data: {
+                discussList: discussList
+            }
         })
     } catch (error) {
         resProcessor.jsonp(req, res, {
@@ -1567,23 +1633,22 @@ const findDiscuss = async (req, res, next) => {
 
 
 module.exports = [
-    ['POST', '/api/task/createTasklist', apiAuth, createTasklist],
+    ['POST', '/api/task/createTaskList', apiAuth, createTasklist],
     ['POST', '/api/task/updateTasklist', apiAuth, updateTasklist],
     ['POST', '/api/task/changeListIndex', apiAuth, changeTaskListIndex],
     ['POST', '/api/task/delTasklist', apiAuth, delTasklist],
-    ['GET', '/api/task/findTasklistById', apiAuth, findTasklistById],
+    ['POST', '/api/task/findTasklistById', apiAuth, findTasklistById],
     ['POST', '/api/task/create', apiAuth, createTask],
     ['POST', '/api/task/delTask', apiAuth, delTask],
     ['POST', '/api/task/edit', apiAuth, editTask],
     ['POST', '/api/task/changeDir', apiAuth, changeTaskDir],
     ['POST', '/api/task/changeIndex', apiAuth, changeTaskIndex],
     ['POST', '/api/task/changeList', apiAuth, changeTaskList],
-    ['GET', '/api/task/taskInfo', apiAuth, taskInfo],
+    ['POST', '/api/task/taskInfo', apiAuth, taskInfo],
     ['POST', '/api/task/addCheckitem', apiAuth, addCheckitem],
     ['POST', '/api/task/dropCheckitem', apiAuth, dropCheckitem],
-    ['GET', '/api/task/findCheckitem', apiAuth, findCheckitem],
+    ['POST', '/api/task/findCheckitem', apiAuth, findCheckitem],
     ['POST', '/api/task/editCheckitem', apiAuth, editCheckitem],
-
     ['POST', '/api/task/taskCopy', apiAuth, taskCopy],
     ['POST', '/api/task/taskMove', apiAuth, taskMove],
 

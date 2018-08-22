@@ -77,7 +77,7 @@ export default class Topic extends React.Component{
         })
         if (result.data) {
             this.setState({
-                teamInfo: result.data
+                teamInfo: result.data.teamObj
             })
         }
     }
@@ -102,13 +102,13 @@ export default class Topic extends React.Component{
         this.teamId = result.data.topicObj.team
 
         const memberResult = await api('/api/team/memberList', {
-            method: 'GET',
+            method: 'POST',
             body: {
                 teamId: topicObj.team
             }
         })
         const memberList = []
-        memberResult.data.map((item) => [
+        memberResult.data.memberList.map((item) => [
             memberList.push({
                 ...item,
                 chosen: false,
@@ -230,13 +230,11 @@ export default class Topic extends React.Component{
                 const result1 = await api('/api/file/createFile', {
                     method: 'POST',
                     body: {
-                        fileInfo: {
-                            teamId: this.teamId,
-                            size: item.size,
-                            dir: '/',
-                            fileName: item.name,
-                            ossKey: this.state.topicOssKeyArr[index],
-                        }
+                        teamId: this.teamId,
+                        size: item.size,
+                        dir: '/',
+                        fileName: item.name,
+                        ossKey: this.state.topicOssKeyArr[index],
                     }
                 })
                 if (result1.state.code === 0) {
@@ -290,13 +288,11 @@ export default class Topic extends React.Component{
                 const result1 = await api('/api/file/createFile', {
                     method: 'POST',
                     body: {
-                        fileInfo: {
-                            teamId: this.teamId,
-                            size: item.size,
-                            dir: '/',
-                            fileName: item.name,
-                            ossKey: ossArr[index],
-                        }
+                        teamId: this.teamId,
+                        size: item.size,
+                        dir: '/',
+                        fileName: item.name,
+                        ossKey: ossArr[index],
                     }
                 })
                 if (result1.state.code === 0) {
@@ -375,13 +371,11 @@ export default class Topic extends React.Component{
                 const result1 = await api('/api/file/createFile', {
                     method: 'POST',
                     body: {
-                        fileInfo: {
-                            teamId: this.teamId,
-                            size: item.size,
-                            dir: '/',
-                            fileName: item.name,
-                            ossKey: this.state.discussOssKeyArr[index],
-                        }
+                        teamId: this.teamId,
+                        size: item.size,
+                        dir: '/',
+                        fileName: item.name,
+                        ossKey: this.state.discussOssKeyArr[index],
                     }
                 })
                 if (result1.state.code === 0) {

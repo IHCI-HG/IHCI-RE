@@ -21,7 +21,7 @@ const WxChoose = {
         BIND_ACCOUNT:"绑定账号",
         ENTER_IHCI:"直接进入平台",
         SUBMIT:"确定",
-        CANCEL:"取消"
+        CANCEL:"返回"
     },
 }
 const IhciJoin = {
@@ -56,14 +56,18 @@ const Person = {
     PERSON_INFO_CHECK: {
         PERSON_INFO_ILLEGAL:"设置失败，请检查格式",
         IMAGE_ILLEGAL: "文件格式必须是JPG，JPEG或PNG",
-        CREATE_NAME_ILLEGAL: "加入iHCI要求实名",      
+        CREATE_NAME_ILLEGAL: "加入iHCI要求实名",
+        CREATE_MAIL_ILLEGAL: "格式错误,请填写正确格式的邮件地址",
+        CREATE_PHONE_ILLEGAL: "格式错误,请填写正确格式的电话号码",
+
 
     },
     RESPONSE_MESSAGE: {
-        SET__SUCCESS: "设置成功",
+        SET_SUCCESS: "设置成功",
         SET_FAIL: "设置失败，请稍后再试",
         FIRST_SET_INFO_SUCCESS: "设置成功，已发送使用说明邮件，请检查邮箱",
-        BIND_WX_FAIL: "解绑失败",
+        UNBIND_WX_FAIL: "解绑失败",
+        BIND_WX_FAIL:"该微信号已经绑定",
         UPLOAD_IMAGE_FAIL: "上传图片失败",
         UPLOAD_IMAGE_SUCCESS: "上传图片成功",
         ACTIVATE_MAIL_WAIT: "请不要重复提交激活请求，请等待60s后再尝试发送",
@@ -71,6 +75,7 @@ const Person = {
         ACTIVATE_MAIL_SUCCESS: "已发送激活邮件，请检查邮箱",
         ACTIVATE_MAIL_FAIL: "激活邮件发送失败，请稍后再试",
         SET_ACCOUNT_SUCCESS: "设置成功",
+        
     },
     PAGE_INFO: {
         PAGE_TITLE: "个人设置",
@@ -82,7 +87,6 @@ const Person = {
         WX_BLOCK_TITLE: "微信",
         WX_BOUND: "已绑定",
         WX_NOT_BOUND: "未绑定",
-        WX_UNBIND: "解绑",
         FOLLOW_BLOCK_TITLE: "服务号",
         NOT_FOLLOW: "未关注",
         FOLLOWED: "已关注",
@@ -90,17 +94,23 @@ const Person = {
         FOLLOW_NOTICE_B: "才能接受讨论消息提醒",
         SET_NAME: "姓名",
         EMAIL_BLOCK_TITLE: "邮箱",
-        SET_EMAIL: "修改邮箱",   
+        SET_EMAIL: "修改邮箱", 
+        ACTIVATED_MAIL: "邮箱已激活",
+        MAIL_TEXT:"邮箱未", 
+        PHONE_BLOCK_TITLE: "手机",
+
     },
     BUTTON_TEXT: {
         TEAM_EXIT: "退出团队",
         UPLOAD_IMAGE: "上传图片",
         SET_ACCOUNT: "设置账号密码",
         SUBMIT: "确定",
+        WX_UNBIND: "解绑",
+        WX_BIND:"绑定",
         FOLLOW: "关注服务号",
-
-
-
+        ACTIVATE:"激活",
+        SAVE:"保存",
+        LOGIN_OUT:"登出",
     }
 }
 module.exports.WxChoose = WxChoose

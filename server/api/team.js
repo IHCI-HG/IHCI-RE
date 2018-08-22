@@ -29,19 +29,21 @@ var folderDB = mongoose.model('folder')
 var file = require('../models/file')
 
 const creatTeam = async (req, res, next) => {
-    const teamInfo = req.body.teamInfo || {}
+    const teamName = req.body.teamName
+    const teamImg = req.body.teamImg
+    const teamDes = req.body.teamDes
     const userId = req.rSession.userId
 
-    if (!teamInfo.name) {
+    if (!teamName) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
     }
 
     try {
-        let teamObj = await teamDB.createTeam(teamInfo.name, teamInfo.teamImg, teamInfo.teamDes)
+        let teamObj = await teamDB.createTeam(teamName, teamImg, teamDes)
         await teamDB.addMember(teamObj._id, userId, 'creator')
         await userDB.addTeam(userId, teamObj, 'creator')
         teamObj = await teamDB.findByTeamId(teamObj._id)
@@ -56,7 +58,7 @@ const creatTeam = async (req, res, next) => {
         });
     } catch (error) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
         console.error(error);
@@ -69,7 +71,7 @@ const joinTeam = async (req, res, next) => {
 
     if (!teamId) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -79,7 +81,7 @@ const joinTeam = async (req, res, next) => {
         let teamObj = await teamDB.findByTeamId(teamId)
         if (!teamObj) {
             resProcessor.jsonp(req, res, {
-                state: { code: 1, msg: '团队不存在' },
+                state: { code: 3001, msg: '团队不存在' },
                 data: {}
             });
             return
@@ -94,7 +96,7 @@ const joinTeam = async (req, res, next) => {
         })
         if (isJoined) {
             resProcessor.jsonp(req, res, {
-                state: { code: 1, msg: '您已在团队中' },
+                state: { code: 3001, msg: '您已在团队中' },
                 data: {}
             });
             return
@@ -118,20 +120,20 @@ const joinTeam = async (req, res, next) => {
     } catch (error) {
         console.error(error);
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
     }
 }
 
 const modifyMemberRole = async (req, res, next) => {
-    const body = req.body
     const userId = req.rSession.userId
-    const teamId = body.teamId
+    const teamId = req.body.teamId
+    const role = req.body.role
 
-    if (!body.teamId || !body.userId || !body.role) {
+    if (!teamId || !role) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -140,7 +142,7 @@ const modifyMemberRole = async (req, res, next) => {
         let teamObj = await teamDB.findByTeamId(teamId)
         if (!teamObj || !teamObj.memberList) {
             resProcessor.jsonp(req, res, {
-                state: { code: 1, msg: '团队不存在' },
+                state: { code: 3001, msg: '团队不存在' },
                 data: {}
             });
             return
@@ -155,7 +157,7 @@ const modifyMemberRole = async (req, res, next) => {
 
         if (!myRole) {
             resProcessor.jsonp(req, res, {
-                state: { code: 1, msg: '你不并在这个团队里面' },
+                state: { code: 3001, msg: '你不并在这个团队里面' },
                 data: {}
             });
             return
@@ -177,8 +179,8 @@ const modifyMemberRole = async (req, res, next) => {
             return
         }
 
-        await teamDB.changeMemberRole(teamId, userId, body.role)
-        await userDB.modifyTeamRole(userId, teamId, body.role)
+        await teamDB.changeMemberRole(teamId, userId, role)
+        await userDB.modifyTeamRole(userId, teamId, role)
         teamObj = await teamDB.findByTeamId(teamId)
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '修改成功' },
@@ -189,7 +191,7 @@ const modifyMemberRole = async (req, res, next) => {
     } catch (error) {
         console.error(error);
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
     }
@@ -209,7 +211,7 @@ const modifyTeamInfo = async (req, res, next) => {
 
     if (!teamInfo || !teamId) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -218,7 +220,7 @@ const modifyTeamInfo = async (req, res, next) => {
         let teamObj = await teamDB.findByTeamId(teamId)
         if (!teamObj) {
             resProcessor.jsonp(req, res, {
-                state: { code: 1, msg: '团队不存在' },
+                state: { code: 3001, msg: '团队不存在' },
                 data: {}
             });
             return
@@ -242,7 +244,7 @@ const modifyTeamInfo = async (req, res, next) => {
     } catch (error) {
         console.error(error);
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
     }
@@ -256,7 +258,7 @@ const markTeam = async (req, res, next) => {
 
     if (!teamId || markState == undefined) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -266,7 +268,7 @@ const markTeam = async (req, res, next) => {
         let teamObj = await teamDB.findByTeamId(teamId)
         if (!teamObj) {
             resProcessor.jsonp(req, res, {
-                state: { code: 1, msg: '团队不存在' },
+                state: { code: 3001, msg: '团队不存在' },
                 data: {}
             });
             return
@@ -274,7 +276,7 @@ const markTeam = async (req, res, next) => {
         let userObj = await userDB.findByUserId(userId)
         if (!userObj) {
             resProcessor.jsonp(req, res, {
-                state: { code: 1, msg: '用户不存在' },
+                state: { code: 3001, msg: '用户不存在' },
                 data: {}
             });
             return
@@ -284,14 +286,16 @@ const markTeam = async (req, res, next) => {
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '设置成功' },
-            data: result
+            data: {
+                teamObj: result
+            },
         });
 
 
     } catch (error) {
         console.error(error);
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
     }
@@ -307,12 +311,12 @@ const leaveTeam = async(req,res) =>{
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '删除成功' },
-            data: result
+            data: {}
         });
     }catch (error) {
         console.error(error);
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
     }
@@ -326,7 +330,7 @@ const kikMember = async (req, res, next) => {
 
     if (!tarMemberId || !teamId) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -336,7 +340,7 @@ const kikMember = async (req, res, next) => {
         let teamObj = await teamDB.findByTeamId(teamId)
         if (!teamObj) {
             resProcessor.jsonp(req, res, {
-                state: { code: 1, msg: '团队不存在' },
+                state: { code: 3001, msg: '团队不存在' },
                 data: {}
             });
             return
@@ -361,14 +365,13 @@ const kikMember = async (req, res, next) => {
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '设置成功' },
             data: {
-                result: result
             }
         });
 
     } catch (error) {
         console.error(error);
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
     }
@@ -378,7 +381,7 @@ const teamInfo = async (req, res, next) => {
     const teamId = req.body.teamId
     if (!teamId) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -387,19 +390,21 @@ const teamInfo = async (req, res, next) => {
         let teamObj = await teamDB.findByTeamId(teamId)
         if (!teamObj) {
             resProcessor.jsonp(req, res, {
-                state: { code: 1, msg: '团队不存在' },
+                state: { code: 3001, msg: '团队不存在' },
                 data: {}
             });
             return
         }
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
-            data: teamObj
+            data: {
+                teamObj: teamObj
+            }
         });
     } catch (error) {
         console.error(error);
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
     }
@@ -412,7 +417,7 @@ const teamInfoList = async (req, res, next) => {
 
     if (!teamIdList || !teamIdList.length) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -426,12 +431,14 @@ const teamInfoList = async (req, res, next) => {
         const result = await Promise.all(promiseList)
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
-            data: result
+            data: {
+                teamInfoList: result
+            }
         });
     } catch (error) {
         console.error(error);
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
     }
@@ -439,10 +446,10 @@ const teamInfoList = async (req, res, next) => {
 
 // 直接返回团队的成员列表
 const memberList = async (req, res, next) => {
-    const teamId = req.query.teamId
+    const teamId = req.body.teamId
     if (!teamId) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -451,7 +458,7 @@ const memberList = async (req, res, next) => {
         const teamObj = await teamDB.findByTeamId(teamId)
         if (!teamObj) {
             resProcessor.jsonp(req, res, {
-                state: { code: 1, msg: "团队不存在" },
+                state: { code: 3001, msg: "团队不存在" },
                 data: {}
             });
             return
@@ -463,22 +470,24 @@ const memberList = async (req, res, next) => {
         const result = await Promise.all(promiseList)
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
-            data: result
+            data: {
+                memberList: result
+            }
         });
     } catch (error) {
         console.error(error);
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
     }
 }
 
 const taskList = async (req, res, nect) => {
-    const teamId = req.query.teamId
+    const teamId = req.body.teamId
     if (!teamId) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -487,7 +496,7 @@ const taskList = async (req, res, nect) => {
         let team = await teamDB.findByTeamId(teamId)
         if (!team) {
             resProcessor.jsonp(req, res, {
-                state: { code: 1, msg: '团队不存在' },
+                state: { code: 3001, msg: '团队不存在' },
                 data: {}
             });
             return
@@ -606,12 +615,14 @@ const taskList = async (req, res, nect) => {
         }
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
-            data: taskObj
+            data: {
+                taskObj: taskObj
+            }
         });
     } catch (error) {
         console.error(error);
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
     }
@@ -631,7 +642,7 @@ module.exports = [
     ['POST', '/api/team/kikMember', apiAuth, kikMember],
     ['POST', '/api/team/leaveTeam',apiAuth,leaveTeam],
 
-    ['GET', '/api/team/memberList', apiAuth, memberList],
-    ['GET', '/api/team/taskList', apiAuth, taskList],
+    ['POST', '/api/team/memberList', apiAuth, memberList],
+    ['POST', '/api/team/taskList', apiAuth, taskList],
 
 ];

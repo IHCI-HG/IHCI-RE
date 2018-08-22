@@ -60,7 +60,7 @@ function reName() {
 
 const getOssClient = async () => {
     const result = await api('/api/getOssStsToken', {
-        method: 'GET',
+        method: 'POST',
         body: {}
     })
     const token = result.data

@@ -54,11 +54,9 @@ export default class TeamCreate extends React.Component{
         const result = await api('/api/team/create', {
             method: 'POST',
             body: {
-                teamInfo: {
-                    name: this.state.name,
+                    teamName: this.state.name,
                     teamImg: this.state.teamImg,
                     teamDes: this.state.desc
-                }
             }
         })
 

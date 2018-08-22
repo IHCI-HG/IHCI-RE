@@ -40,7 +40,7 @@ const signUp = async (req, res, next) => {
     const userInfo = req.body.userInfo
     if(!userInfo.username || !userInfo.password) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: "参数不全"},
+            state: { code: 3000, msg: "参数不全"},
             data: {}
         });
         return
@@ -53,7 +53,7 @@ const signUp = async (req, res, next) => {
     )
     if(!result) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: "用户名已经存在"},
+            state: { code: 1000, msg: "用户名已经存在"},
             data: {}
         });
         return

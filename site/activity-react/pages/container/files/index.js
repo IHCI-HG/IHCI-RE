@@ -74,7 +74,7 @@ export default class Files extends React.Component {
         })
         if (result.data) {
             this.setState({
-                teamInfo: result.data
+                teamInfo: result.data.teamObj
             })
         }
     }
@@ -83,10 +83,8 @@ export default class Files extends React.Component {
         const result = await api('/api/file/getDirFileList', {
             method: 'POST',
             body: {
-                dirInfo: {
-                    teamId: this.teamId,
-                    dir: this.curDir,
-                }
+                teamId: this.teamId,
+                dir: this.curDir,
             }
         })
         if (result && result.data && result.data.fileList) {
@@ -110,11 +108,9 @@ export default class Files extends React.Component {
         const result = await api('/api/file/createFolder', {
             method: 'POST',
             body: {
-                folderInfo: {
-                    teamId: this.teamId,
-                    dir: this.curDir,
-                    folderName: this.state.createFolderName
-                }
+                teamId: this.teamId,
+                dir: this.curDir,
+                folderName: this.state.createFolderName
             }
         })
 
@@ -151,12 +147,10 @@ export default class Files extends React.Component {
             const result = await api('/api/file/moveFile', {
                 method: 'POST',
                 body: {
-                    fileInfo: {
-                        teamId: this.teamId,
-                        dir: this.curDir,
-                        fileName: this.state.moveItem.name,
-                        tarDir: tarDir,
-                    }
+                    teamId: this.teamId,
+                    dir: this.curDir,
+                    fileName: this.state.moveItem.name,
+                    tarDir: tarDir,
                 }
             })
 
@@ -170,12 +164,10 @@ export default class Files extends React.Component {
             const result = await api('/api/file/moveFolder', {
                 method: 'POST',
                 body: {
-                    folderInfo: {
-                        teamId: this.teamId,
-                        dir: this.curDir,
-                        folderName: this.state.moveItem.name,
-                        tarDir: tarDir,
-                    }
+                    teamId: this.teamId,
+                    dir: this.curDir,
+                    folderName: this.state.moveItem.name,
+                    tarDir: tarDir,
                 }
             })
 
@@ -229,13 +221,11 @@ export default class Files extends React.Component {
         const result = await api('/api/file/createFile', {
             method: 'POST',
             body: {
-                fileInfo: {
-                    teamId: this.teamId,
-                    size: file.size,
-                    dir: this.curDir,
-                    fileName: file.name,
-                    ossKey: ossKey
-                }
+                teamId: this.teamId,
+                size: file.size,
+                dir: this.curDir,
+                fileName: file.name,
+                ossKey: ossKey
             }
         })
         if (result.state.code === 0) {
@@ -252,22 +242,18 @@ export default class Files extends React.Component {
             const result = await api('/api/file/delFile', {
                 method: 'POST',
                 body: {
-                    fileInfo: {
-                        teamId: this.teamId,
-                        dir: this.curDir,
-                        fileName: name
-                    }
+                    teamId: this.teamId,
+                    dir: this.curDir,
+                    fileName: name
                 }
             })
         } else {
             const result = await api('/api/file/delFolder', {
                 method: 'POST',
                 body: {
-                    folderInfo: {
-                        teamId: this.teamId,
-                        dir: this.curDir,
-                        folderName: name
-                    }
+                    teamId: this.teamId,
+                    dir: this.curDir,
+                    folderName: name
                 }
             })
         }
@@ -322,11 +308,9 @@ export default class Files extends React.Component {
             const result = await api('/api/file/updateFileName', {
                 method: 'POST',
                 body: {
-                    fileInfo: {
-                        teamId: this.teamId,
-                        dir: this.curDir,
-                        fileName: item.name,
-                    },
+                    teamId: this.teamId,
+                    dir: this.curDir,
+                    fileName: item.name,
                     tarName: this.state.renameName,
                 }
             })
@@ -345,11 +329,9 @@ export default class Files extends React.Component {
             const result = await api('/api/file/updateFolderName', {
                 method: 'POST',
                 body: {
-                    folderInfo: {
-                        teamId: this.teamId,
-                        dir: this.curDir,
-                        folderName: item.name,
-                    },
+                    teamId: this.teamId,
+                    dir: this.curDir,
+                    folderName: item.name,
                     tarName: this.state.renameName,
                 }
             })
