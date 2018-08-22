@@ -30,7 +30,14 @@ const search = async (req, res, next) => {
     const timeStamp = req.body.timeStamp
     const type = req.body.type
     const userId = req.rSession.userId 
-    if(keyWord){
+    if(!keyWord) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 3000, msg: "参数不全" },
+            data: {}
+        });
+        return
+    }
+    try{
         const teamIdList = []
         if(teamId) {
             teamIdList.push(teamId)
@@ -114,24 +121,16 @@ const search = async (req, res, next) => {
                 }
             })
         }
-        //console.log("这是搜索结果：", result)
-        if(Result.length){
-            resProcessor.jsonp(req, res, {
-                state: { code: 0, msg:"检索成功"},
-                data: Result
-            });
-        }else{
-            resProcessor.jsonp(req, res, {
-                state: { code: 1, msg:"没有检索到任何结果"},
-                data: {}
-            });
-        }
-    }
-    else{
         resProcessor.jsonp(req, res, {
-            state: { code: 2, msg:"请输入检索词"},
-            data: {}
+            state: { code: 0, msg:"检索成功"},
+            data: Result
         });
+    }catch (error) {
+        console.log(error) 
+        resProcessor.jsonp(req, res, {
+            state: {code: 1000, msg:'操作失败' },
+            data: {},
+        })
     }
 }
 
