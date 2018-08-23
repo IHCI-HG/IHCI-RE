@@ -83,6 +83,7 @@
     "rmc-date-picker": "^5.3.1",
     "session": "^0.1.0",
     "slick-carousel": "^1.7.1",
+    "svg-captcha": "^1.3.11",
     "swipe-js-iso": "^2.0.3",
     "uglify-js": "^2.6.1",
     "underscore": "1.8.2",

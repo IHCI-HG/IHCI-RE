@@ -19,10 +19,10 @@ import {
 } from '../components/wx-utils/wx-utils'
 
 import{
-    setSMS,
-    getSMS,
-    delSMS
-} from '../middleware/sms-redis/sms-redis'
+    set,
+    get,
+    del
+} from '../middleware/redis/redis'
 
 var mongoose = require('mongoose')
 var teamDB = mongoose.model('team')
@@ -50,7 +50,7 @@ const createSMS = async (phoneNumber) =>{
     const code  = await sendNewSMS(phone)
     console.log(code)
 
-    await setSMS(phone,code)
+    await set(phone,code)
 
 
 }
@@ -60,10 +60,17 @@ const createSMS = async (phoneNumber) =>{
 const createNewUser = async (phoneNumber) =>{
     const phone = ''
     // const pwd = await sendPwd(phone)
-    const code = await getSMS(phone,function(result){
+    const code = await get(phone,function(result){
         console.log("redis 获取到的code  "+result)
     })
   
+}
+
+const createCaptcha = async(phoneNumber) =>{
+    const captcha = Captcha.generateCaptcha()
+    res.type('svg')
+    res.send(captcha.data)
+    await set(phoneNumber,captcha.text)
 }
 
 
@@ -620,6 +627,8 @@ module.exports = [
 
     ['GET','/api/createSMS',createSMS],
     ['GET','/api/createNewUser',createNewUser],
+
+    ['GET','/api/createCaptcha',createCaptcha]
 
     ['POST', '/api/getMyInfo',apiAuth, getMyInfo],
     ['POST', '/api/getUserInfo',apiAuth, getUserInfo],
