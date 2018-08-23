@@ -4,7 +4,7 @@ var _ = require('underscore'),
     conf = require('../conf'),
     envi = require('../components/envi/envi');
 const crypto = require('crypto-js');
-const {sendSMS} = require('../components/sms/sms');
+const {sendNewSMS,sendSameSMS,sendPwd} = require('../components/sms/sms');
 
 import fetch from 'isomorphic-fetch';
 import lo from 'lodash';
@@ -18,9 +18,16 @@ import {
     pub_pushTemplateMsg
 } from '../components/wx-utils/wx-utils'
 
+import{
+    setSMS,
+    getSMS,
+    delSMS
+} from '../middleware/sms-redis/sms-redis'
+
 var mongoose = require('mongoose')
 var teamDB = mongoose.model('team')
 var UserDB = mongoose.model('user')
+var SMS = mongoose.model('sms')
 var followerDB = mongoose.model('follower')
 const sortByCreateTime = function(a,b){
     return b.create_time-a.create_time
@@ -34,11 +41,31 @@ var sysTime = function(req, res, next) {
     });
 };
 
-const getSMS = async () =>{
+const createSMS = async (phoneNumber) =>{
     //测试使用，手机号码直接填入phone就可以发送短信
     const phone = ''
-    await sendSMS(phone)
+    //查询数据库是否有改号码的验证码存在，并比对创建时间是否超过两个小时
+    //1. 未超过两个小时，返回数据库存储的验证码
+    //2.超过两个小时，删除无效验证码，并调用获取新的验证码，返回新的验证码
+    const code  = await sendNewSMS(phone)
+    console.log(code)
+
+    await setSMS(phone,code)
+
+
 }
+
+
+
+const createNewUser = async (phoneNumber) =>{
+    const phone = ''
+    // const pwd = await sendPwd(phone)
+    const code = await getSMS(phone,function(result){
+        console.log("redis 获取到的code  "+result)
+    })
+  
+}
+
 
 const signUp = async (req, res, next) => {
     const userInfo = req.body.userInfo
@@ -591,7 +618,8 @@ const wxEnter = async (req, res, next) => {
 module.exports = [
     ['GET', '/api/base/sys-time', sysTime],
 
-    ['GET','/api/getSMS',getSMS],
+    ['GET','/api/createSMS',createSMS],
+    ['GET','/api/createNewUser',createNewUser],
 
     ['POST', '/api/getMyInfo',apiAuth, getMyInfo],
     ['POST', '/api/getUserInfo',apiAuth, getUserInfo],
