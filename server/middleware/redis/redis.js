@@ -1,5 +1,5 @@
-
-const redis = require('redis')
+const Promise = require('bluebird')
+const redis = Promise.promisifyAll(require('redis'))
 const client = redis.createClient()
 
 export const set = async (key,value)=>{
@@ -9,13 +9,13 @@ export const set = async (key,value)=>{
     client.expire(phoneNumber,7200)
 }
 
-export const get = async (key,callback) =>{
-    await client.get(key,function(err,result){
-        console.log(result)
-        callback(result)
-    })
-   
+export const get = async (key) =>{
+    return client.getAsync(key) 
 }
+
+async function getAsync (key) {
+    return client.getAsync(key)
+  }
 
 export const del = async (key) =>{
     client.del(key,function(err){

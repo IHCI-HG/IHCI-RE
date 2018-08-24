@@ -60,9 +60,8 @@ const createSMS = async (phoneNumber) =>{
 const createNewUser = async (phoneNumber) =>{
     const phone = ''
     // const pwd = await sendPwd(phone)
-    const code = await get(phone,function(result){
-        console.log("redis 获取到的code  "+result)
-    })
+    const code = await get(phone)
+    console.log(code,"hhh")
   
 }
 
@@ -582,18 +581,28 @@ const wxEnter = async (req, res, next) => {
     const personInfo = {
         name:req.body.name,
         phone:req.body.phone,
-        mail:req.body.mail
+        code:req.body.code
     }
-    if(!openid || !personInfo.name || !personInfo.phone || !personInfo.mail) {
+    if(!openid || !personInfo.name || !personInfo.phone || !personInfo.code) {
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: "参数不全" },
             data: {}
         });
         return
     }
+    const code = await get(personInfo.phone)
+    console.log(code,"xxx")
+    if(personInfo.code !== code){
+        resProcessor.jsonp(req, res, {
+            state: { code: 1, msg: "验证码错误" },
+            data: {}
+        });
+        return
+    }
     try {
+        const pwd = await sendPwd(personInfo.phone)
         var result1 = await pub_openidToUserInfo(openid)
-        const result2 = await UserDB.createUser(null,null,{
+        const result2 = await UserDB.createUser(personInfo.phone,pwd,{
             unionid:result1.unionid,
             wxUserInfo:result1,
             personInfo:{
