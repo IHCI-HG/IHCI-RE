@@ -3,7 +3,7 @@ import './style.scss'
 import Page from '../../../components/page'
 import api, { authApi } from '../../../utils/api';
 import {IhciJoin as staticText} from '../../../commen/static-text'
-
+import SMSBlock from '../../../components/smsCode'
 export default class IhciJoin extends React.Component{
 
     state = {
@@ -11,13 +11,11 @@ export default class IhciJoin extends React.Component{
         personInfo: {
             name: '',
             phone: '',
-            mail: '',
-        },
+        },  
+        smsCode:'',
         infoCheck:{
             nameEmpty:true,
             phoneEmpty:true,
-            emailEmpty:true,
-            illegalEmailAddress: false,
             illegalPhoneNumber:false,
             illegalName: false,
         },
@@ -80,39 +78,11 @@ export default class IhciJoin extends React.Component{
         })
     }
 
-    isEmailAddress = (emailAddress) => {
-        const reg = /^[A-Za-z0-9._%-]+@([A-Za-z0-9-]+\.)+[A-Za-z]{2,4}$/;
-        return reg.test(emailAddress);
-    }
-
-    mailInputHandle = (e) => {
-        const email = e.target.value
-        var illegalEmailAddress = false
-        if (!this.isEmailAddress(email)){
-            illegalEmailAddress = true
-        }
-
-        this.setState({
-            personInfo: {
-                ...this.state.personInfo,
-                mail: email,
-            },
-            infoCheck: {
-                ...this.state.infoCheck,
-                illegalEmailAddress: illegalEmailAddress,
-                emailEmpty:false,
-            },
-        })
-    }
     infoCheckIllegal = () =>{
         var infoCheck = {
             illegalEmailAddress: false,
             illegalPhoneNumber: false,
             illegalName: false,
-        }
-
-        if (!this.isEmailAddress(this.state.personInfo.mail)){
-            infoCheck.illegalEmailAddress = true
         }
 
         if (!this.isPhoneNumber(this.state.personInfo.phone)){
@@ -142,16 +112,13 @@ export default class IhciJoin extends React.Component{
         if(this.state.infoCheck.phoneEmpty){
             window.toast(staticText.PERSON_INFO_CHECK.CREATE_PHONE_EMPTY)
         }
-        if(this.state.infoCheck.emailEmpty){
-            window.toast(staticText.PERSON_INFO_CHECK.CREATE_EMAIL_EMPTY)
-        }
+
         const result = await api('/api/user/wxEnter',{
             method:'POST',
             body:{
                 openid:this.state.openid,
                 name:this.state.personInfo.name,
                 phone:this.state.personInfo.phone,
-                mail:this.state.personInfo.mail
             }
         })
         if(result.state.code === 0){
@@ -168,6 +135,14 @@ export default class IhciJoin extends React.Component{
         }
     }
 
+    smsCodeInputHandle = (e) =>{
+        const code = e.target.value
+        this.setState({
+            smsCode: code
+        })
+
+    }
+    
     render () {
         return (
             <Page title = {staticText.PAGE_INFO.JOIN__BLOCK_TITLE} className = "enter-page">
@@ -181,17 +156,16 @@ export default class IhciJoin extends React.Component{
                             {this.state.infoCheck.illegalName && <div className='after error'>{staticText.PERSON_INFO_CHECK.CREATE_NAME_ILLEGAL}</div>}
                         </div>
 
-                        <div className="edit-con">    
-                            <div className="before">{staticText.LABEL_TEXT.SET_EMAIL}</div>
-                            <input type="text" onChange={this.mailInputHandle} className="input-edit" value={this.state.personInfo.mail}/>
-                            {this.state.infoCheck.illegalEmailAddress && <div className='after error'>{staticText.PERSON_INFO_CHECK.CREATE_EMAIL_ILLEGAL}</div>}
-                                
-                        </div>
-
                         <div className="edit-con">
                             <div className="before">{staticText.LABEL_TEXT.SET_PHONE}</div>
                             <input type="text" onChange={this.phoneInputHandle} className="input-edit" value={this.state.personInfo.phone}/>
                             {this.state.infoCheck.illegalPhoneNumber && <div className='after error'>{staticText.PERSON_INFO_CHECK.CREATE_PHONE_ILLEGAL}</div>}
+                            
+                            
+                        </div>
+                        <div className = "edit-con">
+                        <SMSBlock smsCodeInputHandle = {this.smsCodeInputHandle}
+                                  smsCode = {this.state.smsCode}></SMSBlock>
                         </div>
                     <div className = "enter-btn" onClick = {this.enterHandle}>{staticText.BUTTON_TEXT.ENTER_IHCI}</div>
                 </div>

@@ -550,7 +550,7 @@ const wxEnter = async (req, res, next) => {
         phone:req.body.phone,
         mail:req.body.mail
     }
-    if(!openid || !personInfo.name || !personInfo.phone || !personInfo.mail) {
+    if(!openid || !personInfo.name || !personInfo.phone) {
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: "参数不全" },
             data: {}
