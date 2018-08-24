@@ -33,6 +33,44 @@
                 font-weight: bold;
                 margin-bottom: 10px;
             }
+
+            .forgetPwd{
+                color: gray;
+                cursor: pointer;
+            }
+
+            .auth-smallinput {
+                width: 50%;
+                margin-right: 10px;
+                outline: 0;
+                border: 1px solid #e9eaea;
+                border-radius: 2px;
+                height: 50px;
+                padding: 0 20px;
+                margin-bottom: 20px;
+            }
+
+            .codeBtn {
+                width: 130px;
+                background-color: orange;
+                border-color: orange;
+                color: #fff;
+                height: 50px;
+                padding: 6px 0;
+                cursor: pointer;
+                font-weight: bold;    
+            }
+            
+            .countSecond {
+                width: 130px;
+                background-color: gray;
+                border-color: gray;
+                color: #fff;
+                height: 50px;
+                padding: 6px 0;
+                font-weight: bold; 
+            }
+
             .auth-input {
                 outline: 0; 
                 border: 1px solid #e9eaea;
