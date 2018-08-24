@@ -23,6 +23,9 @@ import{
     get,
     del
 } from '../middleware/redis/redis'
+import { type } from 'os';
+
+const Captcha = require( "../middleware/captcha/captcha")
 
 var mongoose = require('mongoose')
 var teamDB = mongoose.model('team')
@@ -41,35 +44,50 @@ var sysTime = function(req, res, next) {
     });
 };
 
-const createSMS = async (phoneNumber) =>{
-    //测试使用，手机号码直接填入phone就可以发送短信
-    const phone = ''
-    //查询数据库是否有改号码的验证码存在，并比对创建时间是否超过两个小时
-    //1. 未超过两个小时，返回数据库存储的验证码
-    //2.超过两个小时，删除无效验证码，并调用获取新的验证码，返回新的验证码
-    const code  = await sendNewSMS(phone)
-    console.log(code)
-
-    await set(phone,code)
-
-
+const createSMS = async (req,res) =>{
+    const phoneNumber = req.phoneNumber
+    const code  = await sendNewSMS(phoneNumber)
+    await set(phoneNumber,code)
+    resProcessor.jsonp(req, res, {
+        state: { code: 0 },
+        data: {
+            code: code
+        }
+    });
 }
 
 
+<<<<<<< HEAD
 
 const createNewUser = async (phoneNumber) =>{
     const phone = ''
     // const pwd = await sendPwd(phone)
     const code = await get(phone)
     console.log(code,"hhh")
+=======
+const createNewUser = async (req,res) =>{
+    const phoneNumber = req.phoneNumber
+    const pwd = await sendPwd(phoneNumber)
+    const code = await get(phoneNumber,function(result){
+        console.log("redis 获取到的code  "+result)
+    })
+>>>>>>> 2d8736a1161571aa517e548e3a1478662a97e5b3
   
 }
 
-const createCaptcha = async(phoneNumber) =>{
+const createCaptcha = async(req,res) =>{
+    const phone = '13226653553'
     const captcha = Captcha.generateCaptcha()
+    console.log(captcha.data)
+    console.log(captcha.text)
+    // await set(phone,captcha.text)
     res.type('svg')
     res.send(captcha.data)
-    await set(phoneNumber,captcha.text)
+    
+    resProcessor.jsonp(req, res, {
+        state: { code: 0, msg: "操作成功" }
+    });
+    
 }
 
 
@@ -634,10 +652,13 @@ const wxEnter = async (req, res, next) => {
 module.exports = [
     ['GET', '/api/base/sys-time', sysTime],
 
-    ['GET','/api/createSMS',createSMS],
-    ['GET','/api/createNewUser',createNewUser],
+    ['POST','/api/createSMS',createSMS],
+    ['POST','/api/createNewUser',createNewUser],
 
-    ['GET','/api/createCaptcha',createCaptcha]
+    ['GET','/api/createCaptcha',createCaptcha],
+
+    ['POST','/api/modifyPassword',modifyPassword],
+    ['POST','/api/forgotPassword',forgotPassword],
 
     ['POST', '/api/getMyInfo',apiAuth, getMyInfo],
     ['POST', '/api/getUserInfo',apiAuth, getUserInfo],
