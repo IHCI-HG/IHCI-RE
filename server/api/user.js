@@ -92,6 +92,7 @@ if(userInfo.code !== code){
 const result = await UserDB.createUser(
     userInfo.username,
     userInfo.password,
+    userInfo.code,
     userInfo,
 
 )
