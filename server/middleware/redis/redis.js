@@ -3,13 +3,16 @@ const redis = Promise.promisifyAll(require('redis'))
 const client = redis.createClient()
 
 export const set = async (key,value)=>{
+    key = "sms:" + key
     client.set(key,value,function(err){
         console.log('Error:'+err)
     })
-    client.expire(key,100)
+    client.expire(key,3600)
 }
 
+
 export const get = async (key) =>{
+    key = "sms:"+ key
     return client.getAsync(key) 
 }
 
