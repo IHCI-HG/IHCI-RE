@@ -584,35 +584,6 @@ try{
 }
 
 const wxEnter = async (req, res, next) => {
-<<<<<<< HEAD
-    const openid = req.body.openid
-    const personInfo = {
-        name:req.body.name,
-        phone:req.body.phone,
-        mail:req.body.mail
-    }
-    if(!openid || !personInfo.name || !personInfo.phone) {
-        resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: "参数不全" },
-            data: {}
-        });
-        return
-    }
-    try {
-        var result1 = await pub_openidToUserInfo(openid)
-        const result2 = await UserDB.createUser(null,null,{
-            unionid:result1.unionid,
-            wxUserInfo:result1,
-            personInfo:{
-                ...personInfo,
-                headImg:result1.headimgurl
-            }
-        })
-        const findUser = await UserDB.findByUnionId(result1.unionid)
-        if(findUser){   
-            const flag = await IfBeforeSub(findUser._id, result1.unionid)
-            req.rSession.userId = findUser._id
-=======
 const openid = req.body.openid
 const personInfo = {
     name:req.body.name,
@@ -644,7 +615,6 @@ try {
         personInfo:{
             ...personInfo,
             headImg:result1.headimgurl
->>>>>>> 018afcaaa4c4215a4d08bd157e32117809dbf102
         }
     })
     const findUser = await UserDB.findByUnionId(result1.unionid)
@@ -673,7 +643,7 @@ module.exports = [
 
 ['POST','/api/createSMS',createSMS],
 
-['GET','/api/createCaptcha',createCaptcha],
+['POST','/api/createCaptcha',createCaptcha],
 
 ['POST', '/api/getMyInfo',apiAuth, getMyInfo],
 ['POST', '/api/getUserInfo',apiAuth, getUserInfo],

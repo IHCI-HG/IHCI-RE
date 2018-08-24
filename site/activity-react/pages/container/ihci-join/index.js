@@ -119,6 +119,7 @@ export default class IhciJoin extends React.Component{
                 openid:this.state.openid,
                 name:this.state.personInfo.name,
                 phone:this.state.personInfo.phone,
+                code:this.state.smsCode
             }
         })
         if(result.state.code === 0){
@@ -165,7 +166,10 @@ export default class IhciJoin extends React.Component{
                         </div>
                         <div className = "edit-con">
                         <SMSBlock smsCodeInputHandle = {this.smsCodeInputHandle}
-                                  smsCode = {this.state.smsCode}></SMSBlock>
+                                  smsCode = {this.state.smsCode}
+                                  phoneNumber = {this.state.personInfo.phone}
+                                  phoneEmpty = {this.state.infoCheck.phoneEmpty}
+                                  ></SMSBlock>
                         </div>
                     <div className = "enter-btn" onClick = {this.enterHandle}>{staticText.BUTTON_TEXT.ENTER_IHCI}</div>
                 </div>
