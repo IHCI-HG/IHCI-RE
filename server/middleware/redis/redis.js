@@ -6,7 +6,7 @@ export const set = async (key,value)=>{
     client.set(key,value,function(err){
         console.log('Error:'+err)
     })
-    client.expire(phoneNumber,7200)
+    client.expire(key,100)
 }
 
 export const get = async (key) =>{

@@ -46,7 +46,9 @@ resProcessor.jsonp(req, res, {
 const createSMS = async (req,res) =>{
     const phoneNumber = req.body.phoneNumber
     const code  = await sendNewSMS(phoneNumber)
+    console.log("he")
     await set(phoneNumber,code)
+    console.log("he")
     resProcessor.jsonp(req, res, {
         state: { code: 0 },
         data: {
@@ -72,9 +74,17 @@ const createCaptcha = async(req,res) =>{
 
 const signUp = async (req, res, next) => {
 const userInfo = req.body.userInfo
-if(!userInfo.username || !userInfo.password) {
+if(!userInfo.username || !userInfo.password||!userInfo.code) {
     resProcessor.jsonp(req, res, {
         state: { code: 3000, msg: "参数不全"},
+        data: {}
+    });
+    return
+}
+const code = await get(userInfo.username)
+if(userInfo.code !== code){
+    resProcessor.jsonp(req, res, {
+        state: { code: 1, msg: "验证码错误"},
         data: {}
     });
     return
