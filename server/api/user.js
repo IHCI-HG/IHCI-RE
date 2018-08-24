@@ -4,7 +4,7 @@ proxy = require('../components/proxy/proxy'),
 conf = require('../conf'),
 envi = require('../components/envi/envi');
 const crypto = require('crypto-js');
-const {sendNewSMS,sendSameSMS,sendPwd} = require('../components/sms/sms');
+const {sendNewSMS,sendPwd} = require('../components/sms/sms');
 
 import fetch from 'isomorphic-fetch';
 import lo from 'lodash';
@@ -45,14 +45,18 @@ resProcessor.jsonp(req, res, {
 
 const createSMS = async (req,res) =>{
     const phoneNumber = req.body.phoneNumber
-    const code  = await sendNewSMS(phoneNumber)
-    console.log("he")
+    const result = await get(phoneNumber)
+    let code
+    if(result){
+        code  = await sendNewSMS(phoneNumber,result)
+    }else{
+        code  = await sendNewSMS(phoneNumber)
+    }
+
     await set(phoneNumber,code)
-    console.log("he")
     resProcessor.jsonp(req, res, {
         state: { code: 0 },
         data: {
-            code: code
         }
     });
 }
@@ -72,6 +76,69 @@ const createCaptcha = async(req,res) =>{
 }
 
 
+const modifyPassword = async (req,res) =>{
+    const username = req.body.username
+    const oldPassword = req.body.oldPassword
+    const newPassword = req.body.newPassword
+  
+    if(!username || !oldPassword||!newPassword) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 1 , msg: '参数不全'},
+            data: {}
+        });
+        return
+    }
+
+    const result = await UserDB.authJudge(username, oldPassword)
+
+    if(result){
+       const result =  await UserDB.updatePassword(username,newPassword)
+       if(result){
+        resProcessor.jsonp(req, res, {
+            state: { code: 0 , msg: '修改成功'},
+            data: {}
+        }); 
+       }
+    }else{
+        resProcessor.jsonp(req, res, {
+            state: { code: 1 , msg: '原密码错误'},
+            data: {}
+        });
+    }
+
+
+}
+
+const forgotPassword = async (req,res) =>{
+    const userInfo = req.body.userInfo
+
+    if(!userInfo||!userInfo.username ||!userInfo.code||!userInfo.password) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 3000 , msg: '参数不全'},
+            data: {}
+        });
+        return
+    }
+    const code = await get(userInfo.username)
+    if(userInfo.code !== code){
+        resProcessor.jsonp(req, res, {
+            state: { code: 1 , msg: '验证码错误'},
+            data: {}
+        });
+        return
+    }
+    //删除验证码
+    await del(userInfo.username)
+    const result =  await UserDB.updatePassword(userInfo.username,userInfo.password)
+    if(result){
+        resProcessor.jsonp(req, res, {
+            state: { code: 0 , msg: '修改成功'},
+            data: {}
+        }); 
+       }
+
+}
+
 const signUp = async (req, res, next) => {
 const userInfo = req.body.userInfo
 if(!userInfo.username || !userInfo.password||!userInfo.code) {
@@ -89,9 +156,11 @@ if(userInfo.code !== code){
     });
     return
 }
+await del(userInfo.username)
 const result = await UserDB.createUser(
     userInfo.username,
     userInfo.password,
+    userInfo.code,
     userInfo,
 
 )
@@ -598,7 +667,7 @@ if(!openid || !personInfo.name || !personInfo.phone || !personInfo.code) {
     return
 }
 const code = await get(personInfo.phone)
-console.log(code,"xxx")
+
 if(personInfo.code !== code){
     resProcessor.jsonp(req, res, {
         state: { code: 1, msg: "验证码错误" },
@@ -607,6 +676,7 @@ if(personInfo.code !== code){
     return
 }
 try {
+    await del(personInfo.phone)
     const pwd = await sendPwd(personInfo.phone)
     var result1 = await pub_openidToUserInfo(openid)
     const result2 = await UserDB.createUser(personInfo.phone,pwd,{
@@ -644,6 +714,12 @@ module.exports = [
 ['POST','/api/createSMS',createSMS],
 
 ['POST','/api/createCaptcha',createCaptcha],
+<<<<<<< HEAD
+=======
+
+['POST','/api/forgotPassword',forgotPassword],
+['POST','/api/modifyPassword',modifyPassword],
+>>>>>>> 7012c9d77a9ba1f55564279f66f383d98cb2a0ac
 
 ['POST', '/api/getMyInfo',apiAuth, getMyInfo],
 ['POST', '/api/getUserInfo',apiAuth, getUserInfo],

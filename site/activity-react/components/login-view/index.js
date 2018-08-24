@@ -27,6 +27,7 @@ export class LoginView extends React.Component {
 
         getCode: true,
         count: '',
+        code: '',// 验证码
     }
 
 
@@ -41,9 +42,10 @@ export class LoginView extends React.Component {
                 return 
             }
         }
-        console.log('发送')
 
         //发送验证码
+        console.log('sms')
+        this.getSMS();
 
         const interval = 5;
 
@@ -181,6 +183,22 @@ export class LoginView extends React.Component {
         }
     }
 
+    getSMS = async() => {
+        const result = await api('/api/createSMS', {
+            method: 'POST',
+            body: {
+                phoneNumber: this.state.createPhone
+            }
+        })
+
+        console.log(result.state.code)
+        this.setState({
+            code: result.state.code
+        })
+        
+
+    }
+
     signHandle = async () => {
         // todo 检验账号密码是否可用
         if(this.state.infoCheck.createPhoneEmpty){
@@ -197,7 +215,7 @@ export class LoginView extends React.Component {
         }
 
         // 判断 短信发来的 验证码  满足 ，当验证码不等于...
-        if (this.state.authCode !=='123'){
+        if (this.state.authCode !== this.state.createPhone){
             window.toast('验证码不正确，请重新输入')
             return
         }
@@ -209,6 +227,7 @@ export class LoginView extends React.Component {
                 userInfo: {
                     username: this.state.createPhone, // 手机登录 账号为手机号码
                     password: this.state.createPassword, // 输入的密码就是登陆密码
+                    code: this.state.code,
                 }
             }
         })
