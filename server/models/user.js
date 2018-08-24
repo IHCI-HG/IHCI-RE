@@ -98,6 +98,10 @@ userSchema.statics = {
         const result = await this.findByIdAndUpdate(userId, userObj, () => {})
         return result
     },
+    updatePassword:async function(username,password){
+        const result = await this.findOneAndUpdate({username:username},{password:password},()=>{})
+        return result
+    },
     updateUserByUid: async function(unionid, userObj) {
         const result = await this.findOneAndUpdate({unionid: unionid}, userObj, () => {})
         return result
