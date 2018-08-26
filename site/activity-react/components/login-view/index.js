@@ -46,7 +46,7 @@ export class LoginView extends React.Component {
         console.log('sms')
         this.getSMS();
 
-        const interval = 5;
+        const interval = 60;
 
         var temp = interval
         this.setState({
@@ -280,8 +280,9 @@ export class LoginView extends React.Component {
                                 <div className='auth-form'>
                                 <div className="auth-desc">Choose a username</div>
                                 <input className="auth-input" value={this.state.username} onChange={this.usernameHandle}></input>
-                                <div className="auth-desc">Choose a password    <span className="forgetPwd">忘记密码?</span></div>
+                                <div className="auth-desc">Choose a password</div>
                                 <input className="auth-input" type="password" value={this.state.password} onChange={this.passwordHandle}></input>
+                                <div className="forgetPwd">忘记密码?</div>
                                     <div className="submit-btn" onClick={this.loginHandle}>LOG IN</div>
                                     <div className="submit-btn" onClick={this.props.showWxDialogHandle}>微信登录</div>
                                 </div>
