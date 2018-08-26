@@ -116,7 +116,7 @@ export default class SMSBlock extends React.Component{
     }
     render () {
         return(
-            <div>
+            <div className = "sms-block">
                 <input className = "input-edit" placeholder = "6位数字验证码" value = {this.props.smsCode} onChange = {this.props.smsCodeInputHandle}></input>
                 {
                     <div className = {this.state.numberCheck?"active":"inacitve"} onClick = {this.GetSMSHandle}>{this.state.enable? '获取验证码':`${this.state.count}秒后重发`}</div>

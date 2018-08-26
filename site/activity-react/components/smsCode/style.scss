@@ -1,0 +1,15 @@
+.sms-block{
+    width:200px;
+    display:flex;
+    .input-edit{
+        border: 1px solid #e6e6e6; /*no*/
+        height: 40px;
+        width: 200px;
+        border-radius: 4px;
+        line-height: 40px;  
+    }
+    .active .inactive{
+        width:200px;
+    }
+
+}

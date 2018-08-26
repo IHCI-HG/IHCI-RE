@@ -110,17 +110,19 @@ const modifyPassword = async (req,res) =>{
 }
 
 const forgotPassword = async (req,res) =>{
-    const userInfo = req.body.userInfo
+    const username = req.body.phone
+    const smsCode = req.body.code
+    const password = req.body.password
 
-    if(!userInfo||!userInfo.username ||!userInfo.code||!userInfo.password) {
+    if(!username ||!smsCode||!password) {
         resProcessor.jsonp(req, res, {
             state: { code: 3000 , msg: '参数不全'},
             data: {}
         });
         return
     }
-    const code = await get(userInfo.username)
-    if(userInfo.code !== code){
+    const code = await get(username)
+    if(smsCode !== code){
         resProcessor.jsonp(req, res, {
             state: { code: 1 , msg: '验证码错误'},
             data: {}
@@ -128,8 +130,8 @@ const forgotPassword = async (req,res) =>{
         return
     }
     //删除验证码
-    await del(userInfo.username)
-    const result =  await UserDB.updatePassword(userInfo.username,userInfo.password)
+    await del(username)
+    const result =  await UserDB.updatePassword(username,password)
     if(result){
         resProcessor.jsonp(req, res, {
             state: { code: 0 , msg: '修改成功'},
@@ -714,12 +716,9 @@ module.exports = [
 ['POST','/api/createSMS',createSMS],
 
 ['POST','/api/createCaptcha',createCaptcha],
-<<<<<<< HEAD
-=======
 
 ['POST','/api/forgotPassword',forgotPassword],
 ['POST','/api/modifyPassword',modifyPassword],
->>>>>>> 7012c9d77a9ba1f55564279f66f383d98cb2a0ac
 
 ['POST', '/api/getMyInfo',apiAuth, getMyInfo],
 ['POST', '/api/getUserInfo',apiAuth, getUserInfo],

@@ -13,6 +13,7 @@ import TeamJoin from './team-join'
 import WxCode from './wxcode'
 import WxChoose from './wx-choose'
 import IhciJoin from './ihci-join';
+import PwdReset from './password-reset'
 
 class App extends React.Component{
     state = {
@@ -305,6 +306,10 @@ const routeConfig = [
     {
         path: '/ihci-join',
         component: IhciJoin
+    },
+    {
+        path: '/password-reset',
+        component: PwdReset
     }
 ]
 

@@ -4,6 +4,7 @@ import Page from '../../../components/page'
 import api, { authApi } from '../../../utils/api';
 import {IhciJoin as staticText} from '../../../commen/static-text'
 import SMSBlock from '../../../components/smsCode'
+
 export default class IhciJoin extends React.Component{
 
     state = {
@@ -162,15 +163,12 @@ export default class IhciJoin extends React.Component{
                             <input type="text" onChange={this.phoneInputHandle} className="input-edit" value={this.state.personInfo.phone}/>
                             {this.state.infoCheck.illegalPhoneNumber && <div className='after error'>{staticText.PERSON_INFO_CHECK.CREATE_PHONE_ILLEGAL}</div>}
                             
-                            
                         </div>
-                        <div className = "edit-con">
                         <SMSBlock smsCodeInputHandle = {this.smsCodeInputHandle}
                                   smsCode = {this.state.smsCode}
                                   phoneNumber = {this.state.personInfo.phone}
                                   phoneEmpty = {this.state.infoCheck.phoneEmpty}
                                   ></SMSBlock>
-                        </div>
                     <div className = "enter-btn" onClick = {this.enterHandle}>{staticText.BUTTON_TEXT.ENTER_IHCI}</div>
                 </div>
               
