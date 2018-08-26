@@ -62,14 +62,6 @@ export default class Person extends React.Component{
 
     }
 
-    changePwd = () => {
-        console.log(this.state.showChangePwd)
-        
-        this.setState({ 
-            showChangePwd: !this.state.showChangePwd,         
-        })
-        console.log(this.state.showChangePwd)
-    }
 
     initdataAllFilled = () => {
         if (!INIT_DATA.userObj.personInfo){
@@ -124,7 +116,6 @@ export default class Person extends React.Component{
         },
         infoCheck:{
             illegalEmailAddress: false,
-            illegalPhoneNumber:false,
             illegalName: false,
         },
         confirmEditMail: false,
@@ -139,11 +130,6 @@ export default class Person extends React.Component{
             illegalPassword:false,
         },
 
-        showChangePwd: false,
-
-        currentPwd:'',
-        newPwd:'',
-        oldPwd:'',
     }
 
     
@@ -319,23 +305,6 @@ export default class Person extends React.Component{
         return reg.test(phoneNumber);
     }
 
-    phoneInputHandle = (e) => {
-        const phonNumber = e.target.value
-        var illegalPhoneNumber = false
-        if (!this.isPhoneNumber(phonNumber)){
-            illegalPhoneNumber = true
-        }
-        this.setState({
-            personInfo: {
-                ...this.state.personInfo,
-                phone: phonNumber,
-            },
-            infoCheck: {
-                ...this.state.infoCheck,
-                illegalPhoneNumber: illegalPhoneNumber,
-            },
-        })
-    }
 
     isEmailAddress = (emailAddress) => {
         const reg = /^[A-Za-z0-9._%-]+@([A-Za-z0-9-]+\.)+[A-Za-z]{2,4}$/;
@@ -387,7 +356,6 @@ export default class Person extends React.Component{
     infoCheckIllegal = () =>{
         var infoCheck = {
             illegalEmailAddress: false,
-            illegalPhoneNumber: false,
             illegalName: false,
         }
 
@@ -395,9 +363,7 @@ export default class Person extends React.Component{
             infoCheck.illegalEmailAddress = true
         }
 
-        if (!this.isPhoneNumber(this.state.personInfo.phone)){
-            infoCheck.illegalPhoneNumber = true
-        }
+       
 
         if (!this.isName(this.state.personInfo.name)){
             infoCheck.illegalName = true
@@ -602,20 +568,7 @@ export default class Person extends React.Component{
             }
     }
 
-    currentPwdHandle = async (e) => {
-        const currentPwd = e.target.value
-        this.setState({
-            currentPwd: currentPwd
-        })
-    }
 
-    newPwdHandle = async(e) => {
-        const newPwd = e.target.value
-        this.setState({
-            newPwd: newPwd,
-        })
-        console.log(newPwd)
-    }
 
     getInfo = async() => {
         const result = await api('/api/getMyInfo',{
@@ -627,23 +580,6 @@ export default class Person extends React.Component{
         })
 
         console.log('result', result)
-    }
-    saveChangePwd = () => {
-        const currentPwd = this.state.currentPwd
-        const newPwd = this.state.newPwd
-        this.getInfo()
-       
-       // if (currentPwd !==)
-        if (!currentPwd){
-            window.toast('当前密码不能为空')
-            return
-        } else if(!newPwd) {
-            window.toast('新密码不能为空')
-        } else if (currentPwd !== newPwd){
-            window.toast('密码不一致')
-        } else if(currentPwd && newPwd && currentPwd === newPwd) {
-            window.toast('修改密码成功')
-        }
     }
 
     render() {
@@ -683,6 +619,10 @@ export default class Person extends React.Component{
                     </div>
                     :""
                 }
+                <div className="edit-con">
+                    <div className="before">手机</div>
+                    <div className="showPhone">{this.state.userObj.username}</div>
+                </div>
                 {
                 <div className="edit-con">
                     <div className="before">微信</div>
@@ -711,6 +651,7 @@ export default class Person extends React.Component{
                     {!this.state.userObj.openid && <div className='after'>需要<div className='follow-btn' onClick={this.openFollowDialogHandle}>关注服务号</div>才能接受讨论消息提醒</div>}   
                 </div>:""
                 }
+                
                 <div className="edit-con">
                     <div className="before">姓名</div>
                     <input type="text" onChange={this.nameInputHandle} className="input-edit"  value={this.state.personInfo.name}/>
@@ -739,44 +680,6 @@ export default class Person extends React.Component{
                         
                 </div>
 
-                <div className="edit-con">
-                    <div className="before">手机</div>
-                    <input type="text" onChange={this.phoneInputHandle} className="input-edit" value={this.state.personInfo.phone}/>
-                    {this.state.infoCheck.illegalPhoneNumber && <div className='after error'>格式错误,请填写正确格式的电话号码</div>}
-                </div>
-
-
-                <span className="changePwd" onClick={this.changePwd}>
-                {
-                    !this.state.showChangePwd?
-                    '更改密码':
-                    '取消'
-                }
-                
-                </span>
-                {/* <span className="changePwd" onClick={() => {this.setState({
-                    showChangePwd: false
-                })}}>取消</span> */}
-                {      
-                    this.state.showChangePwd ?
-                    <div>  
-                    {/* <span>取消</span> */}
-                    <div className="edit-con">
-                        <div className="before">当前密码</div>
-                        <input type="password" className="input-edit" 
-                            onChange={this.currentPwdHandle} value={this.state.currentPwd} autoFocus
-                        />
-                    </div>
-                    <div className="edit-con">
-                        <div className="before">新密码</div>
-                        <input type="password" className="input-edit" 
-                            onChange={this.newPwdHandle} value={this.state.newPwd}
-                        />
-                    </div>
-                    <span className="saveChangePwd" onClick={this.saveChangePwd} >保存修改密码</span>
-                    </div>
-                    : ""
-                }
                
 
 

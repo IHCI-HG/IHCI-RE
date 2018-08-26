@@ -28,6 +28,7 @@ class App extends React.Component{
 
         display: 'none',
         menuSetBgColor: '',
+        menuModifyBgColor:'',
         menuCreateBgColor: '',
         menuQuitBgColor: '',
 
@@ -41,6 +42,8 @@ class App extends React.Component{
     handleMouseOver = this.handleMouseOver.bind(this);
     handleSetMouseOver = this.handleSetMouseOver.bind(this);
     handleSetMouseOut = this.handleSetMouseOut.bind(this);
+    handleModifyMouseOut = this.handleModifyMouseOut.bind(this);
+    handleModifyMouseOver = this.handleModifyMouseOver.bind(this);
     handleCreateMouseOver = this.handleCreateMouseOver.bind(this);
     handleCreateMouseOut = this.handleCreateMouseOut.bind(this);
     handleQuitMouseOver = this.handleQuitMouseOver.bind(this);
@@ -76,6 +79,16 @@ class App extends React.Component{
     handleSetMouseOut() {
         this.setState({
             menuSetBgColor: 'whitesmoke'
+        })
+    }
+    handleModifyMouseOver() {
+        this.setState({
+            menuModifyBgColor: '#ccc'
+        })
+    }
+    handleModifyMouseOut() {
+        this.setState({
+            menuModifyBgColor: 'whitesmoke'
         })
     }
     handleCreateMouseOver() {
@@ -136,9 +149,6 @@ class App extends React.Component{
             return false
         }
         if (!this.state.personInfo.mail){
-            return false
-        }
-        if (!this.state.personInfo.phone){
             return false
         }
         return true
@@ -229,6 +239,9 @@ class App extends React.Component{
                         <div className="menuSet" onClick={this.routerHandle.bind(this, '/person')} 
                         style={{backgroundColor:this.state.menuSetBgColor}}
                         onMouseOver={this.handleSetMouseOver} onMouseOut={this.handleSetMouseOut}>个人设置</div>
+                        <div className="modifyPassword" onClick={this.routerHandle.bind(this,'/modify-password')}
+                        style={{backgroundColor:this.state.menuModifyBgColor}}
+                        onMouseOver={this.handleModifyMouseOver} onMouseOut={this.handleModifyMouseOut}>修改密码</div>
                         <div className="menuCreate" onClick={() => {this.locationTo('/team-create')}} 
                         style={{backgroundColor:this.state.menuCreateBgColor}}
                         onMouseOver={this.handleCreateMouseOver} onMouseOut={this.handleCreateMouseOut}>+创建团队</div>

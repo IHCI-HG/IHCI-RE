@@ -88,6 +88,13 @@ const modifyPassword = async (req,res) =>{
         });
         return
     }
+    if(oldPassword === newPassword){
+        resProcessor.jsonp(req,res,{
+            state:{code:1,msg:'新老密码一样'},
+            data:{}
+        });
+        return
+    }
 
     const result = await UserDB.authJudge(username, oldPassword)
 
@@ -346,9 +353,7 @@ if(req.body.headImg) {
 if(req.body.name) {
     personInfoObj.name = req.body.name
 }
-if(req.body.phone) {
-    personInfoObj.phone = req.body.phone
-}
+
 if(req.body.mail) {
     personInfoObj.mail = req.body.mail
     if(user.personInfo!=null && !(req.body.mail==user.personInfo.mail)){
@@ -714,16 +719,14 @@ module.exports = [
 ['POST','/api/createSMS',createSMS],
 
 ['POST','/api/createCaptcha',createCaptcha],
-<<<<<<< HEAD
-=======
-
-['POST','/api/forgotPassword',forgotPassword],
-['POST','/api/modifyPassword',modifyPassword],
->>>>>>> 7012c9d77a9ba1f55564279f66f383d98cb2a0ac
 
 ['POST', '/api/getMyInfo',apiAuth, getMyInfo],
 ['POST', '/api/getUserInfo',apiAuth, getUserInfo],
 ['POST', '/api/userInfoList',apiAuth, userInfoList],
+
+['POST','/api/modifyPassword',modifyPassword],
+['POST','/api/forgotPassword',forgotPassword],
+
 
 ['POST', '/api/login', login],
 ['GET', '/wxLogin', wxLogin],
