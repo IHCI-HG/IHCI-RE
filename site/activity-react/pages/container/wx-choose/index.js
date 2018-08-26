@@ -102,6 +102,12 @@ export default class WxChoose extends React.Component{
         }, 1000)
 
     }
+
+    resetPWDHandle = () =>{
+        setTimeout(() => {
+            location.href = '/password-reset'
+        },500)
+    }
     render () {
         return(
         <Page>
@@ -125,6 +131,7 @@ export default class WxChoose extends React.Component{
                    <input className="login-input" type="password" value={this.state.password} onChange={this.passwordHandle}></input>
                    <div className="login-btn" onClick={this.loginHandle}>{staticText.BUTTON_TEXT.SUBMIT}</div>
                    <div className="login-btn" onClick={this.setTologinHandle}>{staticText.BUTTON_TEXT.CANCEL}</div>
+                   <div className = "login-desc" onClick={this.resetPWDHandle}>{staticText.BUTTON_TEXT.FORGET_PWD}</div>
                    </div>
                 :""
             }

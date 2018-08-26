@@ -714,9 +714,12 @@ module.exports = [
 ['POST','/api/createSMS',createSMS],
 
 ['POST','/api/createCaptcha',createCaptcha],
+<<<<<<< HEAD
+=======
 
 ['POST','/api/forgotPassword',forgotPassword],
 ['POST','/api/modifyPassword',modifyPassword],
+>>>>>>> 7012c9d77a9ba1f55564279f66f383d98cb2a0ac
 
 ['POST', '/api/getMyInfo',apiAuth, getMyInfo],
 ['POST', '/api/getUserInfo',apiAuth, getUserInfo],
