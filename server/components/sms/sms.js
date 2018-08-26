@@ -17,7 +17,7 @@ let resultCode = code?code:randomCode
 const result = await smsClient.sendSMS({
     PhoneNumbers:phoneNumber,
     SignName:'智能人机交互实验室',
-    TemplateCode:'SMS_142621688',
+    TemplateCode:'SMS_142948470',
     TemplateParam:JSON.stringify({
         code:resultCode
     })
