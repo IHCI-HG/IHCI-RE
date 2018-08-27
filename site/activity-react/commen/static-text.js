@@ -44,9 +44,9 @@ const IhciJoin = {
         JOIN_BLOCK_TITLE: "加入iHCI",
     },
     LABEL_TEXT: {
-        SET_NAME: "姓名: ",
-        SET_EMAIL: "邮箱: ",
-        SET_PHONE: "手机: ",
+        SET_NAME: "姓名:",
+        SET_EMAIL: "邮箱:",
+        SET_PHONE: "手机:",
     },
     BUTTON_TEXT: {
         ENTER_IHCI: "加入",

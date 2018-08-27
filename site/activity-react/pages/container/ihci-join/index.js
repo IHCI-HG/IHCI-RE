@@ -154,7 +154,7 @@ export default class IhciJoin extends React.Component{
                     <div className = "head">{staticText.PAGE_INFO.JOIN_BLOCK_TITLE}</div>
                     <div className="edit-con">
                             <div className="before">{staticText.LABEL_TEXT.SET_NAME}</div>
-                            <input type="text" onChange={this.nameInputHandle} className="input-edit"  value={this.state.personInfo.name}/>
+                            <input type="text"  onChange={this.nameInputHandle} className="input-edit"  value={this.state.personInfo.name}/>
                             {this.state.infoCheck.illegalName && <div className='after error'>{staticText.PERSON_INFO_CHECK.CREATE_NAME_ILLEGAL}</div>}
                         </div>
 
@@ -164,12 +164,14 @@ export default class IhciJoin extends React.Component{
                             {this.state.infoCheck.illegalPhoneNumber && <div className='after error'>{staticText.PERSON_INFO_CHECK.CREATE_PHONE_ILLEGAL}</div>}
                             
                         </div>
+                        <div className = "edit-con">
                         <SMSBlock smsCodeInputHandle = {this.smsCodeInputHandle}
                                   smsCode = {this.state.smsCode}
                                   phoneNumber = {this.state.personInfo.phone}
                                   phoneEmpty = {this.state.infoCheck.phoneEmpty}
                                   ></SMSBlock>
-                    <div className = "enter-btn" onClick = {this.enterHandle}>{staticText.BUTTON_TEXT.ENTER_IHCI}</div>
+                        </div>
+                        <div className = "edit-con"><div className = "enter-btn" onClick = {this.enterHandle}>{staticText.BUTTON_TEXT.ENTER_IHCI}</div></div>      
                 </div>
               
             </Page>
