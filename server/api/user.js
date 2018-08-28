@@ -83,14 +83,14 @@ const modifyPassword = async (req,res) =>{
   
     if(!username || !oldPassword||!newPassword) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1 , msg: '参数不全'},
+            state: { code: 3000 , msg: '参数不全'},
             data: {}
         });
         return
     }
     if(oldPassword === newPassword){
         resProcessor.jsonp(req,res,{
-            state:{code:1,msg:'新老密码一样'},
+            state:{code:1000,msg:'新老密码一样'},
             data:{}
         });
         return
@@ -108,7 +108,7 @@ const modifyPassword = async (req,res) =>{
        }
     }else{
         resProcessor.jsonp(req, res, {
-            state: { code: 1 , msg: '原密码错误'},
+            state: { code: 1000 , msg: '原密码错误'},
             data: {}
         });
     }
@@ -131,7 +131,7 @@ const forgotPassword = async (req,res) =>{
     const code = await get(username)
     if(smsCode !== code){
         resProcessor.jsonp(req, res, {
-            state: { code: 1 , msg: '验证码错误'},
+            state: { code: 1000 , msg: '验证码错误'},
             data: {}
         });
         return
@@ -160,7 +160,7 @@ if(!userInfo.username || !userInfo.password||!userInfo.code) {
 const code = await get(userInfo.username)
 if(userInfo.code !== code){
     resProcessor.jsonp(req, res, {
-        state: { code: 1, msg: "验证码错误"},
+        state: { code: 1000, msg: "验证码错误"},
         data: {}
     });
     return
@@ -197,7 +197,7 @@ const password = req.body.password
 const userId = req.rSession.userId
 if(!username || !password) {
     resProcessor.jsonp(req, res, {
-        state: { code: 1, msg: "参数不全"},
+        state: { code: 3000, msg: "参数不全"},
         data: {}
     });
     return
@@ -208,7 +208,7 @@ const result = await UserDB.updateUser(userId,{
 })
 if(!result) {
     resProcessor.jsonp(req, res, {
-        state: { code: 1, msg: "用户名已经存在"},
+        state: { code: 1000, msg: "用户名已经存在"},
         data: {}
     });
     return
@@ -231,7 +231,7 @@ const password = lo.get(req, 'body.password')
 
 if(!username || !password) {
     resProcessor.jsonp(req, res, {
-        state: { code: 1 , msg: '参数不全'},
+        state: { code: 3000 , msg: '参数不全'},
         data: {}
     });
     return
@@ -248,7 +248,7 @@ if(result) {
     });
 } else {
     resProcessor.jsonp(req, res, {
-        state: { code: 1 , msg: '账号或密码错误'},
+        state: { code: 1000 , msg: '账号或密码错误'},
         data: {}
     });
 }
@@ -261,7 +261,7 @@ const password = lo.get(req, 'body.password')
 const openid = lo.get(req, 'body.openid')
 if(!username || !password || !openid) {
     resProcessor.jsonp(req, res, {
-        state: { code: 1 , msg: '参数不全'},
+        state: { code: 3000 , msg: '参数不全'},
         data: {}
     });
     return
@@ -286,7 +286,7 @@ if(result) {
     });
 } else {
     resProcessor.jsonp(req, res, {
-        state: { code: 1 , msg: '账号或密码错误'},
+        state: { code: 1000 , msg: '账号或密码错误'},
         data: {}
     });
 }
@@ -316,7 +316,7 @@ const getUserInfo = async (req, res, next) => {
 const userID = req.body.userId
 if(!userID) {
     resProcessor.jsonp(req, res, {
-        state: { code: 1 , msg: '参数不全'},
+        state: { code: 3000 , msg: '参数不全'},
         data: {}
     });
     return 
@@ -330,7 +330,7 @@ const result = await UserDB.findByUserId(userID)
     });
 } catch (error){
     resProcessor.jsonp(req, res, {
-        state: { code: 2 , msg: '未知错误'},
+        state: { code: 1000 , msg: '未知错误'},
         data: {}
     });
 }
@@ -374,7 +374,7 @@ if(result) {
     });
 } else {
     resProcessor.jsonp(req, res, {
-        state: { code: 1, msg: '设置失败' },
+        state: { code: 1000, msg: '设置失败' },
         data: {}
     });
 }
@@ -396,7 +396,13 @@ const wxLogin = async (req, res, next) => {
 const code = lo.get(req, 'query.code')
 const state = lo.get(req, 'query.state')
 const userId = lo.get(req, 'rSession.userId')
-
+if(!username || !password) {
+    resProcessor.jsonp(req, res, {
+        state: { code: 3000 , msg: '参数不全'},
+        data: {}
+    });
+    return
+}
 try {
     const result = await web_codeToAccessToken(code)
     if (state == 'bind') {
@@ -471,7 +477,7 @@ try {
     });
 } catch (error) {
     resProcessor.jsonp(req, res, {
-        state: { code: 1, msg: '解绑失败' },
+        state: { code: 1000, msg: '解绑失败' },
         data: {}
     });
     console.error(error)
@@ -486,7 +492,7 @@ const resultPromiseList = []
 
 if(!userList || !userList.length) {
     resProcessor.jsonp(req, res, {
-        state: { code: 1, msg: "参数有误" },
+        state: { code: 3000, msg: "参数有误" },
         data: {}
     });
     return
@@ -505,7 +511,7 @@ try {
         });
     } else {
         resProcessor.jsonp(req, res, {
-            state: { code: 1 , msg: '找不到'},
+            state: { code: 1000 , msg: '找不到'},
             data: {}
         });
     }
@@ -668,7 +674,7 @@ const personInfo = {
 }
 if(!openid || !personInfo.name || !personInfo.phone || !personInfo.code) {
     resProcessor.jsonp(req, res, {
-        state: { code: 1, msg: "参数不全" },
+        state: { code: 3000, msg: "参数不全" },
         data: {}
     });
     return
@@ -677,7 +683,7 @@ const code = await get(personInfo.phone)
 
 if(personInfo.code !== code){
     resProcessor.jsonp(req, res, {
-        state: { code: 1, msg: "验证码错误" },
+        state: { code: 1000, msg: "验证码错误" },
         data: {}
     });
     return
@@ -708,7 +714,7 @@ try {
     });
 } catch (error) {
     resProcessor.jsonp(req, res, {
-        state: { code: 1, msg: '登陆失败' },
+        state: { code: 1000, msg: '登陆失败' },
         data: {}
     });
     console.error(error)

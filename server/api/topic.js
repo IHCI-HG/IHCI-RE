@@ -392,7 +392,7 @@ const topicInfo = async (req, res, next) => {
 
 //设置Topic已读
 const readingNotice = async (req, res, next) => {
-    const noticeId = req.body.noticeId
+    const noticeId = req.body.topicId
     const readerId = req.rSession.userId
 
     if(!noticeId == undefined) {
@@ -444,7 +444,7 @@ const readingNotice = async (req, res, next) => {
 
 
 const getMoreTopic = async (req,res,next) =>{
-    const teamId = req.query.teamId;
+    const teamId = req.body.teamId;
     const currentPage = req.query.currentPage;
 
 

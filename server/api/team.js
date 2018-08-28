@@ -159,7 +159,7 @@ const modifyMemberRole = async (req, res, next) => {
 
         if (!myRole) {
             resProcessor.jsonp(req, res, {
-                state: { code: 3001, msg: '你不并在这个团队里面' },
+                state: { code: 3001, msg: '你不在这个团队里面' },
                 data: {}
             });
             return

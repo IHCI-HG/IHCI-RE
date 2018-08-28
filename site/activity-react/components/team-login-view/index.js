@@ -141,9 +141,9 @@ export class TeamLoginView extends React.Component {
         if(result.state.code === 0) {
             window.toast("登录成功")
             if (this.props.join)
-                window.location.href = window.location.href
+                location.href = location.href
             else
-                window.location.href = '/team'
+                location.href = '/team'
         } else {
             window.toast(result.state.msg || "登录失败")
         }
@@ -179,6 +179,9 @@ export class TeamLoginView extends React.Component {
         if(result.state.code === 0) {
             window.toast("注册成功")
             setTimeout(() => {
+            if (this.props.join)
+                location.href = location.href
+            else
                 location.href = '/person'
             }, 300);
         }

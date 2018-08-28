@@ -10,7 +10,7 @@ const roleSchema = new mongoose.Schema({
 
 
 roleSchema.statics = {
-    createRole: function(userId,teamId,role) {
+    createRole: function(teamId, userId, role) {
         return this.create({
             teamId: teamId,
             userId: userId,
@@ -18,8 +18,8 @@ roleSchema.statics = {
         })
     },
 
-    findRole: function(userId,teamId) {
-        return this.find({
+    findRole: async function(userId,teamId) {
+        return this.findOne({
             teamId: teamId,
             userId: userId
         }).exec()
