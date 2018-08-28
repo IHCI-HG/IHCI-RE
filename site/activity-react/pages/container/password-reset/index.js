@@ -54,10 +54,7 @@ export default class PwdReset extends React.Component{
         if(result.state.code === 0){
             window.toast("修改成功")
             setTimeout(() => {
-                window.toast("欢迎回到iHCI")
-            },500)
-            setTimeout(() => {
-                location.href = '/team'
+                window.history.go(-1)
             },1000)
         }else{
             window.toast(result.state.msg)
