@@ -44,7 +44,7 @@ export default class ModidyPassword extends React.Component{
                 newPassword:newPassword
             }
         })
-        console.log(result)
+      
         if(result.state.code === 1){
             window.toast(result.state.msg)
             return

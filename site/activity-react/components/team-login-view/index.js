@@ -2,25 +2,28 @@ import * as React from 'react';
 
 import api, { authApi } from '../../utils/api';
 
+import SMSBlock from '../../components/smsCode'
 import './style.scss'
 
 import WxLoginDialog from '../../components/wx-login-dialog'
 
 export class TeamLoginView extends React.Component {
     state = {
-        //loginBlock: signUp || login
+      
         loginBlock: "login",
 
         username: '',
         password: '',
+        
 
         createUsername: '',
         createPassword: '',
-        createConfirmPassword:'',
+        smsCode: '',
+
         infoCheck:{
-            createUsernameEmpty: true,
+            createUsername: true,
             createPasswordEmpty:true,
-            createConfirmPasswordEmpty: true,
+            smsCodeEmpty:true,
             usernameEmpty:true,
             passwordEmpty:true
         },
@@ -88,6 +91,22 @@ export class TeamLoginView extends React.Component {
             }
         })
     }
+    smsCodeHandle = (e) =>{
+        const smsCode = e.target.value
+        var smsCodeEmpty = true
+        if(smsCode){
+            smsCodeEmpty = false
+        }else{
+            smsCodeEmpty = true
+        }
+        this.setState({
+            smsCode:smsCode,
+            infoCheck:{
+                ...this.state.infoCheck,
+                smsCodeEmpty:smsCodeEmpty
+            }
+        })
+    }
     createPasswordHandle = (e) => {
         const createPassword = e.target.value
         var createPasswordEmpty = true
@@ -106,22 +125,7 @@ export class TeamLoginView extends React.Component {
 
         })
     }
-    createConfirmPasswordHandle = (e) =>{
-        const confirmPassword = e.target.value
-        var createConfirmPasswordEmpty = true
-        if(confirmPassword){
-            createConfirmPasswordEmpty = false
-        }else{
-            createConfirmPasswordEmpty = true
-        }
-        this.setState({
-            createConfirmPassword:e.target.value,
-            infoCheck:{
-                ...this.state.infoCheck,
-                createConfirmPasswordEmpty:createConfirmPasswordEmpty
-            }
-        })
-    }
+    
 
     loginHandle = async () => {
         if(this.state.infoCheck.usernameEmpty){
@@ -146,46 +150,43 @@ export class TeamLoginView extends React.Component {
     }
 
     signHandle = async () => {
-        // todo 检验账号密码是否可用
-        if(this.state.infoCheck.createUsernameEmpty){
-            window.toast("用户名为空")
+        if(this.state.createUsernameEmpty){
+            window.toast("手机为空")
+            return
+        }
+        if(this.state.infoCheck.smsCodeEmpty){
+            window.toast("验证码为空")
             return
         }
         if(this.state.infoCheck.createPasswordEmpty){
             window.toast("密码为空")
-            return
-        }
-        if(this.state.infoCheck.createConfirmPasswordEmpty){
-            window.toast("确认密码为空")
             return 
         }
-        if(this.state.createPassword !== this.state.createConfirmPassword){
-            window.toast("两次输入密码不同")
-            return
-        }
+     
+        // 密码自己设置
         const result = await api('/api/signUp', {
             method: 'POST',
             body: {
                 userInfo: {
-                    username: this.state.createUsername,
-                    password: this.state.createPassword,
+                    username: this.state.createUsername, // 手机登录 账号为手机号码
+                    password: this.state.createPassword, // 输入的密码就是登陆密码
+                    code: this.state.smsCode,
                 }
             }
         })
 
+  
         if(result.state.code === 0) {
             window.toast("注册成功")
             setTimeout(() => {
-                if (this.props.join)
-                    location.href = location.href
-                else location.href = '/person'
+                location.href = '/person'
             }, 300);
         }
         else{
             window.toast(result.state.msg || "注册失败")
         }
     }
-
+    
 
     render () {
         return <div className="auth-con">
@@ -205,13 +206,17 @@ export class TeamLoginView extends React.Component {
                                 <div className='auth-form'>
 
                                     <div className="auth-desc"></div>
-                                    <input type="text" placeholder="Your username" className="auth-input" value={this.state.createUsername} onChange={this.createUsernameHandle}></input>
+                                    <input type="text" placeholder="请填写手机号" className="auth-input" value={this.state.createUsername} onChange={this.createUsernameHandle}></input>
 
+                                    <SMSBlock 
+                                        
+                                        smsCodeInputHandle = {this.smsCodeHandle}
+                                        smsCode = {this.state.smsCode}
+                                        phoneNumber = {this.state.createUsername}
+                                        phoneEmpty = {this.state.createUsernameEmpty}
+                                      /> 
                                     <div className="auth-desc"></div>
-                                    <input type="text" placeholder="Your password" className="auth-input" type="password" value={this.state.createPassword} onChange={this.createPasswordHandle}></input>
-
-                                    <div className="auth-desc"></div>
-                                    <input className="auth-input" placeholder="Confirm Password" type="password" value={this.state.createConfirmPassword} onChange={this.createConfirmPasswordHandle}></input>
+                                    <input type="text" placeholder="请输入密码" className="auth-input" type="password" value={this.state.createPassword} onChange={this.createPasswordHandle}></input>
 
                                     <div className="submit-btn" onClick={this.signHandle}>CREATE ACCOUNT</div>
                                 </div>

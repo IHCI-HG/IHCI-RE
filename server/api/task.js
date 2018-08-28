@@ -380,18 +380,15 @@ const createTask = async (req, res, next) => {
        
         if(taskHeader&&!!deadline){
             var timeTask=setInterval(async()=>{
-                console.log("come in")
-                console.log(deadline)
+
                 var d = new Date()
                 var day=d.getDate()
                 var month=d.getMonth() + 1
                 var year=d.getFullYear()
-                console.log(year,ddl.year)
-                console.log(month,ddl.month)
-                console.log(day,ddl.date-1)
+
                 if(year === ddl.year&&month === ddl.month ){
                     if(day >= ddl.date-1&&day<=ddl.date){
-                    console.log("close to time out!!!!!!")
+      
                     closeToDDLTemplate(headerList,taskObj)
                     clearInterval(timeTask)
                     const teamObj = await teamDB.findByTeamId(teamId);   
@@ -400,7 +397,6 @@ const createTask = async (req, res, next) => {
                     }));
                     }
                     if(day>ddl.date){
-                        console.log("time out!!!")
                         clearInterval(timeTask)
                     }
                 }
@@ -520,19 +516,13 @@ const editTask = async (req, res, next) => {
 
         if (editTask.assigneeId) {
             task.header = editTask.assigneeId   
-
-           
-            //7.6      
+  
             await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'CHANGE_TASK_HEADER', taskObj._id, taskObj.title, task);
             
-            // const result =  await taskDB.updateTask(taskId, task);//之前的result
-            // console.log("## "+result);
+      
             const headerList = [];
             headerList.push(task.header);
 
-            // headerList.map((item) => {
-            //     userDB.editTaskHeader(item, result, teamObj.name)
-            // })
         }else{
             task.header = undefined
             await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'CHANGE_TASK_HEADER', taskObj._id, taskObj.title, task);
@@ -566,7 +556,6 @@ const editTask = async (req, res, next) => {
 
         const result1 = await taskDB.updateTask(taskId, editTask);
 
-        console.log("$$  "+ result1)//更改后的result
 
         if (tasklistId) {
             await tasklistDB.updateTask(tasklistId, taskId, task);

@@ -27,9 +27,6 @@ export default class SMSBlock extends React.Component{
             number += 1
             this.setState({
                 number: number
-            }, () => {
-                console.log(this.state.number)
-                console.log(number)
             })
         }
     }
@@ -99,7 +96,7 @@ export default class SMSBlock extends React.Component{
             body:{}
         })
         if(result.state.code === 0){
-            console.log(result.data)
+   
             this.setState({
                 captchaImg: result.data.img,
                 captchaText:result.data.text
@@ -111,7 +108,7 @@ export default class SMSBlock extends React.Component{
     render () {
         return(
             <div className = "sms-block">
-                <input className = "input-code" placeholder = "6位数字验证码" value = {this.props.smsCode} onChange = {this.props.smsCodeInputHandle}></input>
+                <input className = "input-code" placeholder = "4位数字验证码" value = {this.props.smsCode} onChange = {this.props.smsCodeInputHandle}></input>
                 {
                     <div className ={this.state.numberCheck ? 'active-btn' : 'inacitve-btn'} onClick = {this.GetSMSHandle}>{this.state.enable? '获取验证码':`${this.state.count}秒后重发`}</div>
                 }

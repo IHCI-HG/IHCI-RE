@@ -59,7 +59,7 @@ export default class Modal extends React.Component {
         })
         if(result.data) {
             this.setState({
-                teamInfo: result.data
+                teamInfo: result.data.teamObj
             })
         }
     }

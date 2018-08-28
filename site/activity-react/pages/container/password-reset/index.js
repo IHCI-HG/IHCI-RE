@@ -4,6 +4,7 @@ import Page from '../../../components/page'
 import api from '../../../utils/api';
 //import {WxChoose as staticText} from '../../../commen/static-text'
 import SMSBlock from '../../../components/smsCode'
+const sha256 = require('crypto-js/SHA256');
 
 export default class PwdReset extends React.Component{
     state = {
@@ -44,6 +45,7 @@ export default class PwdReset extends React.Component{
     }
 
     resetPasswordHandle = async() =>{
+<<<<<<< HEAD
         if(phoneEmpty){
             window.toast("手机号为空")
         }
@@ -53,12 +55,16 @@ export default class PwdReset extends React.Component{
         if(codeEmpty){
             window.toast("验证码为空")
         }
+=======
+
+        const password = sha256(this.state.newPassword).toString()
+>>>>>>> ff559d69b7bce5dfb9b55c74bf322880cb6d25cc
         const result = await api('/api/forgotPassword', {
             method: 'POST',
             body:{
                 phone: this.state.phone,
                 code: this.state.smsCode,
-                password: this.state.newPassword,
+                password: password,
             }
         })
         if(result.state.code === 0){
@@ -70,6 +76,7 @@ export default class PwdReset extends React.Component{
             window.toast(result.state.msg)
         }
     }
+
     returnHandle = () =>{
         setTimeout(()=>{
             window.history.go(-1)
@@ -88,7 +95,7 @@ export default class PwdReset extends React.Component{
                    phoneNumber = {this.state.phone}
                    phoneEmpty = {this.state.phoneEmpty}
                 /> 
-                <input className = "input-edit" value = {this.state.newPassword} onChange = {this.passwordInputHandle} placeholder = "新密码"></input>
+                <input className = "input-edit" type="password"  value = {this.state.newPassword} onChange = {this.passwordInputHandle} placeholder = "新密码"></input>
                 <div className = "reset-btn" onClick = {this.resetPasswordHandle}>确定</div>
                 <div className = "reset-btn" onClick = {this.returnHandle}>返回</div>
                 </div>

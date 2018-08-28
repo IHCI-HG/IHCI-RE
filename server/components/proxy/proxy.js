@@ -97,7 +97,6 @@ var apiProxy = function (uri, params, callback, secret, req) {
             var ms = (_serverRequestEndTime[0] - _serverRequestStartTime[0]) * 1e3 +
                 (_serverRequestEndTime[1] - _serverRequestStartTime[1]) * 1e-6;
 
-            console.log('[request server api] uri:' + uri + ' params:', JSON.stringify(params), ' key:', secret, ' response-time: ' + ms.toFixed(3) + 'ms', '\n');
 
             postData = null;
             _serverRequestStartTime = null;
@@ -116,7 +115,6 @@ var apiProxy = function (uri, params, callback, secret, req) {
 
             if (callback) {
                 let bodyStr = JSON.stringify(body) || '';
-                console.log('[request server response-data] uri:' + uri, ' response: ', bodyStr.slice(0, 400), '\n');
 
                 bodyStr = bodyStr.replace(/(\u0085)|(\u2028)|(\u2029)/g, (m) => "");
                 try {

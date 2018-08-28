@@ -41,7 +41,7 @@ function formatDate(date, formatStr) {
 
 export const notificationMail = async function(userIdList, topicObj, type) {
     const personInfoList = await userDB.personInfoList(userIdList)
-    console.log(personInfoList)
+    
     personInfoList.map(async (item) => {
         if(item.personInfo.mail&&item.isLive) {
             var mail = {
@@ -64,7 +64,7 @@ export const notificationMail = async function(userIdList, topicObj, type) {
                 const sendFlag = await sendMail(mail)
                 console.log("邮件发送状态：",sendFlag)
             }catch(error){
-                console.log("错误")
+                console.error("错误")
             };                                     
         }        
     })
