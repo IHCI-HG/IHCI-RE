@@ -17,6 +17,7 @@ export default class IhciJoin extends React.Component{
         infoCheck:{
             nameEmpty:true,
             phoneEmpty:true,
+            codeEmpty:true,
             illegalPhoneNumber:false,
             illegalName: false,
         },
@@ -113,7 +114,9 @@ export default class IhciJoin extends React.Component{
         if(this.state.infoCheck.phoneEmpty){
             window.toast(staticText.PERSON_INFO_CHECK.CREATE_PHONE_EMPTY)
         }
-
+        if(this.state.infoCheck.codeEmpty){
+            window.toast("验证码为空")
+        }
         const result = await api('/api/user/wxEnter',{
             method:'POST',
             body:{
@@ -140,7 +143,11 @@ export default class IhciJoin extends React.Component{
     smsCodeInputHandle = (e) =>{
         const code = e.target.value
         this.setState({
-            smsCode: code
+            smsCode: code,
+            infoCheck:{
+                ...this.state.infoCheck,
+                codeEmpty:false
+            }
         })
 
     }
