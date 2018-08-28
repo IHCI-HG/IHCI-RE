@@ -12,6 +12,7 @@ export default class PwdReset extends React.Component{
         smsCode:'',
         phoneEmpty:true,
         passwordEmpty:true,
+        codeEmpty:true,
 
     }
     componentDidMount = () => {
@@ -37,12 +38,21 @@ export default class PwdReset extends React.Component{
     smsCodeInputHandle = (e) =>{
         const code = e.target.value
         this.setState({
-            smsCode: code
+            smsCode: code,
+            codeEmpty:false
         })
     }
 
     resetPasswordHandle = async() =>{
-
+        if(phoneEmpty){
+            window.toast("手机号为空")
+        }
+        if(passwordEmpty){
+            window.toast("密码为空")
+        }
+        if(codeEmpty){
+            window.toast("验证码为空")
+        }
         const result = await api('/api/forgotPassword', {
             method: 'POST',
             body:{

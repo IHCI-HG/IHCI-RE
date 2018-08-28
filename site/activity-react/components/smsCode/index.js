@@ -4,9 +4,9 @@ import './style.scss'
 
 export default class SMSBlock extends React.Component{
     state = {
-        count: '',
+        count: 60,
         enable: true,
-        number: '',
+        number: 0,
         captchaCode:'',
         captchaImg :'',
         captchaText:'',
@@ -14,10 +14,7 @@ export default class SMSBlock extends React.Component{
         captchCodeCheck:false,
     }
     componentDidMount = async () =>{
-        this.setState({
-            count:60,
-            number:0,
-        })
+        this.getCaptchaImg()
     }
     
     checkSMSNumber = () =>{
