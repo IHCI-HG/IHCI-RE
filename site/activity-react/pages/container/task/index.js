@@ -226,6 +226,9 @@ class Task extends React.Component{
                 todolist.list = [...todolist.list, todo]
                 this.setState({ todoListArr })
             }
+            else{
+                window.toast(result.state.msg)
+            }
             return result
         }
         
