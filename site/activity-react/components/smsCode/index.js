@@ -39,13 +39,8 @@ export default class SMSBlock extends React.Component{
     GetSMSHandle = async () =>{
         if(this.props.phoneEmpty){
             window.toast("请输入手机号")
-            this.setState({
-                enable: false
-            }, () => {
-                console.log(this.state.enable)
-            })
         }
-        if(this.state.enable){
+        if(this.state.enable && !this.props.phoneEmpty){
             this.checkSMSNumber()
             if(this.state.numberCheck){
                 const result = await api('/api/createSMS',{

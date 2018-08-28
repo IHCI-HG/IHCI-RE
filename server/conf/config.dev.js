@@ -39,7 +39,6 @@ var config = {
         'bucket': 'arluber',
     },
 
-    
 
 
     // mail: 'http://localhost:5000',
