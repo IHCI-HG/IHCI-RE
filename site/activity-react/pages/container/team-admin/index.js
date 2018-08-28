@@ -41,7 +41,7 @@ export default class TeamAdmin extends React.Component{
         memberResult.data.map((item, idx) => {
             memberList.push({
                 ...item,
-                ...result.data.memberList[idx],
+                ...result.data.teamObj.memberList[idx],
                 showAdmin: false
             })
         })

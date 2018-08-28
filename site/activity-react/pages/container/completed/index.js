@@ -5,10 +5,7 @@ import api from '../../../utils/api';
 import { timeParse, formatDate, createMarkup } from '../../../utils/util'
 import Page from '../../../components/page'
 
-const newTimeLineItemNum = 20
-const moreTimeLineItemNum = 10
-
-export default class Timeline extends React.Component{
+export default class Completed extends React.Component{
     componentDidMount = async() => {
         await this.initTodoListArr()
         this.initTeamInfo()
@@ -111,7 +108,7 @@ export default class Timeline extends React.Component{
         memberResult.data.map((item, idx) => {
             memberList.push({
                 ...item,
-                ...result.data.memberList[idx],
+                ...result.data.teamObj.memberList[idx],
                 chosen: false,
             })
         })
