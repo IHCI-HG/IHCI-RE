@@ -17,14 +17,24 @@ export default class PwdReset extends React.Component{
 
     }
     componentDidMount = () => {
+        this.setState({
+            phone: window.sessionStorage.getItem('phone')||''
+        },() =>{
+            if(this.state.phone !== ''){
+                this.setState({
+                    phoneEmpty: false
+                })
+            }
+        })
      }
 
     phoneInputHandle = (e) => {
-        const phonNumber = e.target.value
+        const phoneNumber = e.target.value
         this.setState({
-            phone: phonNumber,
-            phoneEmpty:false
-            
+            phone: phoneNumber,
+            phoneEmpty:false  
+        },() => {
+            window.sessionStorage.setItem('phone',phoneNumber)
         })
     }
 
@@ -45,7 +55,6 @@ export default class PwdReset extends React.Component{
     }
 
     resetPasswordHandle = async() =>{
-<<<<<<< HEAD
         if(phoneEmpty){
             window.toast("手机号为空")
         }
@@ -55,10 +64,8 @@ export default class PwdReset extends React.Component{
         if(codeEmpty){
             window.toast("验证码为空")
         }
-=======
 
         const password = sha256(this.state.newPassword).toString()
->>>>>>> ff559d69b7bce5dfb9b55c74bf322880cb6d25cc
         const result = await api('/api/forgotPassword', {
             method: 'POST',
             body:{
@@ -68,6 +75,9 @@ export default class PwdReset extends React.Component{
             }
         })
         if(result.state.code === 0){
+            window.sessionStorage.removeItem('phone')
+            window.sessionStorage.removeItem('number')
+            window.sessionStorage.removeItem('count')
             window.toast("修改成功")
             setTimeout(() => {
                 window.history.go(-1)
@@ -88,7 +98,7 @@ export default class PwdReset extends React.Component{
             <Page title = "重新设置密码" className = "reset-page">
                 <div className = "reset-block">
                 <div className = "title">重新设置密码</div>
-                <input className = "input-edit" value={this.state.phonNumber} onChange = {this.phoneInputHandle} placeholder = "手机号"></input>
+                <input className = "input-edit" value={this.state.phone} onChange = {this.phoneInputHandle} placeholder = "手机号"></input>
                 <SMSBlock 
                    smsCodeInputHandle = {this.smsCodeInputHandle}
                    smsCode = {this.state.smsCode}
