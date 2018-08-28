@@ -22,7 +22,7 @@ export default class Members extends React.Component{
             body: id ? {
                 teamId : id
             }:{}
-        })                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+        })                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
         this.setState({ 
             memberList: result.data
         })
@@ -45,7 +45,10 @@ export default class Members extends React.Component{
     }
 
     initTeamList = async () => {
-        const result = await api('/api/getMyInfo')
+        const result = await api('/api/getMyInfo', {
+            method: 'POST',
+            body: {}
+        })
         if(result.data.userObj) {
             this.setState({
                 teamList: result.data.userObj.teamList,

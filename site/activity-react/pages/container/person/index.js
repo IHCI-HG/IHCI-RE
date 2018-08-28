@@ -711,7 +711,7 @@ export default class Person extends React.Component{
                         </div>}
                     {(!this.state.hasMail || this.state.confirmEditMail) && <div>
                             <input type="text" onChange={this.mailInputHandle} className="input-edit" value={this.state.personInfo.mail}/>
-                            <div className='edit-btn' onClick={this.editSubmitHangle}>确定</div>
+                            {!this.state.infoCheck.illegalEmailAddress&&<div className='edit-btn' onClick={this.editSubmitHangle}>确定</div>}
                         </div>}
                     {this.state.infoCheck.illegalEmailAddress && <div className='after error'>格式错误,请填写正确格式的邮件地址</div>}
                         

@@ -20,7 +20,11 @@ import {
 } from '../components/wx-utils/wx-utils'
 import { dayLeft } from '../../site/activity-react/utils/util';
 import { clearInterval } from 'timers';
-
+import{
+    isMember,
+    isAdmin,
+    isCreator
+} from '../middleware/auth-judge/auth-judge'
 var mongoose = require('mongoose')
 
 var teamDB = mongoose.model('team')
@@ -896,7 +900,7 @@ const taskInfo = async (req, res, next) => {
 
 const addCheckitem = async (req, res, next) => {
     const teamId = req.body.teamId
-    const taskId = req.body.todoId;
+    const taskId = req.body.taskId;
     const content = req.body.name;
     const header = req.body.assigneeId || "";
     const deadline = req.body.ddl || "";
@@ -1012,7 +1016,7 @@ const addCheckitem = async (req, res, next) => {
 }
 
 const dropCheckitem = async (req, res, next) => {
-    const taskId = req.body.todoId;
+    const taskId = req.body.taskId;
     const checkitemId = req.body.checkitemId;
 
     const userId = req.rSession.userId;
@@ -1078,7 +1082,7 @@ const dropCheckitem = async (req, res, next) => {
 }
 
 const findCheckitem = async (req, res, next) => {
-    const taskId = req.body.todoId;
+    const taskId = req.body.taskId;
     const checkitemId = req.body.checkitemId;
 
     const userId = req.rSession.userId;
@@ -1131,7 +1135,7 @@ const findCheckitem = async (req, res, next) => {
 
 const editCheckitem = async (req, res, next) => {
     const teamId = req.body.teamId
-    const taskId = req.body.todoId;
+    const taskId = req.body.taskId;
     const checkitemId = req.body.checkitemId;
     const editCheckitem = req.body.editCheckitem;
 
@@ -1623,7 +1627,7 @@ module.exports = [
     ['POST', '/api/task/changeListIndex', apiAuth, changeTaskListIndex],
     ['POST', '/api/task/delTasklist', apiAuth, delTasklist],
     ['POST', '/api/task/findTasklistById', apiAuth, findTasklistById],
-    ['POST', '/api/task/create', apiAuth, createTask],
+    ['POST', '/api/task/create', apiAuth, isMember, createTask],
     ['POST', '/api/task/delTask', apiAuth, delTask],
     ['POST', '/api/task/edit', apiAuth, editTask],
     ['POST', '/api/task/changeDir', apiAuth, changeTaskDir],

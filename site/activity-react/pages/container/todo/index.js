@@ -805,7 +805,7 @@ export default class Task extends React.Component{
             const resp = await api('/api/task/addCheckitem', {
                 method: 'POST',
                 body: {
-                    todoId: this.props.params.id,
+                    taskId: this.props.params.id,
                     name: todoInfo.name,
                     ddl: todoInfo.date,
                     assigneeId: todoInfo.assigneeId,
@@ -847,7 +847,7 @@ export default class Task extends React.Component{
             const resp = await api('/api/task/editCheckitem', {
                 method: 'POST',
                 body: {
-                    todoId,
+                    taskId: todoId,
                     checkitemId,
                     editCheckitem,
                     teamId:this.state.todo.teamId,
@@ -877,7 +877,7 @@ export default class Task extends React.Component{
         const resp = await api('/api/task/editCheckitem', {
             method: 'POST',
             body: {
-                todoId,
+                taskId: todoId,
                 checkitemId,
                 editCheckitem,
                 teamId:this.state.todo.teamId,
@@ -901,7 +901,7 @@ export default class Task extends React.Component{
         const resp = await api('/api/task/editCheckitem', {
             method: 'POST',
             body: {
-                todoId,
+                taskId: todoId,
                 checkitemId,
                 editCheckitem,
                 teamId:this.state.todo.teamId,
@@ -925,7 +925,7 @@ export default class Task extends React.Component{
         const resp = await api('/api/task/editCheckitem', {
             method: 'POST',
             body: {
-                todoId,
+                taskId: todoId,
                 checkitemId,
                 editCheckitem,
                 teamId: this.state.todo.teamId,
@@ -948,7 +948,7 @@ export default class Task extends React.Component{
         const resp = await api('/api/task/dropCheckitem', {
             method: 'POST',
             body: {
-                todoId,
+                taskId: todoId,
                 checkitemId,
                 teamId:this.state.todo.teamId,
             }

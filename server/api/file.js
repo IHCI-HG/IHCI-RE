@@ -163,32 +163,32 @@ const getDirFileList = async (req, res, next) => {
 }
 
 const downloadFile = async (req, res, next) => {
-    const fileInfo = req.body.fileInfo
+    // const fileInfo = req.body.fileInfo
 
-    var ossKey = `${fileInfo.teamId}${fileInfo.dir}/${fileInfo.fileName}`
+    // var ossKey = `${fileInfo.teamId}${fileInfo.dir}/${fileInfo.fileName}`
 
-    try {
-        const client = new OSSW({
-            accessKeyId: conf.ossConf.ossAdminAccessKeyId,
-            accessKeySecret: conf.ossConf.ossAdminAccessKeySecret,
-            bucket: conf.ossConf.bucket,
-            region: conf.ossConf.region
-        });
-        var result = await client.get(ossKey)
-        console.log(result.res.data)
-        res.send(result.res.data)
+    // try {
+    //     const client = new OSSW({
+    //         accessKeyId: conf.ossConf.ossAdminAccessKeyId,
+    //         accessKeySecret: conf.ossConf.ossAdminAccessKeySecret,
+    //         bucket: conf.ossConf.bucket,
+    //         region: conf.ossConf.region
+    //     });
+    //     var result = await client.get(ossKey)
+    //     console.log(result.res.data)
+    //     res.send(result.res.data)
 
-        /*
-        resProcessor.jsonp(req, res, {
-            state: {code: 0,msg: "Successfully downloaded file"},
-            data: {
-                downFile: downFile
-            }
-        });
-        */
-    } catch (error) {
-        res.send(404)
-    }
+    //     /*
+    //     resProcessor.jsonp(req, res, {
+    //         state: {code: 0,msg: "Successfully downloaded file"},
+    //         data: {
+    //             downFile: downFile
+    //         }
+    //     });
+    //     */
+    // } catch (error) {
+    //     res.send(404)
+    // }
 }
 
 const moveFile = async (req, res, next) => {
