@@ -43,7 +43,7 @@ export class LoginView extends React.Component {
         }
 
         //发送验证码
-        console.log('sms')
+
         this.getSMS();
 
         const interval = 60;
@@ -225,7 +225,7 @@ export class LoginView extends React.Component {
             }
         })
 
-        console.log('##', result)
+  
         if(result.state.code === 0) {
             window.toast("注册成功")
             setTimeout(() => {

@@ -32,7 +32,7 @@ class EditTodo extends React.Component {
         this.setState({
             todoDesc: content
         })
-        console.log(this.state.todoDesc)
+      
     }
 
     fileUploadHandle = async (e) => {

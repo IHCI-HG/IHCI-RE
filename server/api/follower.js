@@ -24,11 +24,11 @@ var follower = async function(req, res, next) {
 
     await followerDB.remove()     
     const followerList = await pub_accessTokenToFollowerList()
-    console.log("这是关注列表：", followerList)
+  
     followerList.data.openid.map(async (item)=>{
          const follower = await pub_openidToUserInfo(item)    
          const result = await followerDB.createFollower(item, follower.unionid) 
-         console.log("这是结果", result)
+        
     })
 
 }

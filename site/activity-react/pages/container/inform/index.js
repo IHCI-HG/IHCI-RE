@@ -23,7 +23,7 @@ class InformItem extends React.PureComponent{
         'CREATE_CHECK_ITEM': '创建了检查项: '
     }
     changeReadState = async () => {
-        console.log(this.props)
+      
         
         const queryNoticeId = this.props.noticeId
         let rState = true
@@ -239,7 +239,7 @@ export default class Infs extends React.Component{
               })
               
               const isreadList = result.data
-              console.log(isreadList)
+            
               if(!isreadList||isreadList.length === 0){
                 this.setState({
                     isreadNoResult:true
@@ -445,7 +445,7 @@ markToRead = async() =>{
       render() {
         const unreadList = this.state.unreadList
         const isreadList = this.state.isreadList
-        console.log(isreadList)
+      
         const userId = this.props.personInfo._id
 
           return (

@@ -113,7 +113,7 @@ var wxReceiver = function(req, res, next) {
             break;
     }
 
-    console.log('wxReceiver-body: ', req.body);
+
 
     if(req.query.echostr) {
         res.send(req.query.echostr)

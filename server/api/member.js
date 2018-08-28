@@ -25,7 +25,7 @@ const member = async (req, res, next) => {
     //当没有传入teamId时，返回所有项目组成员信息；当传入时返回指定项目组成员信息
     try{
         if(teamId){
-            console.log("团队Id:" , teamId)
+      
             const teamObj = await teamDB.findByTeamId(teamId)
             teamObj.memberList.map((item)=>{           
                 memberId.push(item.userId)

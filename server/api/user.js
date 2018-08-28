@@ -296,7 +296,7 @@ const getMyInfo = async (req, res, next) => {
 const userID = req.rSession.userId
 const result = await UserDB.findByUserId(userID)
 
-console.log("*****"    + result)
+
 if(result) {
     result.password = undefined
     resProcessor.jsonp(req, res, {
@@ -510,7 +510,7 @@ try {
         });
     }
 } catch (error) {
-    console.log(error);
+    console.error(error);
     resProcessor.jsonp(req, res, {
         state: { code: 1 , msg: '有问题的userID'},
         data: {}
@@ -646,7 +646,7 @@ resProcessor.jsonp(req, res, {
 });
 }
 const readNoticeArray = async(req,res,next) =>{
-console.log('come in')
+
 const userId = req.rSession.userId
 const isReadNoticeArray = req.body.isReadNoticeArray
 try{

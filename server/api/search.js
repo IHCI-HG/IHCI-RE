@@ -126,7 +126,7 @@ const search = async (req, res, next) => {
             data: Result
         });
     }catch (error) {
-        console.log(error) 
+        console.error(error) 
         resProcessor.jsonp(req, res, {
             state: {code: 1000, msg:'操作失败' },
             data: {},

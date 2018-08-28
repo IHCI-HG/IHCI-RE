@@ -47,7 +47,7 @@ export default class TeamCreate extends React.Component{
     }
 
     createBtnHandle = async () => {
-        console.log(this.state.infoCheck.teamNameEmpty)
+   
         if(this.state.infoCheck.teamNameEmpty){
             window.toast("团队名称为空")
         }
