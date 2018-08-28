@@ -9,7 +9,7 @@ import { TeamLoginView } from '../../../components/team-login-view';
 
 export default class TeamAdmin extends React.Component{
     componentDidMount = async() => {
-        console.log(INIT_DATA)
+       
         if(INIT_DATA.login) {
             this.setState({
                 login: true
@@ -64,7 +64,7 @@ export default class TeamAdmin extends React.Component{
     }
 
     render() {
-        console.log(this)
+       
         return(
             <Page title='加入团队 - IHCI' className="join-team">
             

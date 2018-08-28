@@ -103,7 +103,7 @@ export default class TeamDetail extends React.Component {
             }
             memberIDList.push(item.userId)
         })
-        console.log(isCreator)
+      
         const memberResult = await api('/api/userInfoList', {
             method: 'POST',
             body: { userList: memberIDList }
@@ -340,7 +340,7 @@ export default class TeamDetail extends React.Component {
                 editTask: editTask,
             }
         })
-        console.log(resp)
+        
         if (resp.state.code === 0) {
             // 更新 todolist
             const todoListArr = this.state.todoListArr
@@ -367,7 +367,7 @@ export default class TeamDetail extends React.Component {
                 editTask: editTask,
             }
         })
-        console.log(resp)
+   
         if (resp.state.code === 0) {
             let todoListArr = this.state.todoListArr
             const todolist = todoListArr[lIndex]
@@ -472,7 +472,7 @@ export default class TeamDetail extends React.Component {
                 teamId: this.teamId,
             }
         })
-        console.log(resp)
+    
         this.initTodoListArr()
     }
 

@@ -90,7 +90,7 @@ class Task extends React.Component{
                 teamId: this.teamId
             }
         })
-        console.log(resp)
+        
         let todoListArr = this.state.todoListArr
         //未分类列表
         let unclassifiedList = []

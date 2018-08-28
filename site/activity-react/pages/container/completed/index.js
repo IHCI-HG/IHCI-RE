@@ -75,10 +75,10 @@ export default class Completed extends React.Component{
         todoListArr = [unclassified, ...todoList]
         if (resp.state.code === 0) {
             this.setState({ todoListArr },() => {
-                this.appendToShowList(this.state.todoListArr,()=>{console.log(this.state.todoListArr)})
+                this.appendToShowList(this.state.todoListArr)
             })
         }
-        console.log(this.state.todoListArr)
+        
     }
 
     initTeamInfo = async () => {

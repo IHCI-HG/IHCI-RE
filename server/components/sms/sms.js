@@ -11,19 +11,33 @@ let smsClient = new SMSClient({
     secretAccessKey
 })
 
-export const sendSMS = async(phoneNumber)=>{
+export const sendNewSMS = async(phoneNumber,code)=>{
 let randomCode = '' + (1000 + Math.ceil(Math.random() * 9000))
-console.log(phoneNumber)
-console.log(randomCode)
+let resultCode = code?code:randomCode
 const result = await smsClient.sendSMS({
     PhoneNumbers:phoneNumber,
     SignName:'智能人机交互实验室',
-    TemplateCode:'SMS_142621688',
+    TemplateCode:'SMS_142948470',
     TemplateParam:JSON.stringify({
-        code:randomCode
+        code:resultCode
     })
 })
-return randomCode
+return resultCode
 
+}
+
+
+export const sendPwd = async(phoneNumber)=>{
+    let randomPwd = '' + (10000000 + Math.ceil(Math.random() * 90000000))
+    await smsClient.sendSMS({
+        PhoneNumbers:phoneNumber,
+        SignName:'智能人机交互实验室',
+        TemplateCode:'SMS_142621947',
+        TemplateParam:JSON.stringify({
+            PhoneNumber:phoneNumber,
+            Password:randomPwd
+        })
+    })
+    return randomPwd
 
 }

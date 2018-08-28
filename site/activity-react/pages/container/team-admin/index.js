@@ -112,7 +112,7 @@ export default class TeamAdmin extends React.Component{
     } 
 
     setUserRoleHandle = (id, role) => {
-        console.log(role);
+   
         const memberList = this.state.memberList
         memberList.map((item) => {
             if(item._id == id) {
@@ -190,7 +190,7 @@ export default class TeamAdmin extends React.Component{
         })
 
         if(result.state.code === 0) {
-            console.log(result);
+           
             window.toast("设置成功")
             setTimeout(location.href = '/team/' + this.teamId,10000)
         }
@@ -225,7 +225,7 @@ export default class TeamAdmin extends React.Component{
         await uploadResult.then(function(val) {
             succeeded = 1
         }).catch(function(reason){
-            console.log(reason)
+       
             succeeded = 0
         })
 
@@ -244,15 +244,16 @@ export default class TeamAdmin extends React.Component{
         copyVal.select();
         try{
             if(document.execCommand('copy', false, null)){
-                console.log('copied');
+             
                 window.toast('复制成功');
             }
             else{
-                console.log('failed');
+                window.toast('复制失败');
+          
             }
             
         }catch(err){
-                console.log(err);
+                console.error(err);
         }
     } 
     

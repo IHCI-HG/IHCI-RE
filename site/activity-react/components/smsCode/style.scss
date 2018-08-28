@@ -1,0 +1,31 @@
+.sms-block{
+    width:400px;
+    display:flex;
+    flex-wrap:wrap;
+    flex-direction: row;
+    .input-code{
+        border: 1px solid #e6e6e6; /*no*/
+        height: 45px;
+        width: 250px;
+        margin-top:20px;
+        border-radius: 6px;
+        line-height: 50px;
+        padding:0 10px;  
+    }
+    .active-btn,.inactive-btn{
+        margin-top:20px;
+        margin-left:5px;
+        width:140px;
+        display:flex;
+        flex-wrap:wrap;
+        align-items: center;
+        cursor: pointer;
+    }
+    .active-btn,.change-icon{
+        color:#666;
+    }
+    .inactive-btn{
+        color: #888;
+    }
+
+}

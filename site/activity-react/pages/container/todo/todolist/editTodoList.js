@@ -4,7 +4,7 @@ import '../style.scss'
 class EditTodoList extends React.Component {
 
     handleConfirm = () => {
-        console.log('handleConfirm')
+        
         const params = {}
         // id 可以在之前绑定
         // if (this.props) {
@@ -27,7 +27,7 @@ class EditTodoList extends React.Component {
 
     render() {
         const _props = this.props
-        console.log(_props)
+     
         return (
             <div className="todo">
                 <div className="todo-wrap">
