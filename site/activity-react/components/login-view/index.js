@@ -27,6 +27,21 @@ export class LoginView extends React.Component {
 
         getCode: true,
         count: '',
+
+        numberCheck:true,
+        enable: true,
+        numberCheck:true,
+        captchaCode:'',
+        captchaImg :'',
+        captchaText:'',
+        number: '',
+        captchCodeCheck:false,
+    }
+
+    componentDidMount = async() => {
+        this.setState({
+            number: 0,
+        })
     }
 
 
@@ -46,7 +61,7 @@ export class LoginView extends React.Component {
 
         this.getSMS();
 
-        const interval = 60;
+        const interval = 5;
 
         var temp = interval
         this.setState({
@@ -182,20 +197,93 @@ export class LoginView extends React.Component {
         }
     }
 
+    checkSMSNumber = () => {
+        if (this.state.number === 3){
+            this.setState({
+                numberCheck:false,
+            })
+        } else{
+            var number = this.state.number
+            number += 1
+            this.setState({
+                number: number
+            })
+        }
+    }
+
     getSMS = async() => {
-        const result = await api('/api/createSMS', {
-            method: 'POST',
-            body: {
-                phoneNumber: this.state.createPhone
+        if(this.state.enable) {
+        this.checkSMSNumber()
+        if(this.state.numberCheck){
+            const result = await api('/api/createSMS', {
+                method: 'POST',
+                body: {
+                    phoneNumber: this.state.createPhone
+                }
+            })
+            if(result.state.code === 0 ){
+
+            } else {
+                window.toast(result.state.msg || "请重新输入")
             }
+            this.countDown()
+        } else {
+            window.toast("获取验证码次数过多，请输入图片验证码")
+            this.getCaptchaImg()
+        }
+        }
+    }
+
+    getCaptchaImg = async () =>{
+        const result = await api('/api/createCaptcha',{
+            method:'POST',
+            body:{}
         })
-
-        // console.log(result.state.code)  //0
-        // this.setState({
-        //     code: result.state.code
-        // })
+        if(result.state.code === 0){
+   
+            this.setState({
+                captchaImg: result.data.img,
+                captchaText:result.data.text
+            })
+            
+        }
         
+    }
 
+    captchaInputHandle = (e) =>{
+        const code = e.target.value
+        this.setState({
+            captchaCode: code
+        })
+        if(code === this.state.captchaText){
+            this.setState({
+                captchCodeCheck: true,
+                enable: true
+            })
+        }
+
+    }
+
+    countDown = () =>{
+        this.setState({
+            enable:false
+        })
+        var timer = setInterval(() => {
+            var count = this.state.count  
+            count -=1
+            if(count < 1){
+                count = 60
+                this.setState({
+                    enable: true,
+                    count: count
+                })
+                clearInterval(timer)
+            }else{
+                this.setState({
+                    count: count
+                    })
+                }               
+            },1000)
     }
 
     signHandle = async () => {
@@ -262,9 +350,21 @@ export class LoginView extends React.Component {
                                     <input className="auth-smallinput" placeholder="请输入验证码" type="text" 
                                     value={this.state.authCode} onChange={this.authCodeHandle}></input>
                                     {
-                                        this.state.getCode
-                                        ? <button className="codeBtn" onClick={this.handleClick}>获取验证码</button>
-                                        : <button className="countSecond" disabled>{this.state.count+'s'}后重新获取</button>
+                                        <button className={this.state.numberCheck ? 'codeBtn': 'countSecond'}
+                                        onClick={this.getSMS}>{this.state.enable?'获取验证码':`${this.state.count}秒后重发`}</button>
+                                    }
+
+                                    {
+                                        !this.state.numberCheck ?
+                                        <div>
+                                            <input className = "input-code" value = {this.state.captchaCode} onChange={this.captchaInputHandle}></input>
+                                            {
+                                                this.state.captchCodeCheck ? <i className="icon iconfont check-cion">&#xe750;</i> : ""
+                                            }
+                                            <div dangerouslySetInnerHTML = {{__html:this.state.captchaImg}}></div>
+                                            <div className = "change-icon" onClick = {this.getCaptchaImg}>看不清，换一张</div>
+                                        </div>
+                                        : ""
                                     }
 
                                     <div className="auth-desc">密码</div>
