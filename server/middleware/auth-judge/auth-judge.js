@@ -32,7 +32,7 @@ export const isMember = async (req, res, next) =>{
     var teamId = await getTeamId(req, res, next)
     var userId = req.rSession.userId
     const result = await roleDB.findRole(userId, teamId)
-    if(result.role === "member"){
+    if(result.role === "member"||"admin"||"creator"){
         next()
     }
     else{
@@ -47,7 +47,7 @@ export const isAdmin = async (req, res, next) =>{
     var teamId = await getTeamId(req, res, next)
     var userId = req.rSession.userId
     const result = await roleDB.findRole(userId, teamId)
-    if(result.role === "admin"){
+    if(result.role === "admin"||"creator"){
         next()
     }
     else{

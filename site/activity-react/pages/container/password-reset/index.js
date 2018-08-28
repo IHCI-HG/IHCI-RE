@@ -45,7 +45,6 @@ export default class PwdReset extends React.Component{
     }
 
     resetPasswordHandle = async() =>{
-<<<<<<< HEAD
         if(phoneEmpty){
             window.toast("手机号为空")
         }
@@ -55,10 +54,8 @@ export default class PwdReset extends React.Component{
         if(codeEmpty){
             window.toast("验证码为空")
         }
-=======
 
         const password = sha256(this.state.newPassword).toString()
->>>>>>> ff559d69b7bce5dfb9b55c74bf322880cb6d25cc
         const result = await api('/api/forgotPassword', {
             method: 'POST',
             body:{
