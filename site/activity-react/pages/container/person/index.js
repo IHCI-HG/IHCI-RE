@@ -541,6 +541,40 @@ export default class Person extends React.Component{
             confirmEditMail: true,
         })
     }
+
+    editSubmitHangle = async() => {
+        var infoCheckIllegal = this.infoCheckIllegal()
+
+        if (infoCheckIllegal){
+            window.toast(staticText.PERSON_INFO_CHECK.PERSON_INFO_ILLEGAL)
+            return
+        }
+        const result = await api('/api/setUserInfo', {
+            method: 'POST',
+            body: {
+                ...this.state.personInfo
+            }
+        })
+        const result1 = await api('/api/topic/changeCreator',{
+            method:'POST',
+            body:{
+                personInfo: this.state.personInfo,
+                originPersonInfo: this.state.originPersonInfo,
+            }
+        })
+
+        if(result.state.code === 0) {
+            if(INIT_DATA.userObj.personInfo){
+                window.toast(staticText.RESPONSE_MESSAGE.SET_SUCCESS)
+            }
+            this.setState({
+                confirmEditMail: false,
+            });
+        } else {
+            window.toast(staticText.RESPONSE_MESSAGE.SET_FAIL)
+        }
+    }
+
     UsernamePwdHandle = () => {
         this.setState({
             showUsenamePwd:true
@@ -675,7 +709,10 @@ export default class Person extends React.Component{
                                 }
                             </div>
                         </div>}
-                    {(!this.state.hasMail || this.state.confirmEditMail) && <input type="text" onChange={this.mailInputHandle} className="input-edit" value={this.state.personInfo.mail}/>}
+                    {(!this.state.hasMail || this.state.confirmEditMail) && <div>
+                            <input type="text" onChange={this.mailInputHandle} className="input-edit" value={this.state.personInfo.mail}/>
+                            {!this.state.infoCheck.illegalEmailAddress&&<div className='edit-btn' onClick={this.editSubmitHangle}>确定</div>}
+                        </div>}
                     {this.state.infoCheck.illegalEmailAddress && <div className='after error'>格式错误,请填写正确格式的邮件地址</div>}
                         
                 </div>

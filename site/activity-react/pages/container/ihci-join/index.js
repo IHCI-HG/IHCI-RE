@@ -17,6 +17,7 @@ export default class IhciJoin extends React.Component{
         infoCheck:{
             nameEmpty:true,
             phoneEmpty:true,
+            codeEmpty:true,
             illegalPhoneNumber:false,
             illegalName: false,
         },
@@ -28,8 +29,30 @@ export default class IhciJoin extends React.Component{
         //var textData = require('../../../text.json');
         this.setState({
             openid:this.props.location.query.openid,
-            teamjoin:this.props.location.query.teamjoin
+            teamjoin:this.props.location.query.teamjoin,
+            personInfo:{
+                phone: window.sessionStorage.getItem('phone')||'',
+                name: window.sessionStorage.getItem('name')||''
+            }
+        },() =>{
+            if(this.state.personInfo.phone !== ''){
+                this.setState({
+                    infoCheck: {
+                        ...this.state.infoCheck,
+                        phoneEmpty:false,
+                    }
+                })
+            }
+            if(this.state.personInfo.name !== ''){
+                this.setState({
+                    infoCheck: {
+                        ...this.state.infoCheck,
+                        nameEmpty:false,
+                    }
+                })
+            }
         })
+             
      }
     isName = (name) => {
         const reg = /^[\u4E00-\u9FA5A-Za-z]{1}[\u4E00-\u9FA5A-Za-z0-9_\-]{0,11}$/;
@@ -52,6 +75,8 @@ export default class IhciJoin extends React.Component{
                 illegalName: illegalName,
                 nameEmpty:false,
             },
+        },() =>{
+            window.sessionStorage.setItem('name',name)
         })
     }
 
@@ -61,22 +86,25 @@ export default class IhciJoin extends React.Component{
     }
 
     phoneInputHandle = (e) => {
-        const phonNumber = e.target.value
+        const phoneNumber = e.target.value
         var illegalPhoneNumber = false
-        if (!this.isPhoneNumber(phonNumber)){
+        if (!this.isPhoneNumber(phoneNumber)){
             illegalPhoneNumber = true
         }
         this.setState({
             personInfo: {
                 ...this.state.personInfo,
-                phone: phonNumber,
+                phone: phoneNumber,
             },
             infoCheck: {
                 ...this.state.infoCheck,
                 illegalPhoneNumber: illegalPhoneNumber,
                 phoneEmpty:false,
             },
-        })
+        },() => {
+            window.sessionStorage.setItem('phone',phoneNumber)
+        })  
+         
     }
 
     infoCheckIllegal = () =>{
@@ -113,7 +141,9 @@ export default class IhciJoin extends React.Component{
         if(this.state.infoCheck.phoneEmpty){
             window.toast(staticText.PERSON_INFO_CHECK.CREATE_PHONE_EMPTY)
         }
-
+        if(this.state.infoCheck.codeEmpty){
+            window.toast("验证码为空")
+        }
         const result = await api('/api/user/wxEnter',{
             method:'POST',
             body:{
@@ -123,7 +153,12 @@ export default class IhciJoin extends React.Component{
                 code:this.state.smsCode
             }
         })
+
         if(result.state.code === 0){
+            window.sessionStorage.removeItem('phone')
+            window.sessionStorage.removeItem('count')
+            window.sessionStorage.removeItem('number')
+            window.sessionStorage.removeItem('name')
             window.toast(staticText.RESPONSE_MESSAGE.WELCOME_IHCI_MSG)
             setTimeout(() => {
                 if(this.state.teamjoin){
@@ -140,7 +175,11 @@ export default class IhciJoin extends React.Component{
     smsCodeInputHandle = (e) =>{
         const code = e.target.value
         this.setState({
-            smsCode: code
+            smsCode: code,
+            infoCheck:{
+                ...this.state.infoCheck,
+                codeEmpty:false
+            }
         })
 
     }

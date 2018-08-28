@@ -13,17 +13,28 @@ export default class PwdReset extends React.Component{
         smsCode:'',
         phoneEmpty:true,
         passwordEmpty:true,
+        codeEmpty:true,
 
     }
     componentDidMount = () => {
+        this.setState({
+            phone: window.sessionStorage.getItem('phone')||''
+        },() =>{
+            if(this.state.phone !== ''){
+                this.setState({
+                    phoneEmpty: false
+                })
+            }
+        })
      }
 
     phoneInputHandle = (e) => {
-        const phonNumber = e.target.value
+        const phoneNumber = e.target.value
         this.setState({
-            phone: phonNumber,
-            phoneEmpty:false
-            
+            phone: phoneNumber,
+            phoneEmpty:false  
+        },() => {
+            window.sessionStorage.setItem('phone',phoneNumber)
         })
     }
 
@@ -38,11 +49,21 @@ export default class PwdReset extends React.Component{
     smsCodeInputHandle = (e) =>{
         const code = e.target.value
         this.setState({
-            smsCode: code
+            smsCode: code,
+            codeEmpty:false
         })
     }
 
     resetPasswordHandle = async() =>{
+        if(phoneEmpty){
+            window.toast("手机号为空")
+        }
+        if(passwordEmpty){
+            window.toast("密码为空")
+        }
+        if(codeEmpty){
+            window.toast("验证码为空")
+        }
 
         const password = sha256(this.state.newPassword).toString()
         const result = await api('/api/forgotPassword', {
@@ -54,12 +75,12 @@ export default class PwdReset extends React.Component{
             }
         })
         if(result.state.code === 0){
+            window.sessionStorage.removeItem('phone')
+            window.sessionStorage.removeItem('number')
+            window.sessionStorage.removeItem('count')
             window.toast("修改成功")
             setTimeout(() => {
-                window.toast("欢迎回到iHCI")
-            },500)
-            setTimeout(() => {
-                location.href = '/team'
+                window.history.go(-1)
             },1000)
         }else{
             window.toast(result.state.msg)
@@ -77,7 +98,7 @@ export default class PwdReset extends React.Component{
             <Page title = "重新设置密码" className = "reset-page">
                 <div className = "reset-block">
                 <div className = "title">重新设置密码</div>
-                <input className = "input-edit" value={this.state.phonNumber} onChange = {this.phoneInputHandle} placeholder = "手机号"></input>
+                <input className = "input-edit" value={this.state.phone} onChange = {this.phoneInputHandle} placeholder = "手机号"></input>
                 <SMSBlock 
                    smsCodeInputHandle = {this.smsCodeInputHandle}
                    smsCode = {this.state.smsCode}

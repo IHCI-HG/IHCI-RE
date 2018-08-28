@@ -4,9 +4,9 @@ import './style.scss'
 
 export default class SMSBlock extends React.Component{
     state = {
-        count: '',
+        count: 60,
         enable: true,
-        number: '',
+        number: 0,
         captchaCode:'',
         captchaImg :'',
         captchaText:'',
@@ -15,8 +15,18 @@ export default class SMSBlock extends React.Component{
     }
     componentDidMount = async () =>{
         this.setState({
-            count:60,
-            number:0,
+            count: window.sessionStorage.getItem('count')|| 60,
+            number:window.sessionStorage.getItem('number')|| 0,
+        },()=>{
+            if(this.state.count !== 60){
+                
+                this.countDown()
+            }
+            if(this.setState.number === 3){
+                this.setState({
+                    numberCheck:false
+                })
+            }
         })
     }
     
@@ -30,6 +40,8 @@ export default class SMSBlock extends React.Component{
             number += 1
             this.setState({
                 number: number
+            }, () => {
+                window.sessionStorage.setItem('number',number)
             })
         }
     }
@@ -39,7 +51,7 @@ export default class SMSBlock extends React.Component{
         }
         if(this.state.enable && !this.props.phoneEmpty){
             this.checkSMSNumber()
-            if(this.state.numberCheck){
+            if(this.state.numberCheck || this.state.captchCodeCheck){
                 const result = await api('/api/createSMS',{
                     method:'POST',
                     body:{
@@ -70,11 +82,15 @@ export default class SMSBlock extends React.Component{
                 this.setState({
                     enable: true,
                     count: count
+                },()=>{
+                    window.sessionStorage.removeItem('count')
                 })
                 clearInterval(timer)
             }else{
                 this.setState({
                     count: count
+                    }, () =>{
+                        window.sessionStorage.setItem('count',count)
                     })
                 }               
             },1000)
