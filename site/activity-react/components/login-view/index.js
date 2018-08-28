@@ -324,6 +324,12 @@ export class LoginView extends React.Component {
             window.toast(result.state.msg || "注册失败")
         }
     }
+    
+    forgetPwd = async() => {
+        setTimeout(() => {
+            location.href = '/password-reset'
+        }, 300);
+    }
 
     render () {
         return <div className="auth-con">
@@ -382,7 +388,7 @@ export class LoginView extends React.Component {
                                 <input className="auth-input" value={this.state.username} onChange={this.usernameHandle}></input>
                                 <div className="auth-desc">Choose a password</div>
                                 <input className="auth-input" type="password" value={this.state.password} onChange={this.passwordHandle}></input>
-                                <div className="forgetPwd">忘记密码?</div>
+                                <div className="forgetPwd" onClick={this.forgetPwd}>忘记密码?</div>
                                     <div className="submit-btn" onClick={this.loginHandle}>LOG IN</div>
                                     <div className="submit-btn" onClick={this.props.showWxDialogHandle}>微信登录</div>
                                 </div>
