@@ -117,17 +117,19 @@ const modifyPassword = async (req,res) =>{
 }
 
 const forgotPassword = async (req,res) =>{
-    const userInfo = req.body.userInfo
+    const username = req.body.phone
+    const smsCode = req.body.code
+    const password = req.body.password
 
-    if(!userInfo||!userInfo.username ||!userInfo.code||!userInfo.password) {
+    if(!username ||!smsCode||!password) {
         resProcessor.jsonp(req, res, {
             state: { code: 3000 , msg: '参数不全'},
             data: {}
         });
         return
     }
-    const code = await get(userInfo.username)
-    if(userInfo.code !== code){
+    const code = await get(username)
+    if(smsCode !== code){
         resProcessor.jsonp(req, res, {
             state: { code: 1 , msg: '验证码错误'},
             data: {}
@@ -135,8 +137,8 @@ const forgotPassword = async (req,res) =>{
         return
     }
     //删除验证码
-    await del(userInfo.username)
-    const result =  await UserDB.updatePassword(userInfo.username,userInfo.password)
+    await del(username)
+    const result =  await UserDB.updatePassword(username,password)
     if(result){
         resProcessor.jsonp(req, res, {
             state: { code: 0 , msg: '修改成功'},
@@ -294,7 +296,7 @@ const getMyInfo = async (req, res, next) => {
 const userID = req.rSession.userId
 const result = await UserDB.findByUserId(userID)
 
-console.log("*****"    + result)
+
 if(result) {
     result.password = undefined
     resProcessor.jsonp(req, res, {
@@ -508,7 +510,7 @@ try {
         });
     }
 } catch (error) {
-    console.log(error);
+    console.error(error);
     resProcessor.jsonp(req, res, {
         state: { code: 1 , msg: '有问题的userID'},
         data: {}
@@ -644,7 +646,7 @@ resProcessor.jsonp(req, res, {
 });
 }
 const readNoticeArray = async(req,res,next) =>{
-console.log('come in')
+
 const userId = req.rSession.userId
 const isReadNoticeArray = req.body.isReadNoticeArray
 try{
@@ -719,6 +721,9 @@ module.exports = [
 ['POST','/api/createSMS',createSMS],
 
 ['POST','/api/createCaptcha',createCaptcha],
+
+['POST','/api/forgotPassword',forgotPassword],
+['POST','/api/modifyPassword',modifyPassword],
 
 ['POST', '/api/getMyInfo',apiAuth, getMyInfo],
 ['POST', '/api/getUserInfo',apiAuth, getUserInfo],

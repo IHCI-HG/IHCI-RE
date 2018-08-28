@@ -30,20 +30,14 @@ export default class SMSBlock extends React.Component{
             number += 1
             this.setState({
                 number: number
-            }, () => {
-                console.log(this.state.number)
-                console.log(number)
             })
         }
     }
     GetSMSHandle = async () =>{
         if(this.props.phoneEmpty){
             window.toast("请输入手机号")
-            this.setState({
-                enable: false
-            })
         }
-        if(this.state.enable){
+        if(this.state.enable && !this.props.phoneEmpty){
             this.checkSMSNumber()
             if(this.state.numberCheck){
                 const result = await api('/api/createSMS',{
@@ -105,7 +99,7 @@ export default class SMSBlock extends React.Component{
             body:{}
         })
         if(result.state.code === 0){
-            console.log(result.data)
+   
             this.setState({
                 captchaImg: result.data.img,
                 captchaText:result.data.text
@@ -116,18 +110,18 @@ export default class SMSBlock extends React.Component{
     }
     render () {
         return(
-            <div>
-                <input className = "input-edit" placeholder = "6位数字验证码" value = {this.props.smsCode} onChange = {this.props.smsCodeInputHandle}></input>
+            <div className = "sms-block">
+                <input className = "input-code" placeholder = "4位数字验证码" value = {this.props.smsCode} onChange = {this.props.smsCodeInputHandle}></input>
                 {
-                    <div className = {this.state.numberCheck?"active":"inacitve"} onClick = {this.GetSMSHandle}>{this.state.enable? '获取验证码':`${this.state.count}秒后重发`}</div>
+                    <div className ={this.state.numberCheck ? 'active-btn' : 'inacitve-btn'} onClick = {this.GetSMSHandle}>{this.state.enable? '获取验证码':`${this.state.count}秒后重发`}</div>
                 }
                 
             {
-                this.state.numberCheck?
+                !this.state.numberCheck?
                 <div>
-                    <input className = "input-edit" value = {this.state.captchaCode} onChange={this.captchaInputHandle}></input>
+                    <input className = "input-code" value = {this.state.captchaCode} onChange={this.captchaInputHandle}></input>
+                    {this.state.captchCodeCheck?<i className="icon iconfont check-cion">&#xe750;</i>:""}
                     <div dangerouslySetInnerHTML = {{__html:this.state.captchaImg}}></div>
-                    {this.state.captchCodeCheck?<i className="icon iconfont">&#xe750;</i>:""}
                     <div className = "change-icon" onClick = {this.getCaptchaImg}>看不清，换一张</div>
                 </div>
                 :""

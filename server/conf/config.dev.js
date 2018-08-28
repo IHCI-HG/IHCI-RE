@@ -40,6 +40,7 @@ var config = {
     },
 
 
+
     // mail: 'http://localhost:5000',
     mailOrigin: 'http://localhost:5000',
     mail: {

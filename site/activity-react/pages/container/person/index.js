@@ -404,7 +404,7 @@ export default class Person extends React.Component{
         })
         
         
-        console.log(result1)
+      
         if(result.state.code === 0) {
             if(INIT_DATA.userObj.personInfo){
                 window.toast(staticText.RESPONSE_MESSAGE.SET_SUCCESS)
@@ -479,7 +479,7 @@ export default class Person extends React.Component{
         await uploadResult.then(function(val) {
             succeeded = 1
         }).catch(function(reason){
-            console.log(reason)
+           
             succeeded = 0
         })
 
@@ -495,7 +495,7 @@ export default class Person extends React.Component{
                 headImg: window.location.origin+'/head/'+ossKey
             }
         })
-        console.log(this.state.personInfo.headImg)
+       
     }
 
 
@@ -579,7 +579,7 @@ export default class Person extends React.Component{
             oldPwd: this.state.oldPwd
         })
 
-        console.log('result', result)
+      
     }
 
     render() {

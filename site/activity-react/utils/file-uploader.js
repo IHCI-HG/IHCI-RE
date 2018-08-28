@@ -106,7 +106,7 @@ const fileUploader = async (file, ossKey) => {
 
 
     if (result.res.status == 200) { 
-        console.log("文件上传成功");
+    
     } else {
         console.error(result);
     }
