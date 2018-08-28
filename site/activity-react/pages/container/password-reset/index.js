@@ -63,6 +63,11 @@ export default class PwdReset extends React.Component{
             window.toast(result.state.msg)
         }
     }
+    returnHandle = () =>{
+        setTimeout(()=>{
+            window.history.go(-1)
+        },1000)
+    }
 
     render (){
         return(
@@ -78,6 +83,7 @@ export default class PwdReset extends React.Component{
                 /> 
                 <input className = "input-edit" value = {this.state.newPassword} onChange = {this.passwordInputHandle} placeholder = "新密码"></input>
                 <div className = "reset-btn" onClick = {this.resetPasswordHandle}>确定</div>
+                <div className = "reset-btn" onClick = {this.returnHandle}>返回</div>
                 </div>
             </Page>
             
