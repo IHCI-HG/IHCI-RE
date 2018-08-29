@@ -37,7 +37,6 @@ export default class TeamAdmin extends React.Component{
             method: 'POST',
             body: { userList: memberIDList }
         })
-
         memberResult.data.map((item, idx) => {
             memberList.push({
                 ...item,

@@ -30,6 +30,9 @@ const getTeamId = async(req, res, next) => {
 }
 export const isMember = async (req, res, next) =>{
     var teamId = await getTeamId(req, res, next)
+    if(!teamId){
+        next()
+    }
     var userId = req.rSession.userId
     const result = await roleDB.findRole(userId, teamId)
     if(result.role === "member"||"admin"||"creator"){
@@ -45,6 +48,9 @@ export const isMember = async (req, res, next) =>{
 
 export const isAdmin = async (req, res, next) =>{
     var teamId = await getTeamId(req, res, next)
+    if(!teamId){
+        next()
+    }
     var userId = req.rSession.userId
     const result = await roleDB.findRole(userId, teamId)
     if(result.role === "admin"||"creator"){
@@ -60,6 +66,9 @@ export const isAdmin = async (req, res, next) =>{
 
 export const isCreator = async (req, res, next) => {
     var teamId = await getTeamId(req, res, next)
+    if(!teamId){
+        next()
+    }
     var userId = req.rSession.userId
     const result = await roleDB.findRole(userId, teamId)
     if(result.role === "creator"){
