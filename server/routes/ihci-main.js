@@ -228,6 +228,9 @@ const userAuthJudge = async(req, res, next) => {
         var teamId = taskObj.teamId
     }
     const result = await roleDB.findRole(userId, teamId)
+    if(req.url.indexOf('/team-admin/')!== -1&&result.role!=="creator"&&result.role!=="admin"){
+        res.redirect(`/team/${teamId}`)
+    }
     req.INIT_DATA = {
         role: result?result.role:"visitor"
     }
@@ -248,19 +251,19 @@ module.exports = [
     ['GET', '/auth', clientParams(), wxAuthCodeHandle , mainPage],
 
     ['GET', '/team', clientParams(), routerAuthJudge, pageHandle() ],
-    ['GET', '/files/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
+    ['GET', '/files/:teamId', clientParams(), routerAuthJudge,userAuthJudge, pageHandle() ],
     ['GET', '/sign', clientParams(), routerAuthJudge, pageHandle() ],
 
     ['GET', '/team/:id', clientParams(), silentAuth, routerAuthJudge,userAuthJudge, pageHandle() ],
-    ['GET', '/todo/:id', clientParams(), silentAuth, routerAuthJudge, pageHandle() ],
-    ['GET', '/team-admin/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
+    ['GET', '/todo/:id', clientParams(), silentAuth, routerAuthJudge,userAuthJudge, pageHandle() ],
+    ['GET', '/team-admin/:teamId', clientParams(), routerAuthJudge,userAuthJudge, pageHandle() ],
     ['GET', '/team-management',clientParams(), routerAuthJudge, pageHandle()],
     ['GET', '/modify-password',clientParams(), routerAuthJudge, pageHandle()],
     ['GET', '/team-join/:teamId', clientParams(), silentAuth, joinTeam, pageHandle() ],
 
     ['GET', '/team-create', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/person', clientParams(), routerAuthJudge, personSeting, pageHandle() ],
-    ['GET', '/discuss/topic/:id', clientParams(), silentAuth, routerAuthJudge, pageHandle() ],
+    ['GET', '/discuss/topic/:id', clientParams(), silentAuth, routerAuthJudge,userAuthJudge, pageHandle() ],
     ['GET', '/timeline', clientParams(), silentAuth,    routerAuthJudge, pageHandle() ],
     ['GET', '/member', clientParams(),   routerAuthJudge, pageHandle() ],
     ['GET', '/search', clientParams(),   routerAuthJudge, pageHandle() ],
