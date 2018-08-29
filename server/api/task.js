@@ -4,6 +4,11 @@ var _ = require('underscore'),
     conf = require('../conf');
 
 import apiAuth from '../components/auth/api-auth'
+import{
+    isMember,
+    isAdmin,
+    isCreator
+}from '../middleware/auth-judge/auth-judge'
 
 import {
     createTopicTemplate,
@@ -1622,30 +1627,30 @@ const findDiscuss = async (req, res, next) => {
 
 
 module.exports = [
-    ['POST', '/api/task/createTaskList', apiAuth, createTasklist],
-    ['POST', '/api/task/updateTasklist', apiAuth, updateTasklist],
-    ['POST', '/api/task/changeListIndex', apiAuth, changeTaskListIndex],
-    ['POST', '/api/task/delTasklist', apiAuth, delTasklist],
-    ['POST', '/api/task/findTasklistById', apiAuth, findTasklistById],
-    ['POST', '/api/task/create', apiAuth, isCreator, createTask],
-    ['POST', '/api/task/delTask', apiAuth, delTask],
-    ['POST', '/api/task/edit', apiAuth, editTask],
-    ['POST', '/api/task/changeDir', apiAuth, changeTaskDir],
-    ['POST', '/api/task/changeIndex', apiAuth, changeTaskIndex],
-    ['POST', '/api/task/changeList', apiAuth, changeTaskList],
-    ['POST', '/api/task/taskInfo', apiAuth, taskInfo],
-    ['POST', '/api/task/addCheckitem', apiAuth, addCheckitem],
-    ['POST', '/api/task/dropCheckitem', apiAuth, dropCheckitem],
-    ['POST', '/api/task/findCheckitem', apiAuth, findCheckitem],
-    ['POST', '/api/task/editCheckitem', apiAuth, editCheckitem],
-    ['POST', '/api/task/taskCopy', apiAuth, taskCopy],
-    ['POST', '/api/task/taskMove', apiAuth, taskMove],
+    ['POST', '/api/task/createTaskList', apiAuth, isMember, createTasklist],
+    ['POST', '/api/task/updateTasklist', apiAuth, isMember, updateTasklist],
+    ['POST', '/api/task/changeListIndex', apiAuth, isMember, changeTaskListIndex],
+    ['POST', '/api/task/delTasklist', apiAuth, isMember, delTasklist],
+    ['POST', '/api/task/findTasklistById', apiAuth, isMember, findTasklistById],
+    ['POST', '/api/task/create', apiAuth, isMember, createTask],
+    ['POST', '/api/task/delTask', apiAuth, isMember, delTask],
+    ['POST', '/api/task/edit', apiAuth, isMember, editTask],
+    ['POST', '/api/task/changeDir', apiAuth, isMember, changeTaskDir],
+    ['POST', '/api/task/changeIndex', apiAuth, isMember, changeTaskIndex],
+    ['POST', '/api/task/changeList', apiAuth, isMember, changeTaskList],
+    ['POST', '/api/task/taskInfo', apiAuth, isMember, taskInfo],
+    ['POST', '/api/task/addCheckitem', apiAuth, isMember, addCheckitem],
+    ['POST', '/api/task/dropCheckitem', apiAuth, isMember, dropCheckitem],
+    ['POST', '/api/task/findCheckitem', apiAuth, isMember, findCheckitem],
+    ['POST', '/api/task/editCheckitem', apiAuth, isMember, editCheckitem],
+    ['POST', '/api/task/taskCopy', apiAuth, isMember, taskCopy],
+    ['POST', '/api/task/taskMove', apiAuth, isMember, taskMove],
 
     //6.26
-    ['POST', '/api/task/createDiscuss', apiAuth, createDiscuss],
-    ['POST', '/api/task/editDiscuss', apiAuth, editDiscuss],
-    ['POST', '/api/task/delDiscuss', apiAuth, delDiscuss],
+    ['POST', '/api/task/createDiscuss', apiAuth, isMember, createDiscuss],
+    ['POST', '/api/task/editDiscuss', apiAuth, isMember, editDiscuss],
+    ['POST', '/api/task/delDiscuss', apiAuth, isMember, delDiscuss],
 
     //6.27
-    ['POST', '/api/task/findDiscuss', apiAuth, findDiscuss],
+    ['POST', '/api/task/findDiscuss', apiAuth, isMember, findDiscuss],
 ]

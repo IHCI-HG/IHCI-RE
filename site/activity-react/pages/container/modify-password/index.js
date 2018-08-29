@@ -34,6 +34,11 @@ export default class ModidyPassword extends React.Component{
         })
     }
     saveChangePwd = async() =>{
+        if (!this.state.currentPwd) {
+            window.toast('请输入当前密码')
+        } else if(!this.state.newPwd) {
+            window.toast('请输入新密码')
+        } 
         const oldPassword = sha256(this.state.currentPwd).toString()
         const newPassword = sha256(this.state.newPwd).toString()
         const result =  await api('/api/modifyPassword',{
@@ -45,15 +50,13 @@ export default class ModidyPassword extends React.Component{
             }
         })
       
-        if(result.state.code === 1){
-            window.toast(result.state.msg)
-            return
-        }
         if(result.state.code === 0){
             window.toast(result.state.msg)
             location.href = './team'
+        } else {
+            window.toast(result.state.msg)
+            return
         }
-
     }
     
  

@@ -3,10 +3,14 @@ var _ = require('underscore'),
     proxy = require('../components/proxy/proxy'),
     conf = require('../conf');
 
-
 import fetch from 'isomorphic-fetch';
 import lo from 'lodash';
 import apiAuth from '../components/auth/api-auth'
+import{
+    isMember,
+    isAdmin,
+    isCreator
+}from '../middleware/auth-judge/auth-judge'
 
 import {
     web_codeToAccessToken,
@@ -637,18 +641,18 @@ const taskList = async (req, res, nect) => {
 
 
 module.exports = [
-    ['POST', '/api/team/info', apiAuth, teamInfo],
-    ['POST', '/api/team/infoList', apiAuth, teamInfoList],
+    ['POST', '/api/team/info', apiAuth, isMember, teamInfo],
+    ['POST', '/api/team/infoList', apiAuth, isMember, teamInfoList],
 
-    ['POST', '/api/team/create', apiAuth, creatTeam],
-    ['POST', '/api/team/modifyTeamInfo', apiAuth, modifyTeamInfo],
+    ['POST', '/api/team/create', apiAuth, isMember, creatTeam],
+    ['POST', '/api/team/modifyTeamInfo', apiAuth, isMember, modifyTeamInfo],
     ['POST', '/api/team/join', apiAuth, joinTeam],
-    ['POST', '/api/team/roleModify', apiAuth, modifyMemberRole],
-    ['POST', '/api/team/markTeam', apiAuth, markTeam],
-    ['POST', '/api/team/kikMember', apiAuth, kikMember],
-    ['POST', '/api/team/leaveTeam',apiAuth,leaveTeam],
+    ['POST', '/api/team/roleModify', apiAuth, isCreator, modifyMemberRole],
+    ['POST', '/api/team/markTeam', apiAuth, isMember, markTeam],
+    ['POST', '/api/team/kikMember', apiAuth, isAdmin, kikMember],
+    ['POST', '/api/team/leaveTeam',apiAuth, isMember, leaveTeam],
 
-    ['POST', '/api/team/memberList', apiAuth, memberList],
-    ['POST', '/api/team/taskList', apiAuth, taskList],
+    ['POST', '/api/team/memberList', apiAuth, isMember, memberList],
+    ['POST', '/api/team/taskList', apiAuth, isMember, taskList],
 
 ];
