@@ -55,7 +55,6 @@ export default class TeamDetail extends React.Component {
         this.teamId = this.props.params.id
         this.initTeamInfo()
         this.initTeamFile()
-        console.log(INIT_DATA)
     }
 
     initTeamFile = async () => {
