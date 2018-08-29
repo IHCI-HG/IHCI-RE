@@ -15,25 +15,24 @@ export default class SMSBlock extends React.Component{
     }
     componentDidMount = async () =>{
         this.setState({
-            count: window.sessionStorage.getItem('count')|| 60,
-            number:window.sessionStorage.getItem('number')|| 0,
+            count: parseInt(window.sessionStorage.getItem('count'))|| 60,
+            number:parseInt(window.sessionStorage.getItem('number'))|| 0,
+            numberCheck:Boolean(window.sessionStorage.getItem('numberCheck'))||true
         },()=>{
             if(this.state.count !== 60){
-                
                 this.countDown()
             }
-            if(this.setState.number === 3){
-                this.setState({
-                    numberCheck:false
-                })
-            }
         })
+        this.getCaptchaImg()
     }
     
-    checkSMSNumber = () =>{
+    checkSMSNumber = async () =>{
         if(this.state.number ===3){
             this.setState({
                 numberCheck:false,
+            },()=>{
+                window.sessionStorage.setItem('numberCheck',false)
+                console.log(this.state.numberCheck)
             })
         }else{
             var number = this.state.number
@@ -42,15 +41,18 @@ export default class SMSBlock extends React.Component{
                 number: number
             }, () => {
                 window.sessionStorage.setItem('number',number)
+                console.log(this.state.number)
+                console.log(this.state.numberCheck)
             })
         }
     }
     GetSMSHandle = async () =>{
+        
         if(this.props.phoneEmpty){
             window.toast("请输入手机号")
         }
         if(this.state.enable && !this.props.phoneEmpty){
-            this.checkSMSNumber()
+            await this.checkSMSNumber()
             if(this.state.numberCheck || this.state.captchCodeCheck){
                 const result = await api('/api/createSMS',{
                     method:'POST',
@@ -59,14 +61,12 @@ export default class SMSBlock extends React.Component{
                     }
                 })
                 if(result.state.code === 0 ){
-
+                    this.countDown()
                 }else{
                     window.toast(result.state.msg || "请重新输入")
                 }
-                this.countDown()
             }else{
                 window.toast("获取验证码次数过多，请输入图片验证码")
-                this.getCaptchaImg()
             }
         }
     }
@@ -129,14 +129,14 @@ export default class SMSBlock extends React.Component{
             <div className = "sms-block">
                 <input className = "input-code" placeholder = "4位数字验证码" value = {this.props.smsCode} onChange = {this.props.smsCodeInputHandle}></input>
                 {
-                    <div className ={this.state.numberCheck ? 'active-btn' : 'inacitve-btn'} onClick = {this.GetSMSHandle}>{this.state.enable? '获取验证码':`${this.state.count}秒后重发`}</div>
+                    <div className ={this.state.numberCheck ? 'active-btn' : 'inactive-btn'} onClick = {this.GetSMSHandle}>{this.state.enable? '获取验证码':`${this.state.count}秒后重发`}</div>
                 }
                 
             {
                 !this.state.numberCheck?
                 <div>
                     <input className = "input-code" value = {this.state.captchaCode} onChange={this.captchaInputHandle}></input>
-                    {this.state.captchCodeCheck?<i className="icon iconfont check-cion">&#xe750;</i>:""}
+                    {this.state.captchCodeCheck?<i className="icon iconfont icon-right"></i>:<i className = "icon iconfont icon-close"></i>}
                     <div dangerouslySetInnerHTML = {{__html:this.state.captchaImg}}></div>
                     <div className = "change-icon" onClick = {this.getCaptchaImg}>看不清，换一张</div>
                 </div>
