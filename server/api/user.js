@@ -501,6 +501,7 @@ if(!userList || !userList.length) {
 try {
     userList.map((item) => {
         resultPromiseList.push(UserDB.baseInfoById(item))
+        console.log(UserDB.baseInfoById(item))
     })
     const resultList = await Promise.all(resultPromiseList)
 
