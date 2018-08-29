@@ -7,6 +7,12 @@ import fetch from 'isomorphic-fetch';
 import lo from 'lodash';
 import apiAuth from '../components/auth/api-auth'
 
+import{
+    isMember,
+    isAdmin,
+    isCreator
+}from '../middleware/auth-judge/auth-judge'
+
 var mongoose = require('mongoose')
 var teamDB = mongoose.model('team')
 var userDB = mongoose.model('user')
@@ -53,5 +59,5 @@ const member = async (req, res, next) => {
 }
 
 module.exports = [
-    ['POST', '/api/member', apiAuth, member]
+    ['POST', '/api/member', apiAuth, isMember, member]
 ];

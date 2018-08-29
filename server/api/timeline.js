@@ -13,6 +13,11 @@ import {
     web_accessTokenToUserInfo,
     web_codeToUserInfo,
 } from '../components/wx-utils/wx-utils'
+import{
+    isMember,
+    isAdmin,
+    isCreator
+}from '../middleware/auth-judge/auth-judge'
 
 var mongoose = require('mongoose')
 
@@ -68,5 +73,5 @@ const returnTimeline = async (req, res, next) => {
 }
 
 module.exports = [
-    ['POST', '/api/timeline/getTimeline', returnTimeline],
+    ['POST', '/api/timeline/getTimeline', isMember, returnTimeline],
 ];
