@@ -641,8 +641,8 @@ const taskList = async (req, res, nect) => {
 
 
 module.exports = [
-    ['POST', '/api/team/info', apiAuth, isMember, teamInfo],
-    ['POST', '/api/team/infoList', apiAuth, isMember, teamInfoList],
+    ['POST', '/api/team/info', apiAuth, teamInfo],
+    ['POST', '/api/team/infoList', apiAuth, teamInfoList],
 
     ['POST', '/api/team/create', apiAuth, isMember, creatTeam],
     ['POST', '/api/team/modifyTeamInfo', apiAuth, isMember, modifyTeamInfo],
@@ -653,6 +653,6 @@ module.exports = [
     ['POST', '/api/team/leaveTeam',apiAuth, isMember, leaveTeam],
 
     ['POST', '/api/team/memberList', apiAuth, isMember, memberList],
-    ['POST', '/api/team/taskList', apiAuth, isMember, taskList],
+    ['POST', '/api/team/taskList', apiAuth, taskList],
 
 ];
