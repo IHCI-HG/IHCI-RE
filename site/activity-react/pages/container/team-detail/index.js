@@ -802,6 +802,12 @@ export default class TeamDetail extends React.Component {
                                     <span>设置</span>
                                 </div>
                             }
+                            {
+                                INIT_DATA.role === 'visitor'&&<div className = "admin">
+                                <div className="admin-con iconfont icon-add" onClick = {this.JoinTeamHandle}></div>
+                                <span>加入</span>
+                                </div> 
+                            }
 
                         </div>
                     </div>
