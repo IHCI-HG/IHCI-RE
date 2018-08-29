@@ -491,7 +491,7 @@ class Task extends React.Component{
         <div>
         <div className="head">
             <span className='head-title'>任务</span>
-            <div className="create-btn">
+            {(this.props.role!=='visitor')&&<div className="create-btn">
                 <span onClick={(e) => {
                     this.setState({ showCreateTodo: true })
                     e.stopPropagation()
@@ -516,7 +516,7 @@ class Task extends React.Component{
                 </li>
                     </ul>
                 }
-            </div>
+            </div>}
         </div>
         
 
@@ -529,6 +529,7 @@ class Task extends React.Component{
                 handlecloseEditTodo={this.handlecloseEditTodo.bind(this)}
                 {...unclassified}
                 id=""
+                role={this.props.role}
                 highLight={this.state.onDragStart&&(this.state.listIdFrom!=="")}
                 dragTodoId={this.state.dragTodoId}
                 dragStarted={this.state.onDragStart}
@@ -570,6 +571,7 @@ class Task extends React.Component{
                     {...todoList}
                     doneList={this.state.doneList}
                     createInput="任务名"
+                    role={this.props.role}
                     highLight={this.state.onDragStart&&(this.state.listIdFrom!==todoList.id)}
                     dragTodoId={this.state.dragTodoId}
                     dragStarted={this.state.onDragStart}

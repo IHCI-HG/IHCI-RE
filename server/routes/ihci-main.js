@@ -22,6 +22,7 @@ var UserDB = mongoose.model('user')
 var teamDB = mongoose.model('team')
 var topicDB = mongoose.model('topic')
 var taskDB = mongoose.model('task')
+var roleDB = mongoose.model('role')
 
 import {
     pub_codeToAccessToken,
@@ -226,25 +227,15 @@ const userAuthJudge = async(req, res, next) => {
         const taskObj = await taskDB.findByTaskId(taskId)
         var teamId = taskObj.teamId
     }
-    const teamObj = await teamDB.findByTeamId(teamId)
-    var auth = []
-    if(req.url === '/team-admin/:teamId'){
-        auth = teamObj.memberList.filter((item)=>{
-            return item.userId === userId && item.role === 'creator'
-        })
+    const result = await roleDB.findRole(userId, teamId)
+    if(req.url.indexOf('/team-admin/')!== -1&&result.role!=="creator"&&result.role!=="admin"){
+        res.redirect(`/team/${teamId}`)
     }
-    else{
-        auth = teamObj.memberList.filter((item)=>{
-            return item.userId === userId
-        })
+    req.INIT_DATA = {
+        role: result?result.role:"visitor"
     }
-    if(auth.length === 0){
-        //提示权限不足
-        res.redirect('/team')
-    }
-    else{
-        next()
-    }
+    console.log(req.INIT_DATA)
+    next()
 }
 
 module.exports = [
@@ -260,19 +251,19 @@ module.exports = [
     ['GET', '/auth', clientParams(), wxAuthCodeHandle , mainPage],
 
     ['GET', '/team', clientParams(), routerAuthJudge, pageHandle() ],
-    ['GET', '/files/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
+    ['GET', '/files/:teamId', clientParams(), routerAuthJudge,userAuthJudge, pageHandle() ],
     ['GET', '/sign', clientParams(), routerAuthJudge, pageHandle() ],
 
-    ['GET', '/team/:id', clientParams(), silentAuth, routerAuthJudge, pageHandle() ],
-    ['GET', '/todo/:id', clientParams(), silentAuth, routerAuthJudge, pageHandle() ],
-    ['GET', '/team-admin/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
+    ['GET', '/team/:id', clientParams(), silentAuth, routerAuthJudge,userAuthJudge, pageHandle() ],
+    ['GET', '/todo/:id', clientParams(), silentAuth, routerAuthJudge,userAuthJudge, pageHandle() ],
+    ['GET', '/team-admin/:teamId', clientParams(), routerAuthJudge,userAuthJudge, pageHandle() ],
     ['GET', '/team-management',clientParams(), routerAuthJudge, pageHandle()],
     ['GET', '/modify-password',clientParams(), routerAuthJudge, pageHandle()],
     ['GET', '/team-join/:teamId', clientParams(), silentAuth, joinTeam, pageHandle() ],
 
     ['GET', '/team-create', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/person', clientParams(), routerAuthJudge, personSeting, pageHandle() ],
-    ['GET', '/discuss/topic/:id', clientParams(), silentAuth, routerAuthJudge, pageHandle() ],
+    ['GET', '/discuss/topic/:id', clientParams(), silentAuth, routerAuthJudge,userAuthJudge, pageHandle() ],
     ['GET', '/timeline', clientParams(), silentAuth,    routerAuthJudge, pageHandle() ],
     ['GET', '/member', clientParams(),   routerAuthJudge, pageHandle() ],
     ['GET', '/search', clientParams(),   routerAuthJudge, pageHandle() ],
