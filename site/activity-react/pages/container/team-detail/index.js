@@ -55,6 +55,7 @@ export default class TeamDetail extends React.Component {
         this.teamId = this.props.params.id
         this.initTeamInfo()
         this.initTeamFile()
+        console.log(INIT_DATA)
     }
 
     initTeamFile = async () => {
@@ -811,7 +812,7 @@ export default class TeamDetail extends React.Component {
 
                     <div className="head">
                         <span className='head-title'>讨论</span>
-                        <div className="create-btn" onClick={() => { this.setState({ showCreateTopic: true }) }}>发起讨论</div>
+                        {(INIT_DATA.role!=='visitor')&&<div className="create-btn" onClick={() => { this.setState({ showCreateTopic: true }) }}>发起讨论</div>}
                     </div>
 
                     {
@@ -853,6 +854,7 @@ export default class TeamDetail extends React.Component {
                     </div>
 
                         <Task
+                        role={INIT_DATA.role}
                         teamId={this.props.params.id}
                         curUserId={this.props.personInfo._id}
                         ></Task>
@@ -861,8 +863,8 @@ export default class TeamDetail extends React.Component {
                         <input className='file-input-hidden' type="file" ref={(fileInput) => this.fileInput = fileInput} onChange={this.uploadFileHandle}></input>
                         <div className="head">
                             <span className='head-title'>文件</span>
-                            <div className="create-btn" onClick={this.openFileInput}>上传文件</div>
-                            <div className="create-btn" onClick={this.createFolderHandle}>创建文件夹</div>
+                            {(INIT_DATA.role!=='visitor')&&<div className="create-btn" onClick={this.openFileInput}>上传文件</div>}
+                            {(INIT_DATA.role!=='visitor')&&<div className="create-btn" onClick={this.createFolderHandle}>创建文件夹</div>}
                         </div>
 
                         <div className="file-list">
@@ -912,11 +914,11 @@ export default class TeamDetail extends React.Component {
                                                     <div className="name" onClick={() => { this.folderClickHandle(item.name) }}><i className="icon iconfont icon-iconset0196"></i>{item.name}</div>
                                                     <div className="size">-</div>
                                                     <div className="last-modify">{formatDate(item.last_modify_time)}</div>
-                                                    <div className="tools">
+                                                    {(INIT_DATA.role!=='visitor')&&<div className="tools">
                                                         <span onClick={() => { this.openMoveModalHandle(item) }}>移动</span>
                                                         <span onClick={() => { this.renameHandle(item) }}> 重命名 </span>
                                                         <span onClick={() => { this.deleteHandle('folder', item.name) }}>删除</span>
-                                                    </div>
+                                                    </div>}
                                                 </div>
                                             )
                                         }
@@ -926,12 +928,12 @@ export default class TeamDetail extends React.Component {
                                                     <div className="name">{item.name}</div>
                                                     <div className="size">{item.size}</div>
                                                     <div className="last-modify">{formatDate(item.last_modify_time)}</div>
-                                                    <div className="tools">
+                                                    {(INIT_DATA.role!=='visitor')&&<div className="tools">
                                                         <span onClick={() => { this.downloadHandle(item.ossKey) }}>下载</span>
                                                         <span onClick={() => { this.openMoveModalHandle(item) }}>移动</span>
                                                         <span onClick={() => { this.renameHandle(item) }}> 重命名 </span>
                                                         <span onClick={() => { this.deleteHandle('file', item.name) }}>删除</span>
-                                                    </div>
+                                                    </div>}
                                                 </div>
                                             )
                                         }

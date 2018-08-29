@@ -106,7 +106,7 @@ class TodoItem extends React.Component {
             data-id={this.props.dataId}
             data-listindex={this.props.index}
             draggable='true'>
-                <div className="actions-wrap">
+                {(this.props.role!=='visitor')&&<div className="actions-wrap">
                     <div className="actions">
                         <i className="icon iconfont"
                            onClick={_props.handleTodoDelete}
@@ -124,10 +124,11 @@ class TodoItem extends React.Component {
                         }
                     </div>
                 </div>
-                <div className={`${_props.hasDone ? 'check-box-checked' : 'check-box'}`}
+                }
+                {(this.props.role!=='visitor')&&<div className={`${_props.hasDone ? 'check-box-checked' : 'check-box'}`}
                      onClick={_props.handleTodoCheck.bind(this, _props.hasDone)}>
                     <i className="icon iconfont checked-icon">&#xe750;</i>
-                </div>
+                </div>}
                 <div className="todo-wrap"
                 data-id={this.props.dataId}
                 data-listindex={this.props.index}
@@ -156,7 +157,7 @@ class TodoItem extends React.Component {
                             <span className="remark">{timeBefore(Date.parse(_props.completeTime))}</span>
                         </span>
                         :
-                        < ItemLabel
+                        (this.props.role!=='visitor')&&< ItemLabel
                             // 使用用户传入，不用id
                             assigneeId={_props.assignee?_props.assignee.id:null}
                             date={_props.ddl}

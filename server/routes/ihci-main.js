@@ -22,6 +22,7 @@ var UserDB = mongoose.model('user')
 var teamDB = mongoose.model('team')
 var topicDB = mongoose.model('topic')
 var taskDB = mongoose.model('task')
+var roleDB = mongoose.model('role')
 
 import {
     pub_codeToAccessToken,
@@ -226,25 +227,12 @@ const userAuthJudge = async(req, res, next) => {
         const taskObj = await taskDB.findByTaskId(taskId)
         var teamId = taskObj.teamId
     }
-    const teamObj = await teamDB.findByTeamId(teamId)
-    var auth = []
-    if(req.url === '/team-admin/:teamId'){
-        auth = teamObj.memberList.filter((item)=>{
-            return item.userId === userId && item.role === 'creator'
-        })
+    const result = await roleDB.findRole(userId, teamId)
+    req.INIT_DATA = {
+        role: result?result.role:"visitor"
     }
-    else{
-        auth = teamObj.memberList.filter((item)=>{
-            return item.userId === userId
-        })
-    }
-    if(auth.length === 0){
-        //提示权限不足
-        res.redirect('/team')
-    }
-    else{
-        next()
-    }
+    console.log(req.INIT_DATA)
+    next()
 }
 
 module.exports = [
@@ -263,7 +251,7 @@ module.exports = [
     ['GET', '/files/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/sign', clientParams(), routerAuthJudge, pageHandle() ],
 
-    ['GET', '/team/:id', clientParams(), silentAuth, routerAuthJudge, pageHandle() ],
+    ['GET', '/team/:id', clientParams(), silentAuth, routerAuthJudge,userAuthJudge, pageHandle() ],
     ['GET', '/todo/:id', clientParams(), silentAuth, routerAuthJudge, pageHandle() ],
     ['GET', '/team-admin/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/team-management',clientParams(), routerAuthJudge, pageHandle()],

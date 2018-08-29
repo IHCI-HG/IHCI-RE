@@ -98,7 +98,7 @@ class TodoList extends React.Component {
                             onDragEnd={_props.dragEnd.bind(this,this.props.id)}
                             onDragOver={_props.dragOver}
                             onDrop={_props.drop.bind(this,this.props.id)}>
-                                <div className="name-actions">
+                                {(this.props.role!=='visitor')&&<div className="name-actions">
                                     <i className="icon iconfont"
                                        onClick={_props.handleTodoListDelete}>&#xe70b;</i>
                                     <i className="icon iconfont"
@@ -106,7 +106,7 @@ class TodoList extends React.Component {
                                            this.setMode('edit')
                                            e.stopPropagation()
                                        }}>&#xe6ec;</i>
-                                </div>
+                                </div>}
                                 {_props.name}
                             </h4>
                         </div>
@@ -130,6 +130,7 @@ class TodoList extends React.Component {
                             <TodoItem
                                 {...todo}
                                 key={todo.id}
+                                role={this.props.role}
                                 memberList={_props.memberList}
                                 handleAssigneeChange={_props.handleAssigneeChange.bind(this,todo.id)}
                                 handleDateChange={_props.handleDateChange.bind(this,todo.id)}
