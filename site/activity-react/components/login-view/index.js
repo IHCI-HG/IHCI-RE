@@ -26,24 +26,110 @@ export class LoginView extends React.Component {
         },
 
         getCode: true,
-        count: '',
-
-        numberCheck:true,
+        count: 60,
         enable: true,
+        number: 0,
+
         numberCheck:true,
         captchaCode:'',
         captchaImg :'',
         captchaText:'',
-        number: '',
+
         captchCodeCheck:false,
     }
 
     componentDidMount = async() => {
         this.setState({
-            number: 0,
+            count: parseInt(window.sessionStorage.getItem('count'))||60,
+            number: parseInt(window.sessionStorage.getItem('number'))||0,
+            numberCheck: Boolean(window.sessionStorage.getItem('numberCheck'))||true
+        }, ()=>{
+            if(this.state.count != 60) {
+                this.countDown()
+            }
         })
+        this.getCaptchaImg()
     }
 
+    checkSMSNumber = async() => {
+        if (this.state.number === 3){
+            this.setState({
+                numberCheck:false,
+            }, ()=>{
+                window.sessionStorage.setItem('numberCheck',false)
+            })
+        } else {
+            var number = this.state.number
+            number += 1
+            this.setState({
+                number: number
+            }, () => {
+                window.sessionStorage.setItem('number',number)
+            })
+        }
+    }
+
+    getSMS = async() => {
+        if(this.state.enable) {
+            await this.checkSMSNumber()
+        if(this.state.numberCheck){
+            const result = await api('/api/createSMS', {
+                method: 'POST',
+                body: {
+                    phoneNumber: this.state.createPhone
+                }
+            })
+            if(result.state.code === 0 ){
+                this.countDown()
+            } else {
+                window.toast(result.state.msg || "请重新输入")
+            }
+            this.countDown()
+        } else {
+            window.toast("获取验证码次数过多，请输入图片验证码")
+          }
+        }
+    }
+
+    countDown = () =>{
+        this.setState({
+            enable:false
+        })
+        var timer = setInterval(() => {
+            var count = this.state.count  
+            count -=1
+            if(count < 1){
+                count = 60
+                this.setState({
+                    enable: true,
+                    count: count
+                },()=>{
+                    window.sessionStorage.removeItem('count')
+                })
+                clearInterval(timer)
+            } else {
+                this.setState({
+                    count: count
+                    }, () =>{
+                        window.sessionStorage.setItem('count',count)
+                    })
+                }               
+            },1000)
+    }
+
+    captchaInputHandle = (e) =>{
+        const code = e.target.value
+        this.setState({
+            captchaCode: code
+        })
+        if(code === this.state.captchaText){
+            this.setState({
+                captchCodeCheck: true,
+                enable: true
+            })
+        }
+
+    }
 
     handleClick = () => {
         if (this.state.createPhone == "") {
@@ -197,42 +283,8 @@ export class LoginView extends React.Component {
         }
     }
 
-    checkSMSNumber = () => {
-        if (this.state.number === 3){
-            this.setState({
-                numberCheck:false,
-            })
-        } else{
-            var number = this.state.number
-            number += 1
-            this.setState({
-                number: number
-            })
-        }
-    }
 
-    getSMS = async() => {
-        if(this.state.enable) {
-        this.checkSMSNumber()
-        if(this.state.numberCheck){
-            const result = await api('/api/createSMS', {
-                method: 'POST',
-                body: {
-                    phoneNumber: this.state.createPhone
-                }
-            })
-            if(result.state.code === 0 ){
 
-            } else {
-                window.toast(result.state.msg || "请重新输入")
-            }
-            this.countDown()
-        } else {
-            window.toast("获取验证码次数过多，请输入图片验证码")
-            this.getCaptchaImg()
-        }
-        }
-    }
 
     getCaptchaImg = async () =>{
         const result = await api('/api/createCaptcha',{
@@ -243,48 +295,15 @@ export class LoginView extends React.Component {
    
             this.setState({
                 captchaImg: result.data.img,
-                captchaText:result.data.text
+                captchaText: result.data.text
             })
             
         }
         
     }
 
-    captchaInputHandle = (e) =>{
-        const code = e.target.value
-        this.setState({
-            captchaCode: code
-        })
-        if(code === this.state.captchaText){
-            this.setState({
-                captchCodeCheck: true,
-                enable: true
-            })
-        }
 
-    }
 
-    countDown = () =>{
-        this.setState({
-            enable:false
-        })
-        var timer = setInterval(() => {
-            var count = this.state.count  
-            count -=1
-            if(count < 1){
-                count = 60
-                this.setState({
-                    enable: true,
-                    count: count
-                })
-                clearInterval(timer)
-            }else{
-                this.setState({
-                    count: count
-                    })
-                }               
-            },1000)
-    }
 
     signHandle = async () => {
         // todo 检验账号密码是否可用
