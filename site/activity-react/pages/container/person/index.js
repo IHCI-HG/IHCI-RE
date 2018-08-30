@@ -609,8 +609,6 @@ export default class Person extends React.Component{
             }
     }
 
-
-
     getInfo = async() => {
         const result = await api('/api/getMyInfo',{
             method: 'POST',

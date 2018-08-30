@@ -113,7 +113,7 @@ export default class WxChoose extends React.Component{
         <Page>
             {
                 this.state.loginBlock === ''?
-            <div className="auth-nav"> 
+            <div className="auth-block"> 
                <div className = "auth-header">{staticText.PAGE_INFO.CHOOSE_BLOCK_TITLE}</div>
                <div className = "login-desc">{staticText.PAGE_INFO.PAGE_IHCI_DESC}</div>
                <div className = "auth-nav-item" onClick={this.setTologinHandle}>{staticText.BUTTON_TEXT.BIND_ACCOUNT}</div>
