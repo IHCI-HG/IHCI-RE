@@ -217,7 +217,7 @@ export default class IhciJoin extends React.Component{
 
                         <div className="edit-con">
                             <div className="before">{staticText.LABEL_TEXT.SET_PHONE}</div>
-                            <input type="text" onChange={this.phoneInputHandle} className="input-edit" value={this.state.personInfo.phone}/>
+                            <input type="number" onChange={this.phoneInputHandle} className="input-edit" value={this.state.personInfo.phone}/>
                             {this.state.infoCheck.illegalPhoneNumber && <div className='after error'>{staticText.PERSON_INFO_CHECK.CREATE_PHONE_ILLEGAL}</div>}
                             
                         </div>

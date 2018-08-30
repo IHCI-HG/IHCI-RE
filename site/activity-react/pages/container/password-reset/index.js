@@ -98,7 +98,7 @@ export default class PwdReset extends React.Component{
             <Page title = "重新设置密码" className = "reset-page">
                 <div className = "reset-block">
                 <div className = "title">重新设置密码</div>
-                <input className = "input-edit" value={this.state.phone} onChange = {this.phoneInputHandle} placeholder = "手机号"></input>
+                <input type="number" className = "input-edit" value={this.state.phone} onChange = {this.phoneInputHandle} placeholder = "手机号"></input>
                 <SMSBlock 
                    smsCodeInputHandle = {this.smsCodeInputHandle}
                    smsCode = {this.state.smsCode}

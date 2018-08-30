@@ -214,7 +214,7 @@ export class LoginView extends React.Component {
                                 <div className='login-view-form'>
 
                                     <div className="auth-desc">手机</div>
-                                    <input className="auth-input" placeholder="请输入手机号" 
+                                    <input type="number" className="auth-input" placeholder="请输入手机号" 
                                     value={this.state.createPhone} onChange={this.createPhoneHandle} 
                                     onClick={this.judgeUsernameEmptyHandle} autoFocus></input>
                                     
@@ -237,7 +237,7 @@ export class LoginView extends React.Component {
                             this.state.loginBlock == "login" ?
                                 <div className='login-view-form'>
                                 <div className="auth-desc">Choose a username</div>
-                                <input className="auth-input" value={this.state.username} onChange={this.usernameHandle}></input>
+                                <input type="number" className="auth-input" value={this.state.username} onChange={this.usernameHandle}></input>
                                 <div className="auth-desc">Choose a password</div>
                                 <input className="auth-input" type="password" value={this.state.password} onChange={this.passwordHandle}></input>
                                 <div className="forgetPwd" onClick={this.forgetPwd}>忘记密码?</div>

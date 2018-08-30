@@ -126,7 +126,7 @@ export default class WxChoose extends React.Component{
                    <div className="loginBlock">
                    <div className = "auth-header">{staticText.PAGE_INFO.ACCOUNT_BLOCK_TITLE}</div>
                    <div className ="login-desc">{staticText.LABEL_TEXT.SET_USERNAME}</div>
-                   <input className="login-input" value={this.state.username} onChange={this.usernameHandle}></input>
+                   <input type="number" className="login-input" value={this.state.username} onChange={this.usernameHandle}></input>
                    <div className ="login-desc">{staticText.LABEL_TEXT.SET_PASSWORD}</div>
                    <input className="login-input" type="password" value={this.state.password} onChange={this.passwordHandle}></input>
                    <div className="login-btn" onClick={this.loginHandle}>{staticText.BUTTON_TEXT.SUBMIT}</div>
