@@ -9,6 +9,7 @@
     "state": "./node_modules/.bin/webpack --config ./site/activity-react/webpack.prod.conf.js --progress --colors --display-error-details --profile --json > stats.json"
   },
   "dependencies": {
+    "@alicloud/sms-sdk": "^1.1.3",
     "ali-oss": "^5.2.0",
     "apollo-local-query": "^0.3.0",
     "apollo-server-express": "^1.1.2",
