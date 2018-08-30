@@ -206,9 +206,7 @@ const signUp = async (req, res, next) => {
     const result = await UserDB.createUser(
         userInfo.username,
         userInfo.password,
-        userInfo.code,
         userInfo,
-
     )
     if (!result) {
         resProcessor.jsonp(req, res, {
