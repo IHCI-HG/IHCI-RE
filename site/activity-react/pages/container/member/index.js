@@ -22,7 +22,7 @@ export default class Members extends React.Component{
             body: id ? {
                 teamId : id
             }:{}
-        })                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+        })                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
         this.setState({ 
             memberList: result.data
         })
@@ -119,7 +119,7 @@ export default class Members extends React.Component{
                                 <div className="member-item" key={'member-item-' + item._id}>
                                     <img src={item.personInfo.headImg} onClick={this.toTimeLineHandle.bind(this, item._id)}  alt="" className="head-img"/>
                                     <span className="name">{item.personInfo.name}</span>
-                                    <span className="phone">{item.personInfo.phone}</span>
+                                    <span className="phone">{item.username}</span>
                                     <span className="mail">{item.personInfo.mail}</span>
                                 </div>
                             )

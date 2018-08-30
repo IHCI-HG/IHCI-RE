@@ -372,7 +372,7 @@ module.exports = [
     ['POST','/api/file/createFile',apiAuth, isMember, createFile],
     ['POST','/api/file/createFolder',apiAuth, isMember, createFolder],
     ['POST','/api/file/downloadFile',apiAuth, isMember, downloadFile],
-    ['POST','/api/file/getDirFileList',apiAuth, isMember, getDirFileList],
+    ['POST','/api/file/getDirFileList',apiAuth, getDirFileList],
     ['POST','/api/file/moveFile',apiAuth, isMember, moveFile], 
     ['POST','/api/file/moveFolder',apiAuth, isMember, moveFolder],
     ['POST','/api/file/delFile',apiAuth, isMember, delFile],
