@@ -130,6 +130,14 @@ const routerConf = [{
         }
     }, 
     {
+        path: 'modify-password',
+        getComponent: function (nextState, callback) {
+            require.ensure([], (require) => {
+                callback(null, require('./modify-password').default);
+            });
+        }
+    }, 
+    {
         path: 'sign',
         getComponent: function (nextState, callback) {
             require.ensure([], (require) => {

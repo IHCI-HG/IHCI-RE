@@ -47,18 +47,16 @@ export default class TeamCreate extends React.Component{
     }
 
     createBtnHandle = async () => {
-        console.log(this.state.infoCheck.teamNameEmpty)
+   
         if(this.state.infoCheck.teamNameEmpty){
             window.toast("团队名称为空")
         }
         const result = await api('/api/team/create', {
             method: 'POST',
             body: {
-                teamInfo: {
-                    name: this.state.name,
+                    teamName: this.state.name,
                     teamImg: this.state.teamImg,
                     teamDes: this.state.desc
-                }
             }
         })
 

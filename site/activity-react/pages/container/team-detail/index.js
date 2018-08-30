@@ -61,10 +61,8 @@ export default class TeamDetail extends React.Component {
         const result = await api('/api/file/getDirFileList', {
             method: 'POST',
             body: {
-                dirInfo: {
-                    teamId: this.teamId,
-                    dir: '/',
-                }
+                teamId: this.teamId,
+                dir: '/',
             }
         })
         if (result && result.data && result.data.fileList) {
@@ -86,10 +84,10 @@ export default class TeamDetail extends React.Component {
             window.toast('团队内容加载出错')
         }
         const teamInfo = {}
-        teamInfo._id = result.data._id
-        teamInfo.name = result.data.name
-        teamInfo.teamImg = result.data.teamImg
-        teamInfo.desc = result.data.teamDes
+        teamInfo._id = result.data.teamObj._id
+        teamInfo.name = result.data.teamObj.name
+        teamInfo.teamImg = result.data.teamObj.teamImg
+        teamInfo.desc = result.data.teamObj.teamDes
 
 
         const memberList = []
@@ -99,13 +97,13 @@ export default class TeamDetail extends React.Component {
 
         let isCreator = ''
 
-        result.data.memberList.map((item) => {  // 判断是否是创建者 ？
+        result.data.teamObj.memberList.map((item) => {  // 判断是否是创建者 ？
             if (item.userId == curUserId) {
                 isCreator = item.role
             }
             memberIDList.push(item.userId)
         })
-        console.log(isCreator)
+      
         const memberResult = await api('/api/userInfoList', {
             method: 'POST',
             body: { userList: memberIDList }
@@ -114,7 +112,7 @@ export default class TeamDetail extends React.Component {
         memberResult.data.map((item, idx) => {
             memberList.push({
                 ...item,
-                ...result.data.memberList[idx],
+                ...result.data.teamObj.memberList[idx],
                 chosen: false,
             })
         })
@@ -122,7 +120,7 @@ export default class TeamDetail extends React.Component {
             isCreator: isCreator,
             teamInfo: teamInfo,
             memberList: memberList,
-            topicList: sortByCreateTime(result.data.topicList)
+            topicList: sortByCreateTime(result.data.teamObj.topicList)
         })
     }
 
@@ -147,13 +145,11 @@ export default class TeamDetail extends React.Component {
             const result1 = await api('/api/file/createFile', {
                 method: 'POST',
                 body: {
-                    fileInfo: {
-                        teamId: this.teamId,
-                        size: this.state.attachmentsArg.size,
-                        dir: '/',
-                        fileName: this.state.attachmentsArg.name,
-                        ossKey: this.state.ossKeyArg,
-                    }
+                    teamId: this.teamId,
+                    size: this.state.attachmentsArg.size,
+                    dir: '/',
+                    fileName: this.state.attachmentsArg.name,
+                    ossKey: this.state.ossKeyArg,
                 }
             })
             if (result1.state.code === 0) {
@@ -167,7 +163,7 @@ export default class TeamDetail extends React.Component {
             method: 'POST',
             body: {
                 teamId: this.teamId,
-                name: this.state.topicName,
+                title: this.state.topicName,
                 content: this.state.topicContent,
                 fileList: this.state.topicAttachments,
                 informList: informList,
@@ -178,7 +174,7 @@ export default class TeamDetail extends React.Component {
             const topicList = this.state.topicList
             const time = new Date().getTime()
             topicList.unshift({
-                _id: result.data._id,
+                _id: result.data.topicObj._id,
                 creator: this.props.personInfo,
                 title: this.state.topicName,
                 content: this.state.topicContent,
@@ -274,14 +270,14 @@ export default class TeamDetail extends React.Component {
             // 返回用户名的显示依赖assigneeId
             if (result.state.code === 0) {
                 let todo = {
-                    listId: result.data.listId,
-                    id: result.data.id,
-                    name: result.data.title,
-                    desc: result.data.content,
+                    listId: result.data.taskObj.listId,
+                    id: result.data.taskObj.id,
+                    name: result.data.taskObj.title,
+                    desc: result.data.taskObj.content,
                     assignee: {
-                        id: result.data.header,
+                        id: result.data.taskObj.header,
                     },
-                    ddl: result.data.deadline,
+                    ddl: result.data.taskObj.deadline,
                     checkItemDoneNum: 0,
                     // checkItemNum: 0,
                     hasDone: false,
@@ -321,9 +317,9 @@ export default class TeamDetail extends React.Component {
                 const todoListArr = this.state.todoListArr
                 const todolist = todoListArr[lIndex]
                 const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
-                todoItem.name = resp.data.title
-                todoItem.ddl = resp.data.deadline
-                todoItem.assignee.id = resp.data.header
+                todoItem.name = resp.data.taskObj.title
+                todoItem.ddl = resp.data.taskObj.deadline
+                todoItem.assignee.id = resp.data.taskObj.header
                 todolist.list[itemIndex] = todoItem
                 todolist.list = todolist.list.slice()
                 this.setState({ todoListArr })
@@ -344,14 +340,14 @@ export default class TeamDetail extends React.Component {
                 editTask: editTask,
             }
         })
-        console.log(resp)
+        
         if (resp.state.code === 0) {
             // 更新 todolist
             const todoListArr = this.state.todoListArr
             const todolist = todoListArr[lIndex]
             const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
-            todoItem.hasDone = resp.data.state
-            todoItem.completeTime = resp.data.completed_time
+            todoItem.hasDone = resp.data.taskObj.state
+            todoItem.completeTime = resp.data.taskObj.completed_time
             // ...更新完成时间赋值
             todolist.list[itemIndex] = todoItem
             todolist.list = todolist.list.slice()
@@ -371,14 +367,14 @@ export default class TeamDetail extends React.Component {
                 editTask: editTask,
             }
         })
-        console.log(resp)
+   
         if (resp.state.code === 0) {
             let todoListArr = this.state.todoListArr
             const todolist = todoListArr[lIndex]
             const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
             // fix bug: 这里进行过短路优化
             todoItem.assignee = {}
-            todoItem.assignee.id = resp.data.header
+            todoItem.assignee.id = resp.data.taskObj.header
             todolist.list[itemIndex] = todoItem
             todolist.list = todolist.list.slice()
             this.setState({ todoListArr })
@@ -402,7 +398,7 @@ export default class TeamDetail extends React.Component {
             const todoListArr = this.state.todoListArr
             const todolist = todoListArr[lIndex]
             const [todoItem, itemIndex] = getUpdateItem(todolist.list, id)
-            todoItem.ddl = resp.data.deadline
+            todoItem.ddl = resp.data.taskObj.deadline
             todolist.list = todolist.list.slice()
             this.setState({ todoListArr })
             return resp
@@ -452,8 +448,8 @@ export default class TeamDetail extends React.Component {
                 })
                 if (result.state.code === 0) {
                     let createTodo = {
-                        id: result.data.id,
-                        name: result.data.name,
+                        id: result.data.taskList.id,
+                        name: result.data.taskList.name,
                         list: [],
                     }
                     let todoListArr = this.state.todoListArr
@@ -476,7 +472,7 @@ export default class TeamDetail extends React.Component {
                 teamId: this.teamId,
             }
         })
-        console.log(resp)
+    
         this.initTodoListArr()
     }
 
@@ -495,7 +491,7 @@ export default class TeamDetail extends React.Component {
                 }
             })
             if (resp.state.code === 0) {
-                todoListArr[index].name = resp.data.name
+                todoListArr[index].name = resp.data.editTasklist.name
                 this.setState({ todoListArr: todoListArr.slice() })
             }
             return resp
@@ -532,11 +528,9 @@ export default class TeamDetail extends React.Component {
         const result = await api('/api/file/createFolder', {
             method: 'POST',
             body: {
-                folderInfo: {
-                    teamId: this.teamId,
-                    dir: '/',
-                    folderName: this.state.createFolderName
-                }
+                teamId: this.teamId,
+                dir: '/',
+                folderName: this.state.createFolderName
             }
         })
 
@@ -592,13 +586,11 @@ export default class TeamDetail extends React.Component {
         const result = await api('/api/file/createFile', {
             method: 'POST',
             body: {
-                fileInfo: {
-                    teamId: this.teamId,
-                    size: file.size,
-                    dir: '/',
-                    fileName: file.name,
-                    ossKey: ossKey,
-                }
+                teamId: this.teamId,
+                size: file.size,
+                dir: '/',
+                fileName: file.name,
+                ossKey: ossKey,
             }
         })
         if (result.state.code === 0) {
@@ -625,11 +617,9 @@ export default class TeamDetail extends React.Component {
             const result = await api('/api/file/delFile', {
                 method: 'POST',
                 body: {
-                    fileInfo: {
-                        teamId: this.teamId,
-                        dir: '/',
-                        fileName: name
-                    }
+                    teamId: this.teamId,
+                    dir: '/',
+                    fileName: name
                 }
             })
         }
@@ -637,11 +627,9 @@ export default class TeamDetail extends React.Component {
             const result = await api('/api/file/delFolder', {
                 method: 'POST',
                 body: {
-                    folderInfo: {
-                        teamId: this.teamId,
-                        dir: '/',
-                        folderName: name
-                    }
+                    teamId: this.teamId,
+                    dir: '/',
+                    folderName: name
                 }
             })
         }
@@ -654,7 +642,7 @@ export default class TeamDetail extends React.Component {
     }
 
     folderClickHandle = (dir) => {
-        location.href = '/files/' + this.teamId + '?dir=/' + dir
+        location.href = '/files/' + this.teamId + '/?dir=/' + dir
     }
     
     moveHandle = async (item, tarDir) => {
@@ -662,12 +650,10 @@ export default class TeamDetail extends React.Component {
             const result = await api('/api/file/moveFile', {
                 method: 'POST',
                 body: {
-                    fileInfo: {
-                        teamId: this.teamId,
-                        dir: '/',
-                        fileName: this.state.moveItem.name,
-                        tarDir: tarDir,
-                    }
+                    teamId: this.teamId,
+                    dir: '/',
+                    fileName: this.state.moveItem.name,
+                    tarDir: tarDir,
                 }
             })
 
@@ -681,12 +667,10 @@ export default class TeamDetail extends React.Component {
             const result = await api('/api/file/moveFolder', {
                 method: 'POST',
                 body: {
-                    folderInfo: {
-                        teamId: this.teamId,
-                        dir: '/',
-                        folderName: this.state.moveItem.name,
-                        tarDir: tarDir,
-                    }
+                    teamId: this.teamId,
+                    dir: '/',
+                    folderName: this.state.moveItem.name,
+                    tarDir: tarDir,
                 }
             })
 
@@ -745,11 +729,9 @@ export default class TeamDetail extends React.Component {
             const result = await api('/api/file/updateFileName', {
                 method: 'POST',
                 body: {
-                    fileInfo: {
-                        teamId: this.teamId,
-                        dir: '/',
-                        fileName: item.name,
-                    },
+                    teamId: this.teamId,
+                    dir: '/',
+                    fileName: item.name,
                     tarName: this.state.renameName,
                 }
             })
@@ -767,11 +749,9 @@ export default class TeamDetail extends React.Component {
             const result = await api('/api/file/updateFolderName', {
                 method: 'POST',
                 body: {
-                    folderInfo: {
-                        teamId: this.teamId,
-                        dir: '/',
-                        folderName: item.name,
-                    },
+                    teamId: this.teamId,
+                    dir: '/',
+                    folderName: item.name,
                     tarName: this.state.renameName,
                 }
             })
@@ -822,6 +802,12 @@ export default class TeamDetail extends React.Component {
                                     <span>设置</span>
                                 </div>
                             }
+                            {
+                                INIT_DATA.role === 'visitor'&&<div className = "admin">
+                                <div className="admin-con iconfont icon-add" onClick = {this.JoinTeamHandle}></div>
+                                <span>加入</span>
+                                </div> 
+                            }
 
                         </div>
                     </div>
@@ -831,7 +817,7 @@ export default class TeamDetail extends React.Component {
 
                     <div className="head">
                         <span className='head-title'>讨论</span>
-                        <div className="create-btn" onClick={() => { this.setState({ showCreateTopic: true }) }}>发起讨论</div>
+                        {(INIT_DATA.role!=='visitor')&&<div className="create-btn" onClick={() => { this.setState({ showCreateTopic: true }) }}>发起讨论</div>}
                     </div>
 
                     {
@@ -873,6 +859,7 @@ export default class TeamDetail extends React.Component {
                     </div>
 
                         <Task
+                        role={INIT_DATA.role}
                         teamId={this.props.params.id}
                         curUserId={this.props.personInfo._id}
                         ></Task>
@@ -881,8 +868,8 @@ export default class TeamDetail extends React.Component {
                         <input className='file-input-hidden' type="file" ref={(fileInput) => this.fileInput = fileInput} onChange={this.uploadFileHandle}></input>
                         <div className="head">
                             <span className='head-title'>文件</span>
-                            <div className="create-btn" onClick={this.openFileInput}>上传文件</div>
-                            <div className="create-btn" onClick={this.createFolderHandle}>创建文件夹</div>
+                            {(INIT_DATA.role!=='visitor')&&<div className="create-btn" onClick={this.openFileInput}>上传文件</div>}
+                            {(INIT_DATA.role!=='visitor')&&<div className="create-btn" onClick={this.createFolderHandle}>创建文件夹</div>}
                         </div>
 
                         <div className="file-list">
@@ -932,11 +919,11 @@ export default class TeamDetail extends React.Component {
                                                     <div className="name" onClick={() => { this.folderClickHandle(item.name) }}><i className="icon iconfont icon-iconset0196"></i>{item.name}</div>
                                                     <div className="size">-</div>
                                                     <div className="last-modify">{formatDate(item.last_modify_time)}</div>
-                                                    <div className="tools">
+                                                    {(INIT_DATA.role!=='visitor')&&<div className="tools">
                                                         <span onClick={() => { this.openMoveModalHandle(item) }}>移动</span>
                                                         <span onClick={() => { this.renameHandle(item) }}> 重命名 </span>
                                                         <span onClick={() => { this.deleteHandle('folder', item.name) }}>删除</span>
-                                                    </div>
+                                                    </div>}
                                                 </div>
                                             )
                                         }
@@ -946,12 +933,12 @@ export default class TeamDetail extends React.Component {
                                                     <div className="name">{item.name}</div>
                                                     <div className="size">{item.size}</div>
                                                     <div className="last-modify">{formatDate(item.last_modify_time)}</div>
-                                                    <div className="tools">
+                                                    {(INIT_DATA.role!=='visitor')&&<div className="tools">
                                                         <span onClick={() => { this.downloadHandle(item.ossKey) }}>下载</span>
                                                         <span onClick={() => { this.openMoveModalHandle(item) }}>移动</span>
                                                         <span onClick={() => { this.renameHandle(item) }}> 重命名 </span>
                                                         <span onClick={() => { this.deleteHandle('file', item.name) }}>删除</span>
-                                                    </div>
+                                                    </div>}
                                                 </div>
                                             )
                                         }

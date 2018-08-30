@@ -8,8 +8,7 @@ class HtmlAdditionalChunksPlugin {
 
     apply(compiler) {
         compiler.hooks.done.tap('HelloWorldPlugin', () => {
-            console.log('Hello World!');
-            console.log(this.options);
+        
         });
     }
 }

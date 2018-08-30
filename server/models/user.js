@@ -28,7 +28,6 @@ const userSchema = new mongoose.Schema({
     teamList: [mongoose.Schema.Types.Mixed],
     openid: String,
     unionid: { type: String, index: true },
-    subState: Boolean,
     wxUserInfo: mongoose.Schema.Types.Mixed,
     mailCode :String,
     mailLimitTime :String,
@@ -80,8 +79,11 @@ userSchema.statics = {
     },
     baseInfoById: async function(userId) {
         const result = await this.findById(userId)
-        result.personInfo._id = result._id
-        return result.personInfo
+        if(result.personInfo){
+            result.personInfo._id = result._id
+            return result.personInfo
+        }
+        
     },
     findByUnionId: async function(unionid) {
         const result = await this.findOne({unionid: unionid}).exec()
@@ -97,6 +99,10 @@ userSchema.statics = {
     },
     updateUser: async function(userId, userObj) {
         const result = await this.findByIdAndUpdate(userId, userObj, () => {})
+        return result
+    },
+    updatePassword:async function(username,password){
+        const result = await this.findOneAndUpdate({username:username},{password:password},()=>{})
         return result
     },
     updateUserByUid: async function(unionid, userObj) {
@@ -274,6 +280,30 @@ userSchema.statics = {
             }
         ).exec()
     },
+
+    editNotice: async function(userId, Obj, teamName, type) {
+        return this.update(
+            { _id: userId },
+            {
+                $addToSet: {
+                    noticeList: {
+                        create_time: Obj.create_time,
+                        noticeId: mongoose.Types.ObjectId(),
+                        topicId:Obj._id.toString(),
+                        teamId: Obj.team?Obj.team:Obj.teamId,
+                        teamName: teamName,
+                        creator: Obj.creator,
+                        noticeTitle: Obj.title,
+                        noticeContent: Obj.content,
+                        type: type,
+                        readState: false,
+                    }
+                }
+            }
+        ).exec()
+    },
+    
+
     readNotice: async function(userId, noticeId, readState) {
         const notice = mongoose.Types.ObjectId(noticeId)
         return this.update(

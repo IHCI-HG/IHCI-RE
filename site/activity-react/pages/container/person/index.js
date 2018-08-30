@@ -11,7 +11,7 @@ import {Person as staticText} from '../../../commen/static-text'
 
 export default class Person extends React.Component{
     componentDidMount = async() => {
-        this.initFollower()
+       
         this.personInfo = {}
         this.originPersonInfo = {}
         if(INIT_DATA.userObj) {
@@ -45,7 +45,7 @@ export default class Person extends React.Component{
         }
 
         if(this.props.location.query.alreadyBind) {
-            window.toast("该微信号已经绑定")
+            window.toast(staticText.RESPONSE_MESSAGE.BIND_WX_FAIL)
             history.pushState({}, {}, '/person')
         }
         // else if (!this.initdataAllFilled()){
@@ -62,13 +62,7 @@ export default class Person extends React.Component{
 
     }
 
-    initFollower = async() => {
-        const result = await api('/follower', {
-            method: 'POST',
-            body: {}
-        })
-        //console.log(result)
-    }
+
     initdataAllFilled = () => {
         if (!INIT_DATA.userObj.personInfo){
             return false
@@ -122,7 +116,6 @@ export default class Person extends React.Component{
         },
         infoCheck:{
             illegalEmailAddress: false,
-            illegalPhoneNumber:false,
             illegalName: false,
         },
         confirmEditMail: false,
@@ -136,6 +129,7 @@ export default class Person extends React.Component{
             illegalUsername:false,
             illegalPassword:false,
         },
+
     }
 
     
@@ -311,23 +305,6 @@ export default class Person extends React.Component{
         return reg.test(phoneNumber);
     }
 
-    phoneInputHandle = (e) => {
-        const phonNumber = e.target.value
-        var illegalPhoneNumber = false
-        if (!this.isPhoneNumber(phonNumber)){
-            illegalPhoneNumber = true
-        }
-        this.setState({
-            personInfo: {
-                ...this.state.personInfo,
-                phone: phonNumber,
-            },
-            infoCheck: {
-                ...this.state.infoCheck,
-                illegalPhoneNumber: illegalPhoneNumber,
-            },
-        })
-    }
 
     isEmailAddress = (emailAddress) => {
         const reg = /^[A-Za-z0-9._%-]+@([A-Za-z0-9-]+\.)+[A-Za-z]{2,4}$/;
@@ -379,7 +356,6 @@ export default class Person extends React.Component{
     infoCheckIllegal = () =>{
         var infoCheck = {
             illegalEmailAddress: false,
-            illegalPhoneNumber: false,
             illegalName: false,
         }
 
@@ -387,9 +363,7 @@ export default class Person extends React.Component{
             infoCheck.illegalEmailAddress = true
         }
 
-        if (!this.isPhoneNumber(this.state.personInfo.phone)){
-            infoCheck.illegalPhoneNumber = true
-        }
+       
 
         if (!this.isName(this.state.personInfo.name)){
             infoCheck.illegalName = true
@@ -412,7 +386,7 @@ export default class Person extends React.Component{
         var infoCheckIllegal = this.infoCheckIllegal()
 
         if (infoCheckIllegal){
-            window.toast("设置失败，请检查格式")
+            window.toast(staticText.PERSON_INFO_CHECK.PERSON_INFO_ILLEGAL)
             return
         }
         const result = await api('/api/setUserInfo', {
@@ -430,16 +404,23 @@ export default class Person extends React.Component{
         })
         
         
-        console.log(result1)
+      
         if(result.state.code === 0) {
             if(INIT_DATA.userObj.personInfo){
-                window.toast("设置成功")
+                window.toast(staticText.RESPONSE_MESSAGE.SET_SUCCESS)
             }
-            setTimeout(() => {
-                location.href = '/team'
-            }, 500);
+            if(this.props.location.query.teamjoin){
+                setTimeout(() => {
+                    location.href = `/team-join/${this.props.location.query.teamId}`
+                },500);
+            }else{
+                setTimeout(() => {
+                    location.href = '/team'
+                }, 500);
+            }
+            
         } else {
-            window.toast("设置失败，请稍后再试")
+            window.toast(staticText.RESPONSE_MESSAGE.SET_FAIL)
         }
         if(!INIT_DATA.userObj.personInfo){
             const result = await api('/api/manual', {
@@ -450,7 +431,7 @@ export default class Person extends React.Component{
             })
     
             if(result.state.code === 0) {
-                window.toast("设置成功，已发送使用说明邮件，请检查邮箱")
+                window.toast(staticText.RESPONSE_MESSAGE.FIRST_SET_INFO_SUCCESS)
             }
         }
     }
@@ -477,7 +458,7 @@ export default class Person extends React.Component{
         if(result.state.code === 0) {
             location.href = location.href
         } else {
-            window.toast("解绑失败")
+            window.toast(staticText.RESPONSE_MESSAGE.UNBIND_WX_FAIL)
         }
     }
     
@@ -494,7 +475,7 @@ export default class Person extends React.Component{
         var type = arr.pop()
         type = type.toLowerCase()
         if(type != 'jpg' && type != 'jpeg' && type != 'png') {
-            window.toast("文件格式必须是JPG，JPEG或PNG")
+            window.toast(staticText.PERSON_INFO_CHECK.IMAGE_ILLEGAL)
             return 
         }
         var newFile = new File([file],this.state.userObj._id+file.name)
@@ -505,35 +486,35 @@ export default class Person extends React.Component{
         await uploadResult.then(function(val) {
             succeeded = 1
         }).catch(function(reason){
-            console.log(reason)
+           
             succeeded = 0
         })
 
         if(succeeded === 0) {
-            window.toast("上传图片失败")
+            window.toast(staticText.RESPONSE_MESSAGE.UPLOAD_IMAGE_FAIL)
             return
         } 
 
-        window.toast("上传图片成功")
+        window.toast(staticText.RESPONSE_MESSAGE.UPLOAD_IMAGE_SUCCESS)
         this.setState({
             personInfo: {
                 ...this.state.personInfo,
                 headImg: window.location.origin+'/head/'+ossKey
             }
         })
-        console.log(this.state.personInfo.headImg)
+       
     }
 
 
     activateMailHandle = async() => {
         if(!this.state.sendMailEnabled){
-            window.toast("请不要重复提交激活请求，请等待60s后再尝试发送")
+            window.toast(staticText.RESPONSE_MESSAGE.ACTIVATE_MAIL_WAIT)
             return
         }
 
         if (this.state.personInfo.mail.length <= 0)
         {
-            window.toast("邮箱未设置，请先修改邮箱")
+            window.toast(staticText.RESPONSE_MESSAGE.ASKTO_SET_MAIL)
             return
         }
 
@@ -545,9 +526,9 @@ export default class Person extends React.Component{
         })
 
         if(result.state.code === 0) {
-            window.toast("已发送激活邮件，请检查邮箱")
+            window.toast(staticText.RESPONSE_MESSAGE.ACTIVATE_MAIL_SUCCESS)
         } else {
-            window.toast("激活邮件发送失败，请稍后再试")
+            window.toast(staticText.RESPONSE_MESSAGE.ACTIVATE_MAIL_FAIL)
         }
 
         this.setState({
@@ -562,11 +543,45 @@ export default class Person extends React.Component{
 
     }
 
-    editConfirmHangle = () => {
+    editConfirmHandle = () => {
         this.setState({
             confirmEditMail: true,
         })
     }
+
+    editSubmitHandle = async() => {
+        var infoCheckIllegal = this.infoCheckIllegal()
+
+        if (infoCheckIllegal){
+            window.toast(staticText.PERSON_INFO_CHECK.PERSON_INFO_ILLEGAL)
+            return
+        }
+        const result = await api('/api/setUserInfo', {
+            method: 'POST',
+            body: {
+                ...this.state.personInfo
+            }
+        })
+        const result1 = await api('/api/topic/changeCreator',{
+            method:'POST',
+            body:{
+                personInfo: this.state.personInfo,
+                originPersonInfo: this.state.originPersonInfo,
+            }
+        })
+
+        if(result.state.code === 0) {
+            if(INIT_DATA.userObj.personInfo){
+                window.toast(staticText.RESPONSE_MESSAGE.SET_SUCCESS)
+            }
+            this.setState({
+                confirmEditMail: false,
+            });
+        } else {
+            window.toast(staticText.RESPONSE_MESSAGE.SET_FAIL)
+        }
+    }
+
     UsernamePwdHandle = () => {
         this.setState({
             showUsenamePwd:true
@@ -581,7 +596,7 @@ export default class Person extends React.Component{
                 }
             })
             if(result.state.code === 0){
-                window.toast("设置成功")
+                window.toast(staticText.RESPONSE_MESSAGE.SET_SUCCESS)
                 this.setState({
                     showUsenamePwd:false
                 })
@@ -590,17 +605,32 @@ export default class Person extends React.Component{
                 }, 500);
                 
             }else{
-                window.toast(result.state.msg ||"设置失败，请稍后再试")
+                window.toast(result.state.msg ||staticText.RESPONSE_MESSAGE.SET_FAIL)
             }
     }
+
+
+
+    getInfo = async() => {
+        const result = await api('/api/getMyInfo',{
+            method: 'POST',
+            body: {}
+        })
+        this.setState({
+            oldPwd: this.state.oldPwd
+        })
+
+      
+    }
+
     render() {
         // let personInfo = this.state.personInfo
         return (
-            <Page title={"个人设置"} className="person-edit-page page-wrap">
+            <Page title={staticText.PAGE_INFO.PAGE_TITLE} className="person-edit-page page-wrap">
                 <input className='file-input-hidden' type="file" ref={(fileInput) => this.fileInput = fileInput} onChange={this.uploadFileHandle}></input>
                 <div className = "header">
-                <div className="title">个人设置</div>
-                <div className="manage" onClick={() => {location.href = '/team-management'}}> 退出团队</div>
+                <div className="title">{staticText.PAGE_INFO.PAGE_TITLE}</div>
+                <div className="manage" onClick={() => {location.href = '/team-management'}}>{staticText.BUTTON_TEXT.TEAM_EXIT}</div>
                 </div>
                 
                 <div className="head-edit">
@@ -608,13 +638,13 @@ export default class Person extends React.Component{
                         <img src={this.state.personInfo.headImg} className='head-img' />
                     </div>
                     <div className="right">
-                        <div className="create-btn" onClick={this.openFileInput}> 上传图片 </div>
+                        <div className="create-btn" onClick={this.openFileInput}>{staticText.BUTTON_TEXT.UPLOAD_IMAGE}</div>
                     </div>
                 </div>
                 {
                     !this.state.userObj.username?
                     <div className = "edit-con">
-                    <div className = "after">尚未设置账号密码，请</div><div className = "follow-btn" onClick = {this.UsernamePwdHandle}>设置账号密码</div>
+                    <div className = "after">尚未设置账号密码，请</div><div className = "follow-btn" onClick = {this.UsernamePwdHandle}>{staticText.BUTTON_TEXT.SET_ACCOUNT}</div>
                     </div>
                     :""
                 }
@@ -626,10 +656,14 @@ export default class Person extends React.Component{
                     <br/>
                     <div className = "before">密码：</div>
                     <input className = "input-edit" type = "password" value = {this.state.password} onChange = {this.passwordHandle}></input>
-                    <div className = "save-btn" onClick = {this.SaveUsenamePwdHandle}>确定</div>
+                    <div className = "save-btn" onClick = {this.SaveUsenamePwdHandle}>{staticText.BUTTON_TEXT.SUBMIT}</div>
                     </div>
                     :""
                 }
+                <div className="edit-con">
+                    <div className="before">手机</div>
+                    <div className="showPhone">{this.state.userObj.username}</div>
+                </div>
                 {
                 <div className="edit-con">
                     <div className="before">微信</div>
@@ -654,10 +688,11 @@ export default class Person extends React.Component{
                 {this.state.userObj.unionid ?
                 <div className="edit-con">
                     <div className="before">服务号</div>
-                    {!this.state.userObj.subState ? <div className="bind-wx ">未关注</div> : <div className="bind-wx act">已关注</div>}
-                    {!this.state.userObj.subState && <div className='after'>需要<div className='follow-btn' onClick={this.openFollowDialogHandle}>关注服务号</div>才能接受讨论消息提醒</div>}   
+                    {!this.state.userObj.openid ? <div className="bind-wx ">未关注</div> : <div className="bind-wx act">已关注</div>}
+                    {!this.state.userObj.openid && <div className='after'>需要<div className='follow-btn' onClick={this.openFollowDialogHandle}>关注服务号</div>才能接受讨论消息提醒</div>}   
                 </div>:""
                 }
+                
                 <div className="edit-con">
                     <div className="before">姓名</div>
                     <input type="text" onChange={this.nameInputHandle} className="input-edit"  value={this.state.personInfo.name}/>
@@ -672,7 +707,7 @@ export default class Person extends React.Component{
                             <div className='after default-color'>
                                 {this.state.personInfo.mail}
                             </div>
-                            <div className='edit-btn' onClick={this.editConfirmHangle}>修改邮箱</div>
+                            <div className='edit-btn' onClick={this.editConfirmHandle}>修改邮箱</div>
  
                             <div className='active-info'>
                                 {this.state.userObj.isLive ?
@@ -681,28 +716,15 @@ export default class Person extends React.Component{
                                 }
                             </div>
                         </div>}
-                    {(!this.state.hasMail || this.state.confirmEditMail) && <input type="text" onChange={this.mailInputHandle} className="input-edit" value={this.state.personInfo.mail}/>}
+                    {(!this.state.hasMail || this.state.confirmEditMail) && <div>
+                            <input type="text" onChange={this.mailInputHandle} className="input-edit" value={this.state.personInfo.mail}/>
+                            {!this.state.infoCheck.illegalEmailAddress&&<div className='edit-btn' onClick={this.editSubmitHandle}>确定</div>}
+                        </div>}
                     {this.state.infoCheck.illegalEmailAddress && <div className='after error'>格式错误,请填写正确格式的邮件地址</div>}
                         
                 </div>
 
-                <div className="edit-con">
-                    <div className="before">手机</div>
-                    <input type="text" onChange={this.phoneInputHandle} className="input-edit" value={this.state.personInfo.phone}/>
-                    {this.state.infoCheck.illegalPhoneNumber && <div className='after error'>格式错误,请填写正确格式的电话号码</div>}
-                </div>
-
-                {/*
-                    <div className="edit-con">
-                        <div className="before">当前密码</div>
-                        <input type="password" className="input-edit" />
-                    </div>
-
-                    <div className="edit-con">
-                        <div className="before">新密码</div>
-                        <input type="password" className="input-edit" />
-                    </div>
-                */}
+               
 
 
                 <div className="save-btn" onClick={this.saveHandle}>保存</div>
@@ -715,7 +737,7 @@ export default class Person extends React.Component{
                 }
 
                 {
-                    this.state.showFollow && <FollowDialog subState = {this.state.userObj.subState} closeHandle={this.closeFollowDialogHandle}/>
+                    this.state.showFollow && <FollowDialog subState = {this.state.userObj.openid?true:false} closeHandle={this.closeFollowDialogHandle}/>
                 }
 
             </Page>

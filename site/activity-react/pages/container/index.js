@@ -13,6 +13,7 @@ import TeamJoin from './team-join'
 import WxCode from './wxcode'
 import WxChoose from './wx-choose'
 import IhciJoin from './ihci-join';
+import PwdReset from './password-reset'
 
 class App extends React.Component{
     state = {
@@ -28,6 +29,7 @@ class App extends React.Component{
 
         display: 'none',
         menuSetBgColor: '',
+        menuModifyBgColor:'',
         menuCreateBgColor: '',
         menuQuitBgColor: '',
 
@@ -41,6 +43,8 @@ class App extends React.Component{
     handleMouseOver = this.handleMouseOver.bind(this);
     handleSetMouseOver = this.handleSetMouseOver.bind(this);
     handleSetMouseOut = this.handleSetMouseOut.bind(this);
+    handleModifyMouseOut = this.handleModifyMouseOut.bind(this);
+    handleModifyMouseOver = this.handleModifyMouseOver.bind(this);
     handleCreateMouseOver = this.handleCreateMouseOver.bind(this);
     handleCreateMouseOut = this.handleCreateMouseOut.bind(this);
     handleQuitMouseOver = this.handleQuitMouseOver.bind(this);
@@ -78,6 +82,16 @@ class App extends React.Component{
             menuSetBgColor: 'whitesmoke'
         })
     }
+    handleModifyMouseOver() {
+        this.setState({
+            menuModifyBgColor: '#ccc'
+        })
+    }
+    handleModifyMouseOut() {
+        this.setState({
+            menuModifyBgColor: 'whitesmoke'
+        })
+    }
     handleCreateMouseOver() {
         this.setState({
             menuCreateBgColor: '#ccc'
@@ -111,15 +125,18 @@ class App extends React.Component{
     }
 
     setHeadImg = async () => {
-        const result = await api('/api/getMyInfo')
-        if(result.data && result.data.personInfo && result.data.personInfo.headImg) {
+        const result = await api('/api/getMyInfo',{
+            method: 'POST',
+            body: {}
+        })
+        if(result.data.userObj && result.data.userObj.personInfo && result.data.userObj.personInfo.headImg) {
             this.setState({
-                headImg: result.data.personInfo.headImg,
-                menuName: result.data.personInfo.name,
-                menuEmail: result.data.personInfo.mail,
+                headImg: result.data.userObj.personInfo.headImg,
+                menuName: result.data.userObj.personInfo.name,
+                menuEmail: result.data.userObj.personInfo.mail,
                 personInfo: {
-                    ...result.data,
-                    ...result.data.personInfo,
+                    ...result.data.userObj,
+                    ...result.data.userObj.personInfo,
                 },
             })
         }
@@ -133,9 +150,6 @@ class App extends React.Component{
             return false
         }
         if (!this.state.personInfo.mail){
-            return false
-        }
-        if (!this.state.personInfo.phone){
             return false
         }
         return true
@@ -226,6 +240,9 @@ class App extends React.Component{
                         <div className="menuSet" onClick={this.routerHandle.bind(this, '/person')} 
                         style={{backgroundColor:this.state.menuSetBgColor}}
                         onMouseOver={this.handleSetMouseOver} onMouseOut={this.handleSetMouseOut}>个人设置</div>
+                        <div className="modifyPassword" onClick={this.routerHandle.bind(this,'/modify-password')}
+                        style={{backgroundColor:this.state.menuModifyBgColor}}
+                        onMouseOver={this.handleModifyMouseOver} onMouseOut={this.handleModifyMouseOut}>修改密码</div>
                         <div className="menuCreate" onClick={() => {this.locationTo('/team-create')}} 
                         style={{backgroundColor:this.state.menuCreateBgColor}}
                         onMouseOver={this.handleCreateMouseOver} onMouseOut={this.handleCreateMouseOut}>+创建团队</div>
@@ -302,6 +319,10 @@ const routeConfig = [
     {
         path: '/ihci-join',
         component: IhciJoin
+    },
+    {
+        path: '/password-reset',
+        component: PwdReset
     }
 ]
 

@@ -5,9 +5,19 @@
     flex-direction: column;
     .join-table{
         position: absolute;
-        left:25%;
+        left:20%;
         height:-10%;
-        .title{}
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        .edit-con{
+            display: flex;
+            align-items: center;
+            flex-direction: row;
+            flex-wrap: wrap;
+            width: 400px;
+        }
         .desc{
             width:400px;
             height:100px;
@@ -20,7 +30,7 @@
             font-weight: bold;
         }
         .before {
-            width: 100px;
+            width: 70px;
             color: #666;
             margin-top: 20px;
         }
@@ -28,9 +38,10 @@
             color: #f00;
         }
         .input-edit {
+            margin-top: 20px;
             border: 1px solid #e6e6e6; /*no*/
             height: 40px;
-            width: 400px;
+            width: 300px;
             border-radius: 4px;
             line-height: 40px;
             padding: 0 10px;

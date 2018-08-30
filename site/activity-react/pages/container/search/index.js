@@ -112,7 +112,7 @@ class SearchResultItem extends React.PureComponent{
     }
 
     render() {
-        console.log(this)
+    
         switch (this.props.type) {
             case 'CREATE_TOPIC':
             case 'REPLY_TOPIC':
@@ -242,6 +242,7 @@ export default class SearchResult extends React.Component{
                 type: queryType ? queryType : '',
             }
         })
+
         this.setState({
             resultList: result.data
         }, () => {

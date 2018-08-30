@@ -60,7 +60,7 @@ function reName() {
 
 const getOssClient = async () => {
     const result = await api('/api/getOssStsToken', {
-        method: 'GET',
+        method: 'POST',
         body: {}
     })
     const token = result.data
@@ -106,7 +106,7 @@ const fileUploader = async (file, ossKey) => {
 
 
     if (result.res.status == 200) { 
-        console.log("文件上传成功");
+    
     } else {
         console.error(result);
     }

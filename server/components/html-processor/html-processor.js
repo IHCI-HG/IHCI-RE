@@ -51,7 +51,7 @@ var handle = function(req, res, next, opts) {
     try {
         html = cache.get(cacheKey);
         if (!html) {
-            console.log('not use html cache. cacheKey:', cacheKey, ' path:', filePath);
+
             html = fs.readFileSync(filePath, 'utf8');
             cache.set(cacheKey, html);
         }

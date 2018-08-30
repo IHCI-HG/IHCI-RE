@@ -16,10 +16,10 @@ export default class TeamManagement extends React.Component{
     getTeamList  = async() => {
         
         const result = await api('/api/getMyInfo', {
-            method: 'GET',
-            body: {}
+            method: 'POST',
+            body: {}    
         })
-        const teamList = result.data.teamList
+        const teamList = result.data.userObj.teamList
         this.setState({
             teamList: teamList
         })
@@ -38,7 +38,9 @@ export default class TeamManagement extends React.Component{
             <Page title="我的团队管理" className="management-page">
                 <div className="page-wrap">  
                 <h2>所有团队</h2>      
-                <br/>        
+                <br/>
+                {
+                    this.state.teamList.length > 0 ?   
                     <div className="teamList">
                     {
                         this.state.teamList.map((item)=>{
@@ -52,6 +54,8 @@ export default class TeamManagement extends React.Component{
                         })
                     }
                     </div>
+                    : <div class="noTeam">您暂时没有加入任何团队</div>
+                }
                 </div>
             </Page>
         )

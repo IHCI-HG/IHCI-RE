@@ -9,6 +9,11 @@ import {
     createTopicTemplate,
     replyTopicTemplate
 } from '../components/wx-utils/wx-utils'
+import{
+    isMember,
+    isAdmin,
+    isCreator
+}from '../middleware/auth-judge/auth-judge'
 
 var mongoose = require('mongoose')
 
@@ -21,7 +26,7 @@ var timelineDB = mongoose.model('timeline')
 
 const createTopic = async (req, res, next) => {
     const teamId = req.body.teamId
-    const topicName = req.body.name
+    const title = req.body.title
     const topicContent = req.body.content
     const topicFileList = req.body.fileList
     const informList = req.body.informList
@@ -29,9 +34,9 @@ const createTopic = async (req, res, next) => {
 
 
 
-    if(!topicName || !topicContent) {
+    if(!title || !topicContent) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -39,9 +44,16 @@ const createTopic = async (req, res, next) => {
 
     try {
         const userObj = await userDB.baseInfoById(userId)
-        const result = await topicDB.createTopic(topicName, topicFileList, topicContent, userObj, teamId)
+        const result = await topicDB.createTopic(title, topicFileList, topicContent, userObj, teamId)
         await teamDB.addTopic(teamId, result)
         const teamObj = await teamDB.findByTeamId(teamId)
+        if(!teamObj){
+            resProcessor.jsonp(req, res, {
+                state: { code: 3001, msg: "无效的id" },
+                data: {}
+            });
+            return
+        }
         await timelineDB.createTimeline(teamId, teamObj.name, userObj, 'CREATE_TOPIC', result._id, result.title, result)
 
         //如果有需要通知的人，则走微信模板消息下发流程
@@ -56,15 +68,15 @@ const createTopic = async (req, res, next) => {
 
             notificationMail(informList, result, "创建了讨论")
         }
-
+        
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
-            data: result,
+            data: {topicObj: result},
         });
     } catch (error) {
         console.error(error);
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
     }
@@ -148,14 +160,20 @@ const changeTopicCreator = async (req, res, next) => {
 const editTopic = async (req, res, next) => {
     const teamId = req.body.teamId
     const topicId = req.body.topicId
-    const editTopic = req.body.editTopic
     const informList = req.body.informList
-
+    const title = req.body.title
+    const content = req.body.content
+    const fileList = req.body.fileList
     const userId = req.rSession.userId
-
+    
+    const editTopic = {
+        title: title,
+        content: content,
+        fileList: fileList
+    }
     if(!teamId || !topicId || !editTopic) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -169,7 +187,7 @@ const editTopic = async (req, res, next) => {
          }
         if(!topicObj) {
             resProcessor.jsonp(req, res, {
-                state: { code: 1, msg: "话题不存在" },
+                state: { code: 3001, msg: "无效的id" },
                 data: {}
             });
             return
@@ -196,14 +214,13 @@ const editTopic = async (req, res, next) => {
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
             data: {
-                result1: result1,
-                result2: result2
+                topicObj: result1,
             }
         });
     } catch (error) {
         console.error(error);
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000 , msg: '操作失败' },
             data: {}
         });
     }
@@ -223,7 +240,7 @@ const createDiscuss = async (req, res, next) => {
 
     if(!teamId || !topicId || !content) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -232,6 +249,13 @@ const createDiscuss = async (req, res, next) => {
     try {
         const userObj = await userDB.baseInfoById(userId)
         const topicObj = await topicDB.findByTopicId(topicId)
+        if(!topicObj) {
+            resProcessor.jsonp(req, res, {
+                state: { code: 3001, msg: "无效的id" },
+                data: {}
+            });
+            return
+        }
         const result = await discussDB.createDiscuss(teamId, topicId, topicObj.title, content, userObj, fileList)
 
         await topicDB.addDiscuss(topicId, result)
@@ -254,12 +278,12 @@ const createDiscuss = async (req, res, next) => {
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
-            data: result
+            data: {discussObj:result}
         });
     } catch (error) {
         console.error(error);
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
     }
@@ -280,7 +304,7 @@ const editDiscuss = async (req, res, next) => {
 
     if(!discussId || !topicId || !content) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -292,6 +316,13 @@ const editDiscuss = async (req, res, next) => {
     }
     try {
         var discussObj = (await discussDB.findTaskDiscuss(discussId)).toObject();
+        if(!discussObj) {
+            resProcessor.jsonp(req, res, {
+                state: { code: 3001, msg: "无效的id" },
+                data: {}
+            });
+            return
+        }
         //delete discussObj._id;
         discussObj.content = content;
         discussObj.fileList = fileList || discussObj.fileList;
@@ -317,12 +348,12 @@ const editDiscuss = async (req, res, next) => {
         }
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
-            data: result
+            data: {discussObj:result}
         });
     } catch (error) {
         console.error(error);
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
     }
@@ -331,12 +362,12 @@ const editDiscuss = async (req, res, next) => {
 
 
 const topicInfo = async (req, res, next) => {
-    const topicId = req.query.topicId
+    const topicId = req.body.topicId
     const userId = req.rSession.userId
 
     if(!topicId) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -344,15 +375,21 @@ const topicInfo = async (req, res, next) => {
 
     try {
         const topicObj = await topicDB.findByTopicId(topicId)
-
+        if(!topicObj){
+            resProcessor.jsonp(req, res, {
+                state: { code: 3001, msg: "无效的id" },
+                data: {}
+            });
+            return
+        }
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
-            data: topicObj
+            data: {topicObj:topicObj}
         });
     } catch (error) {
         console.error(error);
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
     }
@@ -360,7 +397,7 @@ const topicInfo = async (req, res, next) => {
 
 //设置Topic已读
 const readingNotice = async (req, res, next) => {
-    const noticeId = req.body.noticeId
+    const noticeId = req.body.topicId
     const readerId = req.rSession.userId
 
     if(!noticeId == undefined) {
@@ -412,7 +449,7 @@ const readingNotice = async (req, res, next) => {
 
 
 const getMoreTopic = async (req,res,next) =>{
-    const teamId = req.query.teamId;
+    const teamId = req.body.teamId;
     const currentPage = req.query.currentPage;
 
 
@@ -450,7 +487,7 @@ const delTopic = async (req,res,next) =>{
 
     if(!topicId) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: "参数不正确" },
+            state: { code: 3000, msg: "参数不正确" },
             data: {}
         });
         return
@@ -458,6 +495,13 @@ const delTopic = async (req,res,next) =>{
 
     try {
         const topicObj = await topicDB.findByTopicId(topicId);
+        if(!topicObj){
+            resProcessor.jsonp(req, res, {
+                state: { code: 3001, msg: "无效的id" },
+                data: {}
+            });
+            return
+        }
         const teamId = topicObj.team;
 
         const discussList = topicObj.discussList;
@@ -479,12 +523,12 @@ const delTopic = async (req,res,next) =>{
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
-            data: result
+            data: {topicObj:result}
         });
     } catch (error) {
         console.error(error);
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
     }
@@ -500,7 +544,7 @@ const delDiscuss = async (req,res,next)=>{
 
     if(!discussId) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: "参数不正确" },
+            state: { code: 3000, msg: "参数不正确" },
             data: {}
         });
         return
@@ -508,6 +552,13 @@ const delDiscuss = async (req,res,next)=>{
 
     try {
         const result = await discussDB.findDiscussById(discussId);
+        if(!result){
+            resProcessor.jsonp(req, res, {
+                state: { code: 3001, msg: "无效的id" },
+                data: {}
+            });
+            return
+        }
         const teamId = result.teamId;
         const topicId = result.topicId;
 
@@ -531,19 +582,19 @@ const delDiscuss = async (req,res,next)=>{
     } catch (error) {
         console.error(error);
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
     }
 }
 
 const getDiscuss = async (req, res, next) => {
-    const topicId = req.query.topicId
+    const topicId = req.body.topicId
     const userId = req.rSession.userId
 
     if(!topicId) {
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: "参数不全" },
+            state: { code: 3000, msg: "参数不全" },
             data: {}
         });
         return
@@ -551,35 +602,41 @@ const getDiscuss = async (req, res, next) => {
 
     try {
         const discussList = await discussDB.getDiscussByTopicId(topicId)
-
+        if(!discussList){
+            resProcessor.jsonp(req, res, {
+                state: { code: 3001, msg: "无效的id" },
+                data: {}
+            });
+            return
+        }
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '请求成功' },
-            data: discussList
+            data:{ discussList:discussList}
         });
     } catch (error) {
         console.error(error);
         resProcessor.jsonp(req, res, {
-            state: { code: 1, msg: '操作失败' },
+            state: { code: 1000, msg: '操作失败' },
             data: {}
         });
     }
 }
 
 module.exports = [
-    ['GET', '/api/topic/get', apiAuth, topicInfo],
+    ['POST', '/api/topic/get', apiAuth, topicInfo],
     //6.22
-    ['GET','/api/topic/getMoreTopic', apiAuth,getMoreTopic],
+    ['GET','/api/topic/getMoreTopic', apiAuth, isMember,getMoreTopic],
 
-    ['POST', '/api/topic/createTopic', apiAuth, memberAuth, createTopic],
-    ['POST', '/api/topic/editTopic', apiAuth, editTopic],
-    ['POST', '/api/topic/createDiscuss', apiAuth, createDiscuss],
-    ['POST', '/api/topic/editDiscuss', apiAuth, editDiscuss],
-    ['POST', '/api/topic/changeCreator', apiAuth, changeTopicCreator],
-    ['POST', '/api/topic/readingNotice', apiAuth,readingNotice],
+    ['POST', '/api/topic/createTopic', apiAuth, isMember, createTopic],
+    ['POST', '/api/topic/editTopic', apiAuth, isMember, editTopic],
+    ['POST', '/api/topic/createDiscuss', apiAuth, isMember, createDiscuss],
+    ['POST', '/api/topic/editDiscuss', apiAuth, isMember, editDiscuss],
+    ['POST', '/api/topic/changeCreator', apiAuth, isMember, changeTopicCreator],
+    ['POST', '/api/topic/readingNotice', apiAuth,isMember, readingNotice],
 
     //6.28
-    ['POST','/api/topic/delTopic',apiAuth,delTopic],
-    ['POST','/api/topic/delDiscuss',apiAuth,delDiscuss],
-    ['GET','/api/topic/getDiscuss',apiAuth,getDiscuss],
+    ['POST','/api/topic/delTopic',apiAuth,isMember, delTopic],
+    ['POST','/api/topic/delDiscuss',apiAuth,isMember, delDiscuss],
+    ['POST','/api/topic/getDiscuss',apiAuth,isMember, getDiscuss],
 
 ];

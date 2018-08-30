@@ -53,8 +53,7 @@ export default class Topic extends React.Component{
     }
 
     componentDidMount = async() => {
-        console.log('mounted!!')
-        console.log(this)
+      
         this.topicId = this.props.params.id
         this.initPageInfo()
         try{
@@ -78,50 +77,50 @@ export default class Topic extends React.Component{
         })
         if (result.data) {
             this.setState({
-                teamInfo: result.data
+                teamInfo: result.data.teamObj
             })
         }
     }
 
     initPageInfo = async () => {
         const result = await api('/api/topic/get', {
-            method: 'GET',
+            method: 'POST',
             body: {
                 topicId: this.topicId
             }
         })
-
-        const topicObj = result.data
+    
+        const topicObj = result.data.topicObj
         topicObj.imgList = []
         topicObj.fileList.map((fileItem,index)=>{
             if(fileItem.name.endsWith(".jpg")||fileItem.name.endsWith(".jpeg")||fileItem.name.endsWith(".png")||fileItem.name.endsWith(".bmp")||fileItem.name.endsWith(".gif")){
                 topicObj.imgList.push(fileItem)
             }
         })
-        console.log(result)
-
-        this.teamId = result.data.team
+   
+        this.teamId = result.data.topicObj.team
 
         const memberResult = await api('/api/team/memberList', {
-            method: 'GET',
+            method: 'POST',
             body: {
                 teamId: topicObj.team
             }
         })
         const memberList = []
-        memberResult.data.map((item) => [
+        memberResult.data.memberList.map((item) => [
             memberList.push({
                 ...item,
                 chosen: false,
             })
         ])
         const result2 = await api('/api/topic/getDiscuss', {
-            method: 'GET',
+            method: 'POST',
             body: {
                 topicId: this.topicId
             }
         })
-        const discussList = result2.data
+      
+        const discussList = result2.data.discussList
         discussList.map((item)=>{
             item.imgList = []
             item.fileList.map((fileItem,index)=>{
@@ -145,7 +144,7 @@ export default class Topic extends React.Component{
     }
 
     topicContentHandle = (content) => {
-        console.log(content)
+      
         this.setState({
             topicContentInput: content
         })
@@ -224,24 +223,17 @@ export default class Topic extends React.Component{
                 informList.push(item._id)
             }
         })
-        let editTopic = {
-                title: this.state.topicNameInput,
-                content: this.state.topicContentInput,
-                fileList: this.state.topicAttachments,
-        }
         if(this.state.topicAttachmentsArr!==[])
         {
             this.state.topicAttachmentsArr.map(async(item,index)=>{
                 const result1 = await api('/api/file/createFile', {
                     method: 'POST',
                     body: {
-                        fileInfo: {
-                            teamId: this.teamId,
-                            size: item.size,
-                            dir: '/',
-                            fileName: item.name,
-                            ossKey: this.state.topicOssKeyArr[index],
-                        }
+                        teamId: this.teamId,
+                        size: item.size,
+                        dir: '/',
+                        fileName: item.name,
+                        ossKey: this.state.topicOssKeyArr[index],
                     }
                 })
                 if (result1.state.code === 0) {
@@ -256,13 +248,15 @@ export default class Topic extends React.Component{
             body: {
                 teamId: this.teamId,
                 topicId: this.topicId,
-                editTopic,
+                title: this.state.topicNameInput,
+                content: this.state.topicContentInput,
+                fileList: this.state.topicAttachments,
                 informList: informList,
                 fileList:this.state.topicAttachments
             }
         })
 
-        if (result) {
+        if (result.state.code === 0) {
             this.setState({
                 topicObj: {
                     ...this.state.topicObj,
@@ -293,13 +287,11 @@ export default class Topic extends React.Component{
                 const result1 = await api('/api/file/createFile', {
                     method: 'POST',
                     body: {
-                        fileInfo: {
-                            teamId: this.teamId,
-                            size: item.size,
-                            dir: '/',
-                            fileName: item.name,
-                            ossKey: ossArr[index],
-                        }
+                        teamId: this.teamId,
+                        size: item.size,
+                        dir: '/',
+                        fileName: item.name,
+                        ossKey: ossArr[index],
                     }
                 })
                 if (result1.state.code === 0) {
@@ -320,7 +312,7 @@ export default class Topic extends React.Component{
                 fileList:fileList
             }
         })
-        console.log(result)
+      
         if(result.state.code == 0) {
             const imgList=[]
             fileList.map((fileItem,index)=>{
@@ -362,7 +354,7 @@ export default class Topic extends React.Component{
         this.setState({
             createDiscussContent: e.target.value
         })
-        console.log('here:',this.state.createDiscussContent)
+  
     }
 
     createDiscussHandle = async () => {
@@ -378,13 +370,11 @@ export default class Topic extends React.Component{
                 const result1 = await api('/api/file/createFile', {
                     method: 'POST',
                     body: {
-                        fileInfo: {
-                            teamId: this.teamId,
-                            size: item.size,
-                            dir: '/',
-                            fileName: item.name,
-                            ossKey: this.state.discussOssKeyArr[index],
-                        }
+                        teamId: this.teamId,
+                        size: item.size,
+                        dir: '/',
+                        fileName: item.name,
+                        ossKey: this.state.discussOssKeyArr[index],
                     }
                 })
                 if (result1.state.code === 0) {
@@ -405,16 +395,16 @@ export default class Topic extends React.Component{
                 informList: informList
             }
         })
-        console.log(result)
+     
         if(result && result.state.code == 0) {
             const discussList = this.state.discussList
-            result.data.imgList=[]
-            result.data.fileList.map((fileItem,index)=>{
+            result.data.discussObj.imgList=[]
+            result.data.discussObj.fileList.map((fileItem,index)=>{
                 if(fileItem.name.endsWith(".jpg")||fileItem.name.endsWith(".jpeg")||fileItem.name.endsWith(".png")||fileItem.name.endsWith(".bmp")||fileItem.name.endsWith(".gif")){
                     result.data.imgList.push(fileItem)
                 }
             })
-            discussList.push(result.data)
+            discussList.push(result.data.discussObj)
             this.setState({
                 discussList: discussList,
                 createDiscussContent: '',
@@ -447,7 +437,7 @@ export default class Topic extends React.Component{
     }
 
     undoHighlight = () =>{
-        console.log("blur!!")
+     
         this.setState({
             enableHighlight: false,
         })
@@ -488,7 +478,7 @@ export default class Topic extends React.Component{
                                 <div className="infrom">请选择要通知的人：</div>
                                 <MemberChosenList choseHandle={this.memberChoseHandle} memberList={this.state.memberList}/>
                                 <div className="button-warp">
-                                    <div className="save-btn" onClick={this.topicChangeSaveHandle}>保存</div>
+                                    <div className="save-btn" onClick={()=>{setTimeout(this.topicChangeSaveHandle.bind(this),400)}}>保存</div>
                                     <div className="cancel-btn" onClick={() => {this.setState({topicObj: {...this.state.topicObj, editStatus: false}})}}>取消</div>
                                 </div>
                             </div>

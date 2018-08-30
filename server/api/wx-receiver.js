@@ -25,12 +25,12 @@ var subscribeEventHandle = async (openid) => {
     try {
         const wxUserInfo = await pub_openidToUserInfo(openid)
         if(wxUserInfo && wxUserInfo.unionid) {
+            const result = followerDB.findByUnionId(wxUserInfo.unionid)
             await followerDB.createFollower(openid, wxUserInfo.unionid)
             const userObj = await UserDB.findByUnionId(wxUserInfo.unionid)
             if(userObj) {
                 await UserDB.updateUser(userObj._id, {
                     openid: wxUserInfo.openid,
-                    subState: true
                 })          
             } 
             pub_pushTemplateMsg(openid, 'YH-TY6g0sbVJgC5Ppk-cBDvLlFCfQxRm61QKj7IOSV4', 'www.animita.cn', {
@@ -60,7 +60,6 @@ var unsubscribeEventHandle = async (openid) => {
     if(userObj) {
        await UserDB.updateUser(userObj._id, {
             openid: '',
-            subState: false
         })      
     } 
 }
@@ -114,7 +113,7 @@ var wxReceiver = function(req, res, next) {
             break;
     }
 
-    console.log('wxReceiver-body: ', req.body);
+
 
     if(req.query.echostr) {
         res.send(req.query.echostr)
