@@ -1,17 +1,31 @@
 
         .auth-con {
-            width: 60%;
-            margin: auto;
-            height: 350px;
+            display:flex;
+            flex-direction:column;
+            align-items: center;
+            width: 70%;
+            margin-top:150px !important;
+            margin:auto;
+            height: 600px;
+        }
+        .title{
+            margin:auto;
+            font-size:50px;
         }
         .auth-nav {
+            margin-top:20px !important;
             height: 50px;
             display: flex;
-            align-items: center;
-            justify-content: center;
-
-            padding-top: 100px;
+            flex-direction: row !important;
+            align-items: flex-end !important;
+            justify-content:space-between !important;
+            padding:0px 0px;
             .auth-nav-item {
+                margin-top:20px;
+                margin-bottom: 0;
+                border-radius: 0;
+                font-weight: 400;
+                width:230px;
                 transition: background-color .3s;
                 cursor: pointer;
                 flex-grow: 1;
@@ -19,18 +33,25 @@
                 align-items: center;
                 justify-content: center;
                 height: 50px;
+                color:black !important;
+                background-color: #f0f0f0;
                 &:hover {
-                    background-color: rgb(237, 237, 237);
+                    background-color: rgb(237, 237, 237) !important;
                 }
                 &.active{
-                    background: #ff9900d4;
+                    background: #fff;
                 }
             }
+            
         }
+        
         .auth-form {
             padding: 30px;
+            width:400px;
             background-color: #fff;
             height: 100%;
+            display:flex;
+            flex-direction: column;
             .auth-desc {
                 font-size: 16px;
                 font-weight: bold;
@@ -82,6 +103,7 @@
             }
             .wx-btn{
                 cursor: pointer;
+                margin:auto;
             }
         }
 

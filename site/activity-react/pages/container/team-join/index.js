@@ -87,14 +87,8 @@ export default class TeamAdmin extends React.Component{
                             <div className='join-btn' onClick={this.joinBtnHandle}>点击加入团队</div> 
                         </div>
                         : 
-                        <div className='reg-box'>
-                            {/* <span className='reg-msg'>您尚未登录</span> */}
-                            <div className='reg-item'>
-                                {/* <div className='reg-inner-item'> */}
-                                <TeamLoginView  join={true} showWxDialogHandle={this.showWxDialogHandle} teamName={this.state.teamObj.name} teamName={this.state.teamObj.name } />
-                                {/* </div> */}
-                            </div>
-                        </div>
+                        <TeamLoginView  join={true} showWxDialogHandle={this.showWxDialogHandle} teamName={this.state.teamObj.name} teamName={this.state.teamObj.name } />
+                    
                     }
                     </div>
                     

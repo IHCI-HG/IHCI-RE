@@ -409,9 +409,16 @@ export default class Person extends React.Component{
             if(INIT_DATA.userObj.personInfo){
                 window.toast(staticText.RESPONSE_MESSAGE.SET_SUCCESS)
             }
-            setTimeout(() => {
-                location.href = '/team'
-            }, 500);
+            if(this.props.location.query.teamjoin){
+                setTimeout(() => {
+                    window.history.go(-1)
+                },500);
+            }else{
+                setTimeout(() => {
+                    location.href = '/team'
+                }, 500);
+            }
+            
         } else {
             window.toast(staticText.RESPONSE_MESSAGE.SET_FAIL)
         }
