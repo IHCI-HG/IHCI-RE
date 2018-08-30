@@ -149,9 +149,9 @@ class App extends React.Component{
         if (!this.state.personInfo.name){
             return false
         }
-        if (!this.state.personInfo.mail){
-            return false
-        }
+        // if (!this.state.personInfo.mail){
+        //     return false
+        // }
         return true
     }
 
