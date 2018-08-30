@@ -180,7 +180,7 @@ export class TeamLoginView extends React.Component {
             window.toast("注册成功")
             setTimeout(() => {
                 if (this.props.join)
-                    location.href = `/person?teamjoin=${this.props.join}`
+                    location.href = `/person?teamjoin=${this.props.join}&teamId=${this.props.teamId}`
                 else
                     location.href = '/person'
             }, 300);

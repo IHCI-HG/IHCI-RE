@@ -411,7 +411,7 @@ export default class Person extends React.Component{
             }
             if(this.props.location.query.teamjoin){
                 setTimeout(() => {
-                    window.history.go(-1)
+                    location.href = `/team-join/${this.props.location.query.teamId}`
                 },500);
             }else{
                 setTimeout(() => {
