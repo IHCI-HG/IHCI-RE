@@ -6,6 +6,7 @@ import './style.scss'
 
 import WxLoginDialog from '../../components/wx-login-dialog'
 
+import SMSBlock from '../../components/smsCode'
 export class LoginView extends React.Component {
     state = {
         //loginBlock: signUp || login
@@ -25,63 +26,7 @@ export class LoginView extends React.Component {
             passwordEmpty:true
         },
 
-        getCode: true,
-        count: '',
-
-        numberCheck:true,
-        enable: true,
-        numberCheck:true,
-        captchaCode:'',
-        captchaImg :'',
-        captchaText:'',
-        number: '',
-        captchCodeCheck:false,
     }
-
-    componentDidMount = async() => {
-        this.setState({
-            number: 0,
-        })
-    }
-
-
-    handleClick = () => {
-        if (this.state.createPhone == "") {
-            window.toast('手机号不能为空')
-            return
-        } else {
-            // 手机正确格式验证
-            if(!(/^1[3|4|5|7|8]\d{9}$/.test(this.state.createPhone))) {
-                window.toast('手机格式有误')
-                return 
-            }
-        }
-
-        //发送验证码
-
-        this.getSMS();
-
-        const interval = 5;
-
-        var temp = interval
-        this.setState({
-            getCode: false,
-            count: temp
-        })
-        var timer = setInterval(() => {
-            this.setState({
-                count: --temp, 
-            })
-        
-            if(this.state.count == 0) {
-                this.setState({
-                    count: interval,
-                    getCode: true
-                })
-                clearInterval(timer)
-            }
-        }, 1000);
-    }       
 
     setToSignUpHandle = () =>  {
         this.setState({
@@ -93,8 +38,6 @@ export class LoginView extends React.Component {
             loginBlock: 'login'
         });
     }
-
-
 
     usernameHandle = (e) => {
         const username = e.target.value
@@ -197,95 +140,6 @@ export class LoginView extends React.Component {
         }
     }
 
-    checkSMSNumber = () => {
-        if (this.state.number === 3){
-            this.setState({
-                numberCheck:false,
-            })
-        } else{
-            var number = this.state.number
-            number += 1
-            this.setState({
-                number: number
-            })
-        }
-    }
-
-    getSMS = async() => {
-        if(this.state.enable) {
-        this.checkSMSNumber()
-        if(this.state.numberCheck){
-            const result = await api('/api/createSMS', {
-                method: 'POST',
-                body: {
-                    phoneNumber: this.state.createPhone
-                }
-            })
-            if(result.state.code === 0 ){
-
-            } else {
-                window.toast(result.state.msg || "请重新输入")
-            }
-            this.countDown()
-        } else {
-            window.toast("获取验证码次数过多，请输入图片验证码")
-            this.getCaptchaImg()
-        }
-        }
-    }
-
-    getCaptchaImg = async () =>{
-        const result = await api('/api/createCaptcha',{
-            method:'POST',
-            body:{}
-        })
-        if(result.state.code === 0){
-   
-            this.setState({
-                captchaImg: result.data.img,
-                captchaText:result.data.text
-            })
-            
-        }
-        
-    }
-
-    captchaInputHandle = (e) =>{
-        const code = e.target.value
-        this.setState({
-            captchaCode: code
-        })
-        if(code === this.state.captchaText){
-            this.setState({
-                captchCodeCheck: true,
-                enable: true
-            })
-        }
-
-    }
-
-    countDown = () =>{
-        this.setState({
-            enable:false
-        })
-        var timer = setInterval(() => {
-            var count = this.state.count  
-            count -=1
-            if(count < 1){
-                count = 60
-                this.setState({
-                    enable: true,
-                    count: count
-                })
-                clearInterval(timer)
-            }else{
-                this.setState({
-                    count: count
-                    })
-                }               
-            },1000)
-    }
-
     signHandle = async () => {
         // todo 检验账号密码是否可用
         if(this.state.infoCheck.createPhoneEmpty){
@@ -331,6 +185,18 @@ export class LoginView extends React.Component {
         }, 300);
     }
 
+    smsCodeInputHandle = (e) =>{
+        const code = e.target.value
+        this.setState({
+            authCode: code,
+            infoCheck:{
+                ...this.state.infoCheck,
+                authCodeEmpty:false
+            }
+        })
+
+    }
+
     render () {
         return <div className="auth-con">
                         <div className="auth-nav">
@@ -353,25 +219,11 @@ export class LoginView extends React.Component {
                                     onClick={this.judgeUsernameEmptyHandle} autoFocus></input>
                                     
                                     <div className="auth-desc">验证码</div>
-                                    <input className="auth-smallinput" placeholder="请输入验证码" type="text" 
-                                    value={this.state.authCode} onChange={this.authCodeHandle}></input>
-                                    {
-                                        <button className={this.state.numberCheck ? 'codeBtn': 'countSecond'}
-                                        onClick={this.getSMS}>{this.state.enable?'获取验证码':`${this.state.count}秒后重发`}</button>
-                                    }
-
-                                    {
-                                        !this.state.numberCheck ?
-                                        <div>
-                                            <input className = "input-code" value = {this.state.captchaCode} onChange={this.captchaInputHandle}></input>
-                                            {
-                                                this.state.captchCodeCheck ? <i className="icon iconfont check-cion">&#xe750;</i> : ""
-                                            }
-                                            <div dangerouslySetInnerHTML = {{__html:this.state.captchaImg}}></div>
-                                            <div className = "change-icon" onClick = {this.getCaptchaImg}>看不清，换一张</div>
-                                        </div>
-                                        : ""
-                                    }
+                                    <SMSBlock smsCodeInputHandle = {this.smsCodeInputHandle}
+                                  smsCode = {this.state.authCode}
+                                  phoneNumber = {this.state.createPhone}
+                                  phoneEmpty = {this.state.infoCheck.createPhoneEmpty}
+                                  ></SMSBlock>
 
                                     <div className="auth-desc">密码</div>
                                     <input className="auth-input" placeholder="请输入密码"

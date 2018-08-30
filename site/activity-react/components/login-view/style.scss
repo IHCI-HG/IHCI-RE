@@ -28,6 +28,42 @@
         .auth-form {
             padding: 30px;
             background-color: #fff;
+
+            .sms-block 
+            {
+                .input-code {
+                    margin-right: 10px;
+                    outline: 0;
+                    border: 1px solid #e9eaea;
+                    border-radius: 2px;
+                    height: 50px;
+                    width: 140px;
+                    padding: 0 20px;
+                    margin-top:10px;
+                    margin-bottom: 10px;
+                }
+                .active-btn {
+                    margin-top:10px;
+                    margin-left:10px;
+                    display:flex;
+                    flex-wrap:wrap;
+                    //align-items: center;
+                    cursor: pointer;
+                    text-align: center;
+                    width: 130px;
+                    background-color: orange;
+                    border-color: orange;
+                    color: #fff;
+                    height: 50px;
+                    font-weight: bold;  
+                
+                    justify-content: center;
+                
+                }
+
+              
+         
+            }
             .auth-desc {
                 font-size: 16px;
                 font-weight: bold;
@@ -59,7 +95,7 @@
                 height: 50px;
                 padding: 6px 0;
                 cursor: pointer;
-                font-weight: bold;    
+                font-weight: bold; 
             }
             
             .countSecond {

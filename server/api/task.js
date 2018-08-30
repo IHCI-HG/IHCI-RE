@@ -1633,7 +1633,7 @@ module.exports = [
     ['POST', '/api/task/changeDir', apiAuth, isMember, changeTaskDir],
     ['POST', '/api/task/changeIndex', apiAuth, isMember, changeTaskIndex],
     ['POST', '/api/task/changeList', apiAuth, isMember, changeTaskList],
-    ['POST', '/api/task/taskInfo', apiAuth, isMember, taskInfo],
+    ['POST', '/api/task/taskInfo', apiAuth, taskInfo],
     ['POST', '/api/task/addCheckitem', apiAuth, isMember, addCheckitem],
     ['POST', '/api/task/dropCheckitem', apiAuth, isMember, dropCheckitem],
     ['POST', '/api/task/findCheckitem', apiAuth, isMember, findCheckitem],
