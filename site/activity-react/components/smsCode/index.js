@@ -27,12 +27,11 @@ export default class SMSBlock extends React.Component{
     }
     
     checkSMSNumber = async () =>{
-        if(this.state.number ===3){
+        if(this.state.number === 3){
             this.setState({
                 numberCheck:false,
             },()=>{
                 window.sessionStorage.setItem('numberCheck',false)
-                console.log(this.state.numberCheck)
             })
         }else{
             var number = this.state.number
@@ -41,8 +40,6 @@ export default class SMSBlock extends React.Component{
                 number: number
             }, () => {
                 window.sessionStorage.setItem('number',number)
-                console.log(this.state.number)
-                console.log(this.state.numberCheck)
             })
         }
     }

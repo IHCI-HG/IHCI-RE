@@ -61,6 +61,12 @@ export default class IhciJoin extends React.Component{
 
     nameInputHandle = (e) => {
         const name = e.target.value
+        let nameEmpty = true
+        if(name){
+            nameEmpty = false
+        }else{
+            nameEmpty = true
+        }
         var illegalName = false
         if (!this.isName(name)){
             illegalName = true
@@ -73,7 +79,7 @@ export default class IhciJoin extends React.Component{
             infoCheck: {
                 ...this.state.infoCheck,
                 illegalName: illegalName,
-                nameEmpty:false,
+                nameEmpty:nameEmpty,
             },
         },() =>{
             window.sessionStorage.setItem('name',name)
@@ -87,6 +93,12 @@ export default class IhciJoin extends React.Component{
 
     phoneInputHandle = (e) => {
         const phoneNumber = e.target.value
+        let phoneEmpty = true
+        if(phoneNumber){
+            phoneEmpty = false
+        }else{
+            phoneEmpty = true
+        }
         var illegalPhoneNumber = false
         if (!this.isPhoneNumber(phoneNumber)){
             illegalPhoneNumber = true
@@ -99,7 +111,7 @@ export default class IhciJoin extends React.Component{
             infoCheck: {
                 ...this.state.infoCheck,
                 illegalPhoneNumber: illegalPhoneNumber,
-                phoneEmpty:false,
+                phoneEmpty:phoneEmpty,
             },
         },() => {
             window.sessionStorage.setItem('phone',phoneNumber)
@@ -174,6 +186,12 @@ export default class IhciJoin extends React.Component{
 
     smsCodeInputHandle = (e) =>{
         const code = e.target.value
+        let codeEmpty = true
+        if(code){
+            codeEmpty = false
+        }else{
+            codeEmpty = true
+        }
         this.setState({
             smsCode: code,
             infoCheck:{

@@ -4,11 +4,6 @@ var _ = require('underscore'),
     conf = require('../conf');
 
 import apiAuth from '../components/auth/api-auth'
-import{
-    isMember,
-    isAdmin,
-    isCreator
-}from '../middleware/auth-judge/auth-judge'
 
 import {
     createTopicTemplate,

@@ -164,7 +164,6 @@ const silentAuth = async(req, res, next) => {
     if(envi.isWeixin(req)){
         //静默授权
         var urlObj = url.parse(req.url,true)
-        console.log(urlObj)
         if(!req.rSession.userId&&!urlObj.query.code){
             res.redirect(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx87136e7c8133efe3&redirect_uri=http%3A%2F%2Fwww.animita.cn${urlObj.pathname.substr(0,urlObj.pathname.length)}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`)
         }
@@ -234,7 +233,6 @@ const userAuthJudge = async(req, res, next) => {
     req.INIT_DATA = {
         role: result?result.role:"visitor"
     }
-    console.log(req.INIT_DATA)
     next()
 }
 

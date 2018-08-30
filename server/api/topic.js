@@ -623,7 +623,7 @@ const getDiscuss = async (req, res, next) => {
 }
 
 module.exports = [
-    ['POST', '/api/topic/get', apiAuth, isMember, topicInfo],
+    ['POST', '/api/topic/get', apiAuth, topicInfo],
     //
     //6.22
     ['GET','/api/topic/getMoreTopic', apiAuth, isMember,getMoreTopic],
