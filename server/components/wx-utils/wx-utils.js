@@ -89,7 +89,6 @@ export const pub_getAccessToken = async function () {
     }
 
     const result = await fetch(`https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${conf.pubAppId}&secret=${conf.pubAppSe}`)
-
     const data = await result.json()
     console.log(data)
     if (data.access_token) {
@@ -310,7 +309,6 @@ export const createTaskTemplate = async function (headerList, taskObj, headernam
     console.log("########################")
     console.log(headername)
     const openidList = await userDB.openidList(headerList)
-   
 
     console.log(openidList)
     openidList.map((item) => {

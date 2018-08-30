@@ -46,6 +46,9 @@ var config = {
         'bucket': 'arluber',
     },
 
+    sysAppId: 'LTAIHdOovdo1ddVO',
+    sysAppSe: '6buiD9zXaOtKSLAWOQdHks390Cg9xe',
+
     mailOrigin: 'http://localhost:5000',
     mail: {
         host: 'smtp.163.com', 

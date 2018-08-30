@@ -624,18 +624,13 @@ const getDiscuss = async (req, res, next) => {
 
 module.exports = [
     ['POST', '/api/topic/get', apiAuth, topicInfo],
-    //
     //6.22
     ['GET','/api/topic/getMoreTopic', apiAuth, isMember,getMoreTopic],
 
     ['POST', '/api/topic/createTopic', apiAuth, isMember, createTopic],
-    //
     ['POST', '/api/topic/editTopic', apiAuth, isMember, editTopic],
-    //
     ['POST', '/api/topic/createDiscuss', apiAuth, isMember, createDiscuss],
-    //
     ['POST', '/api/topic/editDiscuss', apiAuth, isMember, editDiscuss],
-    //
     ['POST', '/api/topic/changeCreator', apiAuth, isMember, changeTopicCreator],
     ['POST', '/api/topic/readingNotice', apiAuth,isMember, readingNotice],
 
