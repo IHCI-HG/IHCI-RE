@@ -130,8 +130,6 @@ export default class SMSBlock extends React.Component{
         
     }
     render () {
-        console.log(this.state.numberCheck)
-        console.log(this.state.count)
 
         return(
             <div className = "sms-block">
