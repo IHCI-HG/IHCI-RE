@@ -63,9 +63,14 @@ export default class SMSBlock extends React.Component{
                     this.countDown()
                 }else{
                     window.toast(result.state.msg || "请重新输入")
+                    this.getCaptchaImg()
+                    this.setState({
+                        captchCodeCheck:false
+                    })
                 }
             }else{
-                window.toast("获取验证码次数过多，请输入图片验证码")
+                window.toast("请输入图片验证码")
+                
             }
         }
     }
@@ -130,7 +135,8 @@ export default class SMSBlock extends React.Component{
         
     }
     render () {
-
+        const disabled = this.state.count===60&&(this.state.numberCheck||(!this.state.numberCheck&&this.state.captchCodeCheck))? "disabled" : ""
+        
         return(
             <div className = "sms-block">
                 <input type="number" className = "input-code" placeholder = "4位验证码" value = {this.props.smsCode} onChange = {this.props.smsCodeInputHandle}></input>
