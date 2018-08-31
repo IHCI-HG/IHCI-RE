@@ -17,13 +17,14 @@ export default class SMSBlock extends React.Component{
         this.setState({
             count: parseInt(window.sessionStorage.getItem('count'))|| 60,
             number:parseInt(window.sessionStorage.getItem('number'))|| 0,
-            numberCheck:Boolean(window.sessionStorage.getItem('numberCheck'))||true
+            numberCheck:parseInt(window.sessionStorage.getItem('number'))===3?false:true
         },()=>{
             if(this.state.count !== 60){
                 this.countDown()
             }
         })
         this.getCaptchaImg()
+        
     }
     
     checkSMSNumber = async () =>{
@@ -57,6 +58,7 @@ export default class SMSBlock extends React.Component{
                         phoneNumber:this.props.phoneNumber
                     }
                 })
+                
                 if(result.state.code === 0 ){
                     this.countDown()
                 }else{
@@ -69,7 +71,8 @@ export default class SMSBlock extends React.Component{
     }
     countDown = () =>{
         this.setState({
-            enable:false
+            enable:false,
+            count:59
         })
         var timer = setInterval(() => {
             var count = this.state.count  
@@ -95,13 +98,18 @@ export default class SMSBlock extends React.Component{
 
     captchaInputHandle = (e) =>{
         const code = e.target.value
-        this.setState({
-            captchaCode: code
-        })
-        if(code === this.state.captchaText){
+
+        if(code.toUpperCase() === this.state.captchaText.toUpperCase()){
             this.setState({
+                captchaCode: code,
                 captchCodeCheck: true,
                 enable: true
+            })
+        }
+        if(code.toUpperCase() !== this.state.captchaText.toUpperCase()){
+            this.setState({
+                captchaCode: code,
+                captchCodeCheck: false
             })
         }
 
@@ -122,20 +130,22 @@ export default class SMSBlock extends React.Component{
         
     }
     render () {
+        console.log(this.state.numberCheck)
+        console.log(this.state.count)
+
         return(
             <div className = "sms-block">
-                <input type="number" className = "input-code" placeholder = "4位数字验证码" value = {this.props.smsCode} onChange = {this.props.smsCodeInputHandle}></input>
+                <input type="number" className = "input-code" placeholder = "4位验证码" value = {this.props.smsCode} onChange = {this.props.smsCodeInputHandle}></input>
                 {
-                    <div className ={this.state.numberCheck ? 'active-btn' : 'inactive-btn'} onClick = {this.GetSMSHandle}>{this.state.enable? '获取验证码':`${this.state.count}秒后重发`}</div>
+                    <div className ={this.state.count===60&&(this.state.numberCheck||(!this.state.numberCheck&&this.state.captchCodeCheck)) ? 'active-btn' : 'inactive-btn'} onClick = {this.GetSMSHandle}>{this.state.enable? '获取验证码':`${this.state.count}秒后重发`}</div>
                 }
                 
             {
                 !this.state.numberCheck?
                 <div>
-                    <input className = "input-code" value = {this.state.captchaCode} onChange={this.captchaInputHandle}></input>
+                    <input className = "input-code" placeholder="图片验证码" value = {this.state.captchaCode} onChange={this.captchaInputHandle}></input>
                     {this.state.captchCodeCheck?<i className="icon iconfont icon-right"></i>:<i className = "icon iconfont icon-close"></i>}
-                    <div dangerouslySetInnerHTML = {{__html:this.state.captchaImg}}></div>
-                    <div className = "change-icon" onClick = {this.getCaptchaImg}>看不清，换一张</div>
+                    <div className="captcha" dangerouslySetInnerHTML = {{__html:this.state.captchaImg}} onClick = {this.getCaptchaImg}></div>
                 </div>
                 :""
             }

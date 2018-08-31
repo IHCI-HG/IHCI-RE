@@ -49,14 +49,34 @@ var sysTime = function (req, res, next) {
 };
 
 const createSMS = async (req, res) => {
+    const typeMap = {
+        'isv.MOBILE_NUMBER_ILLEGAL': '手机号不正确',
+        'isv.BLACK_KEY_CONTROL_LIMIT':'黑名单管控'
+    }
+
     const phoneNumber = req.body.phoneNumber
     const result = await get(phoneNumber)
+    
     let code
-    if (result) {
+    try{
+    if (result) {   
         code = await sendNewSMS(phoneNumber, result)
     } else {
         code = await sendNewSMS(phoneNumber)
     }
+   }catch(err){
+       Object.keys(typeMap).map(key =>{
+           if(key === err.code){
+            resProcessor.jsonp(req, res, {
+                state: {
+                    code: 1,
+                    msg:typeMap[key]
+                },
+                data: {}
+            });
+           }
+       })
+   }
 
     await set(phoneNumber, code)
     resProcessor.jsonp(req, res, {
