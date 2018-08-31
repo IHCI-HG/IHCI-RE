@@ -21,6 +21,7 @@ async function getAsync (key) {
   }
 
 export const del = async (key) =>{
+    key = "sms:"+ key
     client.del(key,function(err){
         console.log('Error:'+err)
     })

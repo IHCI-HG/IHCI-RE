@@ -12,8 +12,10 @@ let smsClient = new SMSClient({
 })
 
 export const sendNewSMS = async(phoneNumber,code)=>{
+
 let randomCode = '' + (1000 + Math.ceil(Math.random() * 9000))
 let resultCode = code?code:randomCode
+
 const result = await smsClient.sendSMS({
     PhoneNumbers:phoneNumber,
     SignName:'智能人机交互实验室',
@@ -22,6 +24,7 @@ const result = await smsClient.sendSMS({
         code:resultCode
     })
 })
+
 return resultCode
 
 }

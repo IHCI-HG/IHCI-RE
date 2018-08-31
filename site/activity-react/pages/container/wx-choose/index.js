@@ -113,7 +113,7 @@ export default class WxChoose extends React.Component{
         <Page>
             {
                 this.state.loginBlock === ''?
-            <div className="auth-nav"> 
+            <div className="auth-block"> 
                <div className = "auth-header">{staticText.PAGE_INFO.CHOOSE_BLOCK_TITLE}</div>
                <div className = "login-desc">{staticText.PAGE_INFO.PAGE_IHCI_DESC}</div>
                <div className = "auth-nav-item" onClick={this.setTologinHandle}>{staticText.BUTTON_TEXT.BIND_ACCOUNT}</div>
@@ -123,15 +123,14 @@ export default class WxChoose extends React.Component{
             }
             {
                    this.state.loginBlock === "login"?
-                   <div className="loginBlock">
+                   <div className="login-Block">
                    <div className = "auth-header">{staticText.PAGE_INFO.ACCOUNT_BLOCK_TITLE}</div>
-                   <div className ="login-desc">{staticText.LABEL_TEXT.SET_USERNAME}</div>
-                   <input className="login-input" value={this.state.username} onChange={this.usernameHandle}></input>
-                   <div className ="login-desc">{staticText.LABEL_TEXT.SET_PASSWORD}</div>
-                   <input className="login-input" type="password" value={this.state.password} onChange={this.passwordHandle}></input>
+                   <input type="number" className="login-input" value={this.state.username} onChange={this.usernameHandle} placeholder="账号/手机号"></input>
+                   <input className="login-input" type="password" value={this.state.password} onChange={this.passwordHandle} placeholder="密码"></input>
+                   <div className = "reset-btn" onClick={this.resetPWDHandle}>{staticText.BUTTON_TEXT.FORGET_PWD}</div>
                    <div className="login-btn" onClick={this.loginHandle}>{staticText.BUTTON_TEXT.SUBMIT}</div>
                    <div className="login-btn" onClick={this.setTologinHandle}>{staticText.BUTTON_TEXT.CANCEL}</div>
-                   <div className = "login-desc" onClick={this.resetPWDHandle}>{staticText.BUTTON_TEXT.FORGET_PWD}</div>
+                   
                    </div>
                 :""
             }
