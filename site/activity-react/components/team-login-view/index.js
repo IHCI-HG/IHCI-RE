@@ -209,7 +209,7 @@ export class TeamLoginView extends React.Component {
                     <div className='auth-form'>
 
                         <div className="auth-desc"></div>
-                        <input type="text" placeholder="请填写手机号" className="auth-input" value={this.state.createUsername} onChange={this.createUsernameHandle}></input>
+                        <input type="number" placeholder="请填写手机号" className="auth-input" value={this.state.createUsername} onChange={this.createUsernameHandle}></input>
 
                         <SMSBlock
 
@@ -229,7 +229,7 @@ export class TeamLoginView extends React.Component {
                 this.state.loginBlock == "login" ?
                     <div className='auth-form'>
                         <div className="auth-desc"></div>
-                        <input type="text" placeholder="账号" className="auth-input" value={this.state.username} onChange={this.usernameHandle}></input>
+                        <input type="number" placeholder="账号" className="auth-input" value={this.state.username} onChange={this.usernameHandle}></input>
                         <div className="auth-desc"></div>
                         <input type="text" placeholder="密码" className="auth-input" type="password" value={this.state.password} onChange={this.passwordHandle}></input>
 
