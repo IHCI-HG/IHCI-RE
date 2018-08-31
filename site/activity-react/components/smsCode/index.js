@@ -155,7 +155,7 @@ export default class SMSBlock extends React.Component{
                 <div>
                     <input className = "input-code" placeholder={"图片验证码"} value = {this.state.captchaCode} onChange={this.captchaInputHandle}></input>
                     {this.state.captchCodeCheck?<img className="right" src={require('./right.png')}></img>:<img className = "error" src={require('./error.png')}></img>}
-                    <div dangerouslySetInnerHTML = {{__html:this.state.captchaImg}}></div>
+                    <div onClick = {this.getCaptchaImg} dangerouslySetInnerHTML = {{__html:this.state.captchaImg}}></div>
                     <div className = "change-icon" onClick = {this.getCaptchaImg}>看不清，换一张</div>
                 </div>
                 :""
