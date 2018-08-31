@@ -55,13 +55,13 @@ export default class PwdReset extends React.Component{
     }
 
     resetPasswordHandle = async() =>{
-        if(phoneEmpty){
+        if(this.state.phoneEmpty){
             window.toast("手机号为空")
         }
-        if(passwordEmpty){
+        if(this.state.passwordEmpty){
             window.toast("密码为空")
         }
-        if(codeEmpty){
+        if(this.state.codeEmpty){
             window.toast("验证码为空")
         }
 
