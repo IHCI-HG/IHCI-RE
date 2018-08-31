@@ -4,7 +4,7 @@ import './style.scss'
 
 export default class SMSBlock extends React.Component{
     state = {
-        count: 60,
+        count: '',
         enable: true,
         number: 0,
         captchaCode:'',
@@ -14,14 +14,19 @@ export default class SMSBlock extends React.Component{
         captchCodeCheck:false,
     }
     componentDidMount = async () =>{
+        var dateEnd = new Date()
+        var dateBegin = new Date(window.sessionStorage.getItem('dateBegin'))
+        const count =  60-parseInt((dateEnd.getTime()- dateBegin.getTime())/1000)
         this.setState({
-            count: parseInt(window.sessionStorage.getItem('count'))|| 60,
+            count: count > 0? count: 60,
             number:parseInt(window.sessionStorage.getItem('number'))|| 0,
-            numberCheck:Boolean(window.sessionStorage.getItem('numberCheck'))||true
+            numberCheck:window.sessionStorage.getItem('numberCheck') !==''?!window.sessionStorage.getItem('numberCheck'):true
+
         },()=>{
             if(this.state.count !== 60){
                 this.countDown()
             }
+            console.log(this.state.numberCheck)
         })
         this.getCaptchaImg()
     }
@@ -51,6 +56,7 @@ export default class SMSBlock extends React.Component{
         if(this.state.enable && !this.props.phoneEmpty){
             await this.checkSMSNumber()
             if(this.state.numberCheck || this.state.captchCodeCheck){
+                
                 const result = await api('/api/createSMS',{
                     method:'POST',
                     body:{
@@ -58,6 +64,8 @@ export default class SMSBlock extends React.Component{
                     }
                 })
                 if(result.state.code === 0 ){
+                    var dateBegin = new Date()
+                    window.sessionStorage.setItem('dateBegin',dateBegin)
                     this.countDown()
                 }else{
                     window.toast(result.state.msg || "请重新输入")
@@ -65,8 +73,8 @@ export default class SMSBlock extends React.Component{
             }else{
                 window.toast("获取验证码次数过多，请输入图片验证码")
             }
-        }
     }
+}
     countDown = () =>{
         this.setState({
             enable:false
@@ -86,8 +94,6 @@ export default class SMSBlock extends React.Component{
             }else{
                 this.setState({
                     count: count
-                    }, () =>{
-                        window.sessionStorage.setItem('count',count)
                     })
                 }               
             },1000)
@@ -133,7 +139,7 @@ export default class SMSBlock extends React.Component{
                 !this.state.numberCheck?
                 <div>
                     <input className = "input-code" value = {this.state.captchaCode} onChange={this.captchaInputHandle}></input>
-                    {this.state.captchCodeCheck?<i className="icon iconfont icon-right"></i>:<i className = "icon iconfont icon-close"></i>}
+                    {this.state.captchCodeCheck?<img className="right" src={require('./right.png')}></img>:<img className = "error" src={require('./error.png')}></img>}
                     <div dangerouslySetInnerHTML = {{__html:this.state.captchaImg}}></div>
                     <div className = "change-icon" onClick = {this.getCaptchaImg}>看不清，换一张</div>
                 </div>
