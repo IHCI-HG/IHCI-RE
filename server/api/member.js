@@ -7,25 +7,24 @@ import fetch from 'isomorphic-fetch';
 import lo from 'lodash';
 import apiAuth from '../components/auth/api-auth'
 
+import{
+    isMember,
+    isAdmin,
+    isCreator
+}from '../middleware/auth-judge/auth-judge'
+
 var mongoose = require('mongoose')
 var teamDB = mongoose.model('team')
 var userDB = mongoose.model('user')
 var timelineDB = mongoose.model('timeline')
 const member = async (req, res, next) => {         
     const teamId = req.body.teamId
-    if(!teamId) {
-        resProcessor.jsonp(req, res, {
-            state: { code: 3000, msg: "参数不全" },
-            data: {}
-        });
-        return
-    }
     const userId = req.rSession.userId 
     const memberId = []
     //当没有传入teamId时，返回所有项目组成员信息；当传入时返回指定项目组成员信息
     try{
         if(teamId){
-            console.log("团队Id:" , teamId)
+      
             const teamObj = await teamDB.findByTeamId(teamId)
             teamObj.memberList.map((item)=>{           
                 memberId.push(item.userId)
@@ -60,5 +59,5 @@ const member = async (req, res, next) => {
 }
 
 module.exports = [
-    ['POST', '/api/member', apiAuth, member]
+    ['POST', '/api/member', apiAuth, isMember, member]
 ];

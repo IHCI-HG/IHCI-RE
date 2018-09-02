@@ -9,6 +9,11 @@ import {
     createTopicTemplate,
     replyTopicTemplate
 } from '../components/wx-utils/wx-utils'
+import{
+    isMember,
+    isAdmin,
+    isCreator
+}from '../middleware/auth-judge/auth-judge'
 
 var mongoose = require('mongoose')
 
@@ -392,7 +397,7 @@ const topicInfo = async (req, res, next) => {
 
 //设置Topic已读
 const readingNotice = async (req, res, next) => {
-    const noticeId = req.body.noticeId
+    const noticeId = req.body.topicId
     const readerId = req.rSession.userId
 
     if(!noticeId == undefined) {
@@ -444,7 +449,7 @@ const readingNotice = async (req, res, next) => {
 
 
 const getMoreTopic = async (req,res,next) =>{
-    const teamId = req.query.teamId;
+    const teamId = req.body.teamId;
     const currentPage = req.query.currentPage;
 
 
@@ -619,24 +624,19 @@ const getDiscuss = async (req, res, next) => {
 
 module.exports = [
     ['POST', '/api/topic/get', apiAuth, topicInfo],
-    //
     //6.22
-    ['GET','/api/topic/getMoreTopic', apiAuth,getMoreTopic],
+    ['GET','/api/topic/getMoreTopic', apiAuth, isMember,getMoreTopic],
 
-    ['POST', '/api/topic/createTopic', apiAuth, createTopic],
-    //
-    ['POST', '/api/topic/editTopic', apiAuth, editTopic],
-    //
-    ['POST', '/api/topic/createDiscuss', apiAuth, createDiscuss],
-    //
-    ['POST', '/api/topic/editDiscuss', apiAuth, editDiscuss],
-    //
-    ['POST', '/api/topic/changeCreator', apiAuth, changeTopicCreator],
-    ['POST', '/api/topic/readingNotice', apiAuth,readingNotice],
+    ['POST', '/api/topic/createTopic', apiAuth, isMember, createTopic],
+    ['POST', '/api/topic/editTopic', apiAuth, isMember, editTopic],
+    ['POST', '/api/topic/createDiscuss', apiAuth, isMember, createDiscuss],
+    ['POST', '/api/topic/editDiscuss', apiAuth, isMember, editDiscuss],
+    ['POST', '/api/topic/changeCreator', apiAuth, isMember, changeTopicCreator],
+    ['POST', '/api/topic/readingNotice', apiAuth,isMember, readingNotice],
 
     //6.28
-    ['POST','/api/topic/delTopic',apiAuth,delTopic],
-    ['POST','/api/topic/delDiscuss',apiAuth,delDiscuss],
-    ['POST','/api/topic/getDiscuss',apiAuth,getDiscuss],
+    ['POST','/api/topic/delTopic',apiAuth,isMember, delTopic],
+    ['POST','/api/topic/delDiscuss',apiAuth,isMember, delDiscuss],
+    ['POST','/api/topic/getDiscuss',apiAuth,isMember, getDiscuss],
 
 ];

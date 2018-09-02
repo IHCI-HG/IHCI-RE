@@ -90,7 +90,7 @@ pages.forEach(item => {
 entrys.vendor = ['babel-polyfill', 'react-dom'];
 entrys.braft_editor_vendor = ['braft-editor'];
 
-console.log('entrys', entrys);
+
 
 // optimization 配置
 optimization.splitChunks = {

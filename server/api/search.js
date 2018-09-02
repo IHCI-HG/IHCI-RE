@@ -14,6 +14,12 @@ import {
     web_codeToUserInfo,
 } from '../components/wx-utils/wx-utils'
 
+import{
+    isMember,
+    isAdmin,
+    isCreator
+}from '../middleware/auth-judge/auth-judge'
+
 var mongoose = require('mongoose')
 var teamDB = mongoose.model('team')
 var userDB = mongoose.model('user')
@@ -126,7 +132,7 @@ const search = async (req, res, next) => {
             data: Result
         });
     }catch (error) {
-        console.log(error) 
+        console.error(error) 
         resProcessor.jsonp(req, res, {
             state: {code: 1000, msg:'操作失败' },
             data: {},
@@ -135,5 +141,5 @@ const search = async (req, res, next) => {
 }
 
 module.exports = [
-    ['POST', '/api/search', apiAuth, search]
+    ['POST', '/api/search', apiAuth, isMember, search]
 ];

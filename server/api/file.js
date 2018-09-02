@@ -18,6 +18,12 @@ import { mongo } from 'mongoose';
 import { resolve } from 'url';
 import { responsePathAsArray } from 'graphql';
 
+import{
+    isMember,
+    isAdmin,
+    isCreator
+}from '../middleware/auth-judge/auth-judge'
+
 const fileDownloader = async (teamId, dir, fileName) => {
 
     if(typeof teamId != 'string' || typeof dir != 'string' || typeof fileName != 'string') {
@@ -163,32 +169,32 @@ const getDirFileList = async (req, res, next) => {
 }
 
 const downloadFile = async (req, res, next) => {
-    const fileInfo = req.body.fileInfo
+    // const fileInfo = req.body.fileInfo
 
-    var ossKey = `${fileInfo.teamId}${fileInfo.dir}/${fileInfo.fileName}`
+    // var ossKey = `${fileInfo.teamId}${fileInfo.dir}/${fileInfo.fileName}`
 
-    try {
-        const client = new OSSW({
-            accessKeyId: conf.ossConf.ossAdminAccessKeyId,
-            accessKeySecret: conf.ossConf.ossAdminAccessKeySecret,
-            bucket: conf.ossConf.bucket,
-            region: conf.ossConf.region
-        });
-        var result = await client.get(ossKey)
-        console.log(result.res.data)
-        res.send(result.res.data)
+    // try {
+    //     const client = new OSSW({
+    //         accessKeyId: conf.ossConf.ossAdminAccessKeyId,
+    //         accessKeySecret: conf.ossConf.ossAdminAccessKeySecret,
+    //         bucket: conf.ossConf.bucket,
+    //         region: conf.ossConf.region
+    //     });
+    //     var result = await client.get(ossKey)
+    //     console.log(result.res.data)
+    //     res.send(result.res.data)
 
-        /*
-        resProcessor.jsonp(req, res, {
-            state: {code: 0,msg: "Successfully downloaded file"},
-            data: {
-                downFile: downFile
-            }
-        });
-        */
-    } catch (error) {
-        res.send(404)
-    }
+    //     /*
+    //     resProcessor.jsonp(req, res, {
+    //         state: {code: 0,msg: "Successfully downloaded file"},
+    //         data: {
+    //             downFile: downFile
+    //         }
+    //     });
+    //     */
+    // } catch (error) {
+    //     res.send(404)
+    // }
 }
 
 const moveFile = async (req, res, next) => {
@@ -362,16 +368,15 @@ const updateFolderName = async (req, res, next) => {
 
 
 module.exports = [
-    ['POST', '/api/getOssStsToken', apiAuth, getOssStsToken],
-    ['POST','/api/file/createFile',apiAuth, createFile],
-    ['POST','/api/file/createFolder',apiAuth, createFolder],
-    ['POST','/api/file/downloadFile',apiAuth, downloadFile],
+    ['POST', '/api/getOssStsToken', apiAuth, isMember, getOssStsToken],
+    ['POST','/api/file/createFile',apiAuth, isMember, createFile],
+    ['POST','/api/file/createFolder',apiAuth, isMember, createFolder],
+    ['POST','/api/file/downloadFile',apiAuth, isMember, downloadFile],
     ['POST','/api/file/getDirFileList',apiAuth, getDirFileList],
-    ['POST','/api/file/moveFile',apiAuth,moveFile], 
-    ['POST','/api/file/moveFolder',apiAuth, moveFolder],
-    ['POST','/api/file/delFile',apiAuth, delFile],
-    ['POST','/api/file/delFolder',apiAuth, delFolder],
-    ['POST','/api/file/updateFileName',apiAuth, updateFileName],
-    ['POST','/api/file/updateFolderName',apiAuth,updateFolderName],
-    
+    ['POST','/api/file/moveFile',apiAuth, isMember, moveFile], 
+    ['POST','/api/file/moveFolder',apiAuth, isMember, moveFolder],
+    ['POST','/api/file/delFile',apiAuth, isMember, delFile],
+    ['POST','/api/file/delFolder',apiAuth, isMember, delFolder],
+    ['POST','/api/file/updateFileName',apiAuth, isMember, updateFileName],
+    ['POST','/api/file/updateFolderName',apiAuth, isMember, updateFolderName],
 ];

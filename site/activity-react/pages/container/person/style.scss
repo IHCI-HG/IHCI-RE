@@ -56,6 +56,11 @@
             color: #666;
         }
     }
+
+    .saveChangePwd {
+        cursor: pointer;
+    }
+    
     .edit-con {
         display: flex;
         align-items: center;
@@ -65,12 +70,21 @@
             width: 100px;
             color: #666;
         } 
+        .showPhone{
+            color: gray;
+        }
         .after{
             display: flex;
             color: #666;
             margin: 10px;
             align-items: center;
 
+        }
+        .edit-btn{
+            cursor: pointer;
+            color: rgb(255, 197, 73);
+            margin-left: 10px;
+            display: inline;
         }
         .mail-present-bar{
             display: flex;
@@ -97,6 +111,7 @@
                 color: grey;
                 margin-left: 10px;
             }
+            
         }
         .error{
             color: #f00;
@@ -163,6 +178,20 @@
         &:hover{
             box-shadow: 1px 2px 6px #a2a2a2;
         }
+    }
+    .changePwd {
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        width: 80px;
+        height: 30px;
+        line-height: 30px;
+        padding: 0 10px;
+        border-radius: 4px;
+        background-color: rgb(255, 158, 41);
+        color: #fff;
+        font-weight: bold;
+        margin-right: 20px;
     }
        
 }

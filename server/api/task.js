@@ -20,7 +20,11 @@ import {
 } from '../components/wx-utils/wx-utils'
 import { dayLeft } from '../../site/activity-react/utils/util';
 import { clearInterval } from 'timers';
-
+import{
+    isMember,
+    isAdmin,
+    isCreator
+} from '../middleware/auth-judge/auth-judge'
 var mongoose = require('mongoose')
 
 var teamDB = mongoose.model('team')
@@ -380,18 +384,15 @@ const createTask = async (req, res, next) => {
        
         if(taskHeader&&!!deadline){
             var timeTask=setInterval(async()=>{
-                console.log("come in")
-                console.log(deadline)
+
                 var d = new Date()
                 var day=d.getDate()
                 var month=d.getMonth() + 1
                 var year=d.getFullYear()
-                console.log(year,ddl.year)
-                console.log(month,ddl.month)
-                console.log(day,ddl.date-1)
+
                 if(year === ddl.year&&month === ddl.month ){
                     if(day >= ddl.date-1&&day<=ddl.date){
-                    console.log("close to time out!!!!!!")
+      
                     closeToDDLTemplate(headerList,taskObj)
                     clearInterval(timeTask)
                     const teamObj = await teamDB.findByTeamId(teamId);   
@@ -400,7 +401,6 @@ const createTask = async (req, res, next) => {
                     }));
                     }
                     if(day>ddl.date){
-                        console.log("time out!!!")
                         clearInterval(timeTask)
                     }
                 }
@@ -520,19 +520,13 @@ const editTask = async (req, res, next) => {
 
         if (editTask.assigneeId) {
             task.header = editTask.assigneeId   
-
-           
-            //7.6      
+  
             await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'CHANGE_TASK_HEADER', taskObj._id, taskObj.title, task);
             
-            // const result =  await taskDB.updateTask(taskId, task);//之前的result
-            // console.log("## "+result);
+      
             const headerList = [];
             headerList.push(task.header);
 
-            // headerList.map((item) => {
-            //     userDB.editTaskHeader(item, result, teamObj.name)
-            // })
         }else{
             task.header = undefined
             await timelineDB.createTimeline(teamId, teamObj.name, baseInfoObj, 'CHANGE_TASK_HEADER', taskObj._id, taskObj.title, task);
@@ -566,7 +560,6 @@ const editTask = async (req, res, next) => {
 
         const result1 = await taskDB.updateTask(taskId, editTask);
 
-        console.log("$$  "+ result1)//更改后的result
 
         if (tasklistId) {
             await tasklistDB.updateTask(tasklistId, taskId, task);
@@ -907,7 +900,7 @@ const taskInfo = async (req, res, next) => {
 
 const addCheckitem = async (req, res, next) => {
     const teamId = req.body.teamId
-    const taskId = req.body.todoId;
+    const taskId = req.body.taskId;
     const content = req.body.name;
     const header = req.body.assigneeId || "";
     const deadline = req.body.ddl || "";
@@ -1023,7 +1016,7 @@ const addCheckitem = async (req, res, next) => {
 }
 
 const dropCheckitem = async (req, res, next) => {
-    const taskId = req.body.todoId;
+    const taskId = req.body.taskId;
     const checkitemId = req.body.checkitemId;
 
     const userId = req.rSession.userId;
@@ -1089,7 +1082,7 @@ const dropCheckitem = async (req, res, next) => {
 }
 
 const findCheckitem = async (req, res, next) => {
-    const taskId = req.body.todoId;
+    const taskId = req.body.taskId;
     const checkitemId = req.body.checkitemId;
 
     const userId = req.rSession.userId;
@@ -1142,7 +1135,7 @@ const findCheckitem = async (req, res, next) => {
 
 const editCheckitem = async (req, res, next) => {
     const teamId = req.body.teamId
-    const taskId = req.body.todoId;
+    const taskId = req.body.taskId;
     const checkitemId = req.body.checkitemId;
     const editCheckitem = req.body.editCheckitem;
 
@@ -1629,30 +1622,30 @@ const findDiscuss = async (req, res, next) => {
 
 
 module.exports = [
-    ['POST', '/api/task/createTaskList', apiAuth, createTasklist],
-    ['POST', '/api/task/updateTasklist', apiAuth, updateTasklist],
-    ['POST', '/api/task/changeListIndex', apiAuth, changeTaskListIndex],
-    ['POST', '/api/task/delTasklist', apiAuth, delTasklist],
-    ['POST', '/api/task/findTasklistById', apiAuth, findTasklistById],
-    ['POST', '/api/task/create', apiAuth, createTask],
-    ['POST', '/api/task/delTask', apiAuth, delTask],
-    ['POST', '/api/task/edit', apiAuth, editTask],
-    ['POST', '/api/task/changeDir', apiAuth, changeTaskDir],
-    ['POST', '/api/task/changeIndex', apiAuth, changeTaskIndex],
-    ['POST', '/api/task/changeList', apiAuth, changeTaskList],
+    ['POST', '/api/task/createTaskList', apiAuth, isMember, createTasklist],
+    ['POST', '/api/task/updateTasklist', apiAuth, isMember, updateTasklist],
+    ['POST', '/api/task/changeListIndex', apiAuth, isMember, changeTaskListIndex],
+    ['POST', '/api/task/delTasklist', apiAuth, isMember, delTasklist],
+    ['POST', '/api/task/findTasklistById', apiAuth, isMember, findTasklistById],
+    ['POST', '/api/task/create', apiAuth, isMember, createTask],
+    ['POST', '/api/task/delTask', apiAuth, isMember, delTask],
+    ['POST', '/api/task/edit', apiAuth, isMember, editTask],
+    ['POST', '/api/task/changeDir', apiAuth, isMember, changeTaskDir],
+    ['POST', '/api/task/changeIndex', apiAuth, isMember, changeTaskIndex],
+    ['POST', '/api/task/changeList', apiAuth, isMember, changeTaskList],
     ['POST', '/api/task/taskInfo', apiAuth, taskInfo],
-    ['POST', '/api/task/addCheckitem', apiAuth, addCheckitem],
-    ['POST', '/api/task/dropCheckitem', apiAuth, dropCheckitem],
-    ['POST', '/api/task/findCheckitem', apiAuth, findCheckitem],
-    ['POST', '/api/task/editCheckitem', apiAuth, editCheckitem],
-    ['POST', '/api/task/taskCopy', apiAuth, taskCopy],
-    ['POST', '/api/task/taskMove', apiAuth, taskMove],
+    ['POST', '/api/task/addCheckitem', apiAuth, isMember, addCheckitem],
+    ['POST', '/api/task/dropCheckitem', apiAuth, isMember, dropCheckitem],
+    ['POST', '/api/task/findCheckitem', apiAuth, isMember, findCheckitem],
+    ['POST', '/api/task/editCheckitem', apiAuth, isMember, editCheckitem],
+    ['POST', '/api/task/taskCopy', apiAuth, isMember, taskCopy],
+    ['POST', '/api/task/taskMove', apiAuth, isMember, taskMove],
 
     //6.26
-    ['POST', '/api/task/createDiscuss', apiAuth, createDiscuss],
-    ['POST', '/api/task/editDiscuss', apiAuth, editDiscuss],
-    ['POST', '/api/task/delDiscuss', apiAuth, delDiscuss],
+    ['POST', '/api/task/createDiscuss', apiAuth, isMember, createDiscuss],
+    ['POST', '/api/task/editDiscuss', apiAuth, isMember, editDiscuss],
+    ['POST', '/api/task/delDiscuss', apiAuth, isMember, delDiscuss],
 
     //6.27
-    ['POST', '/api/task/findDiscuss', apiAuth, findDiscuss],
+    ['POST', '/api/task/findDiscuss', apiAuth, isMember, findDiscuss],
 ]

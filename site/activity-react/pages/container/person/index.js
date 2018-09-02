@@ -62,6 +62,7 @@ export default class Person extends React.Component{
 
     }
 
+
     initdataAllFilled = () => {
         if (!INIT_DATA.userObj.personInfo){
             return false
@@ -115,7 +116,6 @@ export default class Person extends React.Component{
         },
         infoCheck:{
             illegalEmailAddress: false,
-            illegalPhoneNumber:false,
             illegalName: false,
         },
         confirmEditMail: false,
@@ -129,6 +129,7 @@ export default class Person extends React.Component{
             illegalUsername:false,
             illegalPassword:false,
         },
+
     }
 
     
@@ -304,23 +305,6 @@ export default class Person extends React.Component{
         return reg.test(phoneNumber);
     }
 
-    phoneInputHandle = (e) => {
-        const phonNumber = e.target.value
-        var illegalPhoneNumber = false
-        if (!this.isPhoneNumber(phonNumber)){
-            illegalPhoneNumber = true
-        }
-        this.setState({
-            personInfo: {
-                ...this.state.personInfo,
-                phone: phonNumber,
-            },
-            infoCheck: {
-                ...this.state.infoCheck,
-                illegalPhoneNumber: illegalPhoneNumber,
-            },
-        })
-    }
 
     isEmailAddress = (emailAddress) => {
         const reg = /^[A-Za-z0-9._%-]+@([A-Za-z0-9-]+\.)+[A-Za-z]{2,4}$/;
@@ -372,7 +356,6 @@ export default class Person extends React.Component{
     infoCheckIllegal = () =>{
         var infoCheck = {
             illegalEmailAddress: false,
-            illegalPhoneNumber: false,
             illegalName: false,
         }
 
@@ -380,9 +363,7 @@ export default class Person extends React.Component{
             infoCheck.illegalEmailAddress = true
         }
 
-        if (!this.isPhoneNumber(this.state.personInfo.phone)){
-            infoCheck.illegalPhoneNumber = true
-        }
+       
 
         if (!this.isName(this.state.personInfo.name)){
             infoCheck.illegalName = true
@@ -423,14 +404,21 @@ export default class Person extends React.Component{
         })
         
         
-        console.log(result1)
+      
         if(result.state.code === 0) {
             if(INIT_DATA.userObj.personInfo){
                 window.toast(staticText.RESPONSE_MESSAGE.SET_SUCCESS)
             }
-            setTimeout(() => {
-                location.href = '/team'
-            }, 500);
+            if(this.props.location.query.teamjoin){
+                setTimeout(() => {
+                    location.href = `/team-join/${this.props.location.query.teamId}`
+                },500);
+            }else{
+                setTimeout(() => {
+                    location.href = '/team'
+                }, 500);
+            }
+            
         } else {
             window.toast(staticText.RESPONSE_MESSAGE.SET_FAIL)
         }
@@ -498,7 +486,7 @@ export default class Person extends React.Component{
         await uploadResult.then(function(val) {
             succeeded = 1
         }).catch(function(reason){
-            console.log(reason)
+           
             succeeded = 0
         })
 
@@ -514,7 +502,7 @@ export default class Person extends React.Component{
                 headImg: window.location.origin+'/head/'+ossKey
             }
         })
-        console.log(this.state.personInfo.headImg)
+       
     }
 
 
@@ -555,11 +543,45 @@ export default class Person extends React.Component{
 
     }
 
-    editConfirmHangle = () => {
+    editConfirmHandle = () => {
         this.setState({
             confirmEditMail: true,
         })
     }
+
+    editSubmitHandle = async() => {
+        var infoCheckIllegal = this.infoCheckIllegal()
+
+        if (infoCheckIllegal){
+            window.toast(staticText.PERSON_INFO_CHECK.PERSON_INFO_ILLEGAL)
+            return
+        }
+        const result = await api('/api/setUserInfo', {
+            method: 'POST',
+            body: {
+                ...this.state.personInfo
+            }
+        })
+        const result1 = await api('/api/topic/changeCreator',{
+            method:'POST',
+            body:{
+                personInfo: this.state.personInfo,
+                originPersonInfo: this.state.originPersonInfo,
+            }
+        })
+
+        if(result.state.code === 0) {
+            if(INIT_DATA.userObj.personInfo){
+                window.toast(staticText.RESPONSE_MESSAGE.SET_SUCCESS)
+            }
+            this.setState({
+                confirmEditMail: false,
+            });
+        } else {
+            window.toast(staticText.RESPONSE_MESSAGE.SET_FAIL)
+        }
+    }
+
     UsernamePwdHandle = () => {
         this.setState({
             showUsenamePwd:true
@@ -586,6 +608,19 @@ export default class Person extends React.Component{
                 window.toast(result.state.msg ||staticText.RESPONSE_MESSAGE.SET_FAIL)
             }
     }
+
+    getInfo = async() => {
+        const result = await api('/api/getMyInfo',{
+            method: 'POST',
+            body: {}
+        })
+        this.setState({
+            oldPwd: this.state.oldPwd
+        })
+
+      
+    }
+
     render() {
         // let personInfo = this.state.personInfo
         return (
@@ -623,6 +658,10 @@ export default class Person extends React.Component{
                     </div>
                     :""
                 }
+                <div className="edit-con">
+                    <div className="before">手机</div>
+                    <div className="showPhone">{this.state.userObj.username}</div>
+                </div>
                 {
                 <div className="edit-con">
                     <div className="before">微信</div>
@@ -651,6 +690,7 @@ export default class Person extends React.Component{
                     {!this.state.userObj.openid && <div className='after'>需要<div className='follow-btn' onClick={this.openFollowDialogHandle}>关注服务号</div>才能接受讨论消息提醒</div>}   
                 </div>:""
                 }
+                
                 <div className="edit-con">
                     <div className="before">姓名</div>
                     <input type="text" onChange={this.nameInputHandle} className="input-edit"  value={this.state.personInfo.name}/>
@@ -665,7 +705,7 @@ export default class Person extends React.Component{
                             <div className='after default-color'>
                                 {this.state.personInfo.mail}
                             </div>
-                            <div className='edit-btn' onClick={this.editConfirmHangle}>修改邮箱</div>
+                            <div className='edit-btn' onClick={this.editConfirmHandle}>修改邮箱</div>
  
                             <div className='active-info'>
                                 {this.state.userObj.isLive ?
@@ -674,28 +714,14 @@ export default class Person extends React.Component{
                                 }
                             </div>
                         </div>}
-                    {(!this.state.hasMail || this.state.confirmEditMail) && <input type="text" onChange={this.mailInputHandle} className="input-edit" value={this.state.personInfo.mail}/>}
+                    {(!this.state.hasMail || this.state.confirmEditMail) && <div>
+                            <input type="text" onChange={this.mailInputHandle} className="input-edit" value={this.state.personInfo.mail}/>
+                            {(!this.state.infoCheck.illegalEmailAddress && this.state.personInfo.mail)&&<div className='edit-btn' onClick={this.editSubmitHandle}>确定</div>}
+                        </div>}
                     {this.state.infoCheck.illegalEmailAddress && <div className='after error'>格式错误,请填写正确格式的邮件地址</div>}
-                        
                 </div>
 
-                <div className="edit-con">
-                    <div className="before">手机</div>
-                    <input type="text" onChange={this.phoneInputHandle} className="input-edit" value={this.state.personInfo.phone}/>
-                    {this.state.infoCheck.illegalPhoneNumber && <div className='after error'>格式错误,请填写正确格式的电话号码</div>}
-                </div>
-
-                {/*
-                    <div className="edit-con">
-                        <div className="before">当前密码</div>
-                        <input type="password" className="input-edit" />
-                    </div>
-
-                    <div className="edit-con">
-                        <div className="before">新密码</div>
-                        <input type="password" className="input-edit" />
-                    </div>
-                */}
+               
 
 
                 <div className="save-btn" onClick={this.saveHandle}>保存</div>

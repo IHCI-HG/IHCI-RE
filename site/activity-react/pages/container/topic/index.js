@@ -53,7 +53,7 @@ export default class Topic extends React.Component{
     }
 
     componentDidMount = async() => {
-        console.log('mounted!!')
+      
         this.topicId = this.props.params.id
         this.initPageInfo()
         try{
@@ -89,7 +89,7 @@ export default class Topic extends React.Component{
                 topicId: this.topicId
             }
         })
-        console.log(result)
+    
         const topicObj = result.data.topicObj
         topicObj.imgList = []
         topicObj.fileList.map((fileItem,index)=>{
@@ -97,8 +97,7 @@ export default class Topic extends React.Component{
                 topicObj.imgList.push(fileItem)
             }
         })
-        console.log(result)
-
+   
         this.teamId = result.data.topicObj.team
 
         const memberResult = await api('/api/team/memberList', {
@@ -120,7 +119,7 @@ export default class Topic extends React.Component{
                 topicId: this.topicId
             }
         })
-        console.log(result2)
+      
         const discussList = result2.data.discussList
         discussList.map((item)=>{
             item.imgList = []
@@ -145,7 +144,7 @@ export default class Topic extends React.Component{
     }
 
     topicContentHandle = (content) => {
-        console.log(content)
+      
         this.setState({
             topicContentInput: content
         })
@@ -313,7 +312,7 @@ export default class Topic extends React.Component{
                 fileList:fileList
             }
         })
-        console.log(result)
+      
         if(result.state.code == 0) {
             const imgList=[]
             fileList.map((fileItem,index)=>{
@@ -355,7 +354,7 @@ export default class Topic extends React.Component{
         this.setState({
             createDiscussContent: e.target.value
         })
-        console.log('here:',this.state.createDiscussContent)
+  
     }
 
     createDiscussHandle = async () => {
@@ -396,7 +395,7 @@ export default class Topic extends React.Component{
                 informList: informList
             }
         })
-        console.log(result)
+     
         if(result && result.state.code == 0) {
             const discussList = this.state.discussList
             result.data.discussObj.imgList=[]
@@ -438,7 +437,7 @@ export default class Topic extends React.Component{
     }
 
     undoHighlight = () =>{
-        console.log("blur!!")
+     
         this.setState({
             enableHighlight: false,
         })

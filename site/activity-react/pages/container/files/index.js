@@ -142,7 +142,7 @@ export default class Files extends React.Component {
     }
 
     moveHandle = async (item, tarDir) => {
-        console.log(this.state.moveItem)
+ 
         if (item.fileType == 'file') {
             const result = await api('/api/file/moveFile', {
                 method: 'POST',
@@ -209,7 +209,7 @@ export default class Files extends React.Component {
         await uploadResult.then(function (val) {
             succeeded = 1
         }).catch(function (reason) {
-            console.log(reason)
+
             succeeded = 0
         })
 

@@ -90,7 +90,7 @@ class Task extends React.Component{
                 teamId: this.teamId
             }
         })
-        console.log(resp)
+        
         let todoListArr = this.state.todoListArr
         //未分类列表
         let unclassifiedList = []
@@ -225,6 +225,9 @@ class Task extends React.Component{
                 }
                 todolist.list = [...todolist.list, todo]
                 this.setState({ todoListArr })
+            }
+            else{
+                window.toast(result.state.msg)
             }
             return result
         }
@@ -488,7 +491,7 @@ class Task extends React.Component{
         <div>
         <div className="head">
             <span className='head-title'>任务</span>
-            <div className="create-btn">
+            {(this.props.role!=='visitor')&&<div className="create-btn">
                 <span onClick={(e) => {
                     this.setState({ showCreateTodo: true })
                     e.stopPropagation()
@@ -513,7 +516,7 @@ class Task extends React.Component{
                 </li>
                     </ul>
                 }
-            </div>
+            </div>}
         </div>
         
 
@@ -526,6 +529,7 @@ class Task extends React.Component{
                 handlecloseEditTodo={this.handlecloseEditTodo.bind(this)}
                 {...unclassified}
                 id=""
+                role={this.props.role}
                 highLight={this.state.onDragStart&&(this.state.listIdFrom!=="")}
                 dragTodoId={this.state.dragTodoId}
                 dragStarted={this.state.onDragStart}
@@ -567,6 +571,7 @@ class Task extends React.Component{
                     {...todoList}
                     doneList={this.state.doneList}
                     createInput="任务名"
+                    role={this.props.role}
                     highLight={this.state.onDragStart&&(this.state.listIdFrom!==todoList.id)}
                     dragTodoId={this.state.dragTodoId}
                     dragStarted={this.state.onDragStart}

@@ -6,6 +6,7 @@ import './style.scss'
 
 import WxLoginDialog from '../../components/wx-login-dialog'
 
+import SMSBlock from '../../components/smsCode'
 export class LoginView extends React.Component {
     state = {
         //loginBlock: signUp || login
@@ -14,16 +15,17 @@ export class LoginView extends React.Component {
         username: '',
         password: '',
 
-        createUsername: '',
-        createPassword: '',
-        createConfirmPassword:'',
+        createPhone: '',
+        authCode: '',
+        createPassword:'',
         infoCheck:{
-            createUsernameEmpty: true,
-            createPasswordEmpty:true,
-            createConfirmPasswordEmpty: true,
+            createPhoneEmpty: true,
+            authCodeEmpty:true,
+            createPasswordEmpty: true,
             usernameEmpty:true,
             passwordEmpty:true
         },
+
     }
 
     setToSignUpHandle = () =>  {
@@ -36,8 +38,6 @@ export class LoginView extends React.Component {
             loginBlock: 'login'
         });
     }
-
-
 
     usernameHandle = (e) => {
         const username = e.target.value
@@ -72,53 +72,51 @@ export class LoginView extends React.Component {
         })
     }
 
-    createUsernameHandle = (e) => {
-        const createUsername = e.target.value
-        var createUsernameEmpty = true
-        if(createUsername){
-            createUsernameEmpty = false
+    createPhoneHandle = (e) => {
+        const createPhone = e.target.value
+        var createPhoneEmpty = true
+        if(createPhone){
+            createPhoneEmpty = false
         }else{
-            createUsernameEmpty = true
+            createPhoneEmpty = true
         }
         this.setState({
-            createUsername: createUsername,
+            createPhone: createPhone,
             infoCheck:{
                 ...this.state.infoCheck,
-                createUsernameEmpty:createUsernameEmpty
+                createPhoneEmpty:createPhoneEmpty
             }
         })
     }
-    createPasswordHandle = (e) => {
-        const createPassword = e.target.value
-        var createPasswordEmpty = true
-        if(createPassword){
-            createPasswordEmpty = false
+    authCodeHandle = (e) => {
+        const authCode = e.target.value
+        var authCodeEmpty = true
+        if(authCode){
+            authCodeEmpty = false
         }else{
-            createPasswordEmpty = true
+            authCodeEmpty = true
         }
         this.setState({
-            createPassword: createPassword,
+            authCode: authCode,
+            infoCheck:{
+                ...this.state.infoCheck,
+                authCodeEmpty:authCodeEmpty
+            }
+        })
+    }
+    createPasswordHandle = (e) =>{
+        const confirmPassword = e.target.value
+        var createPasswordEmpty = true
+        if(confirmPassword){
+            createPasswordEmpty = false
+        }else{
+            createPassworddEmpty = true
+        }
+        this.setState({
+            createPassword:e.target.value,
             infoCheck:{
                 ...this.state.infoCheck,
                 createPasswordEmpty:createPasswordEmpty
-            }
-            
-
-        })
-    }
-    createConfirmPasswordHandle = (e) =>{
-        const confirmPassword = e.target.value
-        var createConfirmPasswordEmpty = true
-        if(confirmPassword){
-            createConfirmPasswordEmpty = false
-        }else{
-            createConfirmPasswordEmpty = true
-        }
-        this.setState({
-            createConfirmPassword:e.target.value,
-            infoCheck:{
-                ...this.state.infoCheck,
-                createConfirmPasswordEmpty:createConfirmPasswordEmpty
             }
         })
     }
@@ -144,32 +142,32 @@ export class LoginView extends React.Component {
 
     signHandle = async () => {
         // todo 检验账号密码是否可用
-        if(this.state.infoCheck.createUsernameEmpty){
-            window.toast("用户名为空")
+        if(this.state.infoCheck.createPhoneEmpty){
+            window.toast("手机为空")
+            return
+        }
+        if(this.state.infoCheck.authCodeEmpty){
+            window.toast("验证码为空")
             return
         }
         if(this.state.infoCheck.createPasswordEmpty){
             window.toast("密码为空")
-            return
-        }
-        if(this.state.infoCheck.createConfirmPasswordEmpty){
-            window.toast("确认密码为空")
             return 
         }
-        if(this.state.createPassword !== this.state.createConfirmPassword){
-            window.toast("两次输入密码不同")
-            return
-        }
+     
+        // 密码自己设置
         const result = await api('/api/signUp', {
             method: 'POST',
             body: {
                 userInfo: {
-                    username: this.state.createUsername,
-                    password: this.state.createPassword,
+                    username: this.state.createPhone, // 手机登录 账号为手机号码
+                    password: this.state.createPassword, // 输入的密码就是登陆密码
+                    code: this.state.authCode,
                 }
             }
         })
 
+  
         if(result.state.code === 0) {
             window.toast("注册成功")
             setTimeout(() => {
@@ -179,6 +177,24 @@ export class LoginView extends React.Component {
         else{
             window.toast(result.state.msg || "注册失败")
         }
+    }
+    
+    forgetPwd = async() => {
+        setTimeout(() => {
+            location.href = '/password-reset'
+        }, 300);
+    }
+
+    smsCodeInputHandle = (e) =>{
+        const code = e.target.value
+        this.setState({
+            authCode: code,
+            infoCheck:{
+                ...this.state.infoCheck,
+                authCodeEmpty:false
+            }
+        })
+
     }
 
     render () {
@@ -195,28 +211,36 @@ export class LoginView extends React.Component {
                         </div>
                         {
                             this.state.loginBlock == "signUp" ?
-                                <div className='auth-form'>
+                                <div className='login-view-form'>
 
-                                    <div className="auth-desc">Your username</div>
-                                    <input className="auth-input" value={this.state.createUsername} onChange={this.createUsernameHandle} onClick={this.judgeUsernameEmptyHandle}></input>
-                                    {/* {this.state.infoCheck.usernameEmpty && <div className='after error'>用户名不能为空</div>} */}
-                                    <div className="auth-desc">Your password</div>
-                                    <input className="auth-input" type="password" value={this.state.createPassword} onChange={this.createPasswordHandle}></input>
-                                    {/* {this.state.infoCheck.passwordEmpty && <div className='after error'>密码不能为空</div>} */}
-                                    <div className="auth-desc">Confirm Password</div>
-                                    <input className="auth-input" type="password" value={this.state.createConfirmPassword} onChange={this.createConfirmPasswordHandle}></input>
-                                    {/* {this.state.infoCheck.confirmPasswordEmpty && <div className='after error'>重新输入密码不能为空</div>} */}
+                                    <div className="auth-desc">手机</div>
+                                    <input type="number" className="auth-input" placeholder="请输入手机号" 
+                                    value={this.state.createPhone} onChange={this.createPhoneHandle} 
+                                    onClick={this.judgeUsernameEmptyHandle} autoFocus></input>
+                                    
+                                    <div className="auth-desc">验证码</div>
+                                    <SMSBlock smsCodeInputHandle = {this.smsCodeInputHandle}
+                                  smsCode = {this.state.authCode}
+                                  phoneNumber = {this.state.createPhone}
+                                  phoneEmpty = {this.state.infoCheck.createPhoneEmpty}
+                                  ></SMSBlock>
+
+                                    <div className="auth-desc">密码</div>
+                                    <input className="auth-input" placeholder="请输入密码"
+                                    type="password" value={this.state.createPassword} onChange={this.createPasswordHandle}></input>
+                                   
                                     <div className="submit-btn" onClick={this.signHandle}>CREATE ACCOUNT</div>
                                 </div>
                             : ""
                         }
                         {
                             this.state.loginBlock == "login" ?
-                                <div className='auth-form'>
+                                <div className='login-view-form'>
                                 <div className="auth-desc">Choose a username</div>
-                                <input className="auth-input" value={this.state.username} onChange={this.usernameHandle}></input>
+                                <input type="number" className="auth-input" value={this.state.username} onChange={this.usernameHandle}></input>
                                 <div className="auth-desc">Choose a password</div>
                                 <input className="auth-input" type="password" value={this.state.password} onChange={this.passwordHandle}></input>
+                                <div className="forgetPwd" onClick={this.forgetPwd}>忘记密码?</div>
                                     <div className="submit-btn" onClick={this.loginHandle}>LOG IN</div>
                                     <div className="submit-btn" onClick={this.props.showWxDialogHandle}>微信登录</div>
                                 </div>

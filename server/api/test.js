@@ -54,7 +54,7 @@ const test = async (req, res, next) => {
             data: token
         });
     } catch (error) {
-        console.log(error);
+        console.error(error);
         resProcessor.jsonp(req, res, {
             state: { code: 1, msg: '操作失败' },
             data: ''

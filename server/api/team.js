@@ -3,10 +3,14 @@ var _ = require('underscore'),
     proxy = require('../components/proxy/proxy'),
     conf = require('../conf');
 
-
 import fetch from 'isomorphic-fetch';
 import lo from 'lodash';
 import apiAuth from '../components/auth/api-auth'
+import{
+    isMember,
+    isAdmin,
+    isCreator
+}from '../middleware/auth-judge/auth-judge'
 
 import {
     web_codeToAccessToken,
@@ -20,6 +24,7 @@ import { MongooseDocument } from 'mongoose';
 var mongoose = require('mongoose')
 
 var teamDB = mongoose.model('team')
+var roleDB = mongoose.model('role')
 var userDB = mongoose.model('user')
 var topicDB = mongoose.model('topic')
 var tasklistDB = mongoose.model('tasklist')
@@ -46,10 +51,10 @@ const creatTeam = async (req, res, next) => {
         let teamObj = await teamDB.createTeam(teamName, teamImg, teamDes)
         await teamDB.addMember(teamObj._id, userId, 'creator')
         await userDB.addTeam(userId, teamObj, 'creator')
+        await roleDB.createRole(teamObj._id, userId, 'creator') 
         teamObj = await teamDB.findByTeamId(teamObj._id)
 
         await folderDB.createFolder(teamObj._id,'','')
-         
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '创建成功' },
             data: {
@@ -109,6 +114,7 @@ const joinTeam = async (req, res, next) => {
 
         await teamDB.addMember(teamId, userId, 'member')
         await userDB.addTeam(userId, teamObj, 'member')
+        await roleDB.createRole(teamObj._id, userId, 'member') 
         teamObj = await teamDB.findByTeamId(teamId)
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '加入成功' },
@@ -157,7 +163,7 @@ const modifyMemberRole = async (req, res, next) => {
 
         if (!myRole) {
             resProcessor.jsonp(req, res, {
-                state: { code: 3001, msg: '你不并在这个团队里面' },
+                state: { code: 3001, msg: '你不在这个团队里面' },
                 data: {}
             });
             return
@@ -307,6 +313,8 @@ const leaveTeam = async(req,res) =>{
     try{
         let teamObj = await teamDB.findByTeamId(teamId)
         const result = await teamDB.delMember(teamId, userId)
+        const result2 = await roleDB.findRole(userId, teamId)
+        await roleDB.delRoleById(result2._id)
         await userDB.delTeam(userId, teamId)
 
         resProcessor.jsonp(req, res, {
@@ -361,6 +369,8 @@ const kikMember = async (req, res, next) => {
         }
         const result = await teamDB.delMember(teamId, tarMemberId)
         await userDB.delTeam(tarMemberId, teamId)
+        const result2 = await roleDB.findRole(userId, teamId)
+        await roleDB.delRoleById(result2._id)
 
         resProcessor.jsonp(req, res, {
             state: { code: 0, msg: '设置成功' },
@@ -634,15 +644,15 @@ module.exports = [
     ['POST', '/api/team/info', apiAuth, teamInfo],
     ['POST', '/api/team/infoList', apiAuth, teamInfoList],
 
-    ['POST', '/api/team/create', apiAuth, creatTeam],
-    ['POST', '/api/team/modifyTeamInfo', apiAuth, modifyTeamInfo],
+    ['POST', '/api/team/create', apiAuth, isMember, creatTeam],
+    ['POST', '/api/team/modifyTeamInfo', apiAuth, isMember, modifyTeamInfo],
     ['POST', '/api/team/join', apiAuth, joinTeam],
-    ['POST', '/api/team/roleModify', apiAuth, modifyMemberRole],
-    ['POST', '/api/team/markTeam', apiAuth, markTeam],
-    ['POST', '/api/team/kikMember', apiAuth, kikMember],
-    ['POST', '/api/team/leaveTeam',apiAuth,leaveTeam],
+    ['POST', '/api/team/roleModify', apiAuth, isCreator, modifyMemberRole],
+    ['POST', '/api/team/markTeam', apiAuth, isMember, markTeam],
+    ['POST', '/api/team/kikMember', apiAuth, isAdmin, kikMember],
+    ['POST', '/api/team/leaveTeam',apiAuth, isMember, leaveTeam],
 
-    ['POST', '/api/team/memberList', apiAuth, memberList],
+    ['POST', '/api/team/memberList', apiAuth, isMember, memberList],
     ['POST', '/api/team/taskList', apiAuth, taskList],
 
 ];

@@ -1,6 +1,6 @@
 const WxChoose = {
     PERSON_INFO_CHECK: {
-        ENTER_USERNAME_EMPTY: "账号为空",
+        ENTER_USERNAME_EMPTY: "手机号为空",
         ENTER_PASSWORD_EMPTY: "密码为空"
     },
     RESPONSE_MESSAGE:{
@@ -14,14 +14,15 @@ const WxChoose = {
         ACCOUNT_BLOCK_TITLE:"绑定已有账号",
     },
     LABEL_TEXT:{
-        SET_USERNAME:"账号: ",
+        SET_USERNAME:"手机号: ",
         SET_PASSWORD:"密码: ",
     },
     BUTTON_TEXT:{
         BIND_ACCOUNT:"绑定账号",
         ENTER_IHCI:"直接进入平台",
         SUBMIT:"确定",
-        CANCEL:"返回"
+        CANCEL:"返回",
+        FORGET_PWD:"忘记密码",
     },
 }
 const IhciJoin = {
@@ -43,9 +44,9 @@ const IhciJoin = {
         JOIN_BLOCK_TITLE: "加入iHCI",
     },
     LABEL_TEXT: {
-        SET_NAME: "姓名: ",
-        SET_EMAIL: "邮箱: ",
-        SET_PHONE: "手机: ",
+        SET_NAME: "姓名:",
+        SET_EMAIL: "邮箱:",
+        SET_PHONE: "手机:",
     },
     BUTTON_TEXT: {
         ENTER_IHCI: "加入",
