@@ -32,25 +32,6 @@ export default class MainPage extends React.Component {
     componentDidMount = async () => {
         this.data = window.INIT_DATA
 
-      
-        if (fetch) {
-            alert("aaa")
-        }
-        const aaa = fetch('/test', {
-            method: 'GET',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: null
-        })
-        alert(aaa)
-
-
-        const bbb = await aaa
-        console.log(bbb);
-        alert(bbb)
-
     }
 
     showWxDialogHandle = () => {
