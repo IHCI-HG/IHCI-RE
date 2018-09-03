@@ -78,7 +78,6 @@ export default class SMSBlock extends React.Component{
                 }
             }else{
                 window.toast("请输入图片验证码")
-                
             }
     }
 }
