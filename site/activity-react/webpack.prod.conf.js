@@ -21,7 +21,6 @@ const extractSass = new ExtractTextPlugin({
     disable: MODE === 'dev'
 });
 
-
 // console.log('-----------------当前模式：', `${MODE}`);
 
 const entrys = {};
