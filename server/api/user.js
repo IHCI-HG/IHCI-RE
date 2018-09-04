@@ -517,16 +517,6 @@ const wxLogin = async (req, res, next) => {
     const code = lo.get(req, 'query.code')
     const state = lo.get(req, 'query.state')
     const userId = lo.get(req, 'rSession.userId')
-    if (!username || !password) {
-        resProcessor.jsonp(req, res, {
-            state: {
-                code: 3000,
-                msg: '参数不全'
-            },
-            data: {}
-        });
-        return
-    }
     try {
         const result = await web_codeToAccessToken(code)
         if (state == 'bind') {
