@@ -2,22 +2,23 @@
     width:400px;
     display:flex;
     flex-wrap:wrap;
+    height:50px;
+    margin-bottom: 10px;
     flex-direction: row;
     .input-code{
         border: 1px solid #e6e6e6; /*no*/
-        height: 45px;
+        height: 50px;
         width: 200px;
-        margin-top:20px;
         border-radius: 6px;
         line-height: 50px;
-        padding:0 10px;  
-       
+        &:focus {
+            border: 1px solid #a2a2a2;
+        }
     }
     .captcha{
         margin-bottom: 20px;
     }
     .active-btn{
-        margin-top:13px;
         margin-left:10px;
         display:flex;
         flex-wrap:wrap;

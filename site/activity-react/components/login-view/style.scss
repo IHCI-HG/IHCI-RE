@@ -39,11 +39,9 @@
                     height: 50px;
                     width: 140px;
                     padding: 0 20px;
-                    margin-top:10px;
                     margin-bottom: 10px;
                 }
                 .active-btn {
-                    margin-top:10px;
                     margin-left:10px;
                     display:flex;
                     flex-wrap:wrap;
@@ -138,6 +136,43 @@
 
                 &:hover {
                     box-shadow: 1px 2px 6px #a2a2a2;
+                }
+            }
+            .menuArrow{
+                position: absolute;
+                top: -8px;
+                left:200px;
+                overflow: hidden;
+                width: 13px;
+                height: 13px;
+                z-index: -100;
+                background-color: #fffbed;
+                border-left: 1px solid #f9efd3;
+                border-top: 1px solid #f9efd3;
+                -webkit-transform: rotate(45deg);
+                transform: rotate(45deg);
+            }
+            .help-block{
+                width: 500px;
+                position: absolute;
+                background-color: #fffbed;
+                border: 1px solid #f9efd3;
+                z-index: 100;
+                border-radius: 10px;
+                right:-20px;
+                padding: 10px;
+                .help-title{
+                    color: #646565;
+                    font-size: 18px;
+                    line-height: 14px;
+                    font-weight: 700;
+                }
+                .help-text{
+                    margin-top:5px;
+                    font-size:16px;
+                    .help-row{
+                        line-height:120%;
+                    }
                 }
             }
         }

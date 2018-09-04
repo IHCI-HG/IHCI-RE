@@ -25,7 +25,7 @@ export class LoginView extends React.Component {
             usernameEmpty:true,
             passwordEmpty:true
         },
-
+        helpDisplay:false
     }
 
     setToSignUpHandle = () =>  {
@@ -224,24 +224,35 @@ export class LoginView extends React.Component {
                                   phoneNumber = {this.state.createPhone}
                                   phoneEmpty = {this.state.infoCheck.createPhoneEmpty}
                                   ></SMSBlock>
-
+                                    <div className="forgetPwd" onClick={()=>{this.setState({helpDisplay:!this.state.helpDisplay})}}>收不到验证码?</div>
+                                    {this.state.helpDisplay&&<div className="help-block">
+                                        <div className="menuArrow" ></div>
+                                        <div className="help-title">没收到短信验证码？</div>
+                                        <ul className="help-text">
+                                            <li className="help-row">1、网络通讯异常可能会造成短信丢失，请重新获取或稍后再试。</li>
+                                            <li className="help-row">2、请核实手机是否已欠费停机，或者屏蔽了系统短信。</li>
+                                            <li className="help-row">3、如果手机已丢失或停用， 请选择其他验证方式 。</li>
+                                            <li className="help-row">4、您也可以尝试将SIM卡移动到另一部手机，然后重试。</li>
+                                        </ul>
+                                    </div>
+                                    }
                                     <div className="auth-desc">密码</div>
                                     <input className="auth-input" placeholder="请输入密码"
                                     type="password" value={this.state.createPassword} onChange={this.createPasswordHandle}></input>
                                    
-                                    <div className="submit-btn" onClick={this.signHandle}>CREATE ACCOUNT</div>
+                                    <div className="submit-btn" onClick={this.signHandle}>注册</div>
                                 </div>
                             : ""
                         }
                         {
                             this.state.loginBlock == "login" ?
                                 <div className='login-view-form'>
-                                <div className="auth-desc">Choose a username</div>
+                                <div className="auth-desc">手机</div>
                                 <input type="number" className="auth-input" value={this.state.username} onChange={this.usernameHandle}></input>
-                                <div className="auth-desc">Choose a password</div>
+                                <div className="auth-desc">密码</div>
                                 <input className="auth-input" type="password" value={this.state.password} onChange={this.passwordHandle}></input>
                                 <div className="forgetPwd" onClick={this.forgetPwd}>忘记密码?</div>
-                                    <div className="submit-btn" onClick={this.loginHandle}>LOG IN</div>
+                                    <div className="submit-btn" onClick={this.loginHandle}>登录</div>
                                     <div className="submit-btn" onClick={this.props.showWxDialogHandle}>微信登录</div>
                                 </div>
                             : ""
