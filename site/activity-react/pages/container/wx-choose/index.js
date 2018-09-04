@@ -125,7 +125,7 @@ export default class WxChoose extends React.Component{
                    this.state.loginBlock === "login"?
                    <div className="login-Block">
                    <div className = "auth-header">{staticText.PAGE_INFO.ACCOUNT_BLOCK_TITLE}</div>
-                   <input type="number" className="login-input" value={this.state.username} onChange={this.usernameHandle} placeholder="账号/手机号"></input>
+                   <input type="number" pattern="[0-9]*" className="login-input" value={this.state.username} onChange={this.usernameHandle} placeholder="账号/手机号"></input>
                    <input className="login-input" type="password" value={this.state.password} onChange={this.passwordHandle} placeholder="密码"></input>
                    <div className = "reset-btn" onClick={this.resetPWDHandle}>{staticText.BUTTON_TEXT.FORGET_PWD}</div>
                    <div className="login-btn" onClick={this.loginHandle}>{staticText.BUTTON_TEXT.SUBMIT}</div>

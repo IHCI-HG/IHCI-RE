@@ -214,7 +214,7 @@ export class LoginView extends React.Component {
                                 <div className='login-view-form'>
 
                                     <div className="auth-desc">手机</div>
-                                    <input type="number" className="auth-input" placeholder="请输入手机号" 
+                                    <input type="number" pattern="[0-9]*" className="auth-input" placeholder="请输入手机号" 
                                     value={this.state.createPhone} onChange={this.createPhoneHandle} 
                                     onClick={this.judgeUsernameEmptyHandle} autoFocus></input>
                                     
@@ -228,6 +228,7 @@ export class LoginView extends React.Component {
                                     {this.state.helpDisplay&&<div className="help-block">
                                         <div className="menuArrow" ></div>
                                         <div className="help-title">没收到短信验证码？</div>
+                                        <div className="help-close" onClick={()=>{this.setState({helpDisplay:false})}}><i className="iconfont icon-close"></i></div>
                                         <ul className="help-text">
                                             <li className="help-row">1、网络通讯异常可能会造成短信丢失，请重新获取或稍后再试。</li>
                                             <li className="help-row">2、请核实手机是否已欠费停机，或者屏蔽了系统短信。</li>
@@ -248,7 +249,7 @@ export class LoginView extends React.Component {
                             this.state.loginBlock == "login" ?
                                 <div className='login-view-form'>
                                 <div className="auth-desc">手机</div>
-                                <input type="number" className="auth-input" value={this.state.username} onChange={this.usernameHandle}></input>
+                                <input type="number" pattern="[0-9]*" className="auth-input" value={this.state.username} onChange={this.usernameHandle}></input>
                                 <div className="auth-desc">密码</div>
                                 <input className="auth-input" type="password" value={this.state.password} onChange={this.passwordHandle}></input>
                                 <div className="forgetPwd" onClick={this.forgetPwd}>忘记密码?</div>

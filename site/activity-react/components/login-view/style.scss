@@ -166,6 +166,14 @@
                     font-size: 18px;
                     line-height: 14px;
                     font-weight: 700;
+                    display: inline;
+                }
+                .help-close{
+                    display: inline;
+                    position: absolute;
+                    right:4px;
+                    top:4px;
+                    cursor: pointer;
                 }
                 .help-text{
                     margin-top:5px;

@@ -1108,7 +1108,7 @@ export default class Task extends React.Component{
                             {!copyExpanded&&<a  onClick={() => {this.setState({copyExpanded: true,moveExpanded: false})}}>复制</a>}
                             {copyExpanded&&<div className="confirm">
                                     <p className="title">复制任务到当前清单</p>
-                                    <input type="number" placeholder="复制数量[1~50]" min="1" max="50" name="count" id="count" onChange={this.numberInputHandle} />
+                                    <input type="number" pattern="[0-9]*" placeholder="复制数量[1~50]" min="1" max="50" name="count" id="count" onChange={this.numberInputHandle} />
                                     {/* <div className="simple-select select-choose-projects require-select" >
                                         <select onChange={this.copySelectedHandle} value={this.state.teamToCopy} className="select-list">
                                             <option className="default" value="请选择小组">点击选择小组</option>
