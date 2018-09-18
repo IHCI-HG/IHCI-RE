@@ -491,7 +491,7 @@ class Task extends React.Component{
         <div>
         <div className="head">
             <span className='head-title'>任务</span>
-            {(this.props.role!=='visitor')&&<div className="create-btn">
+            <div className="create-btn">
                 <span onClick={(e) => {
                     this.setState({ showCreateTodo: true })
                     e.stopPropagation()
@@ -516,7 +516,7 @@ class Task extends React.Component{
                 </li>
                     </ul>
                 }
-            </div>}
+            </div>
         </div>
         
 

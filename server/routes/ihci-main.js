@@ -230,9 +230,7 @@ const userAuthJudge = async(req, res, next) => {
     if(req.url.indexOf('/team-admin/')!== -1&&result.role!=="creator"&&result.role!=="admin"){
         res.redirect(`/team/${teamId}`)
     }
-    req.INIT_DATA = {
-        role: result?result.role:"visitor"
-    }
+    
     next()
 }
 
