@@ -7,9 +7,7 @@ import fetch from 'isomorphic-fetch';
 import lo from 'lodash';
 import apiAuth from '../components/auth/api-auth'
 import{
-    isMember,
-    isAdmin,
-    isCreator
+    isMember
 }from '../middleware/auth-judge/auth-judge'
 
 import {
@@ -647,9 +645,9 @@ module.exports = [
     ['POST', '/api/team/create', apiAuth, isMember, creatTeam],
     ['POST', '/api/team/modifyTeamInfo', apiAuth, isMember, modifyTeamInfo],
     ['POST', '/api/team/join', apiAuth, joinTeam],
-    ['POST', '/api/team/roleModify', apiAuth, isCreator, modifyMemberRole],
+    // ['POST', '/api/team/roleModify', apiAuth, isCreator, modifyMemberRole],
     ['POST', '/api/team/markTeam', apiAuth, isMember, markTeam],
-    ['POST', '/api/team/kikMember', apiAuth, isAdmin, kikMember],
+    // ['POST', '/api/team/kikMember', apiAuth, isAdmin, kikMember],
     ['POST', '/api/team/leaveTeam',apiAuth, isMember, leaveTeam],
 
     ['POST', '/api/team/memberList', apiAuth, isMember, memberList],

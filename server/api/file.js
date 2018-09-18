@@ -19,9 +19,7 @@ import { resolve } from 'url';
 import { responsePathAsArray } from 'graphql';
 
 import{
-    isMember,
-    isAdmin,
-    isCreator
+    isMember
 }from '../middleware/auth-judge/auth-judge'
 
 const fileDownloader = async (teamId, dir, fileName) => {

@@ -15,9 +15,8 @@ import {
 } from '../components/wx-utils/wx-utils'
 
 import{
-    isMember,
-    isAdmin,
-    isCreator
+    isMember
+    
 }from '../middleware/auth-judge/auth-judge'
 
 var mongoose = require('mongoose')

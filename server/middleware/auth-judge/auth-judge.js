@@ -6,6 +6,7 @@ var discussDB = mongoose.model('discuss')
 var taskDB = mongoose.model('task')
 var tasklistDB = mongoose.model('tasklist')
 var roleDB = mongoose.model('role')
+var teamDB = mongoose.model('team')
 
 const getTeamId = async(req, res, next) => {
     if(req.body.teamId){
@@ -31,83 +32,106 @@ const getTeamId = async(req, res, next) => {
 export const isMember = async (req, res, next) =>{
     var teamId = await getTeamId(req, res, next)
     if(!teamId){
+        resProcessor.jsonp(req, res, {
+            state: { code: 2000, msg: '权限不足' },
+            data: {}
+        });
+    }
+    var userId = req.rSession.userId
+    const result = await teamDB.findByTeamId(teamId)
+    var menber = false
+    for(let i=0;i<result.memberList.length;i++){
+        if(userId === result.memberList[i].userId){
+            menber = true
+            break
+        }
+    }
+    if(menber){
         next()
+    }else{
+        resProcessor.jsonp(req, res, {
+            state: { code: 2000, msg: '权限不足' },
+            data: {}
+        });
     }
-    else{
-        var userId = req.rSession.userId
-        const result = await roleDB.findRole(userId, teamId)
-        if(!result){
-            resProcessor.jsonp(req, res, {
-                state: { code: 2000, msg: '权限不足' },
-                data: {}
-            });
-        }
-        else{
-            if(result.role === "member"||"admin"||"creator"){
-                next()
-            }
-            else{
-                resProcessor.jsonp(req, res, {
-                    state: { code: 2000, msg: '权限不足' },
-                    data: {}
-                });
-            }
-        }
-    }
+    // if(!teamId){
+    //     next()
+    // }
+    // else{
+    //     var userId = req.rSession.userId
+    //     const result = await roleDB.findRole(userId, teamId)
+    //     if(!result){
+    //         resProcessor.jsonp(req, res, {
+    //             state: { code: 2000, msg: '权限不足' },
+    //             data: {}
+    //         });
+    //     }
+    //     else{
+    //         if(result.role === "member"||"admin"||"creator"){
+    //             next()
+    //         }
+    //         else{
+    //             resProcessor.jsonp(req, res, {
+    //                 state: { code: 2000, msg: '权限不足' },
+    //                 data: {}
+    //             });
+    //         }
+    //     }
+    // }
 }
 
-export const isAdmin = async (req, res, next) =>{
-    var teamId = await getTeamId(req, res, next)
-    if(!teamId){
-        next()
-    }
-    else{
-        var userId = req.rSession.userId
-        const result = await roleDB.findRole(userId, teamId)
-        if(!result){
-            resProcessor.jsonp(req, res, {
-                state: { code: 2000, msg: '权限不足' },
-                data: {}
-            });
-        }
-        else{
-            if(result.role === "admin"||"creator"){
-                next()
-            }
-            else{
-                resProcessor.jsonp(req, res, {
-                    state: { code: 2000, msg: '权限不足' },
-                    data: {}
-                });
-            }
-        }
-    }
-}
+// export const isAdmin = async (req, res, next) =>{
+//     var teamId = await getTeamId(req, res, next)
+//     if(!teamId){
+//         next()
+//     }
+//     else{
+//         var userId = req.rSession.userId
+//         const result = await roleDB.findRole(userId, teamId)
+//         if(!result){
+//             resProcessor.jsonp(req, res, {
+//                 state: { code: 2000, msg: '权限不足' },
+//                 data: {}
+//             });
+//         }
+//         else{
+//             if(result.role === "admin"||"creator"){
+//                 next()
+//             }
+//             else{
+//                 resProcessor.jsonp(req, res, {
+//                     state: { code: 2000, msg: '权限不足' },
+//                     data: {}
+//                 });
+//             }
+//         }
+//     }
+// }
 
-export const isCreator = async (req, res, next) => {
-    var teamId = await getTeamId(req, res, next)
-    if(!teamId){
-        next()
-    }
-    else{
-        var userId = req.rSession.userId
-        const result = await roleDB.findRole(userId, teamId)
-        if(!result){
-            resProcessor.jsonp(req, res, {
-                state: { code: 2000, msg: '权限不足' },
-                data: {}
-            });
-        }
-        else{
-            if(result.role === "creator"){
-                next()
-            }
-            else{
-                resProcessor.jsonp(req, res, {
-                    state: { code: 2000, msg: '权限不足' },
-                    data: {}
-                });
-            }
-        }
-    }
-}
+// export const isCreator = async (req, res, next) => {
+//     var teamId = await getTeamId(req, res, next)
+//     if(!teamId){
+//         next()
+//     }
+//     else{
+//         var userId = req.rSession.userId
+//         const result = await roleDB.findRole(userId, teamId)
+//         if(!result){
+//             resProcessor.jsonp(req, res, {
+//                 state: { code: 2000, msg: '权限不足' },
+//                 data: {}
+//             });
+//         }
+//         else{
+//             if(result.role === "creator"){
+//                 next()
+//             }
+//             else{
+//                 resProcessor.jsonp(req, res, {
+//                     state: { code: 2000, msg: '权限不足' },
+//                     data: {}
+//                 });
+//             }
+//         }
+//     }
+// }

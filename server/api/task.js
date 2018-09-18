@@ -21,9 +21,7 @@ import {
 import { dayLeft } from '../../site/activity-react/utils/util';
 import { clearInterval } from 'timers';
 import{
-    isMember,
-    isAdmin,
-    isCreator
+    isMember
 } from '../middleware/auth-judge/auth-judge'
 var mongoose = require('mongoose')
 

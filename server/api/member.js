@@ -8,9 +8,7 @@ import lo from 'lodash';
 import apiAuth from '../components/auth/api-auth'
 
 import{
-    isMember,
-    isAdmin,
-    isCreator
+    isMember
 }from '../middleware/auth-judge/auth-judge'
 
 var mongoose = require('mongoose')
