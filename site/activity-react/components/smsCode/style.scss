@@ -2,15 +2,18 @@
     width:400px;
     display:flex;
     flex-wrap:wrap;
-    height:50px;
-    margin-bottom: 10px;
+    height:30px;
+    margin-bottom: 5px;
     flex-direction: row;
     .input-code{
-        border: 1px solid #e6e6e6; /*no*/
-        height: 50px;
-        width: 200px;
-        border-radius: 6px;
-        line-height: 50px;
+        outline: 0; 
+        border: 1px solid #acacac;
+        border-radius: 25px;
+        height: 30px;
+        width: 120px;
+
+        padding: 0 20px;
+
         &:focus {
             border: 1px solid #a2a2a2;
         }
@@ -19,19 +22,20 @@
         margin-bottom: 20px;
     }
     .active-btn{
-        margin-left:10px;
+        margin-left:5px;
         display:flex;
         flex-wrap:wrap;
         //align-items: center;
         cursor: pointer;
         text-align: center;
-        width: 130px;
-        background-color: orange;
-        border-color: orange;
+        width: 90px;
+        background-color: #ffb43d;
+        border-color: #ffb43d;
         color: #fff;
-        height: 50px;
-        line-height: 50px; 
-        border-radius: 10px;
+        height: 30px;
+        line-height: 30px;
+        font-weight: bold;
+        border-radius: 5px;
         justify-content: center;
     }
     .active-btn{

@@ -201,11 +201,11 @@ export class LoginView extends React.Component {
         return <div className="auth-con">
                         <div className="auth-nav">
                             <div
-                                className={this.state.loginBlock == "login" ? "auth-nav-item active" : "auth-nav-item"}
+                                className={this.state.loginBlock == "login" ? "auth-nav-item-login active" : "auth-nav-item-login"}
                                 onClick={this.setToLoginHandle}
                             >登录</div>
                             <div
-                                className={this.state.loginBlock == "signUp" ? "auth-nav-item active" : "auth-nav-item"}
+                                className={this.state.loginBlock == "signUp" ? "auth-nav-item-signup active" : "auth-nav-item-signup"}
                                 onClick = {this.setToSignUpHandle}
                             >注册</div>
                         </div>
@@ -241,7 +241,7 @@ export class LoginView extends React.Component {
                                     <input className="auth-input" placeholder="请输入密码"
                                     type="password" value={this.state.createPassword} onChange={this.createPasswordHandle}></input>
                                    
-                                    <div className="submit-btn" onClick={this.signHandle}>注册</div>
+                                    <div className="submit-btn" onClick={this.signHandle}>加入我们</div>
                                 </div>
                             : ""
                         }
@@ -254,7 +254,10 @@ export class LoginView extends React.Component {
                                 <input className="auth-input" type="password" value={this.state.password} onChange={this.passwordHandle}></input>
                                 <div className="forgetPwd" onClick={this.forgetPwd}>忘记密码?</div>
                                     <div className="submit-btn" onClick={this.loginHandle}>登录</div>
-                                    <div className="submit-btn" onClick={this.props.showWxDialogHandle}>微信登录</div>
+                                    <div className="wx-submit-btn" onClick={this.props.showWxDialogHandle}>
+                                        <img className="wx-submit-img" src="/activity-react/img/wechat@2x.png" />
+                                        微信登录
+                                    </div>
                                 </div>
                             : ""
                         }

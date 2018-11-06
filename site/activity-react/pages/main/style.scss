@@ -6,20 +6,36 @@
 
 
     .nav {
-        height: 80px;
-        background-color: #fff;
+        height: 64px;
+        background-color: #e0e0e0;
         .nav-con {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 80px;
+            height:44px;
+            top:10px;
+            position: relative;
+            .logo{
+                width:20%;
+                left:10%;
+                position: relative;
+            }
+            .slogan{
+                font-size: 20px;
+                width:26%;
+                left:12%;
+                position: relative;
+            }
+            .division{
+                font-size: 20px;
+                top: 10px;
+                position: relative;
+                left:25%;
+            }
         }
     }
 
 
     .banner {
-        padding: 80px 0;
-        min-height: 600px;
+        height:539px;
         h1 {
             color: #204056;
             font-size: 40px;
@@ -35,8 +51,8 @@
             position: relative;
         }
         .banner-img {
-            height: 400px;
-            width: 400px;
+            height: 439px;
+            width: 436px;
 
             display: flex;
             align-items: center;
@@ -44,77 +60,11 @@
 
             background: #fff;
             position: absolute;
-            top: 120px;
-            left: 20px;
+            top: 50px;
+            left: 8%;
         }
         
-        .auth-con {
-            width: 350px;
-        }
-        .auth-nav {
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            padding-top: 100px;
-            .auth-nav-item {
-                transition: background-color .3s;
-                cursor: pointer;
-                flex-grow: 1;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                height: 50px;
-                &:hover {
-                    background-color: rgb(237, 237, 237);
-                }
-                &.active{
-                    background: #fff;
-                }
-            }
-        }
-        .auth-form {
-            padding: 30px;
-            background-color: #fff;
-            .auth-desc {
-                font-size: 16px;
-                font-weight: bold;
-                margin-bottom: 10px;
-            }
-            .auth-input {
-                outline: 0; 
-                border: 1px solid #e9eaea;
-                border-radius: 2px;
-                height: 50px;
-                width: 290px;
-
-                padding: 0 20px;
-                margin-bottom: 20px;
-
-                &:focus {
-                    border: 1px solid #a2a2a2;
-                }
-            }
-            .submit-btn {
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                height: 50px;
-                width: 290px;
-                background-color: #ff9900;
-
-                font-size: 16px;
-                font-weight: bold;
-                color: #fff;
-                border-radius: 2px;
-
-                &:hover {
-                    box-shadow: 1px 2px 6px #a2a2a2;
-                }
-            }
-        }
+        
     }
     .video  {
         padding: 80px 60px;
