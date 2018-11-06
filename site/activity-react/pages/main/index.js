@@ -55,14 +55,14 @@ export default class MainPage extends React.Component {
 
             <div className="nav">
                 <div className="max-w-con nav-con">
-                    <img className="logo" src="/activity-react/img/logo@2x.png" />
+                    <img className="logo" src={require('./logo@2x.png')} />
                     <div className="slogan">All for the valuable code 一切为了有价值的代码</div>
                     <div className="division">iHCI俱乐部&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iHCI实验室</div>
                 </div>
             </div>
             <div className="banner">
                 <div className="banner-con max-w-con">
-                    <div><img className="banner-img" src="/activity-react/img/tuceng7@2x.png" /></div>
+                    <div><img className="banner-img" src={require('./tuceng7@2x.png')} /></div>
                     <LoginView showWxDialogHandle={this.showWxDialogHandle}/>
                 </div>
             </div>

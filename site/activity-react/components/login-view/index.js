@@ -255,7 +255,7 @@ export class LoginView extends React.Component {
                                 <div className="forgetPwd" onClick={this.forgetPwd}>忘记密码?</div>
                                     <div className="submit-btn" onClick={this.loginHandle}>登录</div>
                                     <div className="wx-submit-btn" onClick={this.props.showWxDialogHandle}>
-                                        <img className="wx-submit-img" src="/activity-react/img/wechat@2x.png" />
+                                        <img className="wx-submit-img" src={require('./wechat@2x.png')} />
                                         微信登录
                                     </div>
                                 </div>
