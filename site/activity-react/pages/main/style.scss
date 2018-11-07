@@ -36,6 +36,7 @@
 
     .banner {
         height:539px;
+        width: 95%;
         h1 {
             color: #204056;
             font-size: 40px;
@@ -67,7 +68,8 @@
         
     }
     .video  {
-        padding: 80px 60px;
+       width: 872px;
+       margin: auto;
 
         background-color: #fff;
 
@@ -75,11 +77,18 @@
         align-items: center;
         justify-content: center;
         .video-des {
-            margin-right: 30px;
+            margin-top: -35px;
+            margin-left: 10px;
+            font-size: 25px;
+            color: gray;
+        }
+        .video-template{
+            width: 100%;
+            height: 100%;
         }
     }
     .stories {
-        padding: 80px 0;
+        padding: 80px 0 0 0;
         h1 {
             color: #204056;
             font-size: 40px;
@@ -112,23 +121,37 @@
                 margin: 30px auto 0;
                 background-color: gray;
             }
-            .name {
-                font-size: 20px;
-                margin: 30px;
+            
+            .item-wrap{
+                margin-left:10%;
+                text-align: left;
+                .name {
+                    font-size: 26px;
+                    margin-top:30px;
+                    margin-bottom: 20px;
+                    color: #808080;
+                }
+                .title {
+                    margin-top:10px;
+                    font-size: 16px;
+                    color: #808080;
+                    
+                }
+                .desc {
+                    margin-top:10px;
+                    line-height: 16px;
+                    font-size: 14px;
+                    color: #808080;
+                }
             }
-            .title {
-                font-size: 20px;
-                margin: 10px;
-            }
-            .desc {
-                font-size: 16px;
-                margin: 10px;
-            }
+            
         }
         .join-num {
+            height: 83px;
+            background-color: #e0e0e0;
             position: relative;
-            margin-top: 40px;
-            padding: 40px 40px 0;
+            margin-top: 50px;
+            padding: 20px 0 20px;
             &::before{
                 content: "";
                 position: absolute;
@@ -153,20 +176,21 @@
         }
     }
     .footer {
-        background-color: #fff;
-        padding: 60px 0 ;
+        background-color: #cccccc;
+        padding: 30px 0 ;
         .footer-list {
             display: flex;
             align-items: flex-start;
-            justify-content: flex-start;
+            justify-content: center;
+            
         }
         line-height: 1.6;
         .foot-item {
-            margin-right: 100px;
-            font-size: 20px;
+            padding: 30px;
+            font-size: 15px;
         }
         .foot-item-title {
-            font-size: 26px;
+            font-size: 15px;
             font-weight: bold;
         }
     }
