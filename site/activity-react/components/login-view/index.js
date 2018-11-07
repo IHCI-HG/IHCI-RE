@@ -29,9 +29,23 @@ export class LoginView extends React.Component {
     }
 
     setToSignUpHandle = () =>  {
-        this.setState({
-            loginBlock: 'signUp'
-        });
+        if(window.outerWidth<=480){
+            if(this.state.loginBlock === 'login'){
+                this.setState({
+                    loginBlock: 'signUp'
+                })
+            }
+            if(this.state.loginBlock === 'signUp'){
+                this.setState({
+                    loginBlock: 'login'
+                })
+            }
+        }
+        else{
+            this.setState({
+                loginBlock: 'signUp'
+            })
+        }
     }
     setToLoginHandle = () => {
         this.setState({ 
@@ -202,12 +216,12 @@ export class LoginView extends React.Component {
                         <div className="auth-nav">
                             <div
                                 className={this.state.loginBlock == "login" ? "auth-nav-item-login active" : "auth-nav-item-login"}
-                                onClick={this.setToLoginHandle}
-                            >登录</div>
+                                onClick={(window.outerWidth>480)?this.setToLoginHandle:null}
+                            >{(window.outerWidth>480||this.state.loginBlock==="login")?"登录":"注册"}</div>
                             <div
                                 className={this.state.loginBlock == "signUp" ? "auth-nav-item-signup active" : "auth-nav-item-signup"}
                                 onClick = {this.setToSignUpHandle}
-                            >注册</div>
+                            >{(window.outerWidth>480||this.state.loginBlock==="login")?"注册":"登录"}</div>
                         </div>
                         {
                             this.state.loginBlock == "signUp" ?

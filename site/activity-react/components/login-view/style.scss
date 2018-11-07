@@ -204,6 +204,221 @@
             }
         }
     
+@media only screen and (max-width: 480px) {
+    .auth-con {
+        width: 90%;
+        height:323px;
+        right:5%;
+        position: relative;
+        margin-top:30px;
+        .auth-nav {
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            .auth-nav-item-login {
+                // border-top-left-radius: 10px;
+                // transition: background-color .3s;
+                background-color: #fff;
+                // cursor: pointer;
+                // flex-grow: 1;
+                // display: flex;
+                // align-items: center;
+                justify-content: left;
+                height: 50px;
+                font-size:42px;
+                
+                &:hover {
+                    background-color: #fff;
+                }
+                &.active{
+                    background-color: #fff;
+                }
+            }
+            .auth-nav-item-signup {
+                border-top-right-radius: 5px;
+                border-radius: 5px;
+                border:1px solid #ACACAC;
+                // transition: background-color .3s;
+                background-color: #fff;
+                // cursor: pointer;
+                // flex-grow: 1;
+                // display: flex;
+                // align-items: center;
+                margin-left: 70%;
+                width:15%;
+                color:#808080;
+                justify-content: center;
+                height: 50px;
+                font-size:32px;
+                &:hover {
+                    background-color: rgb(237, 237, 237);
+                }
+                &.active{
+                    background: #fff;
+                    font-size:32px;
+                }
+            }
+        }
+        .login-view-form {
+            padding: 30px 0;
+            background-color: #fff;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            
+            .auth-desc {
+                font-size: 30px;
+                font-weight: normal;
+                margin-bottom: 12px;
+                color: #4D4D4D;
+            }
+    
+            .forgetPwd{
+                color: gray;
+                cursor: pointer;
+                font-size: 25px;
+                text-align:right;
+                width:100%;
+                display: block;
+            }
+    
+            .auth-smallinput {
+                width: 50%;
+                margin-right: 10px;
+                outline: 0;
+                border: 1px solid #e9eaea;
+                border-radius: 2px;
+                height: 50px;
+                padding: 0 20px;
+                margin-bottom: 20px;
+            }
+    
+            .codeBtn {
+                width: 130px;
+                background-color: #ffb43d;
+                border-color: #ffb43d;
+                color: #fff;
+                height: 50px;
+                padding: 6px 0;
+                cursor: pointer;
+                font-weight: bold; 
+            }
+            
+            .countSecond {
+                width: 130px;
+                background-color: gray;
+                border-color: gray;
+                color: #fff;
+                height: 50px;
+                padding: 6px 0;
+                font-weight: bold; 
+            }
+    
+            .auth-input {
+                outline: 0; 
+                border: 1px solid #acacac;
+                border-radius: 5px;
+                height: 60px;
+                width: 100%;
+                font-size: 25px;
+                padding: 0 20px;
+                margin-bottom: 20px;
+    
+                &:focus {
+                    border: 1px solid #a2a2a2;
+                }
+            }
+            .submit-btn {
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 58px;
+                width: 100%;
+                background-color: #ffb43d;
+                margin-top:10px;
+                font-size: 34px;
+                font-weight: normal;
+                color: #fff;
+                border-radius: 5px;
+    
+                &:hover {
+                    box-shadow: 1px 2px 6px #a2a2a2;
+                }
+            }
+            .wx-submit-btn {
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 58px;
+                width: 100%;
+                background-color: transparent;
+                margin-top:10px;
+                font-size: 34px;
+                font-weight: normal;
+                color: #808080;
+                border-radius: 5px;
+                &:hover {
+                    box-shadow: 1px 2px 6px #a2a2a2;
+                }
+                .wx-submit-img{
+                    height:50px;
+                    width:50px;
+                    margin-right:10px;
+                }
+    
+            }
+            .menuArrow{
+                position: absolute;
+                top: -8px;
+                left:480px;
+                overflow: hidden;
+                width: 13px;
+                height: 13px;
+                z-index: -100;
+                background-color: #fffbed;
+                border-left: 1px solid #f9efd3;
+                border-top: 1px solid #f9efd3;
+                -webkit-transform: rotate(45deg);
+                transform: rotate(45deg);
+            }
+            .help-block{
+                width: 500px;
+                position: absolute;
+                background-color: #fffbed;
+                border: 1px solid #f9efd3;
+                z-index: 100;
+                border-radius: 10px;
+                right:-20px;
+                padding: 10px;
+                .help-title{
+                    color: #646565;
+                    font-size: 18px;
+                    line-height: 14px;
+                    font-weight: 700;
+                    display: inline;
+                }
+                .help-close{
+                    display: inline;
+                    position: absolute;
+                    right:4px;
+                    top:4px;
+                    cursor: pointer;
+                }
+                .help-text{
+                    margin-top:5px;
+                    font-size:16px;
+                    .help-row{
+                        line-height:120%;
+                    }
+                }
+            }
+        }
+    }
 
+
+
+}
 
 
