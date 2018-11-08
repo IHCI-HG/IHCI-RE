@@ -62,7 +62,7 @@ export default class MainPage extends React.Component {
                     <div className="division">iHCI俱乐部&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iHCI实验室</div>
                 </div>
             </div>
-            <div className="slogan-bg">一切只为了有价值的代码</div>
+            <div className="slogan-bg">一切为了有价值的代码</div>
             <div className="banner">
                 <div className="banner-con max-w-con">
                     <div><img className="banner-img" src={require('./tuceng7@2x.png')} /></div>
@@ -80,7 +80,7 @@ export default class MainPage extends React.Component {
             <div className="stories">
                 <div className="story-con">
                     <div className="story-item">
-                        <div><img  className="head-img" src={require('./toxiang1.png')}/></div>
+                        <img  className="head-img" src={require('./toxiang1.png')}/>
                         <div className="item-wrap">
                         <div className="name">Meta Hirschl</div>
                         <div className="title">网页设计师</div>
@@ -116,33 +116,72 @@ export default class MainPage extends React.Component {
                         </div>
                     </div>
                 </div>
-
-                <div className="join-num">
+                {window.outerWidth>480&&<div className="join-num">
                     <div className="p1">迄今已有</div>
                     <div className="num">450人</div>
                     <div className="p1">加入了IHCI</div>
+                </div>}
+                {window.outerWidth<=480&&
+                <div className='join-num'>
+                <span className="p1">迄今已有</span>
+                <span className="num">450人</span>
+                <span className="p1">加入了IHCI</span>
+                </div>}
+                
+            </div>
+
+            {window.outerWidth>480&&
+            <div className="footer">
+            <div className="footer-list max-w-con">
+                <div className="foot-item">
+                    <div className="foot-item-title">IHCI</div>
+                    <div href="">关于我们</div>
+                </div>
+                <div className="foot-item">
+                    <div className="foot-item-title">iHCI俱乐部</div>
+                    <div href="">HTML&CSS</div>
+                    <div href="">JavaScript</div>
+                    <div href="">Python</div>
+                </div>
+                <div className="foot-item">
+                    <div className="foot-item-title">iHCI实验室</div>
+                    <div href="">软件工程</div>
+                    <div href="">人机交互</div>
+                    <div href="">人工智能</div>
                 </div>
             </div>
-            <div className="footer">
+        </div>}
+                {window.outerWidth<=480&&
+                <div className="footer">
                 <div className="footer-list max-w-con">
                     <div className="foot-item">
-                        <div className="foot-item-title">IHCI</div>
-                        <div href="">关于我们</div>
-                    </div>
-                    <div className="foot-item">
                         <div className="foot-item-title">iHCI俱乐部</div>
-                        <div href="">HTML&CSS</div>
-                        <div href="">JavaScript</div>
-                        <div href="">Python</div>
+                        <div className="foot-item-title">iHCI实验室</div>
+                        <div className="foot-item-title">IHCI</div>
+                        
                     </div>
                     <div className="foot-item">
-                        <div className="foot-item-title">iHCI实验室</div>
-                        <div href="">软件工程</div>
-                        <div href="">人机交互</div>
+                        
+                        <div href="">HTML&CSS</div>
                         <div href="">人工智能</div>
+                        <div href="">关于我们</div>
+                        
+                       
+                    </div>
+                    <div className="foot-item">
+                        <div href="">JavaScript</div>
+                        <div href="">软件工程</div>
+                        
+                        
+                    </div>
+                    <div className="foot-item">
+                        <div href="">Python</div>
+                        <div href="">人机交互</div>
+                        
                     </div>
                 </div>
-            </div>
+            </div>}
+            
         </Page>
     }
 }
