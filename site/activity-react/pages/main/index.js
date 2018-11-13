@@ -62,10 +62,9 @@ export default class MainPage extends React.Component {
                     <div className="division">iHCI俱乐部&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iHCI实验室</div>
                 </div>
             </div>
-            <div className="slogan-bg">一切为了有价值的代码</div>
             <div className="banner">
-                <div className="banner-con max-w-con">
-                    <div><img className="banner-img" src={require('./tuceng7@2x.png')} /></div>
+                <div className="banner-con">
+                    <div className="img-wrap"><img className="banner-img" src={require('./tuceng7@2x.png')} /></div>
                     <LoginView showWxDialogHandle={this.showWxDialogHandle}/>
                 </div>
             </div>
