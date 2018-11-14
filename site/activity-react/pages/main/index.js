@@ -68,15 +68,17 @@ export default class MainPage extends React.Component {
                     <LoginView showWxDialogHandle={this.showWxDialogHandle}/>
                 </div>
             </div>
-            <div className="video">  
+            <div className="video">
+                <img className="video-title" src={require('./team-video.png')}/>
                 <div className="video-wrap">
                     { /* <iframe frameborder="0" width="450" height="254" src="https://v.qq.com/iframe/player.html?vid=f0564fwe5va&tiny=0&auto=0" allowfullscreen></iframe> */}
-                    <div><img className="video-template" src={require('./mp4.png')}/></div>
+                    <img className="video-template" src={require('./mp4.png')}/>
                     <div className="video-des">这是一些关于视频的描述balabala</div>
                 </div>
                 
             </div>
             <div className="stories">
+                <div className="story-title">团队成员故事</div>
                 <div className="story-con">
                     <div className="story-item">
                         <img  className="head-img" src={require('./toxiang1.png')}/>
@@ -115,26 +117,30 @@ export default class MainPage extends React.Component {
                         </div>
                     </div>
                 </div>
-                {window.outerWidth>480&&<div className="join-num">
+                {window.outerWidth>480?<div className="join-num">
                     <div className="p1">迄今已有</div>
                     <div className="num">450人</div>
                     <div className="p1">加入了IHCI</div>
-                </div>}
-                {window.outerWidth<=480&&
-                <div className='join-num'>
-                <span className="p1">迄今已有</span>
-                <span className="num">450人</span>
-                <span className="p1">加入了IHCI</span>
+                </div>:<div className="join-num">
+                    <span className="p1">迄今已有</span>
+                    <span className="num">450人</span>
+                    <span className="p1">加入了IHCI</span>
                 </div>}
                 
             </div>
-
-            {window.outerWidth>480&&
             <div className="footer">
+            <div className="trademark">
+        <img className="logo" src={require('./logo@2x.png')} />
+        <div className="trademark-text">川 B2-20130052 蜀 ICP 备 12019256号-5</div>
+        <div className="trademark-footer">©️ Mycolorway Design.</div>
+        </div>
+            {window.outerWidth>480?
+            
             <div className="footer-list max-w-con">
                 <div className="foot-item">
                     <div className="foot-item-title">IHCI</div>
                     <div href="">关于我们</div>
+                    <div href=""><img className="wx" width='20px' height="20px" src={require('./wechat@2x.png')} /></div>
                 </div>
                 <div className="foot-item">
                     <div className="foot-item-title">iHCI俱乐部</div>
@@ -149,9 +155,8 @@ export default class MainPage extends React.Component {
                     <div href="">人工智能</div>
                 </div>
             </div>
-        </div>}
-                {window.outerWidth<=480&&
-                <div className="footer">
+        :
+                
                 <div className="footer-list max-w-con">
                     <div className="foot-item">
                         <div className="foot-item-title">iHCI俱乐部</div>
@@ -179,8 +184,9 @@ export default class MainPage extends React.Component {
                         
                     </div>
                 </div>
-            </div>}
-            
+            }
+        
+        </div>
         </Page>
     }
 }

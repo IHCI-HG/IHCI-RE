@@ -1,5 +1,6 @@
 
         .auth-con {
+            
             width: 410px;
             height:323px;
             right:15%;
@@ -16,7 +17,7 @@
             .auth-nav-item-login {
                 // border-top-left-radius: 10px;
                 // transition: background-color .3s;
-                background-color: #f2f2f2;
+                background-color: #fffaf2;
                 // cursor: pointer;
                 flex-grow: 1;
                 display: flex;
@@ -30,7 +31,7 @@
                     background-color: #f2f2f2;
                 }
                 &.active{
-                    background-color: #f2f2f2;
+                    background-color: #fffaf2;
                 }
             }
             .auth-nav-item-signup {
@@ -39,7 +40,7 @@
                 transform:scaleY(0.9);
                 border:1px solid #ACACAC;
                 // transition: background-color .3s;
-                background-color: #f2f2f2;
+                background-color: #fffaf2;
                 cursor: pointer;
                 flex-grow: 1;
                 display: flex;
@@ -60,8 +61,9 @@
             }
         }
         .login-view-form {
+            
             padding: 10px;
-            background-color: #f2f2f2;
+            background-color: #fffaf2;
             border-bottom-left-radius: 10px;
             border-bottom-right-radius: 10px;
             
@@ -121,7 +123,7 @@
                 border-radius: 5px;
                 height: 52px;
                 width: 400px;
-                background-color: #f2f2f2;
+                background-color: #fffaf2;
                 padding: 0 20px;
                 margin-bottom: 10px;
 

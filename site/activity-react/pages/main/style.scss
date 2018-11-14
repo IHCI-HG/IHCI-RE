@@ -19,12 +19,12 @@
                 position: relative;
             }
             .slogan{
-                font-size: 32px;
+                font-size: 30px;
                 width:25%;
                 left:17.5%;
                 position: relative;
                 .chinese{
-                    letter-spacing:5.4px;  
+                    letter-spacing:3.0px; 
                 }
             }
             .division{
@@ -39,7 +39,7 @@
     .banner {
         height:677px;
         width: 100%;
-        background-color: #f2f2f2;
+        background-color:#fffaf2;
         h1 {
             color: #204056;
             font-size: 40px;
@@ -55,30 +55,32 @@
             position: relative;
         }
         .banner-img {
-            height: 679px;
-            width: 684px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
+            height: 181%;
+            width: 40%;
             background: #fff;
             position: absolute;
             top: 0;
-            left: 14.74%;
+            left: 13.74%;
         }
         
         
     }
-    .video  {
-       width: 872px;
-       margin: auto;
-
-        background-color: #fff;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    .video{
+        height:580px;
+        width: 100%;
+        background-color: #fffaf2;
+    .video-title{
+        height: 100px;
+        width: 250px;
+        position: absolute;
+        right: 250px;
+        top:850px;
+    }
+    .video-wrap  {
+       width: 72.5%;
+       margin: 119px auto;
+       
+       
         .video-des {
             margin-top: -35px;
             margin-left: 10px;
@@ -90,6 +92,8 @@
             height: 100%;
         }
     }
+   
+}
     .stories {
         padding: 80px 0 0 0;
         h1 {
@@ -99,6 +103,16 @@
             text-align: center; 
             font-weight: 100;
             margin-bottom: 60px;
+        }
+        .story-title{
+            width: 500px;
+            height: 70px;
+            background-color: #2B4474;
+            color: white;
+            font-size: 42px;
+            text-align: center;
+            line-height: 70px;
+            margin: 40px auto;
         }
         .story-con {
             display: flex;
@@ -110,7 +124,7 @@
         .story-item {
             background-color: #fff;
             height: 360px;
-            width: 250px;
+            width: 21%;
             margin-left: 60px;
             text-align: center;
             cursor: pointer;
@@ -153,18 +167,7 @@
             position: relative;
             margin-top: 50px;
             padding: 20px 0 20px;
-            &::before{
-                content: "";
-                position: absolute;
-                display: block;
-                left: 0;
-                right: 0;
-                top: 0;
-                margin: auto;
-                width: 1024px;
-                height: 1px;
-                background-color: #838383;
-            }
+           
             text-align: center;
             line-height: 1.6;
             .p1 {
@@ -179,7 +182,11 @@
     .footer {
         background-color: #cccccc;
         padding: 30px 0 ;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         .footer-list {
+           
             display: flex;
             align-items: flex-start;
             justify-content: center;
@@ -193,6 +200,13 @@
         .foot-item-title {
             font-size: 15px;
             font-weight: bold;
+        }
+        .trademark{
+            margin-left: 300px;
+            .logo{
+                width: 300px;
+                height: 70px;
+            }
         }
     }
 }
@@ -355,7 +369,9 @@
             .foot-item-title {
                 font-size: 15px;
                 font-weight: bold;
+                
             }
+            
         }
     }
 }
