@@ -2,38 +2,36 @@
     width:400px;
     display:flex;
     flex-wrap:wrap;
-    height:30px;
-    margin-bottom: 5px;
+    height:52px;
+    margin-bottom: 10px;
     flex-direction: row;
     .input-code{
         outline: 0; 
-        border: 1px solid #acacac;
-        border-radius: 25px;
-        height: 30px;
-        width: 120px;
-
+        border: 2px solid #545454;
+        border-radius: 5px;
+        height: 52px;
+        width: 250px;
+        background-color: #f2f2f2;
         padding: 0 20px;
-
-        &:focus {
-            border: 1px solid #a2a2a2;
-        }
+        margin-bottom: 10px;
     }
     .captcha{
         margin-bottom: 20px;
     }
     .active-btn{
-        margin-left:5px;
+        font-size: 20px;
+        margin-left:10px;
         display:flex;
         flex-wrap:wrap;
         //align-items: center;
         cursor: pointer;
         text-align: center;
-        width: 90px;
+        width: 140px;
         background-color: #ffb43d;
         border-color: #ffb43d;
         color: #fff;
-        height: 30px;
-        line-height: 30px;
+        height: 52px;
+        line-height: 52px;
         font-weight: bold;
         border-radius: 5px;
         justify-content: center;

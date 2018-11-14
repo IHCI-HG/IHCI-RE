@@ -29,21 +29,14 @@ export class LoginView extends React.Component {
     }
 
     setToSignUpHandle = () =>  {
-        if(window.outerWidth<=480){
-            if(this.state.loginBlock === 'login'){
-                this.setState({
-                    loginBlock: 'signUp'
-                })
-            }
-            if(this.state.loginBlock === 'signUp'){
-                this.setState({
-                    loginBlock: 'login'
-                })
-            }
-        }
-        else{
+        if(this.state.loginBlock === 'login'){
             this.setState({
                 loginBlock: 'signUp'
+            })
+        }
+        if(this.state.loginBlock === 'signUp'){
+            this.setState({
+                loginBlock: 'login'
             })
         }
     }
@@ -216,12 +209,11 @@ export class LoginView extends React.Component {
                         <div className="auth-nav">
                             <div
                                 className={this.state.loginBlock == "login" ? "auth-nav-item-login active" : "auth-nav-item-login"}
-                                onClick={(window.outerWidth>480)?this.setToLoginHandle:null}
-                            >{(window.outerWidth>480||this.state.loginBlock==="login")?"登录":"注册"}</div>
+                            >{(this.state.loginBlock==="login")?"登录":"注册"}</div>
                             <div
                                 className={this.state.loginBlock == "signUp" ? "auth-nav-item-signup active" : "auth-nav-item-signup"}
                                 onClick = {this.setToSignUpHandle}
-                            >{(window.outerWidth>480||this.state.loginBlock==="login")?"注册":"登录"}</div>
+                            >{(this.state.loginBlock==="login")?"注册":"登录"}</div>
                         </div>
                         {
                             this.state.loginBlock == "signUp" ?
@@ -238,7 +230,11 @@ export class LoginView extends React.Component {
                                   phoneNumber = {this.state.createPhone}
                                   phoneEmpty = {this.state.infoCheck.createPhoneEmpty}
                                   ></SMSBlock>
-                                    <div className="forgetPwd" onClick={()=>{this.setState({helpDisplay:!this.state.helpDisplay})}}>收不到验证码?</div>
+                                    
+                                    <div className="auth-desc">密码</div>
+                                    <input className="auth-input" placeholder="请输入密码"
+                                    type="password" value={this.state.createPassword} onChange={this.createPasswordHandle}></input>
+                                   <div className="forgetPwd" onClick={()=>{this.setState({helpDisplay:!this.state.helpDisplay})}}>收不到验证码?</div>
                                     {this.state.helpDisplay&&<div className="help-block">
                                         <div className="menuArrow" ></div>
                                         <div className="help-title">没收到短信验证码？</div>
@@ -251,10 +247,6 @@ export class LoginView extends React.Component {
                                         </ul>
                                     </div>
                                     }
-                                    <div className="auth-desc">密码</div>
-                                    <input className="auth-input" placeholder="请输入密码"
-                                    type="password" value={this.state.createPassword} onChange={this.createPasswordHandle}></input>
-                                   
                                     <div className="submit-btn" onClick={this.signHandle}>加入我们</div>
                                 </div>
                             : ""
@@ -262,12 +254,12 @@ export class LoginView extends React.Component {
                         {
                             this.state.loginBlock == "login" ?
                                 <div className='login-view-form'>
-                                <div className="auth-desc">手机</div>
+                                <div className="auth-desc">用户名</div>
                                 <input type="number" pattern="[0-9]*" className="auth-input" value={this.state.username} onChange={this.usernameHandle}></input>
                                 <div className="auth-desc">密码</div>
                                 <input className="auth-input" type="password" value={this.state.password} onChange={this.passwordHandle}></input>
                                 <div className="forgetPwd" onClick={this.forgetPwd}>忘记密码?</div>
-                                    <div className="submit-btn" onClick={this.loginHandle}>登录</div>
+                                    <div className="submit-btn" onClick={this.loginHandle}>加入我们</div>
                                     <div className="wx-submit-btn" onClick={this.props.showWxDialogHandle}>
                                         <img className="wx-submit-img" src={require('./wechat@2x.png')} />
                                         微信登录
