@@ -65,6 +65,8 @@ export default class MainPage extends React.Component {
             <div className="banner">
                 <div className="banner-con">
                     <div className="img-wrap"><img className="banner-img" src={require('./tuceng7@2x.png')} /></div>
+                    <div className="note">&nbsp;&nbsp;Join a TEAM；<br/> &nbsp;&nbsp;prove YOUR VALUE;<br/>
+                                         &nbsp;&nbsp;design and code<br/> &nbsp;&nbsp;for the USERS' VALUE </div>
                     <LoginView showWxDialogHandle={this.showWxDialogHandle}/>
                 </div>
             </div>
