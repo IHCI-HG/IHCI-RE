@@ -62,7 +62,22 @@
             top: 0;
             left: 13.74%;
         }
-        
+        .note{
+            height: 203px;
+            width: 382px;
+            border-top-right-radius:5px;
+            border-bottom-right-radius:5px;
+            display: flex;
+            align-items: center;
+            font-size: 27px;
+            color:#fff;
+            background: #ff9d3d;
+            position: absolute;
+            top: 55%;
+            left: 14.74%;
+            transform:scaleY(0.95);
+            line-height: 33px;
+        }
         
     }
     .video{
