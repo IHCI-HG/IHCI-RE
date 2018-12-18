@@ -5,24 +5,25 @@
         justify-content: space-between;
         box-sizing: border-box;
         border-bottom: 1px solid #e6e6e6; /*no*/
-
         height: 120px;
-        cursor: pointer;
-
+ 
         .head-img {
             height: 80px;
             width: 80px;
             border-radius: 100px;
             margin-right: 20px;
             flex-shrink: 0;
+            cursor: pointer;
         }
         .name {
             margin-right: 1.266667rem;
             flex-shrink: 0;
+            width: 170px;
         }
         .main {
             flex-grow: 1;
             max-width: 70%;
+            cursor: pointer;
             .topic-title {
                 color: #333;
                 font-size: 20px;

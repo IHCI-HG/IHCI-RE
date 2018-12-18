@@ -286,9 +286,9 @@ const createFile = async function(teamId, dir, fileName, ossKey, size) {
 
     size = parseInt(size)
 
-    if(size > 20*1024*1024) {
-        throw '上传文件大小不能超过20M'
-    }
+    // if(size > 20*1024*1024) {
+    //     throw '上传文件大小不能超过20M'
+    // }
 
     var sizeStr
     if(size < 1024) {
@@ -380,16 +380,6 @@ const createFolder = async function(teamId, dir, folderName) {
     }).exec()
     if(!folderObj) {
         throw '目录不存在'
-    }
-
-    let exist = false
-    folderObj.fileList.map((item) => {
-        if(item.name == folderName) {
-            exist = true
-        } 
-    })
-    if(exist) {
-        throw '文件名已存在'
     }
 
     folderObj = await folderDB.createFolder(teamId, dir, folderName)

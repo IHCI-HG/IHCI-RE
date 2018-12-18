@@ -1,13 +1,21 @@
 .person-edit-page {
     padding: 0 30px;
     margin-top: 40px;
-
-    .title {
-        padding: 40px 0;
-        font-size: 30px;
-        font-weight: bold;
+    .header{
+        display:flex;
+        justify-content:space-between;
+        .title {
+            padding: 40px 0;
+            font-size: 30px;
+            font-weight: bold;
+        }
+        .manage{
+            margin-top:20px;
+            font-size: 10px;
+            cursor: pointer;
+        }
     }
-
+    
     .create-btn {
         display: inline-block;
         font-size: 16px;
@@ -21,8 +29,6 @@
             background-color: #e6e6e6;
         }
     }
-
-
     .head-edit {
         display: flex;
         align-items: center;
@@ -51,18 +57,22 @@
         }
     }
 
+    .saveChangePwd {
+        cursor: pointer;
+    }
+    
     .edit-con {
         display: flex;
         align-items: center;
-
         padding-left: 40px;
         height: 80px;
-
         .before {
             width: 100px;
             color: #666;
+        } 
+        .showPhone{
+            color: gray;
         }
-        
         .after{
             display: flex;
             color: #666;
@@ -70,7 +80,12 @@
             align-items: center;
 
         }
-
+        .edit-btn{
+            cursor: pointer;
+            color: rgb(255, 197, 73);
+            margin-left: 10px;
+            display: inline;
+        }
         .mail-present-bar{
             display: flex;
             align-items: center;
@@ -96,10 +111,8 @@
                 color: grey;
                 margin-left: 10px;
             }
+            
         }
-
-        
-        
         .error{
             color: #f00;
         }
@@ -147,7 +160,7 @@
             padding: 0 10px;
         }
     }
-
+    
     .save-btn {
         cursor: pointer;
         display: flex;
@@ -166,4 +179,19 @@
             box-shadow: 1px 2px 6px #a2a2a2;
         }
     }
+    .changePwd {
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        width: 80px;
+        height: 30px;
+        line-height: 30px;
+        padding: 0 10px;
+        border-radius: 4px;
+        background-color: rgb(255, 158, 41);
+        color: #fff;
+        font-weight: bold;
+        margin-right: 20px;
+    }
+       
 }

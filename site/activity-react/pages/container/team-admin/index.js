@@ -3,6 +3,7 @@ import './style.scss'
 import api from '../../../utils/api';
 import Page from '../../../components/page'
 import fileUploader from '../../../utils/file-uploader';
+import {create} from '../../../../../server/components/uuid/uuid'
 
 export default class TeamAdmin extends React.Component{
     componentDidMount = async() => {
@@ -17,7 +18,7 @@ export default class TeamAdmin extends React.Component{
                 teamId: teamId
             }
         })
-        const teamObj = result.data
+        const teamObj = result.data.teamObj
         this.teamInfo = teamObj
         this.setState({
             name: teamObj.name,
@@ -28,7 +29,7 @@ export default class TeamAdmin extends React.Component{
 
         const memberList = []
         const memberIDList = []
-        result.data.memberList.map((item) => {
+        result.data.teamObj.memberList.map((item) => {
             memberIDList.push(item.userId)
         })
 
@@ -36,11 +37,10 @@ export default class TeamAdmin extends React.Component{
             method: 'POST',
             body: { userList: memberIDList }
         })
-
         memberResult.data.map((item, idx) => {
             memberList.push({
                 ...item,
-                ...result.data.memberList[idx],
+                ...result.data.teamObj.memberList[idx],
                 showAdmin: false
             })
         })
@@ -56,10 +56,33 @@ export default class TeamAdmin extends React.Component{
         desc: '',
 
         memberList: [],
-        showAddMemberDialog: false
+        showAddMemberDialog: false,
+
+        infoCheck:{
+            illegalName: false,
+
+        }
+
     }
 
+    isName = (name) => {
+        const reg = /^[\u4E00-\u9FA5A-Za-z]{1}[\u4E00-\u9FA5A-Za-z0-9_\-]{0,11}$/;
+        return reg.test(name);
+    }
     teamNameInputHandle = (e) => {
+        const name = e.target.value
+        var illegalName = false
+        if (!this.isName(name)){
+            illegalName = true
+        }
+        this.setState({    
+            name: name,
+            infoCheck: {
+                ...this.state.infoCheck,
+                illegalName: illegalName,
+            },    
+        })
+
         this.setState({
             name: e.target.value
         })
@@ -88,7 +111,7 @@ export default class TeamAdmin extends React.Component{
     } 
 
     setUserRoleHandle = (id, role) => {
-        console.log(role);
+   
         const memberList = this.state.memberList
         memberList.map((item) => {
             if(item._id == id) {
@@ -128,7 +151,31 @@ export default class TeamAdmin extends React.Component{
         }
     }
 
+    infoCheckIllegal = () =>{
+        var infoCheck = {
+            illegalName: false,
+        }
+        if (!this.isName(this.state.name)){
+            infoCheck.illegalName = true
+        }
+        this.setState({
+            infoCheck: infoCheck,
+        })
+        for(var key in infoCheck)
+        {
+            if (infoCheck[key])
+                return true
+        }
+        return false
+    }
+
     saveBtnHandle = async () => {
+        var infoCheckIllegal = this.infoCheckIllegal()
+
+        if (infoCheckIllegal){
+            window.toast("设置失败，请检查格式")
+            return
+        }
         const result = await api('/api/team/modifyTeamInfo', {
             method: 'POST',
             body: {
@@ -142,7 +189,7 @@ export default class TeamAdmin extends React.Component{
         })
 
         if(result.state.code === 0) {
-            console.log(result);
+           
             window.toast("设置成功")
             setTimeout(location.href = '/team/' + this.teamId,10000)
         }
@@ -163,22 +210,21 @@ export default class TeamAdmin extends React.Component{
     
     uploadFileHandle = async (e) => {
         var file = e.target.files[0];
-
         var arr = file.name.split('.')
         var type = arr.pop()
         if(type != 'jpg' && type != 'jpeg' && type != 'png') {
             window.toast("文件格式必须是JPG，JPEG或PNG")
             return 
         }
-        var newFile = new File([file],this.teamId+file.name)
-
-        var ossKey = Date.now()+'/'+newFile.name
+        var nameParts = file.name.split('.')
+        var ossKey = this.teamId + '/' + create() + '.' + nameParts[nameParts.length-1]
+        var newFile = new File([file],ossKey)
         var succeeded;
         const uploadResult = fileUploader(newFile,ossKey)
         await uploadResult.then(function(val) {
             succeeded = 1
         }).catch(function(reason){
-            console.log(reason)
+       
             succeeded = 0
         })
 
@@ -192,6 +238,24 @@ export default class TeamAdmin extends React.Component{
             teamImg: window.location.origin+'/img/'+ossKey
         })
     }
+    copyHandle = () => {
+        var copyVal = document.getElementById("copyVal");
+        copyVal.select();
+        try{
+            if(document.execCommand('copy', false, null)){
+             
+                window.toast('复制成功');
+            }
+            else{
+                window.toast('复制失败');
+          
+            }
+            
+        }catch(err){
+                console.error(err);
+        }
+    } 
+    
 
 
     render() {
@@ -203,20 +267,27 @@ export default class TeamAdmin extends React.Component{
                         <div className="add-member-dialog">
                             <div><img className="close" type="button" src={require('../team-admin/icon_close.png')} alt=""/></div>
                             <div className="des">将下面的公共邀请链接发送给需要邀请的人</div>
-                            <input type="text" value={`${location.host}/team-join/${this.teamId}`} className="invite-input" />
+                            <input type="text" id="copyVal" readOnly value={`${location.host}/team-join/${this.teamId}`} className="invite-input" />
+                            <button className="copyBtn" onClick={this.copyHandle}>点击复制到剪贴板</button>
                         </div>
                     </div>
                 } 
 
                 <div className="team-admin-con page-wrap">
                     <div className="admin-title-bg">团队设置</div>
+                    
 
                     <div className="admin-title-sm">团队名称</div>
                     <input type="text" value={this.state.name} className="admin-input" onChange={this.teamNameInputHandle} />
+                    {this.state.infoCheck.illegalName && <div className="after error">名字以不超过12个的英文、汉字、数字、下划线与短横构成</div>}
 
                     <div className="admin-title-sm">团队图片</div>
-                    <div className="create-btn" onClick={this.openFileInput}> 上传图片 </div>
-                    <img className="img-preview" src={this.state.teamImg}></img>
+                    <div className="img-wrap">
+                        <div>
+                            <img className="img-preview" src={this.state.teamImg}></img>
+                        </div>
+                        <div className="create-btn" onClick={this.openFileInput}> 上传图片 </div>
+                    </div>
 
                     <div className="admin-title-sm">团队说明</div>
                     <textarea type="text" value={this.state.desc} className="admin-tra" onChange={this.teamDescChangeHandle} placeholder="(选填)" />

@@ -32,7 +32,7 @@ class EditTodo extends React.Component {
         this.setState({
             todoDesc: content
         })
-        console.log(this.state.todoDesc)
+      
     }
 
     fileUploadHandle = async (e) => {
@@ -125,7 +125,10 @@ class EditTodo extends React.Component {
                     <input ref="name"
                            className="dashed-input"
                            placeholder={_props.createInput}
-                           defaultValue={_props.value?_props.value:''}>
+                           defaultValue={_props.value?_props.value:''}
+                           onKeyDown={(event)=>{if(event.keyCode== "13"){this.handleConfirm()}}}
+                           autoFocus>
+                           
                     </input>
                     <ItemLabel assigneeId = {this.state.assigneeId}
                                date = {this.state.date}

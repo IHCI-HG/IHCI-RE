@@ -29,8 +29,9 @@ export default class MainPage extends React.Component {
 
     }
 
-    componentDidMount = () => {
+    componentDidMount = async () => {
         this.data = window.INIT_DATA
+
     }
 
     showWxDialogHandle = () => {
@@ -54,75 +55,140 @@ export default class MainPage extends React.Component {
 
             <div className="nav">
                 <div className="max-w-con nav-con">
-                    <div className="logo">IHCI(换成图)</div>
+                    <img className="logo" src={require('./logo@2x.png')} />
+                    <div className="slogan">
+                            <div className="english">All for the valuable code</div> 
+                            <div className="chinese">一切为了有价值的代码</div></div>
+                    <div className="division">iHCI俱乐部&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iHCI实验室</div>
                 </div>
             </div>
             <div className="banner">
-                <h1>All for the valuable code.</h1>
-                <div className="banner-con max-w-con">
-                    <div className="banner-img">这是LOGO图</div>
+                <div className="banner-con">
+                    <div className="img-wrap"><img className="banner-img" src={require('./tuceng7@2x.png')} /></div>
+                    <div className="note">&nbsp;&nbsp;Join a TEAM；<br/> &nbsp;&nbsp;prove YOUR VALUE;<br/>
+                                         &nbsp;&nbsp;design and code<br/> &nbsp;&nbsp;for the USERS' VALUE </div>
                     <LoginView showWxDialogHandle={this.showWxDialogHandle}/>
                 </div>
             </div>
             <div className="video">
-                <div className="video-des">这是一些关于视频的描述balabala这是一些关于视频的描述balabala这是一些关于视频的描述balabala这是一些关于视频的描述balabala</div>
+                <img className="video-title" src={require('./team-video.png')}/>
                 <div className="video-wrap">
                     { /* <iframe frameborder="0" width="450" height="254" src="https://v.qq.com/iframe/player.html?vid=f0564fwe5va&tiny=0&auto=0" allowfullscreen></iframe> */}
+                    <img className="video-template" src={require('./mp4.png')}/>
+                    <div className="video-des">这是一些关于视频的描述balabala</div>
                 </div>
+                
             </div>
             <div className="stories">
-                <h1>iHCI stories</h1>
+                <div className="story-title">团队成员故事</div>
                 <div className="story-con">
                     <div className="story-item">
-                        <div className="head-img"></div>
-                        <div className="name">名字</div>
-                        <div className="title">这是头衔的描述</div>
-                        <div className="desc">一段说明性的文字</div>
+                        <img  className="head-img" src={require('./toxiang1.png')}/>
+                        <div className="item-wrap">
+                        <div className="name">Meta Hirschl</div>
+                        <div className="title">网页设计师</div>
+                        <div className="desc">
+                        <div>我是一个待业者</div>
+                        <div>通过人机交互实验室</div>
+                        <div>我获得了一份网页设计师的工作</div>
+                        </div>
+                        </div>
                     </div>
                     <div className="story-item">
-                        <div className="head-img"></div>
-                        <div className="name">名字</div>
-                        <div className="title">这是头衔的描述</div>
-                        <div className="desc">一段说明性的文字</div>
+                        <div><img  className="head-img" src={require('./toxiang2.png')}/></div>
+                        <div className="item-wrap">
+                        <div className="name">Brian Grant</div>
+                        <div className="title">出国考研学生</div>
+                        <div className="desc">
+                        <div>我是一个在国外考研的大学生</div>
+                        <div>通过人机交互实验室</div>
+                        <div>我在国外考研更加轻松了</div>
+                        </div>
+                        </div>
                     </div>
                     <div className="story-item">
-                        <div className="head-img"></div>
-                        <div className="name">名字</div>
-                        <div className="title">这是头衔的描述</div>
-                        <div className="desc">一段说明性的文字</div>
+                        <div><img className="head-img" src={require('./toxiang3.png')}/></div>
+                        <div className="item-wrap">
+                        <div className="name">Maxim Orlov</div>
+                        <div className="title">创业者</div>
+                        <div className="desc">
+                        <div>我是创业者</div>
+                        <div>通过人机交互实验室</div>
+                        <div>让我的公司开发了更好的产品</div>
+                        </div>
+                        </div>
                     </div>
                 </div>
-
-                <div className="join-num">
+                {window.outerWidth>480?<div className="join-num">
                     <div className="p1">迄今已有</div>
                     <div className="num">450人</div>
                     <div className="p1">加入了IHCI</div>
-                </div>
+                </div>:<div className="join-num">
+                    <span className="p1">迄今已有</span>
+                    <span className="num">450人</span>
+                    <span className="p1">加入了IHCI</span>
+                </div>}
+                
             </div>
             <div className="footer">
-                <div className="footer-list max-w-con">
-                    <div className="foot-item">
-                        <div className="foot-item-title">IHCI</div>
-                        <div href="">关于我们</div>
-                    </div>
-                    <div className="foot-item">
-                        <div className="foot-item-title">分类</div>
-                        <div href="">软件工程</div>
-                        <div href="">人机交互</div>
-                        <div href="">人工智能</div>
-                    </div>
-                    <div className="foot-item">
-                        <div className="foot-item-title">编程课程</div>
-                        <div href="">HTML&CSS</div>
-                        <div href="">JavaScript</div>
-                        <div href="">Python</div>
-                    </div>
-                    <div className="foot-item">
-                        <div className="foot-item-title">资源</div>
-                        <div href="">参考链接</div>
-                    </div>
+            <div className="trademark">
+        <img className="logo" src={require('./logo@2x.png')} />
+        <div className="trademark-text">川 B2-20130052 蜀 ICP 备 12019256号-5</div>
+        <div className="trademark-footer">©️ Mycolorway Design.</div>
+        </div>
+            {window.outerWidth>480?
+            
+            <div className="footer-list max-w-con">
+                <div className="foot-item">
+                    <div className="foot-item-title">IHCI</div>
+                    <div href="">关于我们</div>
+                    <div href=""><img className="wx" width='20px' height="20px" src={require('./wechat@2x.png')} /></div>
+                </div>
+                <div className="foot-item">
+                    <div className="foot-item-title">iHCI俱乐部</div>
+                    <div href="">HTML&CSS</div>
+                    <div href="">JavaScript</div>
+                    <div href="">Python</div>
+                </div>
+                <div className="foot-item">
+                    <div className="foot-item-title">iHCI实验室</div>
+                    <div href="">软件工程</div>
+                    <div href="">人机交互</div>
+                    <div href="">人工智能</div>
                 </div>
             </div>
+        :
+                
+                <div className="footer-list max-w-con">
+                    <div className="foot-item">
+                        <div className="foot-item-title">iHCI俱乐部</div>
+                        <div className="foot-item-title">iHCI实验室</div>
+                        <div className="foot-item-title">IHCI</div>
+                        
+                    </div>
+                    <div className="foot-item">
+                        
+                        <div href="">HTML&CSS</div>
+                        <div href="">人工智能</div>
+                        <div href="">关于我们</div>
+                        
+                       
+                    </div>
+                    <div className="foot-item">
+                        <div href="">JavaScript</div>
+                        <div href="">软件工程</div>
+                        
+                        
+                    </div>
+                    <div className="foot-item">
+                        <div href="">Python</div>
+                        <div href="">人机交互</div>
+                        
+                    </div>
+                </div>
+            }
+        
+        </div>
         </Page>
     }
 }

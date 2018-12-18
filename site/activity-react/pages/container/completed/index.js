@@ -5,10 +5,7 @@ import api from '../../../utils/api';
 import { timeParse, formatDate, createMarkup } from '../../../utils/util'
 import Page from '../../../components/page'
 
-const newTimeLineItemNum = 20
-const moreTimeLineItemNum = 10
-
-export default class Timeline extends React.Component{
+export default class Completed extends React.Component{
     componentDidMount = async() => {
         await this.initTodoListArr()
         this.initTeamInfo()
@@ -17,7 +14,7 @@ export default class Timeline extends React.Component{
     initTodoListArr = async () => {
         // 请求todoListArr数据
         const resp = await api('/api/team/taskList', {
-            method: 'GET',
+            method: 'POST',
             body: {
                 teamId: this.props.params.id
             }
@@ -26,10 +23,10 @@ export default class Timeline extends React.Component{
         let unclassifiedList = []
         let unclassified = {}
         let todoList = []
-        if (resp.data.taskList == undefined) {
-            resp.data.taskList = []
+        if (resp.data.taskObj.taskList == undefined) {
+            resp.data.taskObj.taskList = []
         }
-        resp.data.taskList.map((item) => {
+        resp.data.taskObj.taskList.map((item) => {
             if(item.state === true){
                 let todoItem = {}
                 todoItem.id = item.id
@@ -48,10 +45,10 @@ export default class Timeline extends React.Component{
         })
         unclassified.name = "清单外任务"
         unclassified.list = unclassifiedList
-        if (resp.data.tasklistList == undefined) {
-            resp.data.tasklistList = []
+        if (resp.data.taskObj.tasklistList == undefined) {
+            resp.data.taskObj.tasklistList = []
         }
-        resp.data.tasklistList.map((item) => {
+        resp.data.taskObj.tasklistList.map((item) => {
             let todoListItem = {}
             todoListItem.id = item._id
             todoListItem.name = item.name
@@ -78,10 +75,10 @@ export default class Timeline extends React.Component{
         todoListArr = [unclassified, ...todoList]
         if (resp.state.code === 0) {
             this.setState({ todoListArr },() => {
-                this.appendToShowList(this.state.todoListArr,()=>{console.log(this.state.todoListArr)})
+                this.appendToShowList(this.state.todoListArr)
             })
         }
-        console.log(this.state.todoListArr)
+        
     }
 
     initTeamInfo = async () => {
@@ -95,13 +92,13 @@ export default class Timeline extends React.Component{
             window.toast('团队内容加载出错')
         }
         const teamInfo = {}
-        teamInfo._id = result.data._id
-        teamInfo.name = result.data.name
+        teamInfo._id = result.data.teamObj._id
+        teamInfo.name = result.data.teamObj.name
         
         const memberList = []
         const memberIDList = []
 
-        result.data.memberList.map((item) => { 
+        result.data.teamObj.memberList.map((item) => { 
             memberIDList.push(item.userId)
         })
         const memberResult = await api('/api/userInfoList', {
@@ -111,7 +108,7 @@ export default class Timeline extends React.Component{
         memberResult.data.map((item, idx) => {
             memberList.push({
                 ...item,
-                ...result.data.memberList[idx],
+                ...result.data.teamObj.memberList[idx],
                 chosen: false,
             })
         })

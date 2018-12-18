@@ -26,7 +26,9 @@ class TodoList extends React.Component {
     }
     componentWillReceiveProps(nextProps) {
         this.setState({todoList:nextProps.list.filter((todo) => {
-            return todo.hasDone === false
+            if(todo){
+                return todo.hasDone === false
+            }
         }),doneList:nextProps.doneList.filter((done)=>{
             return done.listId === this.props.id && done.hasDone === true
         })})
@@ -43,7 +45,6 @@ class TodoList extends React.Component {
 
     }
     setMode(mode) {
-        console.log('setMode:', mode);
         this.setState({ mode: mode })
     }
 
@@ -77,28 +78,35 @@ class TodoList extends React.Component {
         // console.log('todolist渲染', _props.id)
         // console.log('list', _props.list)
         return (
-            <div className="todolist">
+            <div className={(_props.highLight)?"todolist highlight":"todolist"}>
                 {
                     listType === 'classification' && (
                     this.state.mode === 'edit'
                         ? <EditTodoList
-                            confirmLabel="保存"
+                          confirmLabel="保存"
                             defaultValue={_props.name}
                             handleConfirm={this.handleSave.bind(this)}
                             handleClose={this.handleClose.bind(this)}>
                         </EditTodoList>
                         : <div>
-                            <h4 className="todolist-name">
-                                <div className="name-actions">
+                            <h4 className="todolist-name"
+                            data-listid={this.props.index}
+                            data-listindex={_props.index}
+                            data-type='list'
+                            draggable='true'
+                            onDragStart={_props.dragStart.bind(this,null,this.props.id)}
+                            onDragEnd={_props.dragEnd.bind(this,this.props.id)}
+                            onDragOver={_props.dragOver}
+                            onDrop={_props.drop.bind(this,this.props.id)}>
+                                {(this.props.role!=='visitor')&&<div className="name-actions">
                                     <i className="icon iconfont"
                                        onClick={_props.handleTodoListDelete}>&#xe70b;</i>
                                     <i className="icon iconfont"
                                        onClick={(e) => {
-                                           console.log('edit')
                                            this.setMode('edit')
                                            e.stopPropagation()
                                        }}>&#xe6ec;</i>
-                                </div>
+                                </div>}
                                 {_props.name}
                             </h4>
                         </div>
@@ -108,17 +116,31 @@ class TodoList extends React.Component {
                 {
                     this.state.todoList.map((todo,i) => {
                         return (
-                            
+                            <div
+                            className={(!_props.highLight)&&(_props.dragStarted)&&(_props.dragTodoId!==todo.id)?"todo-highlight":""}
+                            key={todo.id}
+                            draggable='true'
+                            onDragStart={_props.dragStart.bind(this,todo.id,this.props.id)}
+                            onDragEnd={_props.dragEnd.bind(this,todo.id)}
+                            onDragOver={_props.dragOver}
+                            onDrop={_props.drop.bind(this,this.props.id)}
+                            data-id={i}
+                            data-listindex={_props.index}
+                            data-type='item'>              
                             <TodoItem
                                 {...todo}
                                 key={todo.id}
+                                role={this.props.role}
                                 memberList={_props.memberList}
                                 handleAssigneeChange={_props.handleAssigneeChange.bind(this,todo.id)}
                                 handleDateChange={_props.handleDateChange.bind(this,todo.id)}
                                 handleTodoModify={_props.handleTodoModify.bind(this,todo.id )}
                                 handleTodoDelete={_props.handleTodoDelete.bind(this,todo.id )}
                                 handleTodoCheck={_props.handleTodoCheck.bind(this, todo.id)}
+                                dataId={i}
+                                index={_props.index}
                             />
+                            </div>
                            
                         )
                     })
@@ -139,6 +161,14 @@ class TodoList extends React.Component {
                                 handleClose={(() => {this.setState({showCreateTodo: false})}).bind(this)}>
                             </NewTodo>
                             :<div className="new-todo"
+                            data-listid={this.props.index}
+                            data-listindex={_props.index}
+                            data-type='list'
+                            draggable='true'
+                            onDragStart={_props.dragStart.bind(this,null,this.props.id)}
+                            onDragEnd={_props.dragEnd.bind(this,this.props.id)}
+                            onDragOver={_props.dragOver}
+                            onDrop={_props.drop.bind(this,this.props.id)}
                                   onClick={(e) => {
                                     this.setState({showCreateTodo: true})
                                     e.stopPropagation()}}>添加新任务</div>

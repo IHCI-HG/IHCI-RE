@@ -19,12 +19,12 @@ class TopicItem extends React.PureComponent {
     }
     initPageInfo = async () => {
         const result = await api('/api/topic/get', {
-            method: 'GET',
+            method: 'POST',
             body: {
                 topicId: this.props._id
             }
         })
-        const discussList = result.data.discussList
+        const discussList = result.data.topicObj.discussList
         this.setState({
             discussList:discussList
         })
@@ -49,14 +49,16 @@ class TopicItem extends React.PureComponent {
     
     render() {
         return (
-            <div className="topic-item" key={"topic-item-" + this.props._id} onClick={() => { this.props.locationTo('/discuss/topic/' + this.props._id) }}>
-                <img src={this.props.creator.headImg} alt="" className="head-img" />
+            <div className="topic-item" key={"topic-item-" + this.props._id} >
+                <img src={this.props.creator.headImg} alt="" className="head-img" onClick={this.props.toTimeLineHandle.bind(this,this.props.creator.id)}/>
                 <div className="name">{this.props.creator.name}</div>
-                <div className="main">
+                <div className="main" onClick={() => { this.props.locationTo('/discuss/topic/' + this.props._id) }}>
                     <div className="topic-title">{this.props.title}</div>
+                    {/*
                     <div className="BraftEditor-container">
-                        <p className="text-max-line-1 public-DraftEditor-content BraftEditor-content" dangerouslySetInnerHTML={createMarkup(this.props.content)}></p>
+                        <p className="text-max-line-1 public-DraftEditor-content BraftEditor-content " dangerouslySetInnerHTML={createMarkup(this.props.content)}></p>
                     </div>
+                    */}
                 </div>
                 {this.props.fileList.length > 0 &&
                     <i className="icon iconfont time">&#xe6dd;</i>

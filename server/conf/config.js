@@ -46,13 +46,16 @@ var config = {
         'bucket': 'arluber',
     },
 
+    sysAppId: 'LTAIHdOovdo1ddVO',
+    sysAppSe: '6buiD9zXaOtKSLAWOQdHks390Cg9xe',
+
     mailOrigin: 'http://localhost:5000',
     mail: {
         host: 'smtp.163.com', 
         port: 25,
         auth: {
-            user: '13416363790@163.com', //注册的邮箱账号
-            pass: 'zcc163mail'  //邮箱的授权码，不是注册时的密码
+            user: 'ihci2018@163.com', //注册的邮箱账号
+            pass: 'ihci2018'  //邮箱的授权码，不是注册时的密码
         }
     },
 

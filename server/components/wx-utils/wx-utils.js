@@ -57,6 +57,13 @@ export const web_codeToAccessToken = async function (code) {
     return data
 }
 
+// 微信公众号内网页登录，用 code 拿用户的 access_token (包括openid 和 unionid)
+export const pub_codeToAccessToken = async function (code) {
+    const result = await fetch(`https://api.weixin.qq.com/sns/oauth2/access_token?appid=${conf.pubAppId}&secret=${conf.pubAppSe}&code=${code}&grant_type=authorization_code`)
+    const data = await result.json()
+    return data
+}
+
 // 网页登录，用access_token + openid 拿用户信息
 export const web_accessTokenToUserInfo = async function (accessToken, openid) {
     const result = await fetch(`https://api.weixin.qq.com/sns/userinfo?access_token=${accessToken}&openid=${openid}`)
@@ -82,11 +89,10 @@ export const pub_getAccessToken = async function () {
     }
 
     const result = await fetch(`https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${conf.pubAppId}&secret=${conf.pubAppSe}`)
-
     const data = await result.json()
     console.log(data)
     if (data.access_token) {
-        redisPromiseSet('pub_access_token', data.access_token, (data.expires_in || 200) - 200)
+        await redisPromiseSet('pub_access_token', data.access_token, (data.expires_in || 200) - 200)
         return data.access_token
     }
 
@@ -112,7 +118,11 @@ export const pub_accessTokenToFollowerList = async function(){
 
 // 服务号推送模板消息通用方法
 export const pub_pushTemplateMsg = async function (openid, templateId, url, data) {
+    console.log("..........................")
+    console.log("come in")
+ 
     const accseeToken = await pub_getAccessToken()
+   
     const result = await fetch(`https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=${accseeToken}`, {
         method: 'post',
         body: JSON.stringify({
@@ -122,7 +132,10 @@ export const pub_pushTemplateMsg = async function (openid, templateId, url, data
             data: data
         })
     })
+
     const resultJson = await result.json()
+    console.log('resultJson',resultJson)
+    console.log("..........................")
     return resultJson
 }
 
@@ -136,14 +149,18 @@ export const pub_pushTemplateMsg = async function (openid, templateId, url, data
 // 点击参与讨论
 // 点击: /discuss/topic/+topicId
 export const createTopicTemplate = async function (userIdList, topicObj) {
+    console.log("=====================")
     const openidList = await userDB.openidList(userIdList)
-
+  
+    const content = topicObj.content.split("<")[1].split(">")[1]
     openidList.map((item) => {
+      
+        console.log(topicObj._id)
         if (typeof item.openid == 'string') {
             pub_pushTemplateMsg(
                 item.openid,
                 'p6pZBXX0SaqODRDZgY_3NqyIAK0mYN9HXYq6yMLyA04',
-                'http://www.animita.cn/team/discuss/topic/' + topicObj._id,
+                'http://www.animita.cn/discuss/topic/' + topicObj._id,
                 {
                     "first": {
                         "value": topicObj.creator.name + " 创建了讨论",
@@ -155,7 +172,7 @@ export const createTopicTemplate = async function (userIdList, topicObj) {
                         "value": formatDate(new Date()),
                     },
                     "keyword3": {
-                        "value": topicObj.content,
+                        "value": content,
                     },
                     "remark": {
                         "value": "点击查看",
@@ -176,14 +193,16 @@ export const createTopicTemplate = async function (userIdList, topicObj) {
 // 点击参与讨论
 // 点击: /discuss/topic/+topicId
 export const replyTopicTemplate = async function (userIdList, discussObj) {
+    console.log("--------------------------")
     const openidList = await userDB.openidList(userIdList)
+    const content = discussObj.content.split("<")[1].split(">")[1]
 
     openidList.map((item) => {
         if (typeof item.openid == 'string') {
             pub_pushTemplateMsg(
                 item.openid,
                 'p6pZBXX0SaqODRDZgY_3NqyIAK0mYN9HXYq6yMLyA04',
-                'http://www.animita.cn/team/discuss/topic/' + discussObj.topicId,
+                'http://www.animita.cn/discuss/topic/' + discussObj.topicId,
                 {
                     "first": {
                         "value": discussObj.creator.name + " 回复了讨论",
@@ -195,7 +214,7 @@ export const replyTopicTemplate = async function (userIdList, discussObj) {
                         "value": formatDate(new Date()),
                     },
                     "keyword3": {
-                        "value": discussObj.content,
+                        "value": content,
                     },
                     "remark": {
                         "value": "点击查看",
@@ -215,7 +234,7 @@ export const applyIntoTeam = async function (userIdList, userObj) {
             pub_pushTemplateMsg(
                 item.openid,
                 'p6pZBXX0SaqODRDZgY_3NqyIAK0mYN9HXYq6yMLyA04',
-                'http://www.animita.cn/team/discuss/topic/',
+                'http://www.animita.cn/discuss/topic/',
                 {
                     "first": {
                         "value": userObj.username + "申请加入团队",
@@ -241,13 +260,14 @@ export const applyIntoTeam = async function (userIdList, userObj) {
 //批准加入团队
 export const admitIntoTeam = async function (userIdList, teamObj) {
     const opneidList = await userDB.openidList(userIdList)
+    
 
     openList.map((item) => {
         if (typeof item.openid == 'string') {
             pub_pushTemplateMsg(
                 item.openid,
                 'p6pZBXX0SaqODRDZgY_3NqyIAK0mYN9HXYq6yMLyA04',
-                'http://www.animita.cn/team/discuss/topic/',
+                'http://www.animita.cn/discuss/topic/',
                 {
                     "first": {
                         "value": teamObj.name + "通过了你的申请",
@@ -264,43 +284,72 @@ export const admitIntoTeam = async function (userIdList, teamObj) {
     })
 }
 
-
-
-export const createTaskTemplate = async function (headerList, taskObj, headername) {
-    console.log(headername)
+export const closeToDDLTemplate = async function (headerList,taskObj){
     const openidList = await userDB.openidList(headerList)
 
-    openidList.map((item) => {
-        if (typeof item.openid == 'string') {
+    openidList.map((item)=>{
+        if(typeof item.openid == 'string'){
             pub_pushTemplateMsg(
                 item.openid,
                 'p6pZBXX0SaqODRDZgY_3NqyIAK0mYN9HXYq6yMLyA04',
                 'http://www.animita.cn/todo/' + taskObj.id,
                 {
                     "first": {
-                        "value": taskObj.creator.name + " 将任务指派给" + headername,
+                        "value": taskObj.title + " 即将到截止日期 " 
+                    }
+                }
+            )
+        }
+    })
+
+}
+
+
+export const createTaskTemplate = async function (headerList, taskObj, headername) {
+    console.log("########################")
+    console.log(headername)
+    const openidList = await userDB.openidList(headerList)
+
+    console.log(openidList)
+    openidList.map((item) => {
+        console.log(typeof item.openid)
+        if (typeof item.openid == 'string') {
+            
+            pub_pushTemplateMsg(
+                item.openid,
+                'p6pZBXX0SaqODRDZgY_3NqyIAK0mYN9HXYq6yMLyA04',
+                'http://www.animita.cn/todo/' + taskObj.id,
+                {
+                    "first": {
+                        "value": taskObj.creator.name + " 将任务指派给 " + headername,
                     },
                     "keyword1": {
                         "value": taskObj.title,
+                        "color":"#173177"
                     },
                     "keyword2": {
                         "value": formatDate(new Date()),
+                        "color":"#173177"
                     },
                     "keyword3": {
                         "value": taskObj.content,
+                        "color":"#173177"
                     },
                     "remark": {
                         "value": "点击查看",
                     }
                 }
             )
+            
         }
     })
+   
+    
 }
 
 export const delTaskTemplate = async function (headerList, taskObj) {
     const openidList = await userDB.openidList(headerList)
-    console.log(taskObj.header)
+    const content = taskObj.content.split("<")[1].split(">")[1]
 
     openidList.map((item) => {
         if (typeof item.openid == 'string') {
@@ -319,7 +368,7 @@ export const delTaskTemplate = async function (headerList, taskObj) {
                         "value": formatDate(new Date()),
                     },
                     "keyword3": {
-                        "value": taskObj.content,
+                        "value": content,
                     },
                     "remark": {
                         "value": "点击查看",
@@ -333,7 +382,7 @@ export const delTaskTemplate = async function (headerList, taskObj) {
 
 export const delHeaderTemplate = async function (headerList, taskObj, headername) {
     const openidList = await userDB.openidList(headerList)
-    console.log(taskObj.header)
+    const content = taskObj.content.split("<")[1].split(">")[1]
 
     openidList.map((item) => {
         if (typeof item.openid == 'string') {
@@ -352,7 +401,7 @@ export const delHeaderTemplate = async function (headerList, taskObj, headername
                         "value": formatDate(new Date()),
                     },
                     "keyword3": {
-                        "value": taskObj.content,
+                        "value": content,
                     },
                     "remark": {
                         "value": "点击查看",
@@ -365,7 +414,7 @@ export const delHeaderTemplate = async function (headerList, taskObj, headername
 
 export const compTaskTemplate = async function (creatorId, taskObj , headername) {
     const openidList = await userDB.openidList(creatorId)
-    console.log(taskObj.header)
+    
 
     openidList.map((item) => {
         if (typeof item.openid == 'string') {
@@ -397,7 +446,10 @@ export const compTaskTemplate = async function (creatorId, taskObj , headername)
 
 
 export const createCheckitemTemplate = async function (headerList, checkitemObj, headername) {
+    console.log("********************")
     const openidList = await userDB.openidList(headerList)
+ 
+    
 
     openidList.map((item) => {
         if (typeof item.openid == 'string') {
@@ -407,7 +459,7 @@ export const createCheckitemTemplate = async function (headerList, checkitemObj,
                 'http://www.animita.cn/todo/' + checkitemObj._id,
                 {
                     "first": {
-                        "value": checkitemObj.creator.username + " 将检查项指派给" + headername,
+                        "value": checkitemObj.creator.name + " 将检查项指派给" + headername,
                     },
                     "keyword1": {
                         "value": checkitemObj.content,
@@ -429,6 +481,7 @@ export const createCheckitemTemplate = async function (headerList, checkitemObj,
 
 export const delCheckitemTemplate = async function (headerList, checkitemObj) {
     const openidList = await userDB.openidList(headerList)
+    const content = checkitemObj.content.split("<")[1].split(">")[1]
 
     openidList.map((item) => {
         if (typeof item.openid == 'string') {
@@ -441,7 +494,7 @@ export const delCheckitemTemplate = async function (headerList, checkitemObj) {
                         "value": checkitemObj.creator.username + " 删除了检查项",
                     },
                     "keyword1": {
-                        "value": checkitemObj.content,
+                        "value": content,
                     },
                     "keyword2": {
                         "value": formatDate(new Date()),
@@ -460,6 +513,8 @@ export const delCheckitemTemplate = async function (headerList, checkitemObj) {
 
 export const delCheckHeaderTemplate = async function (headerList, checkitemObj, headername) {
     const openidList = await userDB.openidList(headerList)
+    const content = checkitemObj.content.split("<")[1].split(">")[1]
+    
 
     openidList.map((item) => {
         if (typeof item.openid == 'string') {
@@ -469,10 +524,10 @@ export const delCheckHeaderTemplate = async function (headerList, checkitemObj, 
                 'http://www.animita.cn/todo/' + checkitemObj._id,
                 {
                     "first": {
-                        "value": checkitemObj.creator.username + " 取消了分配给" + headername + "的检查项",
+                        "value": checkitemObj.creator.name + " 取消了分配给" + headername + "的检查项",
                     },
                     "keyword1": {
-                        "value": checkitemObj.content,
+                        "value": content,
                     },
                     "keyword2": {
                         "value": formatDate(new Date()),
@@ -491,6 +546,7 @@ export const delCheckHeaderTemplate = async function (headerList, checkitemObj, 
 
 export const compCheckitemTemplate = async function (creatorId, checkitemObj , headername) {
     const openidList = await userDB.openidList(creatorId)
+    const content = checkitemObj.content.split("<")[1].split(">")[1]
 
     openidList.map((item) => {
         if (typeof item.openid == 'string') {
@@ -503,7 +559,7 @@ export const compCheckitemTemplate = async function (creatorId, checkitemObj , h
                         "value": headername + " 完成了任务",
                     },
                     "keyword1": {
-                        "value": checkitemObj.content,
+                        "value": content,
                     },
                     "keyword2": {
                         "value": formatDate(new Date()),

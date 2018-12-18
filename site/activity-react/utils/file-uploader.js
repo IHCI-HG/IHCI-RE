@@ -60,11 +60,10 @@ function reName() {
 
 const getOssClient = async () => {
     const result = await api('/api/getOssStsToken', {
-        method: 'GET',
+        method: 'POST',
         body: {}
     })
     const token = result.data
-    console.log('token', token);
 
     if(!OSSW) {
         if(window.toast) {
@@ -93,8 +92,10 @@ const fileUploader = async (file, ossKey) => {
     var result = await client.multipartUpload(ossKey, file, {
         checkpoint: checkpoint,
         progress: async function (p, cpt) {
+            window.bar(p)
             // options.onProgress(p);
             if (cpt !== undefined) {
+                // console.log(cpt.fileSize)
                 checkpoint = cpt;
                 fileName = cpt.name;
                 uploadId = cpt.uploadId;
@@ -103,8 +104,9 @@ const fileUploader = async (file, ossKey) => {
         },
     });
 
+
     if (result.res.status == 200) { 
-        console.log("文件上传成功");
+    
     } else {
         console.error(result);
     }

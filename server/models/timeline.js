@@ -84,6 +84,18 @@ timelineSchema.statics = {
         return this.find({}).sort({create_time: -1}).exec()
     },
 
+    returnByTimeStampAndTeam: function(teamId,timeStamp) {
+        return this.find({
+            teamId: teamId,
+            create_time:{
+                $lt:timeStamp
+            }}).limit(10).sort({create_time: -1}).exec()
+    },
+
+    firstReturnByTeam: function(teamId) {
+        return this.find({teamId: teamId}).limit(20).sort({create_time: -1}).exec()
+    },
+
     findByTeamId: function(teamId) {
         return this.find({teamId: teamId}).sort({create_time: -1}).exec()
     },
@@ -97,6 +109,29 @@ timelineSchema.statics = {
         return result
     },
 
+    firstReturnByTeamIdList: function(teamIdList) {
+        if(teamIdList && teamIdList.length) {
+            return this.find({
+                $or: teamIdList,
+            }).limit(20).sort({create_time: -1}).exec()
+        } else {
+            return []
+        }
+    },
+
+    returnByTimeStampAndTeamIdList: function(teamIdList,timeStamp) {
+        teamIdList.map((item)=>{
+            item.create_time = {
+                $lt:timeStamp
+            }
+        })
+        if(teamIdList && teamIdList.length) {
+            return this.find({$or: teamIdList}).limit(10).sort({create_time: -1}).exec()
+        } else {
+            return []
+        }
+    },
+    
     findByTeamIdList: function(teamIdList) {
         const queryList = []
         teamIdList.map((item) => {

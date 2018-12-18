@@ -1,4 +1,5 @@
 import { stringify } from 'querystring';
+import 'whatwg-fetch'
 const sha256 = require('crypto-js/SHA256')
 
 export interface IApiOptions {
@@ -40,18 +41,30 @@ export default function api(url: string, options: IApiOptions = {
 }
 
 // 这是登录专用的 api
-export function authApi(un: string, pw: string): any {
+export function authApi(un: string, pw: string, openid: string): any {
     // const hpw = crypto.createHmac('sha1', '7e1977739c748beac0c0fd14fd26a544').update(pw).digest('hex');
 
     const hpw = sha256(pw).toString();
-
-    const result = api('/api/login', {
-        method: 'POST',
-        body: {
-            username: un,
-            password: hpw
-        }
-    })
-    return result
+    if(openid){
+        const result = api('/api/user/loginAndBindWx', {
+            method: 'POST',
+            body: {
+                username: un,
+                password: hpw,
+                openid: openid
+            }
+        })
+        return result
+    }
+    else{
+        const result = api('/api/login', {
+            method: 'POST',
+            body: {
+                username: un,
+                password: hpw
+            }
+        })
+        return result
+    }
 }
 

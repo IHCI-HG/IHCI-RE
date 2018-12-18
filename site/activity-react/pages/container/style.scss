@@ -6,10 +6,17 @@
     height: 80px;
 
     padding: 0 50px;
+
+    position: relative;
     .search-bar{
         // float: left;
         align-items: center;
         display: flex;
+        &:hover{
+            color: #44acb6;
+            cursor: pointer;
+        }
+
 
         .searchBox{
             float: left;
@@ -21,7 +28,7 @@
             text-align: left;
             width: 256px;
             border: 1px solid #ccc;
-            border-radius: 5px;
+            border-radius: 5%;
             padding: 5px 8px;
             color: #333;
             transition: width 0.4s ease-in-out;
@@ -39,10 +46,11 @@
     }
 
     .logo {
-        margin-right: 100px;
+        margin-right: 10%;
     }
     .left {
         display: flex;
+        width:60%;
         align-items: center;
     }
     .nav-list{
@@ -66,16 +74,152 @@
         &:visited {
             color: #999;
         }
+        &:hover{
+            color:#44acb6;
+        }
         &.active {
             color: #333;
             font-weight: bold;
         }
     }
-    
-    .head-img {
+    .remind{
+        &:hover{
+            color:#44acb6;
+        }
+
+        .iconfont {
+            font-size: 30px;
+        }
+
+        .redPoint {
+            min-width: 20px;
+            height: 20px;
+            width: 20px;
+            padding: 0 2px;
+            border-radius: 16px;
+
+            display: inline-block;
+            text-align: center;
+            font-size: 0.1em;
+            color: #fff;
+            background-color: red;
+            
+            position: relative;
+            top: -15px;
+            right: 14px;
+        }
+
+        .shake {
+            animation-name: shake;
+            animation-duration: 2s;
+            animation-timing-function: linear;
+            animation-delay: 0s;
+            animation-iteration-count: infinite;
+            animation-direction: normal;
+            animation-fill-mode: none;
+            animation-play-state: running;
+            transform-origin: center top;
+        }
+    }
+    .head-img {       
         border-radius: 100px;
         height: 60px;
         width: 60px;
-        background-color: #763;
+        //background-color: #763;
+        &:hover{
+            box-shadow: 0px 6px 10px #ccc;
+        }
     }
+
+    // 菜单的小箭头
+    .menuArrow{
+        position: absolute;
+        top: -8px;
+        right: 30px;
+        overflow: hidden;
+        width: 13px;
+        height: 13px;
+        background: whitesmoke;
+        border-left: 1px solid whitesmoke;
+        border-top: 1px solid whitesmoke;
+        -webkit-transform: rotate(45deg);
+        transform: rotate(45deg);
+    }
+    .menu{
+        background:whitesmoke;
+        width: 250px;
+        position: absolute;
+        top: 70px;
+        right: 100px;
+        z-index: 100;
+        border-radius: 10px;
+
+        .menuHeader{
+            font-size: 20px;
+            padding: 15px 20px;
+            margin:auto;
+        }
+        .menuSet{
+            border-top: 1px solid #E3E3E3;
+            font-size: 25px;
+            padding:15px 20px;
+            cursor: pointer;
+        }
+        .modifyPassword{
+            border-top: 1px solid #E3E3E3;
+            font-size: 25px;
+            padding:15px 20px;
+            cursor: pointer; 
+        }
+        .menuCreate{
+            border-top: 1px solid #E3E3E3;
+            font-size:25px;
+            padding:15px 20px;
+            cursor: pointer; 
+        }
+        .menuQuit{
+            border-top: 1px solid #E3E3E3;
+            margin: 0 auto;
+            font-size: 25px;
+            padding: 15px 20px;
+            cursor: pointer;
+            border-radius: 0 0 10px 10px;
+            
+        }
+    }
+    
 }
+
+@keyframes shake{
+0% {
+    transform: rotate(0deg);
+}
+3.75% {
+    transform: rotate(25deg);
+}
+15% {
+    transform: rotate(-25deg);
+}
+22.5% {
+    transform: rotate(15deg);
+}
+29% {
+    transform: rotate(-10deg);
+}
+35% {
+    transform: rotate(5deg);
+}
+43% {
+    transform: rotate(-2deg);
+}
+50% {
+    transform: rotate(0deg);
+}
+100% {
+    transform: rotate(0deg);
+}
+
+}
+// @media only screen and (max-width: 480px) {
+
+// }

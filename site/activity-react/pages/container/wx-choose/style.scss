@@ -1,0 +1,75 @@
+.auth-block{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction:column;
+    margin-top:50%; 
+    height:300px;
+}
+.auth-header{
+    font-size: 25px;
+    font-weight: bold;
+    margin:30px auto;
+}
+.auth-nav-item{
+    cursor: pointer;
+    display:flex;
+    //display: inline-block;
+    align-items: center;
+    justify-content: center;
+    width: 300px;
+    height: 50px;
+    border-radius: 8px;
+    background-color: orange;
+    color: white;
+    font-weight: bold;
+    margin-top:50px;  
+}
+.login-Block{
+    display:flex;
+    justify-content: center;
+    //align-items: center;
+    flex-direction:row;
+    flex-wrap:wrap;
+    width:300px;
+    //margin-top:50%; 
+    margin:50% auto;
+    height:400px; 
+    //padding:10px auto;
+}
+.login-desc{
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.login-input{
+        outline: 0; 
+        border: 1px solid #e9eaea;
+        border-radius: 2px;
+        height: 50px;
+        width: 290px;   
+        padding: 0 20px;
+        //margin-bottom:20px;
+}
+.login-btn{
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    width: 100px;
+    background-color: orange;
+    font-size: 20px;
+    font-weight: bold;
+    color: #fff;
+    border-radius: 5px;
+    margin:20px 10px;
+}
+.reset-btn{
+    cursor: pointer;
+    width:290px;
+    height:10px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}

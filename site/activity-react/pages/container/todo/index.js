@@ -176,6 +176,7 @@ export default class Task extends React.Component{
         topicListArr: [],
         copyNumber:0,
         teamToMove: '请选择小组',
+        listToMove:'',
         teamToCopy: '请选择小组',
         user: {
             headImg: 'https://img.qlchat.com/qlLive/userHeadImg/9IR4O7M9-ZY58-7UH8-1502271900709-F8RSGA8V42XY.jpg@132h_132w_1e_1c_2o',
@@ -184,6 +185,7 @@ export default class Task extends React.Component{
         todo: {},
         copyTeamList:[],
         moveTeamList:[],
+        moveTodoList:[],
         loadMoreCount:1,
         // replyCount:0
         teamName:"",
@@ -210,31 +212,33 @@ export default class Task extends React.Component{
 
     initTeamList = async () => {
         const result = await api('/api/getMyInfo', {
-            method: 'GET',
+            method: 'POST',
             body: {}
         })
         const user={}
-        user.headImg = result.data.personInfo.headImg
-        user.name = result.data.personInfo.name
+        user.headImg = result.data.userObj.personInfo.headImg
+        user.name = result.data.userObj.personInfo.name
         this.setState({
             user:user
         })
-        const teamList = result.data.teamList
+        const teamList = result.data.userObj.teamList
         console.log(result)
+        /*
         teamList.map((item, index)=>{
             if(item.teamId === this.state.todo.teamId){
                 teamList.splice(index, 1)
             }
         })
+        */
         this.setState({
             moveTeamList: teamList,
         })
         const result1 = await api('/api/getMyInfo', {
-            method: 'GET',
+            method: 'POST',
             body: {}
         })
         this.setState({
-            copyTeamList: result1.data.teamList,
+            copyTeamList: result1.data.userObj.userObjteamList,
         })
     }
 
@@ -252,14 +256,14 @@ export default class Task extends React.Component{
             window.toast('团队内容加载出错')
         }
         else{
-            const teamName = result.data.name
+            const teamName = result.data.teamObj.name
             this.setState({teamName})
         }
 
         const curUserId = this.props.personInfo._id
 
         let isCreator = false
-        result.data.memberList.map((item) => {  // 判断是否是创建者 ？
+        result.data.teamObj.memberList.map((item) => {  // 判断是否是创建者 ？
             if(item.userId == curUserId) {
                 isCreator = true
             }
@@ -273,47 +277,47 @@ export default class Task extends React.Component{
         memberResult.data.map((item, idx) => {
             memberList.push({
                 ...item,
-                ...result.data.memberList[idx],
+                ...result.data.teamObj.memberList[idx],
                 chosen: false,
             })
         })
         this.setState({
             isCreator: isCreator,
             memberList: memberList,
-            topicList: sortByCreateTime(result.data.topicList)
+            topicList: sortByCreateTime(result.data.teamObj.topicList)
         })
     }
 
     initTodoInfo = async() => {
         const resp = await api('/api/task/taskInfo', {
-            method: 'GET',
+            method: 'POST',
             body: {
                 taskId: this.props.params.id,
             }
         })
         // 后端数据接口适配
-        console.log('checkitemList', resp.data)
+        console.log('checkitemList', resp.data.taskInfo)
         const todo = {}
         todo.imgList = []
-        resp.data.fileList.map((fileItem,index)=>{
+        resp.data.taskInfo.fileList.map((fileItem,index)=>{
             if(fileItem.name.endsWith(".jpg")||fileItem.name.endsWith(".jpeg")||fileItem.name.endsWith(".png")||fileItem.name.endsWith(".bmp")||fileItem.name.endsWith(".gif")){
                 todo.imgList.push(fileItem)
             }
         })
-        todo.id = resp.data._id
-        todo.hasDone = resp.data.state
-        todo.desc = resp.data.content
-        todo.ddl = resp.data.deadline
-        todo.name = resp.data.title
-        todo.fileList = resp.data.fileList
-        todo.completeTime = resp.data.completed_time
+        todo.id = resp.data.taskInfo._id
+        todo.hasDone = resp.data.taskInfo.state
+        todo.desc = resp.data.taskInfo.content
+        todo.ddl = resp.data.taskInfo.deadline
+        todo.name = resp.data.taskInfo.title
+        todo.fileList = resp.data.taskInfo.fileList
+        todo.completeTime = resp.data.taskInfo.completed_time
         todo.list = []
-        todo.listId = resp.data.listId
-        todo.teamId = resp.data.teamId
+        todo.listId = resp.data.taskInfo.listId
+        todo.teamId = resp.data.taskInfo.teamId
         todo.assignee = {}
-        todo.assignee.id = resp.data.header
+        todo.assignee.id = resp.data.taskInfo.header
         // 没有username,根据memberList获取
-        resp.data.checkitemList.forEach(function (item) {
+        resp.data.taskInfo.checkitemList.forEach(function (item) {
             const listItem = {}
             listItem.id = item._id
             listItem.name = item.content
@@ -341,7 +345,7 @@ export default class Task extends React.Component{
         if (resp.state.code === 0) {
             console.log(resp)
             const topicListArr = this.state.topicListArr 
-            resp.data.map((item)=>{
+            resp.data.discussList.map((item)=>{
                 const topic = {}
                 topic.imgList = []
                 item.fileList.map((fileItem,index)=>{
@@ -373,13 +377,11 @@ export default class Task extends React.Component{
                 const result1 = await api('/api/file/createFile', {
                     method: 'POST',
                     body: {
-                        fileInfo: {
-                            teamId: this.state.todo.teamId,
-                            size: item.size,
-                            dir: '/',
-                            fileName: item.name,
-                            ossKey: this.state.ossKeyArr[index],
-                        }
+                        teamId: this.state.todo.teamId,
+                        size: item.size,
+                        dir: '/',
+                        fileName: item.name,
+                        ossKey: this.state.ossKeyArr[index],
                     }
                 })
                 if (result1.state.code === 0) {
@@ -403,17 +405,17 @@ export default class Task extends React.Component{
             const topicList = this.state.topicListArr
             let topic = {}
             topic.imgList = []
-            resp.data.fileList.map((fileItem,index)=>{
+            resp.data.discussObj.fileList.map((fileItem,index)=>{
                 if(fileItem.name.endsWith(".jpg")||fileItem.name.endsWith(".jpeg")||fileItem.name.endsWith(".png")||fileItem.name.endsWith(".bmp")||fileItem.name.endsWith(".gif")){
                     topic.imgList.push(fileItem)
                 }
             })
-            topic.id = resp.data._id
-            topic.creator = resp.data.creator
-            topic.time = resp.data.create_time
-            topic.content = resp.data.content
-            topic.fileList = resp.data.fileList
-            topic.teamId = resp.data.teamId
+            topic.id = resp.data.discussObj._id
+            topic.creator = resp.data.discussObj.creator
+            topic.time = resp.data.discussObj.create_time
+            topic.content = resp.data.discussObj.content
+            topic.fileList = resp.data.discussObj.fileList
+            topic.teamId = resp.data.discussObj.teamId
             topicList.unshift(topic)
             this.setState({
                 topicListArr:topicList,
@@ -438,13 +440,11 @@ export default class Task extends React.Component{
                 const result1 = await api('/api/file/createFile', {
                     method: 'POST',
                     body: {
-                        fileInfo: {
-                            teamId: this.state.todo.teamId,
-                            size: item.size,
-                            dir: '/',
-                            fileName: item.name,
-                            ossKey: ossArr[index],
-                        }
+                        teamId: this.state.todo.teamId,
+                        size: item.size,
+                        dir: '/',
+                        fileName: item.name,
+                        ossKey: ossArr[index],
                     }
                 })
                 if (result1.state.code === 0) {
@@ -472,14 +472,14 @@ export default class Task extends React.Component{
             topicListArr.map((item,index)=>{
                 if(item.id===id){
                     item.imgList = []
-                    resp.data.fileList.map((fileItem,index)=>{
+                    resp.data.discussObj.fileList.map((fileItem,index)=>{
                         if(fileItem.name.endsWith(".jpg")||fileItem.name.endsWith(".jpeg")||fileItem.name.endsWith(".png")||fileItem.name.endsWith(".bmp")||fileItem.name.endsWith(".gif")){
                             item.imgList.push(fileItem)
                         }
                     })
-                    item.content = resp.data.content
-                    item.time = resp.data.create_time
-                    item.fileList = resp.data.fileList
+                    item.content = resp.data.discussObj.content
+                    item.time = resp.data.discussObj.create_time
+                    item.fileList = resp.data.discussObj.fileList
                 }
             })
             this.setState({ topicListArr })
@@ -513,7 +513,7 @@ export default class Task extends React.Component{
             loadMoreCount:this.state.loadMoreCount+1
         },this.loadTopicListArr)}
 
-    moveToTeamHandle = async () => {
+    moveTodoHandle = async () => {
         if(this.state.teamToMove=="请选择小组"){
             alert(this.state.teamToMove)
         }
@@ -522,7 +522,8 @@ export default class Task extends React.Component{
                 method:"POST",
                 body:{
                     taskId:this.props.params.id,
-                    teamIdMoveTo: this.state.teamToMove
+                    teamIdMoveTo: this.state.teamToMove,
+                    tasklistId: this.state.listToMove
                 }
             })
             console.log("move",resp)
@@ -605,10 +606,30 @@ export default class Task extends React.Component{
             updateTopicContent: e
         })
     }
-
-    moveSelectedHandle = (e) => {
+    initSelectedTeamList = async () =>{
+        const resp = await api('/api/team/taskList', {
+            method: 'POST',
+            body: {
+                teamId: this.state.teamToMove
+            }
+        })
+        if (resp.data.taskObj.tasklistList == undefined) {
+            resp.data.taskObj.tasklistList = []
+        }
+        this.setState({
+            moveTodoList : resp.data.taskObj.tasklistList
+        })
+        console.log(this.state.moveTodoList)
+    }
+    moveTeamSelectedHandle = (e) => {
         this.setState({
             teamToMove: e.target.value
+        },()=>{this.initSelectedTeamList()})
+        
+    }
+    moveListSelectedHandle = (e) => {
+        this.setState({
+            listToMove: e.target.value
         })
     }
 
@@ -653,7 +674,7 @@ export default class Task extends React.Component{
         })
         if (resp.state.code === 0) {
             const todo = this.state.todo
-            todo.hasDone = resp.data.state
+            todo.hasDone = resp.data.taskObj.state
             this.setState({ todo })
         }
         return resp
@@ -669,13 +690,11 @@ export default class Task extends React.Component{
                     const result1 = await api('/api/file/createFile', {
                         method: 'POST',
                         body: {
-                            fileInfo: {
-                                teamId: this.state.todo.teamId,
-                                size: item.size,
-                                dir: '/',
-                                fileName: item.name,
-                                ossKey: todoInfo.ossKeyArr[index],
-                            }
+                            teamId: this.state.todo.teamId,
+                            size: item.size,
+                            dir: '/',
+                            fileName: item.name,
+                            ossKey: todoInfo.ossKeyArr[index],
                         }
                     })
                     if (result1.state.code === 0) {
@@ -703,18 +722,18 @@ export default class Task extends React.Component{
             if (resp.state.code === 0) {
                 const todo = this.state.todo
                 todo.imgList = []
-                resp.data.fileList.map((fileItem,index)=>{
+                resp.data.taskObj.fileList.map((fileItem,index)=>{
                     if(fileItem.name.endsWith(".jpg")||fileItem.name.endsWith(".jpeg")||fileItem.name.endsWith(".png")||fileItem.name.endsWith(".bmp")||fileItem.name.endsWith(".gif")){
                         todo.imgList.push(fileItem)
                     }
                 })
                 const rAssignee = {}
-                rAssignee.id = resp.data.header
-                todo.name = resp.data.title
-                todo.ddl = resp.data.deadline
-                todo.desc = resp.data.content
+                rAssignee.id = resp.data.taskObj.header
+                todo.name = resp.data.taskObj.title
+                todo.ddl = resp.data.taskObj.deadline
+                todo.desc = resp.data.taskObj.content
                 todo.assignee = rAssignee
-                todo.fileList = resp.data.fileList
+                todo.fileList = resp.data.taskObj.fileList
                 console.log('handleTodoModify', todo)
                 this.setState({ todo })
             }
@@ -736,7 +755,7 @@ export default class Task extends React.Component{
         if (resp.state.code === 0) {
             const todo = this.state.todo
             const rAssignee = {}
-            rAssignee.id = resp.data.header
+            rAssignee.id = resp.data.taskObj.header
             todo.assignee = rAssignee
             this.setState({ todo })
         }
@@ -756,7 +775,7 @@ export default class Task extends React.Component{
         })
         if (resp.state.code === 0) {
             const todo = this.state.todo
-            todo.ddl = resp.data.deadline
+            todo.ddl = resp.data.taskObj.deadline
             this.setState({ todo })
         }
         return resp
@@ -786,7 +805,7 @@ export default class Task extends React.Component{
             const resp = await api('/api/task/addCheckitem', {
                 method: 'POST',
                 body: {
-                    todoId: this.props.params.id,
+                    taskId: this.props.params.id,
                     name: todoInfo.name,
                     ddl: todoInfo.date,
                     assigneeId: todoInfo.assigneeId,
@@ -800,11 +819,11 @@ export default class Task extends React.Component{
             if (resp.state.code === 0) {
                 const todo = this.state.todo
                 const checkItem = {}
-                checkItem.id = resp.data.id
-                checkItem.name = resp.data.content
+                checkItem.id = resp.data.checkitemObj.id
+                checkItem.name = resp.data.checkitemObj.content
                 checkItem.assignee = {}
-                checkItem.assignee.id = resp.data.header
-                checkItem.ddl = resp.data.deadline
+                checkItem.assignee.id = resp.data.checkitemObj.header
+                checkItem.ddl = resp.data.checkitemObj.deadline
                 checkItem.hasDone = false
                 todo.list = [...todo.list, checkItem]
                 this.setState({ todo })
@@ -814,7 +833,7 @@ export default class Task extends React.Component{
     }
 
     handleCheckModify = async(index, id, checkItemInfo) => {
-        if(!todoInfo.name.trim()){
+        if(!checkItemInfo.name.trim()){
             alert("检查项名不能为空")
         }
         else{
@@ -828,7 +847,7 @@ export default class Task extends React.Component{
             const resp = await api('/api/task/editCheckitem', {
                 method: 'POST',
                 body: {
-                    todoId,
+                    taskId: todoId,
                     checkitemId,
                     editCheckitem,
                     teamId:this.state.todo.teamId,
@@ -837,9 +856,9 @@ export default class Task extends React.Component{
             if (resp.state.code === 0) {
                 const todo = this.state.todo
                 const rAssignee = {}
-                rAssignee.id = resp.data.header
-                todo.list[index].name = resp.data.content
-                todo.list[index].ddl = resp.data.deadline
+                rAssignee.id = resp.data.checkitemObj.header
+                todo.list[index].name = resp.data.checkitemObj.content
+                todo.list[index].ddl = resp.data.checkitemObj.deadline
                 todo.list[index].assignee = rAssignee
                 this.setState({ todo })
             }
@@ -852,10 +871,13 @@ export default class Task extends React.Component{
         const checkitemId = id
         const editCheckitem = {}
         editCheckitem.assigneeId = e.target.value
+        if(editCheckitem.assigneeId === "null"){
+            editCheckitem.assigneeId = undefined
+        }
         const resp = await api('/api/task/editCheckitem', {
             method: 'POST',
             body: {
-                todoId,
+                taskId: todoId,
                 checkitemId,
                 editCheckitem,
                 teamId:this.state.todo.teamId,
@@ -864,7 +886,7 @@ export default class Task extends React.Component{
         if (resp.state.code === 0) {
             const todo = this.state.todo
             const rAssignee = {}
-            rAssignee.id = resp.data.header
+            rAssignee.id = resp.data.checkitemObj.header
             todo.list[index].assignee = rAssignee
             this.setState({ todo })
         }
@@ -879,7 +901,7 @@ export default class Task extends React.Component{
         const resp = await api('/api/task/editCheckitem', {
             method: 'POST',
             body: {
-                todoId,
+                taskId: todoId,
                 checkitemId,
                 editCheckitem,
                 teamId:this.state.todo.teamId,
@@ -887,7 +909,7 @@ export default class Task extends React.Component{
         })
         if (resp.state.code === 0) {
             const todo = this.state.todo
-            const rDDL = resp.data.deadline
+            const rDDL = resp.data.checkitemObj.deadline
             todo.list[index].ddl = rDDL
             this.setState({ todo })
         }
@@ -903,7 +925,7 @@ export default class Task extends React.Component{
         const resp = await api('/api/task/editCheckitem', {
             method: 'POST',
             body: {
-                todoId,
+                taskId: todoId,
                 checkitemId,
                 editCheckitem,
                 teamId: this.state.todo.teamId,
@@ -912,7 +934,7 @@ export default class Task extends React.Component{
         // console.log('resp', resp);
         if (resp.state.code === 0) {
             const todo = this.state.todo
-            const rHasDone = resp.data.state
+            const rHasDone = resp.data.checkitemObj.state
             todo.list[index].hasDone = rHasDone
             todo.list = todo.list.slice()
             this.setState({ todo })
@@ -926,7 +948,7 @@ export default class Task extends React.Component{
         const resp = await api('/api/task/dropCheckitem', {
             method: 'POST',
             body: {
-                todoId,
+                taskId: todoId,
                 checkitemId,
                 teamId:this.state.todo.teamId,
             }
@@ -964,12 +986,10 @@ export default class Task extends React.Component{
         const result = await api('/api/file/moveFile', {
             method: 'POST',
             body: {
-                fileInfo: {
-                    teamId: this.state.todo.teamId,
-                    dir: item.dir,
-                    fileName: item.name.split("/")[2],
-                    tarDir: tarDir,
-                }
+                teamId: this.state.todo.teamId,
+                dir: item.dir,
+                fileName: item.fileName,
+                tarDir: tarDir,
             }
         })
         if(result.state.code === 0){
@@ -1087,8 +1107,8 @@ export default class Task extends React.Component{
                         <div className={"item "+((copyExpanded)?"expanded":"")}>
                             {!copyExpanded&&<a  onClick={() => {this.setState({copyExpanded: true,moveExpanded: false})}}>复制</a>}
                             {copyExpanded&&<div className="confirm">
-                                    <p className="title">复制任务到小组</p>
-                                    <input type="number" placeholder="复制数量[1~50]" min="1" max="50" name="count" id="count" onChange={this.numberInputHandle} />
+                                    <p className="title">复制任务到当前清单</p>
+                                    <input type="number" pattern="[0-9]*" placeholder="复制数量[1~50]" min="1" max="50" name="count" id="count" onChange={this.numberInputHandle} />
                                     {/* <div className="simple-select select-choose-projects require-select" >
                                         <select onChange={this.copySelectedHandle} value={this.state.teamToCopy} className="select-list">
                                             <option className="default" value="请选择小组">点击选择小组</option>
@@ -1110,9 +1130,9 @@ export default class Task extends React.Component{
                             {!moveExpanded&&<a onClick={() => {this.setState({moveExpanded: true,copyExpanded: false})}}>移动</a>}
                             {moveExpanded&&<div className="confirm">
                                 <form>
-                                    <p className="title">移动任务到小组</p>
+                                    <p className="title">移动任务</p>
                                     <div className="simple-select select-choose-projects require-select" >
-                                        <select onChange={this.moveSelectedHandle} value={this.state.teamToMove} className="select-list">
+                                        <select onChange={this.moveTeamSelectedHandle} value={this.state.teamToMove} className="select-list">
                                             <option className="default" value="请选择小组">点击选择小组</option>
                                             {this.state.moveTeamList.map((item) => {
                                                 return (
@@ -1123,8 +1143,18 @@ export default class Task extends React.Component{
                                             })
                                             }
                                         </select>
+                                        <select onChange={this.moveListSelectedHandle} value={this.state.listToMove} className="select-list">
+                                            <option className="default" value=" ">不选择清单</option>
+                                            {this.state.moveTodoList.map((item) => {
+                                                return (
+                                                    <option className = "select-item" key={'list name'+item._id} value={item._id}>
+                                                       {item.name}
+                                                    </option>
+                                                )
+                                            })}
+                                        </select>
                                     </div>
-                                    <button className="act" onClick={this.moveToTeamHandle}>移动</button>
+                                    <button className="act" onClick={this.moveTodoHandle}>移动</button>
                                     <div type="button" className="cancel" onClick={() => {this.setState({moveExpanded: false})}}>取消</div>
                                 </form>
                             </div>}

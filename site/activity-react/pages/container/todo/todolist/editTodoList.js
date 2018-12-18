@@ -4,7 +4,7 @@ import '../style.scss'
 class EditTodoList extends React.Component {
 
     handleConfirm = () => {
-        console.log('handleConfirm')
+        
         const params = {}
         // id 可以在之前绑定
         // if (this.props) {
@@ -27,14 +27,16 @@ class EditTodoList extends React.Component {
 
     render() {
         const _props = this.props
-        console.log(_props)
+     
         return (
             <div className="todo">
                 <div className="todo-wrap">
                     <input ref="name"
                            className="dashed-input"
                            placeholder="输入清单名"
-                           defaultValue={_props.defaultValue}>
+                           defaultValue={_props.defaultValue}
+                           onKeyDown = {(event)=>{if(event.keyCode== "13"){this.handleConfirm()}}}
+                           autoFocus >
                     </input>
                     <div className="buttons">
                         <button className="confirm"

@@ -101,10 +101,12 @@ class TodoItem extends React.Component {
 
         const hasDoneNum = this.caculateHasDoneNum()
         const componentClass = this.caculateStyle()
-
         return (
-            <div className={componentClass}>
-                <div className="actions-wrap">
+            <div className={componentClass}
+            data-id={this.props.dataId}
+            data-listindex={this.props.index}
+            draggable='true'>
+                {(this.props.role!=='visitor')&&<div className="actions-wrap">
                     <div className="actions">
                         <i className="icon iconfont"
                            onClick={_props.handleTodoDelete}
@@ -122,12 +124,18 @@ class TodoItem extends React.Component {
                         }
                     </div>
                 </div>
-                <div className={`${_props.hasDone ? 'check-box-checked' : 'check-box'}`}
+                }
+                {(this.props.role!=='visitor')&&<div className={`${_props.hasDone ? 'check-box-checked' : 'check-box'}`}
                      onClick={_props.handleTodoCheck.bind(this, _props.hasDone)}>
                     <i className="icon iconfont checked-icon">&#xe750;</i>
-                </div>
-                <div className="todo-wrap">
+                </div>}
+                <div className="todo-wrap"
+                data-id={this.props.dataId}
+                data-listindex={this.props.index}
+                draggable='true'>
                     <span className="name"
+                    data-id={this.props.dataId}
+                    data-listindex={this.props.index}
                         onClick={() => {
                             if (_props.detail === 'detail' || _props.type === 'check')
                                 return
@@ -149,7 +157,7 @@ class TodoItem extends React.Component {
                             <span className="remark">{timeBefore(Date.parse(_props.completeTime))}</span>
                         </span>
                         :
-                        < ItemLabel
+                        (this.props.role!=='visitor')&&< ItemLabel
                             // 使用用户传入，不用id
                             assigneeId={_props.assignee?_props.assignee.id:null}
                             date={_props.ddl}
@@ -157,7 +165,7 @@ class TodoItem extends React.Component {
                             handleDateChange={_props.handleDateChange}
                             handleAssigneeChange={_props.handleAssigneeChange}
                             dataId={this.props.dataId}
-                            dataItem={this.props.dataItem}>
+                            index={this.props.index}>
                         </ItemLabel>
                     }
                     {   _props.detail === 'detail' &&

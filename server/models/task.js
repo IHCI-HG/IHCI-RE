@@ -58,7 +58,7 @@ taskSchema.statics = {
     },
 
     updateTask: async function (taskId, taskObj) {
-        const result = await this.findByIdAndUpdate(taskId, taskObj, () => { })
+        const result = await this.findByIdAndUpdate(taskId, taskObj, {new: true},() => { })
         return result
     },
 

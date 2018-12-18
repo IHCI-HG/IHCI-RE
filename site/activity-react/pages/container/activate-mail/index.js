@@ -32,7 +32,7 @@ export default class ActivateMailPage extends React.Component{
     }
 
     activateRequest = async (userId, mailCode) =>{
-        console.log(userId,"\n\n", mailCode)
+ 
         const result = await api('/api/checkCode', {
             method: 'POST',
             body: {
@@ -53,7 +53,7 @@ export default class ActivateMailPage extends React.Component{
     }
 
     render() {
-        console.log(this.state)
+      
         return(
         <Page title='激活邮箱 - IHCI' className="activate-page">
             <div className="nav">
