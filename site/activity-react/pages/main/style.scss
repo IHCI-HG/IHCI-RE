@@ -85,11 +85,11 @@
         width: 100%;
         background-color: #fffaf2;
     .video-title{
-        height: 100px;
-        width: 250px;
+        height: 180px;
+        width: 400px;
         position: absolute;
         right: 250px;
-        top:850px;
+        top:800px;
     }
     .video-wrap  {
        width: 72.5%;
@@ -227,7 +227,7 @@
     }
 }
 
-@media (max-width: 480px)  {
+@media (max-width: 600px)  {
     .main-page {
         background-color: #fff;
         .nav {
@@ -311,52 +311,64 @@
         }
         .stories {
             background-color: #fff;
+           
            .story-con{
                display: block;
                width: 100%;
                margin: 0;
-           }
-           .story-item{
-               margin: 20px auto;
                
-               width: 676px;
-               height: 505px;
-               display: block;
-               border: gray dotted 1px;
-               .head-img {
-                height: 182px;
-                width: 182px;
-                border-radius: 100px;
-                margin: 30px auto 0;
-                background-color: gray;
+              
+               .story-item{
+                margin: 20px auto;
+                
+                width: 676px;
+                height: 505px;
+                display: block;
+                border: gray dotted 1px;
+                
+
+                .head-img {
+                 height: 182px;
+                 width: 182px;
+                 border-radius: 100px;
+                 margin: 30px auto 0;
+                 background-color: gray;
+                 
+             }
+            
+             .item-wrap{
+                 margin-left:10%;
+                 text-align: left;
+                 .name {
+                     font-size: 48px;
+                     margin-top:30px;
+                     margin-bottom: 20px;
+                     color: #808080;
+                 }
+                 .title {
+                     margin-top:36px;
+                     font-size: 36px;
+                     color: #808080;
+                     
+                 }
+                 .desc {
+                     margin-top:20px;
+                     line-height: 40px;
+                     font-size: 32px;
+                     color: #808080;
+                 }
+             }
             }
-            .item-wrap{
-                margin-left:10%;
-                text-align: left;
-                .name {
-                    font-size: 48px;
-                    margin-top:30px;
-                    margin-bottom: 20px;
-                    color: #808080;
-                }
-                .title {
-                    margin-top:36px;
-                    font-size: 36px;
-                    color: #808080;
-                    
-                }
-                .desc {
-                    margin-top:20px;
-                    line-height: 40px;
-                    font-size: 32px;
-                    color: #808080;
-                }
-            }
-           }  
+           }
+           
+           
+           
            
            .join-num{
+              
                height: 68px;
                line-height: 3;
+               
             .p1 {
                 font-size: 24px; 
                 margin-top:40px;
@@ -387,9 +399,12 @@
                 font-weight: bold;
                 
             }
-            
+            .trademark{
+               display: none;
+            }
         }
     }
+
+
+
 }
-
-
