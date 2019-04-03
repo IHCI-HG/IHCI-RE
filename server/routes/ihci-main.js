@@ -84,24 +84,27 @@ const test1 = async (req, res, next) => {
 }
 
 const mainPage = async (req, res, next) => {
-    const filePath = path.resolve(__dirname, '../../public/activity-react/main.html');
-    const cccc = {
-        ssdsds: '1',
-        awdad: [
-            1,2,3,4,5
-        ]
+    // const filePath = path.resolve(__dirname, '../../public/activity-react/main.html');
+    // const cccc = {
+    //     ssdsds: '1',
+    //     awdad: [
+    //         1,2,3,4,5
+    //     ]
+    // }
+    // const options = {
+    //     filePath,
+    //     fillVars: {
+    //         INIT_DATA: {
+    //             aaaa: 'aaaaaaaaaa',
+    //             b: cccc
+    //         }
+    //     },
+    //     renderData: {},
+    // };
+    // htmlProcessor(req, res, next, options)
+    if(req.url.indexOf('www.')=== -1){
+        res.redirect('www.animita.cn')
     }
-    const options = {
-        filePath,
-        fillVars: {
-            INIT_DATA: {
-                aaaa: 'aaaaaaaaaa',
-                b: cccc
-            }
-        },
-        renderData: {},
-    };
-    htmlProcessor(req, res, next, options)
 }
 
 const teamPage = async (req, res, next) => {
