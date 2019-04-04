@@ -28,8 +28,6 @@ var config = {
     'pubAppId': 'wx87136e7c8133efe3',
     'pubAppSe': '195592b5e345046e61b5efc33d4cb42d',
 
-   
-
     'ossConf': {
         'ossAdminAccessKeyId': 'LTAIkrgpPKLOb6CJ',
         'ossAdminAccessKeySecret': 'STTW2qHnI6NLNuUJAjmom6rDSO2ksr',

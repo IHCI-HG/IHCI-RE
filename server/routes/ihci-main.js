@@ -83,28 +83,35 @@ const test1 = async (req, res, next) => {
     res.send('dataStr1')
 }
 
-const mainPage = async (req, res, next) => {
-    // const filePath = path.resolve(__dirname, '../../public/activity-react/main.html');
-    // const cccc = {
-    //     ssdsds: '1',
-    //     awdad: [
-    //         1,2,3,4,5
-    //     ]
-    // }
-    // const options = {
-    //     filePath,
-    //     fillVars: {
-    //         INIT_DATA: {
-    //             aaaa: 'aaaaaaaaaa',
-    //             b: cccc
-    //         }
-    //     },
-    //     renderData: {},
-    // };
-    // htmlProcessor(req, res, next, options)
+const addwww = async (req, res, next) => {
+    console.log(req.url)
     if(req.url.indexOf('www.')=== -1){
-        res.redirect('www.animita.cn')
+        res.redirect('https://www.animita.cn')
     }
+    else{
+        next()
+    }
+}
+const mainPage = async (req, res, next) => {
+    const filePath = path.resolve(__dirname, '../../public/activity-react/main.html');
+    const cccc = {
+        ssdsds: '1',
+        awdad: [
+            1,2,3,4,5
+        ]
+    }
+    const options = {
+        filePath,
+        fillVars: {
+            INIT_DATA: {
+                aaaa: 'aaaaaaaaaa',
+                b: cccc
+            }
+        },
+        renderData: {},
+    };
+    htmlProcessor(req, res, next, options)
+    
 }
 
 const teamPage = async (req, res, next) => {
@@ -241,7 +248,7 @@ const userAuthJudge = async(req, res, next) => {
 
 module.exports = [
     // 主页
-    ['GET', '/', clientParams(), silentAuth, mainPage],
+    ['GET', '/', clientParams(), silentAuth , mainPage , addwww],
     // ['GET', '/', clientParams(), mainPage],
     ['GET', '/activate', clientParams(), pageHandle()],
     //['GET','/wx-choose',clientParams(), pageHandle()],
