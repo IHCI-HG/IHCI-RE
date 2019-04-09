@@ -82,7 +82,13 @@ function RedisSession (options) {
             // 更新cookie对象
             res.cookie(redisSessionKey, signature.sign(req.rSession.sessionId, secret), {
                 //maxAge: 0, //expires * 1000,
-                httpOnly: true
+                // 此处注释httpOnly接口以使用cookie解决日历的登录问题
+                // 若开启httpOnly会使日历无法登录而加载失败
+                // 这是一种hack的方法，并会带来收到xss攻击的风险。后期建议修改为：
+                // iHCI在用户登录同时提供一个用于日历的票据（类似于rsession)
+                // 再开放一个类似api/getMyInfo的api，提供日历服务器完成“ticket-userId”的交换
+                // 如果时间足够，我们会自行添加这些功能。author: makdon
+                //httpOnly: true
             });
 
             return writeHead.apply(this, arguments);
