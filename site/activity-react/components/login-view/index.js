@@ -140,6 +140,8 @@ export class LoginView extends React.Component {
 
         const result = await authApi(this.state.username, this.state.password)
         if(result.state.code === 0) {
+           console.log(result.state)
+         
             window.toast("登录成功")
                 setTimeout("window.location.href = '/team'", 1000)
         } else {

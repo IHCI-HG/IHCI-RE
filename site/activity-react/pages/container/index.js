@@ -35,6 +35,7 @@ class App extends React.Component{
 
         showRemindCount: '',
         
+        
     }
 
 
@@ -118,11 +119,17 @@ class App extends React.Component{
     componentWillMount = async() => {
         this.setHeadImg()
     }
+
+   
     componentDidMount = async() => {
         this.activeTagHandle(this.props.location.pathname)
   
         await this.initUnreadList()
+        
     }
+
+
+    
 
     setHeadImg = async () => {
         const result = await api('/api/getMyInfo',{
@@ -198,6 +205,9 @@ class App extends React.Component{
         else if(/timeline/.test(url)) {
             this.setState({activeTag: 'timeline'})
         }
+        else if(/calendar/.test(url)) {
+            this.setState({activeTag: 'calendar'})
+        }
         else{
             this.setState({activeTag: ''})
         }
@@ -257,6 +267,7 @@ class App extends React.Component{
                             <span className={this.state.activeTag == 'team' ? 'nav-item active' : 'nav-item'} onClick={this.routerHandle.bind(this, '/team')}>团队</span>
                             <span className={this.state.activeTag == 'timeline' ? 'nav-item active' : 'nav-item'} onClick={this.routerHandle.bind(this, '/timeline')}>动态</span>
                             <span className={this.state.activeTag == 'member' ? 'nav-item active' : 'nav-item'} onClick={this.routerHandle.bind(this, '/member')}>成员</span>
+                            <span className={this.state.activeTag == 'calendar' ? 'nav-item active' : 'nav-item'} onClick={this.routerHandle.bind(this, '/calendar')}>日历</span>
                         </div>
                     </div>
                     <div className="person">
@@ -289,7 +300,9 @@ class App extends React.Component{
 
                 </div>
                 { this.props.children && React.cloneElement(this.props.children, {personInfo: this.state.personInfo, activeTagHandle: this.activeTagHandle.bind(this)}) }
+               
             </div>
+            
         )
     }
 }
