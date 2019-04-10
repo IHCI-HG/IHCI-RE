@@ -230,7 +230,7 @@
             }
         }
     
-@media (max-width: 480px) {
+@media (max-width: 600px) {
     .auth-con {
         width: 90%;
         height:323px;
@@ -362,7 +362,7 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                height: 58px;
+                height: 80px;
                 width: 100%;
                 background-color: #ffb43d;
                 margin-top:10px;
@@ -376,27 +376,7 @@
                 }
             }
             .wx-submit-btn {
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                height: 58px;
-                width: 100%;
-                background-color: transparent;
-                margin-top:10px;
-                font-size: 34px;
-                font-weight: normal;
-                color: #808080;
-                border-radius: 5px;
-                &:hover {
-                    box-shadow: 1px 2px 6px #a2a2a2;
-                }
-                .wx-submit-img{
-                    height:50px;
-                    width:50px;
-                    margin-right:10px;
-                }
-    
+                display: none;
             }
             .menuArrow{
                 position: absolute;
@@ -449,5 +429,6 @@
 
 
 }
+
 
 

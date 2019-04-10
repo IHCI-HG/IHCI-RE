@@ -48,6 +48,7 @@ export default class MainPage extends React.Component {
 
     render () {
         return <Page title='IHCI' className="main-page">
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
 
             {
                 this.state.showWxDialog && <WxLoginDialog state="auth" closeHandle={this.hideWxDialogHandle}/>
@@ -82,7 +83,7 @@ export default class MainPage extends React.Component {
             <div className="stories">
                 <div className="story-title">团队成员故事</div>
                 <div className="story-con">
-                    <div className="story-item">
+                    <div className="story-item" id="first-item">
                         <img  className="head-img" src={require('./toxiang1.png')}/>
                         <div className="item-wrap">
                         <div className="name">Meta Hirschl</div>
@@ -94,7 +95,7 @@ export default class MainPage extends React.Component {
                         </div>
                         </div>
                     </div>
-                    <div className="story-item">
+                    <div className="story-item second-item">
                         <div><img  className="head-img" src={require('./toxiang2.png')}/></div>
                         <div className="item-wrap">
                         <div className="name">Brian Grant</div>
@@ -106,7 +107,7 @@ export default class MainPage extends React.Component {
                         </div>
                         </div>
                     </div>
-                    <div className="story-item">
+                    <div className="story-item third-item">
                         <div><img className="head-img" src={require('./toxiang3.png')}/></div>
                         <div className="item-wrap">
                         <div className="name">Maxim Orlov</div>
@@ -119,7 +120,7 @@ export default class MainPage extends React.Component {
                         </div>
                     </div>
                 </div>
-                {window.outerWidth>480?<div className="join-num">
+                {window.outerWidth>550?<div className="join-num">
                     <div className="p1">迄今已有</div>
                     <div className="num">450人</div>
                     <div className="p1">加入了IHCI</div>
@@ -136,7 +137,7 @@ export default class MainPage extends React.Component {
         <div className="trademark-text">川 B2-20130052 蜀 ICP 备 12019256号-5</div>
         <div className="trademark-footer">©️ Mycolorway Design.</div>
         </div>
-            {window.outerWidth>480?
+            {window.outerWidth>600?
             
             <div className="footer-list max-w-con">
                 <div className="foot-item">
