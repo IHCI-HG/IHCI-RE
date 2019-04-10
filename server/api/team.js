@@ -21,6 +21,8 @@ import {
 } from '../components/wx-utils/wx-utils'
 import { MongooseDocument } from 'mongoose';
 
+const axios = require('axios')
+
 var mongoose = require('mongoose')
 
 var teamDB = mongoose.model('team')
@@ -420,6 +422,64 @@ const teamInfo = async (req, res, next) => {
     }
 }
 
+//发送团队成员信息给子系统
+const sendTeamMemberList = async (req, res, next) => {
+    console.log('come in')
+    const teamId = req.body.teamId  
+    try{
+    if (!teamId) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 3000, msg: "参数不全" },
+            data: {}
+        });
+        return
+    }
+
+    
+
+    const memberId = []
+    const teamObj = await teamDB.findByTeamId(teamId)
+    if (!teamObj) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 3001, msg: '团队不存在' },
+            data: {}
+        });
+        return
+    }
+
+    teamObj.memberList.map((item)=>{           
+        memberId.push(item.userId)
+    })
+
+    const memberList = []
+    await Promise.all ( memberId.map(async item => {
+        const memberObj = await userDB.findByUserId(item)  
+        memberList.push({
+            UserId:memberObj._id,
+            UserName:memberObj.personInfo.name,
+            TeamIdList:memberObj.teamList
+        })          
+        }))    
+        
+    var result = await axios.post("http://localhost:8081/memberlist",{
+        teamId:teamId,
+        teamName:teamObj.name,
+        memberList:memberList
+    })
+    
+    resProcessor.jsonp(req, res, {
+        state: { code: 0, msg: '请求成功',data:memberList }
+    });
+    
+    }catch(err){
+        resProcessor.jsonp(req, res, {
+            state: { code: 1000, msg: '操作失败' },
+            data: {}
+        });
+    }
+    
+}
+
 
 // 个人首页、获取团队列表
 const teamInfoList = async (req, res, next) => {
@@ -641,7 +701,11 @@ const taskList = async (req, res, nect) => {
 
 
 module.exports = [
-    ['POST', '/api/team/info', apiAuth, teamInfo],
+	['POST', '/api/team/info', apiAuth, teamInfo],
+
+	//测试状态，还没有判断登陆
+	['POST','/api/user-rights-management',sendTeamMemberList],
+	
     ['POST', '/api/team/infoList', apiAuth, teamInfoList],
 
     ['POST', '/api/team/create', apiAuth, isMember, creatTeam],

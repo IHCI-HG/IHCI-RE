@@ -151,6 +151,14 @@ const routerConf = [{
                 callback(null, require('./completed').default);
             });
         }
+	},
+	{
+        path: 'user-rights-management',
+        getComponent: function (nextState, callback) {
+            require.ensure([], (require) => {
+                callback(null, require('./user-rights-management').default);
+            });
+        }
     }
 ]
 

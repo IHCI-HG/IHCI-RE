@@ -267,5 +267,7 @@ module.exports = [
     ['GET', '/search', clientParams(),   routerAuthJudge, pageHandle() ],
     ['GET', '/completed/:id', clientParams(), silentAuth, routerAuthJudge, pageHandle() ],
     ['GET', '/inform', clientParams(),   routerAuthJudge, personSeting, pageHandle() ],
-    ['GET', '/wxcode', clientParams(),  pageHandle() ],
+	['GET', '/wxcode', clientParams(),  pageHandle() ],
+	
+	['GET', '/user-rights-management',  pageHandle() ],
 ];
