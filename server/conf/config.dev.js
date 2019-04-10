@@ -27,6 +27,8 @@ var config = {
 
     'pubAppId': 'wx87136e7c8133efe3',
     'pubAppSe': '195592b5e345046e61b5efc33d4cb42d',
+    'smsAppId':'LTAIgR6dj6jHXHYY',
+    'smsAppSe':'KItFh8WqT8OpQXEIaAm8pCGQ6g33t9',
 
    
 
