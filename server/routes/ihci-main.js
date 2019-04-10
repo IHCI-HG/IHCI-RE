@@ -275,6 +275,7 @@ module.exports = [
     ['GET', '/discuss/topic/:id', clientParams(), silentAuth, routerAuthJudge,userAuthJudge, pageHandle() ],
     ['GET', '/timeline', clientParams(), silentAuth,    routerAuthJudge, pageHandle() ],
     ['GET', '/member', clientParams(),   routerAuthJudge, pageHandle() ],
+    ['GET', '/calendar', clientParams(), pageHandle()],
     ['GET', '/search', clientParams(),   routerAuthJudge, pageHandle() ],
     ['GET', '/completed/:id', clientParams(), silentAuth, routerAuthJudge, pageHandle() ],
     ['GET', '/inform', clientParams(),   routerAuthJudge, personSeting, pageHandle() ],
