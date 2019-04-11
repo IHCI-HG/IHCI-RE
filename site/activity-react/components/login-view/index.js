@@ -187,7 +187,7 @@ export class LoginView extends React.Component {
                     username: this.state.createPhone, // 手机登录 账号为手机号码
                     password: this.state.createPassword, // 输入的密码就是登陆密码
                     code: this.state.authCode,
-                    nickname: this.state.nickname
+                    nickname: this.state.createNickname
                 }
             }
         })

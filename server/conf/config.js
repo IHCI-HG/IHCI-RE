@@ -45,7 +45,6 @@ var config = {
         'region': 'oss-cn-shenzhen',
         'bucket': 'arluber',
     },
-    
     db: 'mongodb://127.0.0.1:27017/ihci',
 
     'lruMaxAge': 3600000,

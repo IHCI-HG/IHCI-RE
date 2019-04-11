@@ -33,16 +33,16 @@ import {
 // 路由前判定是否已经登录或信息填写完全
 const routerAuthJudge = async (req, res, next) => {
     const userId = req.rSession.userId
-    if(userId) {
-        const user = await UserDB.findByUserId(userId)
+    // if(userId) {
+    //     const user = await UserDB.findByUserId(userId)
 
-        if (!/person/.test(req.url)  &&  user.personInfo==null)
-        {
-            res.redirect('/person')
-            return
-        }
-    } 
-    else {
+    //     if (!/person/.test(req.url)  &&  user.personInfo==null)
+    //     {
+    //         res.redirect('/person')
+    //         return
+    //     }
+    // } 
+    if(!userId) {
         res.redirect('/')
         return
     }

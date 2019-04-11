@@ -120,8 +120,8 @@ class App extends React.Component{
     }
     componentDidMount = async() => {
         this.activeTagHandle(this.props.location.pathname)
-  
         await this.initUnreadList()
+        console.log(this.state.personInfo)
     }
 
     setHeadImg = async () => {
@@ -129,7 +129,8 @@ class App extends React.Component{
             method: 'POST',
             body: {}
         })
-        if(result.data.userObj && result.data.userObj.personInfo && result.data.userObj.personInfo.headImg) {
+        console.log(result)
+        if(result.data.userObj && result.data.userObj.personInfo) {
             this.setState({
                 headImg: result.data.userObj.personInfo.headImg,
                 menuName: result.data.userObj.personInfo.name,
