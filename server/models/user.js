@@ -125,11 +125,20 @@ userSchema.statics = {
     },
     openidList: async function(userIdList) {
         const queryList = []
+        const openidList =[]
         userIdList.length && userIdList.map((item) => {
             queryList.push({_id: item})
         })
         if(queryList && queryList.length) {
-            return this.find({$or: queryList}, {openid: 1}).exec()
+            const result = await this.find({$or: queryList}, {wxUserInfo: 1}).exec()
+            result.forEach(item => {
+                if(item.wxUserInfo.openid){
+                    openidList.push({
+                        openid:item.wxUserInfo.openid
+                    })
+                }
+            });
+            return openidList;
         } else {
             return []
         }

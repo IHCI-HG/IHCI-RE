@@ -236,17 +236,13 @@ export class LoginView extends React.Component {
             {
                 this.state.loginBlock == "signUp" ?
                     <div className='login-view-form'>
-
-                        <div className="auth-desc">手机</div>
                         <input type="number" pattern="[0-9]*" className="auth-input" placeholder="请输入手机号"
                             value={this.state.createPhone} onChange={this.createPhoneHandle}
                             onClick={this.judgeUsernameEmptyHandle} autoFocus></input>
                         <input type='text' className='auth-input' placeholder='请输入昵称' 
                             vlaue={this.state.createNickname} onChange={this.createNicknameHandle}></input>
-                        <div className="auth-desc">密码</div>
                         <input className="auth-input" placeholder="请输入密码"
                             type="password" value={this.state.createPassword} onChange={this.createPasswordHandle}></input>
-                        <div className="auth-desc">验证码</div>
                         <SMSBlock smsCodeInputHandle={this.smsCodeInputHandle}
                             smsCode={this.state.authCode}
                             phoneNumber={this.state.createPhone}
