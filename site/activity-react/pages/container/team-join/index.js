@@ -4,7 +4,7 @@ import api from '../../../utils/api';
 import Page from '../../../components/page'
 
 import WxLoginDialog from '../../../components/wx-login-dialog'
-import { LoginView } from '../../../components/login-view';
+//import { LoginView } from '../../../components/login-view';
 import { TeamLoginView } from '../../../components/team-login-view';
 
 export default class TeamAdmin extends React.Component{

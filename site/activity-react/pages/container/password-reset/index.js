@@ -96,16 +96,16 @@ export default class PwdReset extends React.Component{
     render (){
         return(
             <Page title = "重新设置密码" className = "reset-page">
-                <div className = "reset-block">
+                <div className = "auth-form">
                 <div className = "title">重新设置密码</div>
                 <input type="number" pattern="[0-9]*" className = "input-edit" value={this.state.phone} onChange = {this.phoneInputHandle} placeholder = "手机号"></input>
+                <input className = "input-edit" type="password"  value = {this.state.newPassword} onChange = {this.passwordInputHandle} placeholder = "新密码"></input>
                 <SMSBlock 
                    smsCodeInputHandle = {this.smsCodeInputHandle}
                    smsCode = {this.state.smsCode}
                    phoneNumber = {this.state.phone}
                    phoneEmpty = {this.state.phoneEmpty}
-                /> 
-                <input className = "input-edit" type="password"  value = {this.state.newPassword} onChange = {this.passwordInputHandle} placeholder = "新密码"></input>
+                />
                 <div className = "reset-btn" onClick = {this.resetPasswordHandle}>确定</div>
                 <div className = "reset-btn" onClick = {this.returnHandle}>返回</div>
                 </div>
