@@ -30,9 +30,21 @@ export default class MainPage extends React.Component {
     }
 
     componentDidMount = async () => {
-        this.data = window.INIT_DATA
-
-    }
+        this.data = window.INIT_DATA;
+        // console.log("Parent Test:")
+        // document.domain = '39.108.68.159';
+        // var ifr = document.getElementById('iframeId');
+        // //var targetOrigin = 'http://39.108.68.159:5001'
+        // console.log("send here");
+        // window.addEventListener('message',function(event){
+        // console.log(event.data);
+        // document.getElementById('iframeId').contentWindow.postMessage('someMessage',"*");
+        // console.log("sent");})
+        // console.log("send done")
+        // document.getElementById('iframeId').onload=function(){
+        //     console.log("iframe load done");
+        // document.getElementById('iframeId').contentWindow.postMessage('someMessage',"*");}
+}
 
     showWxDialogHandle = () => {
         this.setState({
@@ -71,6 +83,7 @@ export default class MainPage extends React.Component {
                     <LoginView showWxDialogHandle={this.showWxDialogHandle}/>
                 </div>
             </div>
+            {/* <iframe id="iframeId"  ref="iframeRef"  className="iframeTest" src="http://39.108.68.159:5001/"   ></iframe> */}
             <div className="video">
                 <img className="video-title" src={require('./team-video.png')}/>
                 <div className="video-wrap">
