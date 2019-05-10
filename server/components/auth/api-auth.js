@@ -7,7 +7,6 @@ const generateCode = (serverName, timestamp) => {
     const hash = crypto.createHmac('sha256', secret)
         .update(`ihci${serverName}${timestamp}`)
         .digest('hex');
-    console.log(hash);
     return hash;
 };
 
