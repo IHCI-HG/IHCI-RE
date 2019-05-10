@@ -34,8 +34,8 @@ class App extends React.Component{
         menuQuitBgColor: '',
 
         showRemindCount: '',
-
-
+        
+        
     }
 
 
@@ -120,22 +120,23 @@ class App extends React.Component{
         this.setHeadImg()
     }
 
-
+   
     componentDidMount = async() => {
         this.activeTagHandle(this.props.location.pathname)
+  
         await this.initUnreadList()
+        
     }
 
 
-
+    
 
     setHeadImg = async () => {
         const result = await api('/api/getMyInfo',{
             method: 'POST',
             body: {}
         })
-        console.log(result)
-        if(result.data.userObj && result.data.userObj.personInfo) {
+        if(result.data.userObj && result.data.userObj.personInfo && result.data.userObj.personInfo.headImg) {
             this.setState({
                 headImg: result.data.userObj.personInfo.headImg,
                 menuName: result.data.userObj.personInfo.name,
@@ -232,30 +233,30 @@ class App extends React.Component{
             location.href = '/'
         }
 
-    }
+    } 
 
     render() {
         return (
             <div>
                 <div className='main-nav'>
                     {/* 头像-菜单栏 */}
-                    <div className="menu" style={{display:this.state.display}}
+                    <div className="menu" style={{display:this.state.display}} 
                     onMouseOver={this.handleMouseOver} onMouseOut={this.handleMouseOut}>
                         <div className="menuArrow" ></div>{/* 菜单箭头 */}
                         <div className="menuHeader" >
                             <div>{this.state.menuName}<small><i className="iconfont icon-people"></i></small></div>
                             <div>{this.state.menuEmail}</div>
                         </div>
-                        <div className="menuSet" onClick={this.routerHandle.bind(this, '/person')}
+                        <div className="menuSet" onClick={this.routerHandle.bind(this, '/person')} 
                         style={{backgroundColor:this.state.menuSetBgColor}}
                         onMouseOver={this.handleSetMouseOver} onMouseOut={this.handleSetMouseOut}>个人设置</div>
                         <div className="modifyPassword" onClick={this.routerHandle.bind(this,'/modify-password')}
                         style={{backgroundColor:this.state.menuModifyBgColor}}
                         onMouseOver={this.handleModifyMouseOver} onMouseOut={this.handleModifyMouseOut}>修改密码</div>
-                        <div className="menuCreate" onClick={() => {this.locationTo('/team-create')}}
+                        <div className="menuCreate" onClick={() => {this.locationTo('/team-create')}} 
                         style={{backgroundColor:this.state.menuCreateBgColor}}
                         onMouseOver={this.handleCreateMouseOver} onMouseOut={this.handleCreateMouseOut}>+创建团队</div>
-                        <div className="menuQuit" onClick={this.logOutHandle}
+                        <div className="menuQuit" onClick={this.logOutHandle} 
                         style={{backgroundColor:this.state.menuQuitBgColor}}
                         onMouseOver={this.handleQuitMouseOver} onMouseOut={this.handleQuitMouseOut}>退出</div>
                     </div>
@@ -277,31 +278,31 @@ class App extends React.Component{
                             </form>
                         </div>
 
-                        <div className='nav-item'
+                        <div className='nav-item' 
                         onClick={this.routerHandle.bind(this, '/person')}
-                        onMouseOver={this.handleMouseOver}
+                        onMouseOver={this.handleMouseOver} 
                         onMouseLeave={this.handleMouseOut}
-                        >
-                            <img className="head-img" src={this.state.headImg} />
-                        </div>
-
+                        >                           
+                            <img className="head-img" src={this.state.headImg} />                               
+                        </div>          
+                   
                         <div className='remind'>
                             <div className={this.state.showRemindCount > 0 ? 'shake' : ''}>
-                            <span className='iconfont icon-remind'  onClick={this.routerHandle.bind(this, '/inform')}></span>
+                            <span className='iconfont icon-remind'  onClick={this.routerHandle.bind(this, '/inform')}></span>                           
                             {
-                                this.state.showRemindCount > 0
-                                &&
+                                this.state.showRemindCount > 0 
+                                && 
                                 <span className="redPoint" onClick={this.routerHandle.bind(this, '/inform')} >{this.state.showRemindCount}</span>
-                            }
+                            }   
                             </div>
                         </div>
                     </div>
 
                 </div>
                 { this.props.children && React.cloneElement(this.props.children, {personInfo: this.state.personInfo, activeTagHandle: this.activeTagHandle.bind(this)}) }
-
+               
             </div>
-
+            
         )
     }
 }
@@ -318,15 +319,15 @@ const routeConfig = [
     },
     {
         path: '/team-join/:id',
-        component: TeamJoin
+        component: TeamJoin 
     },
     {
         path: '/wxcode',
-        component: WxCode
+        component: WxCode 
     },
     {
         path: '/wx-choose',
-        component: WxChoose
+        component: WxChoose 
     },
     {
         path: '/ihci-join',
