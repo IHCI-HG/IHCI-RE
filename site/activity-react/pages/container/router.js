@@ -56,6 +56,13 @@ const routerConf = [{
                 callback(null, require('./member').default);
             });
         }
+    },{
+        path: 'calendar',
+        getComponent: function (nextState, callback) {
+            require.ensure([], (require) => {
+                callback(null, require('./calendar').default);
+            });
+        }
     }, {
         path: 'inform',
         getComponent: function (nextState, callback) {

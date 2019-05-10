@@ -48,6 +48,8 @@ class TeamListItem extends React.PureComponent{
 export default class Team extends React.Component{
     componentDidMount = async() => {
         this.initTeamList()
+       
+      
     }
 
     initTeamList = async () => {
@@ -56,6 +58,7 @@ export default class Team extends React.Component{
             body: {}
         })
         const teamList = result.data.userObj.teamList
+
         const teamIdList = []
         teamList.map((item) => {
             teamIdList.push(item.teamId)
