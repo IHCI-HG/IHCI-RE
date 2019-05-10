@@ -41,7 +41,7 @@ const routerAuthJudge = async (req, res, next) => {
     //         res.redirect('/person')
     //         return
     //     }
-    // } 
+    // }
     if(!userId) {
         res.redirect('/')
         return
@@ -83,6 +83,7 @@ const test1 = async (req, res, next) => {
     res.send('dataStr1')
 }
 
+// WARNING: 如果域名变更或者本地IP调试将会导致出错。
 const addwww = async (req, res, next) => {
     console.log(req.url)
     if(req.url.indexOf('www.')=== -1){
@@ -111,7 +112,7 @@ const mainPage = async (req, res, next) => {
         renderData: {},
     };
     htmlProcessor(req, res, next, options)
-    
+
 }
 
 const teamPage = async (req, res, next) => {
