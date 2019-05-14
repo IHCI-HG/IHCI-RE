@@ -202,7 +202,7 @@ const forgotPassword = async (req, res) => {
 
 const signUp = async (req, res, next) => {
     const userInfo = req.body.userInfo
-    if (!userInfo.username || !userInfo.password || !userInfo.code) {
+    if (!userInfo.username || !userInfo.password || !userInfo.code || !userInfo.nickname) {
         resProcessor.jsonp(req, res, {
             state: {
                 code: 3000,
