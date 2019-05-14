@@ -28,6 +28,9 @@ var config = {
     'pubAppId': 'wx87136e7c8133efe3',
     'pubAppSe': '195592b5e345046e61b5efc33d4cb42d',
 
+    'smsAppId':'LTAIgR6dj6jHXHYY',
+    'smsAppSe':'KItFh8WqT8OpQXEIaAm8pCGQ6g33t9',
+
     'ossConf': {
         'ossAdminAccessKeyId': 'LTAIkrgpPKLOb6CJ',
         'ossAdminAccessKeySecret': 'STTW2qHnI6NLNuUJAjmom6rDSO2ksr',
@@ -37,6 +40,17 @@ var config = {
         'roleArn': 'acs:ram::1656281103392398:role/aliyunosstokengeneratorrole',
         'region': 'oss-cn-shenzhen',
         'bucket': 'arluber',
+    },
+
+    // mail: 'http://localhost:5000',
+    mailOrigin: 'http://localhost:5000',
+    mail: {
+        host: 'smtp.163.com', 
+        port: 25,
+        auth: {
+            user: 'ihci2018@163.com', //注册的邮箱账号
+            pass: 'ihci2018'  //邮箱的授权码，不是注册时的密码
+        }
     },
 
     db: 'mongodb://127.0.0.1:27017/ihci',

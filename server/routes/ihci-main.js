@@ -85,7 +85,7 @@ const test1 = async (req, res, next) => {
 
 const addwww = async (req, res, next) => {
     console.log(req.url)
-    if(req.url.indexOf('www.')=== -1){
+    if(req.url.indexOf('www.')=== -1&&req.url.indexOf('localhost')!== -1){
         res.redirect('https://www.animita.cn')
     }
     else{
