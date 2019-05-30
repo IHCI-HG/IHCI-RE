@@ -134,7 +134,7 @@ export class LoginView extends React.Component {
         if (confirmPassword) {
             createPasswordEmpty = false
         } else {
-            createPassworddEmpty = true
+            createPasswordEmpty = true
         }
         this.setState({
             createPassword: e.target.value,

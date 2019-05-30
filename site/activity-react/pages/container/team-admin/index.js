@@ -32,7 +32,7 @@ export default class TeamAdmin extends React.Component{
         console.log('111')
         this.teamId = this.props.params.id
         const teamId = this.teamId
-        this.initTeamInfo(this.teamId)
+        await this.initTeamInfo(this.teamId)
         let isOpenUserRightService = false       
         let inviteTeamMemberPermission = false
         let readTeamMemberPermission = false
@@ -58,7 +58,7 @@ export default class TeamAdmin extends React.Component{
             }else{
                 console.log('com in')
                 let isCreator = false
-                console.log( this.teamInfo.memberList)
+                console.log(this.teamInfo)
                 console.log(this.props.personInfo._id)
                 this.teamInfo.memberList.map((item) => {
         
@@ -93,6 +93,7 @@ export default class TeamAdmin extends React.Component{
             }
         })
         const teamObj = result.data.teamObj
+        console.log(teamObj)
         this.teamInfo = teamObj
         this.setState({
             name: teamObj.name,
@@ -229,6 +230,10 @@ export default class TeamAdmin extends React.Component{
         }
         return false
     }
+    userRightsServiceHandler = async()=>{
+        this.openUserRightsService()
+        location.href = `/user-rights-management/team/${this.teamId}`
+    }
     openUserRightsService = async () =>{
         const result = await api('/api/open-user-rights-service',{
             method:'POST',
@@ -354,7 +359,7 @@ export default class TeamAdmin extends React.Component{
 
                 <div className="team-admin-con page-wrap">
                     <div className="admin-title-bg">团队设置</div>
-                    {(this.state.userRightsService&&this.state.assignRolePermission&&this.state.isOpenUserRightService)&&<div className="user-rights-btn" onClick={()=>{location.href = `/user-rights-management/team/${this.teamId}`}}>角色权限服务</div>}
+                    {(this.state.userRightsService&&this.state.assignRolePermission&&this.state.isOpenUserRightService)&&<div className="user-rights-btn" onClick={this.userRightsServiceHandler}>角色权限服务</div>}
                     {(this.state.userRightsService&&this.state.assignRolePermission&&!this.state.isOpenUserRightService)&&<div className="user-rights-btn" onClick={this.openUserRightsService}>开启权限管理服务</div>}
                     <div className="admin-title-sm">团队名称</div>
                     <input type="text" value={this.state.name} className="admin-input" onChange={this.teamNameInputHandle} />

@@ -172,7 +172,18 @@ const joinTeam = async (req, res, next) => {
     const userId = req.rSession.userId
     const teamId = req.params.teamId
 
+    const userObj = await UserDB.findById(userId)
     const teamObj = await teamDB.findByTeamId(teamId)
+
+    try{
+        var result = await request("addOrganUser",{
+            organId:teamId,
+            userId:userId,
+            userName:userObj.personInfo.name
+        })
+    }catch(err){
+        console.log(err)
+    }
 
     const initData = {
         login: false,
