@@ -238,60 +238,75 @@ const silentAuth = async(req, res, next) => {
 }
 
 const userAuthJudge = async(req, res, next) => {
-    const userId = req.rSession.userId
-    const teamId = req.url.split('/')[2]
-    console.log('------------------------')
-    console.log(userId)
-    console.log(teamId)
-    var result = await axios.post("http://localhost:8081/authenticate",{
-        organId:teamId,
-        userId:userId,
-    })
-    console.log(result);
-    if(result.data.state.code === 0) {
-        const token = result.data.token
-        jwt.verify(token, jwtsecret, function(err, decoded) {      
-            if (err) {
-        //   return res.json({ success: false, message: '无效的token.' });    
-                console.log('无效的token');
-            } else {
-              // 如果验证通过，在req中写入解密结果
-              req.decoded = decoded;  
-              console.log(req)
-              console.log(decoded);
-            //   const obj = {
-            //       teamId:decoded.permissionNameList
-            //   }
-            const obj = {}
-            obj[teamId] = decoded.permissionValueList
-            //   window.sessionStorage.setItem(decoded.userId, obj);
-            req.rSession[userId] = obj;
-            console.log('$$$$$$$$$$$$$$$$$$$$');
-            console.log(req.rSession);
+    
+    try{
+        const userId = req.rSession.userId
+        const teamId = req.url.split('/')[2]
+        console.log('------------------------')
+        console.log(userId)
+        console.log(teamId)
+        var result = await axios.post("http://localhost:8081/authenticate",{
+            organId:teamId,
+            userId:userId,
+        })
+        console.log(result);
+        if(result.data.state.code === 0) {
+            const token = result.data.token
+            jwt.verify(token, jwtsecret, function(err, decoded) {      
+                if (err) {
+            //   return res.json({ success: false, message: '无效的token.' });    
+                    console.log('无效的token');
+                } else {
+                  // 如果验证通过，在req中写入解密结果
+                  req.decoded = decoded;  
+                  console.log(req)
+                  console.log(decoded);
+                //   const obj = {
+                //       teamId:decoded.permissionNameList
+                //   }
+                const obj = {}
+                obj[teamId] = decoded.permissionValueList
+                //   window.sessionStorage.setItem(decoded.userId, obj);
+                req.rSession['userRights'] = true
+                req.rSession[userId] = obj;
+                console.log('$$$$$$$$$$$$$$$$$$$$');
+                console.log(req.rSession);
+            }
+          });
+        }else{
+            console.log('come in')
+            // next()
         }
-      });
+        // if(req.url.indexOf('/discuss/topic/')!== -1){
+        //     const topicId = req.url.split('/')[3]
+        //     const topicObj = await topicDB.findByTopicId(topicId)
+        //     var teamId = topicObj.team
+        // }
+        // if(req.url.indexOf('/files/')!== -1||req.url.indexOf('/team/')!== -1||req.url.indexOf('/team-admin/')!== -1||req.url.indexOf('/completed/')!== -1){
+        //     var teamId = req.url.split('/')[2]
+        // }
+        // if(req.url.indexOf('/todo/')!==-1){
+        //     const taskId = req.url.split('/')[2]
+        //     const taskObj = await taskDB.findByTaskId(taskId)
+        //     var teamId = taskObj.teamId
+        // }
+        // const result = await roleDB.findRole(userId, teamId)
+        // if(req.url.indexOf('/team-admin/')!== -1&&result.role!=="creator"&&result.role!=="admin"){
+        //     res.redirect(`/team/${teamId}`)
+        // }
+        // req.INIT_DATA = {
+        //     role: result?result.role:"visitor"
+        // }
+        next()
+
+    }catch(err){
+        console.log('come in err')
+        req.rSession['userRights'] = false
+        console.log('have set false')
+        next()
+
     }
-    // if(req.url.indexOf('/discuss/topic/')!== -1){
-    //     const topicId = req.url.split('/')[3]
-    //     const topicObj = await topicDB.findByTopicId(topicId)
-    //     var teamId = topicObj.team
-    // }
-    // if(req.url.indexOf('/files/')!== -1||req.url.indexOf('/team/')!== -1||req.url.indexOf('/team-admin/')!== -1||req.url.indexOf('/completed/')!== -1){
-    //     var teamId = req.url.split('/')[2]
-    // }
-    // if(req.url.indexOf('/todo/')!==-1){
-    //     const taskId = req.url.split('/')[2]
-    //     const taskObj = await taskDB.findByTaskId(taskId)
-    //     var teamId = taskObj.teamId
-    // }
-    // const result = await roleDB.findRole(userId, teamId)
-    // if(req.url.indexOf('/team-admin/')!== -1&&result.role!=="creator"&&result.role!=="admin"){
-    //     res.redirect(`/team/${teamId}`)
-    // }
-    // req.INIT_DATA = {
-    //     role: result?result.role:"visitor"
-    // }
-    next()
+   
 }
 
 module.exports = [

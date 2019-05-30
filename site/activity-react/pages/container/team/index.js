@@ -144,7 +144,6 @@ export default class Team extends React.Component{
             <Page title="团队 - IHCI" className="team-page">
                 <div className="page-wrap">
                     <div className="main">
-                        <button onClick={()=>{location.href = `/system-user-rights-management/system`}}>系统权限管理</button>
                         <div className="carete" onClick={() => {this.locationTo('/team-create')}}> 创建团队 </div>
                         <div className="head" onClick={this.starHandle}>星标团队</div>
                         <div className="team-list">

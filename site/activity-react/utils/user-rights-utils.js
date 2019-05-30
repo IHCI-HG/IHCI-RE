@@ -1,4 +1,11 @@
 import api from './api';
+const userRightsServiceOpen = async function () {
+    const result = await api('/api/userRightsServiceOpen',{
+        method:'POST'
+    })
+    console.log(result)
+    return result
+};
 const permissionJudgeList = async function(teamId) {
     console.log(teamId)
     const result = await api('/api/permissionJudgeList', {
@@ -27,3 +34,4 @@ const isOpenUserRightServiceResult = async function(teamId) {
 
 export { permissionJudgeList };
 export { isOpenUserRightServiceResult };
+export { userRightsServiceOpen };

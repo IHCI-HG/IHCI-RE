@@ -895,6 +895,7 @@ const permissionJudge = async(req,res,next) =>{
     }
 
 }
+
 const getPermissionJudgeList = async(req,res,next) =>{
     const teamId = req.body.teamId
     const userId = req.rSession.userId
@@ -919,6 +920,30 @@ const getPermissionJudgeList = async(req,res,next) =>{
             data: {
             }
         });
+    }
+}
+
+
+const userRightsServiceOpen = async(req,res,next) =>{
+    console.log('come in !!!')
+    if(req.rSession['userRights']){
+        resProcessor.jsonp(req, res, {
+            state: {
+                code: 0,
+                msg: '权限管理服务器开'
+            },
+            data: {
+            }
+        });
+    }else{
+        resProcessor.jsonp(req, res, {
+            state: {
+                code: -1,
+                msg: '权限管理服务器关'
+            },
+            data: {
+            }
+        }); 
     }
 }
 
@@ -961,5 +986,6 @@ module.exports = [
     ['POST', '/api/user/wxEnter', wxEnter],
 
     ['POST','/api/permissionJudge',permissionJudge],
-    ['POST','/api/permissionJudgeList',getPermissionJudgeList]
+    ['POST','/api/permissionJudgeList',getPermissionJudgeList],
+    ['POST','/api/userRightsServiceOpen',userRightsServiceOpen]
 ];

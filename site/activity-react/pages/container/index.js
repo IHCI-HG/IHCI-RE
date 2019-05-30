@@ -20,6 +20,7 @@ class App extends React.Component{
         activeTag : '',
         menuName: '',
         menuEmail: '',
+        username:'',
 
         headImg: require('./DefaultImage.jpg'),
         infoImg: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1529474819406&di=267791f485fba8aa30e0adc8f0eede6b&imgtype=0&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimgad%2Fpic%2Fitem%2Fb8014a90f603738d6c070f19b81bb051f819ecb8.jpg',
@@ -32,6 +33,7 @@ class App extends React.Component{
         menuModifyBgColor:'',
         menuCreateBgColor: '',
         menuQuitBgColor: '',
+        menuUserRightsBgColor:'',
 
         showRemindCount: '',
         
@@ -46,7 +48,9 @@ class App extends React.Component{
     handleModifyMouseOut = this.handleModifyMouseOut.bind(this);
     handleModifyMouseOver = this.handleModifyMouseOver.bind(this);
     handleCreateMouseOver = this.handleCreateMouseOver.bind(this);
+    handleSystemUserRightsManageOver = this.handleSystemUserRightsManageOver.bind(this);
     handleCreateMouseOut = this.handleCreateMouseOut.bind(this);
+    handleSystemUserRightsManageOut = this.handleSystemUserRightsManageOut.bind(this);
     handleQuitMouseOver = this.handleQuitMouseOver.bind(this);
     handleQuitMouseOut = this.handleQuitMouseOut.bind(this);
 
@@ -97,6 +101,16 @@ class App extends React.Component{
             menuCreateBgColor: '#ccc'
         })
     }
+    handleSystemUserRightsManageOver() {
+        this.setState({
+            menuUserRightsBgColor: '#ccc'
+        })
+    }
+    handleSystemUserRightsManageOut(){
+        this.setState({
+            menuUserRightsBgColor: 'whitesmoke'
+        })
+    }
     handleCreateMouseOut() {
         this.setState({
             menuCreateBgColor: 'whitesmoke'
@@ -139,6 +153,7 @@ class App extends React.Component{
                     ...result.data.userObj,
                     ...result.data.userObj.personInfo,
                 },
+                username:result.data.userObj.username
             })
         }
         if (!(/team-join/.test(this.props.location.pathname)) && !this.infoAllFilled()){
@@ -247,6 +262,10 @@ class App extends React.Component{
                         <div className="menuCreate" onClick={() => {this.locationTo('/team-create')}} 
                         style={{backgroundColor:this.state.menuCreateBgColor}}
                         onMouseOver={this.handleCreateMouseOver} onMouseOut={this.handleCreateMouseOut}>+创建团队</div>
+                       {this.state.username==='2'&&
+                       <div className="menuCreate" onClick={()=>{location.href = `/system-user-rights-management/system`}}
+                        style={{backgroundColor:this.state.menuUserRightsBgColor}}
+                        onMouseOver={this.handleSystemUserRightsManageOver} onMouseOut={this.handleSystemUserRightsManageOut}>系统权限管理</div>} 
                         <div className="menuQuit" onClick={this.logOutHandle} 
                         style={{backgroundColor:this.state.menuQuitBgColor}}
                         onMouseOver={this.handleQuitMouseOver} onMouseOut={this.handleQuitMouseOut}>退出</div>

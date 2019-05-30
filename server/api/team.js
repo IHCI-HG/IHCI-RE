@@ -486,22 +486,27 @@ const openUserRightService = async (req, res, next) => {
 }
 
 const isOpenUserRightService = async (req,res,next) =>{
-    const teamId = req.body.teamId
-    var result = await axios.post("http://localhost:8081/findOrgan",{
-        organId:teamId
-    })
-    console.log(result)
-    if(result.data.state.code === 0){
-        resProcessor.jsonp(req, res, {
-			state: { code: 0, msg: '' },
-			data: {}
-		});
-    }else{
-        resProcessor.jsonp(req, res, {
-			state: { code: -1, msg: '该团队还未开启权限管理服务' },
-			data: {}
-		});
+    try{
+        const teamId = req.body.teamId
+        var result = await axios.post("http://localhost:8081/findOrgan",{
+            organId:teamId
+        })
+        console.log(result)
+        if(result.data.state.code === 0){
+            resProcessor.jsonp(req, res, {
+                state: { code: 0, msg: '' },
+                data: {}
+            });
+        }else{
+            resProcessor.jsonp(req, res, {
+                state: { code: -1, msg: '该团队还未开启权限管理服务' },
+                data: {}
+            });
+        }
+    }catch(err){
+        console.log(err)
     }
+    
 }
 
 //发送团队成员信息给子系统

@@ -11,7 +11,7 @@ import Editor from '../../../components/editor'
 import fileUploader from '../../../utils/file-uploader'
 import TopicItem from '../../../components/topic-item'
 import {create} from '../../../../../server/components/uuid/uuid'
-import { permissionJudgeList,isOpenUserRightServiceResult } from '../../../utils/user-rights-utils';
+import { permissionJudgeList,isOpenUserRightServiceResult,userRightsServiceOpen } from '../../../utils/user-rights-utils';
 
  
 class TeamChoseItem extends React.PureComponent {
@@ -60,27 +60,44 @@ export default class TeamDetail extends React.Component {
     componentDidMount = async () => {
         this.teamId = this.props.params.id
         const teamId = this.teamId
-        const permissionList =await permissionJudgeList(teamId);
+        const userRightsServiceOpenResult = await userRightsServiceOpen()
+        console.log(userRightsServiceOpenResult)
         let isOpenUserRightService = false
-        let operateTeamSettingPermission = false
-        let deleteFilePermission = false
 
-        const isOpen = await isOpenUserRightServiceResult(teamId);
-        if(isOpen){
-            isOpenUserRightService = true
+        if(userRightsServiceOpenResult.state.code === 0){
+            const isOpen = await isOpenUserRightServiceResult(teamId);
+            console.log('is opne')
+            console.log(isOpen)
+            if(isOpen){
+                isOpenUserRightService = true
+                const permissionList =await permissionJudgeList(teamId);
+                
+                let operateTeamSettingPermission = false
+                let deleteFilePermission = false
+        
+               
+                if(permissionList.indexOf('operateTeamSetting') !== -1){
+                    operateTeamSettingPermission = true
+                }
+                if(permissionList.indexOf('deleteFile') !== -1){
+                    console.log('can delete')
+                    deleteFilePermission = true
+                }
+                this.setState({
+                    isOpenUserRightService,
+                    operateTeamSettingPermission,
+                    deleteFilePermission
+                })
+            }else{
+                this.setState({
+                    isOpenUserRightService
+                })
+            }
+            
+            
         }
-        if(permissionList.indexOf('operateTeamSetting') !== -1){
-            operateTeamSettingPermission = true
-        }
-        if(permissionList.indexOf('deleteFile') !== -1){
-            console.log('can delete')
-            deleteFilePermission = true
-        }
-        this.setState({
-            isOpenUserRightService,
-            operateTeamSettingPermission,
-            deleteFilePermission
-        })
+        
+       
         this.initTeamInfo()
         this.initTeamFile()
     }
@@ -809,6 +826,7 @@ export default class TeamDetail extends React.Component {
     }
 
     render() {
+        console.log(this.state.isOpenUserRightService)
         let teamInfo = this.state.teamInfo
         console.log((this.state.isOpenUserRightService&&this.state.operateTeamSettingPermission)||(!this.state.isOpenUserRightService&&this.state.isCreator == 'creator'))
         return (
