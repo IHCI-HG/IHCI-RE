@@ -134,7 +134,6 @@ class App extends React.Component{
             method: 'POST',
             body: {}
         })
-        console.log(result)
         if(result.data.userObj && result.data.userObj.personInfo) {
             this.setState({
                 headImg: result.data.userObj.personInfo.headImg,
@@ -204,8 +203,8 @@ class App extends React.Component{
         else if(/timeline/.test(url)) {
             this.setState({activeTag: 'timeline'})
         }
-        else if(/calendar/.test(url)) {
-            this.setState({activeTag: 'calendar'})
+        else if(/select-calendar/.test(url)) {
+            this.setState({activeTag: 'select-calendar'})
         }
         else{
             this.setState({activeTag: ''})
@@ -266,7 +265,7 @@ class App extends React.Component{
                             <span className={this.state.activeTag == 'team' ? 'nav-item active' : 'nav-item'} onClick={this.routerHandle.bind(this, '/team')}>团队</span>
                             <span className={this.state.activeTag == 'timeline' ? 'nav-item active' : 'nav-item'} onClick={this.routerHandle.bind(this, '/timeline')}>动态</span>
                             <span className={this.state.activeTag == 'member' ? 'nav-item active' : 'nav-item'} onClick={this.routerHandle.bind(this, '/member')}>成员</span>
-                            <span className={this.state.activeTag == 'calendar' ? 'nav-item active' : 'nav-item'} onClick={this.routerHandle.bind(this, '/calendar')}>日历</span>
+                            <span className={this.state.activeTag == 'select-calendar' ? 'nav-item active' : 'nav-item'} onClick={this.routerHandle.bind(this, '/select-calendar')}>日历</span>
                         </div>
                     </div>
                     <div className="person">

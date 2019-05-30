@@ -1,0 +1,78 @@
+.calendar-page {
+    padding: 0.4rem 0;
+    .carete {
+        cursor: pointer;
+        right: 60px;
+        top: 80px;
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        font-size: 22px;
+        color: #666;
+        font-weight: bold;
+        &:hover{
+            color:#444;
+        }
+    }
+    .main{
+        padding: 0.4rem 0.4rem;
+    }
+    .iframeTest{
+        width: 800px;
+        height: 500px;
+    }
+
+    .teamCardTitle{
+        padding: 10px;
+        font-weight: bold;
+        font-size: 20px;
+    }
+
+    .teamCardShow{
+        display: flex;
+    }
+
+    .teamCardBackground{
+        padding: 20px;
+    }
+
+    .teamCardContent{
+        width: 200px;
+        div{
+            img{
+                width: 200px;
+                height: 200px;
+            }
+        }
+        p{
+            padding: 10px;
+            font-size: 20px;
+            text-align: center;
+            text-overflow:ellipsis;
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            width: 200px;
+        }
+    }
+
+
+    @media only screen and (min-width: 768px){
+        .page-wrap{
+            width: 100%!important;
+            .main{
+                // padding: 0.4rem 0.4rem;
+                .iframeTest{
+                    width: 100%;
+                    margin-bottom: -1px;
+
+                }
+                .clearFloat{
+                    clear: both;
+                }
+            }
+
+        }
+    }
+}
