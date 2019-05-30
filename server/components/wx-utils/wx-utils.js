@@ -120,9 +120,9 @@ export const pub_accessTokenToFollowerList = async function(){
 export const pub_pushTemplateMsg = async function (openid, templateId, url, data) {
     console.log("..........................")
     console.log("come in")
- 
+
     const accseeToken = await pub_getAccessToken()
-   
+
     const result = await fetch(`https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=${accseeToken}`, {
         method: 'post',
         body: JSON.stringify({
@@ -151,10 +151,10 @@ export const pub_pushTemplateMsg = async function (openid, templateId, url, data
 export const createTopicTemplate = async function (userIdList, topicObj) {
     console.log("=====================")
     const openidList = await userDB.openidList(userIdList)
-  
+
     const content = topicObj.content.split("<")[1].split(">")[1]
     openidList.map((item) => {
-      
+
         console.log(topicObj._id)
         if (typeof item.openid == 'string') {
             pub_pushTemplateMsg(
@@ -260,7 +260,7 @@ export const applyIntoTeam = async function (userIdList, userObj) {
 //批准加入团队
 export const admitIntoTeam = async function (userIdList, teamObj) {
     const opneidList = await userDB.openidList(userIdList)
-    
+
 
     openList.map((item) => {
         if (typeof item.openid == 'string') {
@@ -295,7 +295,7 @@ export const closeToDDLTemplate = async function (headerList,taskObj){
                 'http://www.animita.cn/todo/' + taskObj.id,
                 {
                     "first": {
-                        "value": taskObj.title + " 即将到截止日期 " 
+                        "value": taskObj.title + " 即将到截止日期 "
                     }
                 }
             )
@@ -314,7 +314,7 @@ export const createTaskTemplate = async function (headerList, taskObj, headernam
     openidList.map((item) => {
         console.log(typeof item.openid)
         if (typeof item.openid == 'string') {
-            
+
             pub_pushTemplateMsg(
                 item.openid,
                 'p6pZBXX0SaqODRDZgY_3NqyIAK0mYN9HXYq6yMLyA04',
@@ -340,11 +340,11 @@ export const createTaskTemplate = async function (headerList, taskObj, headernam
                     }
                 }
             )
-            
+
         }
     })
-   
-    
+
+
 }
 
 export const delTaskTemplate = async function (headerList, taskObj) {
@@ -414,7 +414,7 @@ export const delHeaderTemplate = async function (headerList, taskObj, headername
 
 export const compTaskTemplate = async function (creatorId, taskObj , headername) {
     const openidList = await userDB.openidList(creatorId)
-    
+
 
     openidList.map((item) => {
         if (typeof item.openid == 'string') {
@@ -448,8 +448,8 @@ export const compTaskTemplate = async function (creatorId, taskObj , headername)
 export const createCheckitemTemplate = async function (headerList, checkitemObj, headername) {
     console.log("********************")
     const openidList = await userDB.openidList(headerList)
- 
-    
+
+
 
     openidList.map((item) => {
         if (typeof item.openid == 'string') {
@@ -514,7 +514,7 @@ export const delCheckitemTemplate = async function (headerList, checkitemObj) {
 export const delCheckHeaderTemplate = async function (headerList, checkitemObj, headername) {
     const openidList = await userDB.openidList(headerList)
     const content = checkitemObj.content.split("<")[1].split(">")[1]
-    
+
 
     openidList.map((item) => {
         if (typeof item.openid == 'string') {
@@ -546,6 +546,47 @@ export const delCheckHeaderTemplate = async function (headerList, checkitemObj, 
 
 export const compCheckitemTemplate = async function (creatorId, checkitemObj , headername) {
     const openidList = await userDB.openidList(creatorId)
+    const content = checkitemObj.content.split("<")[1].split(">")[1]
+
+    openidList.map((item) => {
+        if (typeof item.openid == 'string') {
+            pub_pushTemplateMsg(
+                item.openid,
+                'p6pZBXX0SaqODRDZgY_3NqyIAK0mYN9HXYq6yMLyA04',
+                'http://www.animita.cn/todo/' + checkitemObj._id,
+                {
+                    "first": {
+                        "value": headername + " 完成了任务",
+                    },
+                    "keyword1": {
+                        "value": content,
+                    },
+                    "keyword2": {
+                        "value": formatDate(new Date()),
+                    },
+                    "keyword3": {
+                        "value": "已完成",
+                    },
+                    "remark": {
+                        "value": "点击查看",
+                    }
+                }
+            )
+        }
+    })
+}
+
+/**
+ * [WIP]
+ * This function is used to send msg to usr's wechat that he
+ * is mentioned by someone in calendar's schedule.
+ * @param targetUsrId: userId of receiver
+ * @param sourceUsrId: userId of sender
+ * @param scheduleId: the scheduleId of the schedule in calendar.
+ * @return {Promise<void>}
+ */
+export const remindSchedule = async function (targetUsrId, sourceUsrId, scheduleId) {
+    const openidList = await userDB.openidList([creatorId])
     const content = checkitemObj.content.split("<")[1].split(">")[1]
 
     openidList.map((item) => {
