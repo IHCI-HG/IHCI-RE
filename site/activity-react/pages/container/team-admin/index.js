@@ -1,14 +1,74 @@
 import * as React from 'react';
 import './style.scss'
 import api from '../../../utils/api';
+import { permissionJudgeList,isOpenUserRightServiceResult } from '../../../utils/user-rights-utils';
 import Page from '../../../components/page'
 import fileUploader from '../../../utils/file-uploader';
 import {create} from '../../../../../server/components/uuid/uuid'
 
 export default class TeamAdmin extends React.Component{
+    state = {
+        name: '',
+        teamImg: '',
+        desc: '',
+
+        memberList: [],
+        showAddMemberDialog: false,
+
+        infoCheck:{
+            illegalName: false,
+
+        },
+
+        isOpenUserRightService:false,
+
+        inviteTeamMemberPermission:false,
+        readTeamMemberPermission:false,
+        assignRolePermission:false
+
+    }
     componentDidMount = async() => {
         this.teamId = this.props.params.id
+        const teamId = this.teamId
         this.initTeamInfo(this.teamId)
+
+        const permissionList =await permissionJudgeList(teamId);
+
+        let inviteTeamMemberPermission = false
+        let readTeamMemberPermission = false
+        let assignRolePermission = false
+        let isOpenUserRightService = false
+
+        if(permissionList.indexOf('inviteTeamMember')!== -1){
+            inviteTeamMemberPermission = true
+        }
+        if(permissionList.indexOf('readTeamMember') !== -1){
+            readTeamMemberPermission = true
+        }
+        if(permissionList.indexOf('assignRolePermission') !== -1){
+            assignRolePermission = true
+        }
+        const isOpen = await isOpenUserRightServiceResult(teamId);
+        if(isOpen){
+            isOpenUserRightService = true
+        }
+        if(!isOpen){
+            let isCreator = false
+            this.teamInfo.memberList.map((item) => {
+                if(item.userId == this.props.personInfo._id && item.role == 'creator') {
+                    let isCreator = true
+                } 
+            })
+            if(isCreator) {
+                assignRolePermission = true
+            }
+        }
+        this.setState({
+            inviteTeamMemberPermission,
+            readTeamMemberPermission,
+            assignRolePermission,
+            isOpenUserRightService
+        })
     }
 
     initTeamInfo = async (teamId) => {
@@ -50,20 +110,7 @@ export default class TeamAdmin extends React.Component{
         })
     }
 
-    state = {
-        name: '',
-        teamImg: '',
-        desc: '',
-
-        memberList: [],
-        showAddMemberDialog: false,
-
-        infoCheck:{
-            illegalName: false,
-
-        }
-
-    }
+    
 
     isName = (name) => {
         const reg = /^[\u4E00-\u9FA5A-Za-z]{1}[\u4E00-\u9FA5A-Za-z0-9_\-]{0,11}$/;
@@ -168,7 +215,19 @@ export default class TeamAdmin extends React.Component{
         }
         return false
     }
-
+    openUserRightsService = async () =>{
+        const result = await api('/api/open-user-rights-service',{
+            method:'POST',
+            body:{
+                teamId:this.teamId
+            }
+        })
+        if(result.state.code === 0) {
+        this.setState({
+            isOpenUserRightService:true
+        })
+    }
+    }
     saveBtnHandle = async () => {
         var infoCheckIllegal = this.infoCheckIllegal()
 
@@ -275,8 +334,8 @@ export default class TeamAdmin extends React.Component{
 
                 <div className="team-admin-con page-wrap">
                     <div className="admin-title-bg">团队设置</div>
-                    
-
+                    {this.state.assignRolePermission&&this.state.isOpenUserRightService&&<div className="user-rights-btn" onClick={()=>{location.href = `/user-rights-management/team/${this.teamId}`}}>角色权限服务</div>}
+                    {this.state.assignRolePermission&&!this.state.isOpenUserRightService&&<div className="user-rights-btn" onClick={this.openUserRightsService}>开启权限管理服务</div>}
                     <div className="admin-title-sm">团队名称</div>
                     <input type="text" value={this.state.name} className="admin-input" onChange={this.teamNameInputHandle} />
                     {this.state.infoCheck.illegalName && <div className="after error">名字以不超过12个的英文、汉字、数字、下划线与短横构成</div>}
@@ -294,30 +353,33 @@ export default class TeamAdmin extends React.Component{
 
                     <div className="sava-btn" onClick={this.saveBtnHandle}>保存设置</div>
 
-                    <div className="admin-title-bg flex"> <span>团队成员管理</span> <span className='add' onClick={this.showAddMemberDialogHandle}>添加成员</span> </div>
-
-                    <div className="member-list">
-                        {
-                            this.state.memberList.map((item) => {
-                                return(
-                                    <div className="member-item" key={'member-item-' + item._id}>
-                                        <img src={item.headImg} alt="" className="head-img"/>
-                                        <span className="name">{item.name}</span>
-                                        <span className="phone">{item.phone}</span>
-                                        <span className="mail">{item.mail}</span>
-                                        <span className="role" onClick={this.showAdminHandle.bind(this, item._id)}>{item.role} {item.showAdmin ? '↑' : '↓'} </span>
-                                        {
-                                            item.showAdmin && <div className="admin">
-                                                {/* <div className="admin-item" onClick={this.setUserRoleHandle.bind(this, item._id, 'admin')}>管理员</div>*}
-                                                <div className="admin-item" onClick={this.setUserRoleHandle.bind(this, item._id, 'member')}>成员</div>*/}
-                                                <div className="admin-item" onClick={this.kikMember.bind(this, item._id)}>踢出队伍</div>
-                                            </div>
-                                        }
-                                    </div>
-                                )
-                            })
-                        }
+                    <div className="admin-title-bg flex"> <span>团队成员管理</span>
+                        {this.state.inviteTeamMemberPermission&&<span className='add' onClick={this.showAddMemberDialogHandle}>添加成员</span> } 
                     </div>
+                    {this.state.readTeamMemberPermission&&
+                     <div className="member-list">
+                     {
+                         this.state.memberList.map((item) => {
+                             return(
+                                 <div className="member-item" key={'member-item-' + item._id}>
+                                     <img src={item.headImg} alt="" className="head-img"/>
+                                     <span className="name">{item.name}</span>
+                                     <span className="phone">{item.phone}</span>
+                                     <span className="mail">{item.mail}</span>
+                                     <span className="role" onClick={this.showAdminHandle.bind(this, item._id)}>{item.role} {item.showAdmin ? '↑' : '↓'} </span>
+                                     {
+                                         item.showAdmin && <div className="admin">
+                                             {/* <div className="admin-item" onClick={this.setUserRoleHandle.bind(this, item._id, 'admin')}>管理员</div>*}
+                                             <div className="admin-item" onClick={this.setUserRoleHandle.bind(this, item._id, 'member')}>成员</div>*/}
+                                             <div className="admin-item" onClick={this.kikMember.bind(this, item._id)}>踢出队伍</div>
+                                         </div>
+                                     }
+                                 </div>
+                             )
+                         })
+                     }
+                 </div>}
+                   
                 </div>
 
             </Page>

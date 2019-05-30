@@ -12,6 +12,10 @@ var path = require('path'),
     server = require('../server'),
     url = require('url');
 
+const axios = require('axios')
+const jwt    = require('jsonwebtoken');
+const jwtsecret = 'myjwttest'
+
 var pageHandle = require('../components/page-handle/page-handle')
 var querystring = require('querystring');
 var activityApi = require('../api/activity');
@@ -54,6 +58,17 @@ const wxJudge = async (req, res, next) => {
     }
     next()
 }
+
+
+// const getPermissionJudge = async (req,res,next) =>{
+//    //看看怎么写入cookie，如果写不仅去就写到sotorage
+//    console.log(req);
+// }
+
+const permissionJudge = async( req , res , next) => {
+    
+}
+
 async function address(req, res, next) {
     var filePath = path.resolve(__dirname, '../../public/activity/page/address/full.html'),
     options = {
@@ -212,27 +227,59 @@ const silentAuth = async(req, res, next) => {
 }
 
 const userAuthJudge = async(req, res, next) => {
-    var userId = req.rSession.userId
-    if(req.url.indexOf('/discuss/topic/')!== -1){
-        const topicId = req.url.split('/')[3]
-        const topicObj = await topicDB.findByTopicId(topicId)
-        var teamId = topicObj.team
+    const userId = req.rSession.userId
+    const teamId = req.url.split('/')[2]
+    console.log('------------------------')
+    console.log(userId)
+    console.log(teamId)
+    var result = await axios.post("http://localhost:8081/authenticate",{
+        organId:teamId,
+        userId:userId,
+    })
+    console.log(result);
+    if(result.data.state.code === 0) {
+        const token = result.data.token
+        jwt.verify(token, jwtsecret, function(err, decoded) {      
+            if (err) {
+        //   return res.json({ success: false, message: '无效的token.' });    
+                console.log('无效的token');
+            } else {
+              // 如果验证通过，在req中写入解密结果
+              req.decoded = decoded;  
+              console.log(req)
+              console.log(decoded);
+            //   const obj = {
+            //       teamId:decoded.permissionNameList
+            //   }
+            const obj = {}
+            obj[teamId] = decoded.permissionValueList
+            //   window.sessionStorage.setItem(decoded.userId, obj);
+            req.rSession[userId] = obj;
+            console.log('$$$$$$$$$$$$$$$$$$$$');
+            console.log(req.rSession);
+        }
+      });
     }
-    if(req.url.indexOf('/files/')!== -1||req.url.indexOf('/team/')!== -1||req.url.indexOf('/team-admin/')!== -1||req.url.indexOf('/completed/')!== -1){
-        var teamId = req.url.split('/')[2]
-    }
-    if(req.url.indexOf('/todo/')!==-1){
-        const taskId = req.url.split('/')[2]
-        const taskObj = await taskDB.findByTaskId(taskId)
-        var teamId = taskObj.teamId
-    }
-    const result = await roleDB.findRole(userId, teamId)
-    if(req.url.indexOf('/team-admin/')!== -1&&result.role!=="creator"&&result.role!=="admin"){
-        res.redirect(`/team/${teamId}`)
-    }
-    req.INIT_DATA = {
-        role: result?result.role:"visitor"
-    }
+    // if(req.url.indexOf('/discuss/topic/')!== -1){
+    //     const topicId = req.url.split('/')[3]
+    //     const topicObj = await topicDB.findByTopicId(topicId)
+    //     var teamId = topicObj.team
+    // }
+    // if(req.url.indexOf('/files/')!== -1||req.url.indexOf('/team/')!== -1||req.url.indexOf('/team-admin/')!== -1||req.url.indexOf('/completed/')!== -1){
+    //     var teamId = req.url.split('/')[2]
+    // }
+    // if(req.url.indexOf('/todo/')!==-1){
+    //     const taskId = req.url.split('/')[2]
+    //     const taskObj = await taskDB.findByTaskId(taskId)
+    //     var teamId = taskObj.teamId
+    // }
+    // const result = await roleDB.findRole(userId, teamId)
+    // if(req.url.indexOf('/team-admin/')!== -1&&result.role!=="creator"&&result.role!=="admin"){
+    //     res.redirect(`/team/${teamId}`)
+    // }
+    // req.INIT_DATA = {
+    //     role: result?result.role:"visitor"
+    // }
     next()
 }
 
@@ -269,5 +316,6 @@ module.exports = [
     ['GET', '/inform', clientParams(),   routerAuthJudge, personSeting, pageHandle() ],
 	['GET', '/wxcode', clientParams(),  pageHandle() ],
 	
-	['GET', '/user-rights-management',  pageHandle() ],
+    ['GET', '/user-rights-management/:actor/:teamId',  pageHandle() ],
+    ['GET', '/system-user-rights-management/:actor',  pageHandle() ],
 ];

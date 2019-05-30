@@ -29,6 +29,8 @@ const getTeamId = async(req, res, next) => {
     }
 }
 export const isMember = async (req, res, next) =>{
+    console.log('!!!!!!!!!!!!!!!!!!!')
+    console.log(req.rSession)
     var teamId = await getTeamId(req, res, next)
     if(!teamId){
         next()

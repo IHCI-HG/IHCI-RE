@@ -422,6 +422,88 @@ const teamInfo = async (req, res, next) => {
     }
 }
 
+
+const openUserRightService = async (req, res, next) => {
+    console.log('come in');
+    const teamId = req.body.teamId  
+    console.log(teamId)
+    try{
+    if (!teamId) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 3000, msg: "参数不全" },
+            data: {}
+        });
+        return
+    }
+
+    // const memberIdAndRole = []
+    const teamObj = await teamDB.findByTeamId(teamId)
+    if (!teamObj) {
+        resProcessor.jsonp(req, res, {
+            state: { code: 3001, msg: '团队不存在' },
+            data: {}
+        });
+        return
+    }
+    // console.log('come in this?')
+    // teamObj.memberList.map((item)=>{   
+    //     console.log(item)
+    //     let obj = {
+    //         userId:item.userId,
+    //         role:item.role
+    //     }        
+    //     memberIdAndRole.push(obj)
+    // })
+
+    const memberList = []
+    await Promise.all ( teamObj.memberList.map(async item => {
+        const memberObj = await userDB.findByUserId(item.userId)  
+        memberList.push({
+            userId:memberObj._id,
+            userName:memberObj.personInfo.name,
+            role:item.role
+        })          
+        }))    
+    console.log(memberList,teamObj.name,memberList)
+    var result = await axios.post("http://localhost:8081/createOrganizationUserRights",{
+        organId:teamId,
+        organName:teamObj.name,
+        memberList:memberList
+    })
+    console.log(result)
+    
+    resProcessor.jsonp(req, res, {
+        state: { code: 0, msg: '请求成功',data:memberList }
+    });
+    
+    }catch(err){
+        resProcessor.jsonp(req, res, {
+            state: { code: 1000, msg: '操作失败' },
+            data: {}
+        });
+    }
+    
+}
+
+const isOpenUserRightService = async (req,res,next) =>{
+    const teamId = req.body.teamId
+    var result = await axios.post("http://localhost:8081/findOrgan",{
+        organId:teamId
+    })
+    console.log(result)
+    if(result.data.state.code === 0){
+        resProcessor.jsonp(req, res, {
+			state: { code: 0, msg: '' },
+			data: {}
+		});
+    }else{
+        resProcessor.jsonp(req, res, {
+			state: { code: -1, msg: '该团队还未开启权限管理服务' },
+			data: {}
+		});
+    }
+}
+
 //发送团队成员信息给子系统
 const sendTeamMemberList = async (req, res, next) => {
     console.log('come in')
@@ -704,7 +786,9 @@ module.exports = [
 	['POST', '/api/team/info', apiAuth, teamInfo],
 
 	//测试状态，还没有判断登陆
-	['POST','/api/user-rights-management',sendTeamMemberList],
+    ['POST','/api/user-rights-management',sendTeamMemberList],
+    ['POST','/api/open-user-rights-service',openUserRightService],
+    ['POST','/api/is-open-user-right-service',isOpenUserRightService],
 	
     ['POST', '/api/team/infoList', apiAuth, teamInfoList],
 

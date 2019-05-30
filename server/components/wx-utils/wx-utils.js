@@ -84,6 +84,7 @@ export const pub_getAccessToken = async function () {
 
     // 先从缓存中找access_token
     let accseeToken = await redisPromiseGet('pub_access_token')
+    console.log(accseeToken)
     if (accseeToken) {
         return accseeToken
     }
@@ -122,6 +123,8 @@ export const pub_pushTemplateMsg = async function (openid, templateId, url, data
     console.log("come in")
  
     const accseeToken = await pub_getAccessToken()
+
+    console.log('accessToken')
    
     const result = await fetch(`https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=${accseeToken}`, {
         method: 'post',
@@ -308,11 +311,13 @@ export const closeToDDLTemplate = async function (headerList,taskObj){
 export const createTaskTemplate = async function (headerList, taskObj, headername) {
     console.log("########################")
     console.log(headername)
+    console.log(headerList)
     const openidList = await userDB.openidList(headerList)
 
     console.log(openidList)
     openidList.map((item) => {
-        console.log(typeof item.openid)
+        console.log('come in')
+        console.log(item.openid)
         if (typeof item.openid == 'string') {
             
             pub_pushTemplateMsg(

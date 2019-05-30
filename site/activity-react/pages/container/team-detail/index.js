@@ -11,6 +11,8 @@ import Editor from '../../../components/editor'
 import fileUploader from '../../../utils/file-uploader'
 import TopicItem from '../../../components/topic-item'
 import {create} from '../../../../../server/components/uuid/uuid'
+import { permissionJudgeList,isOpenUserRightServiceResult } from '../../../utils/user-rights-utils';
+
  
 class TeamChoseItem extends React.PureComponent {
     render() {
@@ -49,10 +51,36 @@ export default class TeamDetail extends React.Component {
 
         renameId: '',
         renameName: '',
+
+        isOpenUserRightService:false,
+        operateTeamSettingPermission:false,
+        deleteFilePermission:false
     }
 
     componentDidMount = async () => {
         this.teamId = this.props.params.id
+        const teamId = this.teamId
+        const permissionList =await permissionJudgeList(teamId);
+        let isOpenUserRightService = false
+        let operateTeamSettingPermission = false
+        let deleteFilePermission = false
+
+        const isOpen = await isOpenUserRightServiceResult(teamId);
+        if(isOpen){
+            isOpenUserRightService = true
+        }
+        if(permissionList.indexOf('operateTeamSetting') !== -1){
+            operateTeamSettingPermission = true
+        }
+        if(permissionList.indexOf('deleteFile') !== -1){
+            console.log('can delete')
+            deleteFilePermission = true
+        }
+        this.setState({
+            isOpenUserRightService,
+            operateTeamSettingPermission,
+            deleteFilePermission
+        })
         this.initTeamInfo()
         this.initTeamFile()
     }
@@ -782,6 +810,7 @@ export default class TeamDetail extends React.Component {
 
     render() {
         let teamInfo = this.state.teamInfo
+        console.log((this.state.isOpenUserRightService&&this.state.operateTeamSettingPermission)||(!this.state.isOpenUserRightService&&this.state.isCreator == 'creator'))
         return (
             <Page title={teamInfo.name + " - IHCI"}
                 className="project-page">
@@ -797,7 +826,8 @@ export default class TeamDetail extends React.Component {
                                 <span>成员</span>
                             </div>
                             {
-                                this.state.isCreator == 'creator' && <div className="admin">
+                               ( (this.state.isOpenUserRightService&&this.state.operateTeamSettingPermission)||(!this.state.isOpenUserRightService&&this.state.isCreator == 'creator') )
+                                && <div className="admin">
                                     <div className="admin-con iconfont icon-setup_fill" onClick={this.toAdminHandle}></div>
                                     <span>设置</span>
                                 </div>
@@ -922,7 +952,7 @@ export default class TeamDetail extends React.Component {
                                                     {(INIT_DATA.role!=='visitor')&&<div className="tools">
                                                         <span onClick={() => { this.openMoveModalHandle(item) }}>移动</span>
                                                         <span onClick={() => { this.renameHandle(item) }}> 重命名 </span>
-                                                        <span onClick={() => { this.deleteHandle('folder', item.name) }}>删除</span>
+                                                       {this.state.isOpenUserRightService&&this.state.deleteFilePermission&&<span onClick={() => { this.deleteHandle('folder', item.name) }}>删除</span>} 
                                                     </div>}
                                                 </div>
                                             )
@@ -937,7 +967,7 @@ export default class TeamDetail extends React.Component {
                                                         <span onClick={() => { this.downloadHandle(item.ossKey) }}>下载</span>
                                                         <span onClick={() => { this.openMoveModalHandle(item) }}>移动</span>
                                                         <span onClick={() => { this.renameHandle(item) }}> 重命名 </span>
-                                                        <span onClick={() => { this.deleteHandle('file', item.name) }}>删除</span>
+                                                        {this.state.isOpenUserRightService&&this.state.deleteFilePermission&& <span onClick={() => { this.deleteHandle('file', item.name) }}>删除</span>}
                                                     </div>}
                                                 </div>
                                             )

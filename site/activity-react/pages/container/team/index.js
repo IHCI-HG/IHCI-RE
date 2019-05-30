@@ -4,6 +4,8 @@ import './style.scss'
 import api from '../../../utils/api';
 import Page from '../../../components/page';
 import { locationTo } from '../../../utils/util';
+import { permissionJudgeList,isOpenUserRightServiceResult } from '../../../utils/user-rights-utils';
+
 
 class TeamGalleryItem extends React.PureComponent{
     state = {
@@ -47,7 +49,7 @@ class TeamListItem extends React.PureComponent{
 
 export default class Team extends React.Component{
     componentDidMount = async() => {
-        this.initTeamList()
+        await this.initTeamList()
     }
 
     initTeamList = async () => {
@@ -69,7 +71,22 @@ export default class Team extends React.Component{
         })
         const teamInfoList = listResult.data.teamInfoList
 
-        teamList.map((item, idx) => {
+        teamList.map(async (item, idx) => {
+            // console.log('come in')
+            // let managed = false;
+            // let operateTeamSettingPermission = false;
+            // const permissionList = await permissionJudgeList(item.teamId);
+            // console.log(permissionList)
+            // const isOpen = await isOpenUserRightServiceResult(item.teamId);
+            // if(permissionList.indexOf('operateTeamSetting')!== -1){
+            //     operateTeamSettingPermission = true
+            // }    
+            // if(isOpen){
+            //     managed = operateTeamSettingPermission
+            // }else{
+            //     managed = item.role == 'creator' || item.role == 'admin'
+            // }
+            // console.log(managed)
             teamList[idx] = {
                 ...item,
                 ...teamInfoList[idx],
@@ -127,6 +144,7 @@ export default class Team extends React.Component{
             <Page title="团队 - IHCI" className="team-page">
                 <div className="page-wrap">
                     <div className="main">
+                        <button onClick={()=>{location.href = `/system-user-rights-management/system`}}>系统权限管理</button>
                         <div className="carete" onClick={() => {this.locationTo('/team-create')}}> 创建团队 </div>
                         <div className="head" onClick={this.starHandle}>星标团队</div>
                         <div className="team-list">

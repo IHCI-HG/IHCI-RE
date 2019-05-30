@@ -151,9 +151,17 @@ const routerConf = [{
                 callback(null, require('./completed').default);
             });
         }
-	},
+    },
+    {
+        path: 'system-user-rights-management/:actor',
+        getComponent: function (nextState, callback) {
+            require.ensure([], (require) => {
+                callback(null, require('./user-rights-management').default);
+            });
+        }
+    },
 	{
-        path: 'user-rights-management',
+        path: 'user-rights-management/:actor/:teamId',
         getComponent: function (nextState, callback) {
             require.ensure([], (require) => {
                 callback(null, require('./user-rights-management').default);

@@ -12,6 +12,7 @@ var fillClientParams = function (opts) {
     var options = opts || {};
 
     return function (req, res, next) {
+        
         // 将公参更新写入cookie, 并代入到req中
         autoKeepAppClientParams(req, res);
 

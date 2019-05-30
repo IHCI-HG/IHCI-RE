@@ -870,6 +870,58 @@ const wxEnter = async (req, res, next) => {
     }
 }
 
+const permissionJudge = async(req,res,next) =>{
+    const teamId = req.body.teamId
+    const permission = req.body.permission
+    const userId = req.rSession.userId
+    const permissionList = req.rSession[userId][teamId]
+    console.log(permissionList)
+    if(permissionList.indexOf(permission) !== -1){
+        resProcessor.jsonp(req, res, {
+            state: {
+                code: 1,
+                msg: '拥有权限'
+            },
+            data: {}
+        });
+    }else{
+        resProcessor.jsonp(req, res, {
+            state: {
+                code: 0,
+                msg: '未拥有该权限'
+            },
+            data: {}
+        });
+    }
+
+}
+const getPermissionJudgeList = async(req,res,next) =>{
+    const teamId = req.body.teamId
+    const userId = req.rSession.userId
+    const permissionList = req.rSession[userId][teamId]
+    console.log(permissionList)
+    if(permissionList){
+        resProcessor.jsonp(req, res, {
+            state: {
+                code: 1,
+                msg: ''
+            },
+            data: {
+                permissionList
+            }
+        });
+    }else{
+        resProcessor.jsonp(req, res, {
+            state: {
+                code: 0,
+                msg: '未找到权限列表'
+            },
+            data: {
+            }
+        });
+    }
+}
+
 module.exports = [
     ['GET', '/api/base/sys-time', sysTime],
 
@@ -907,4 +959,7 @@ module.exports = [
     ['POST', '/api/user/loginAndBindWx', loginAndBindWx],
     ['POST', '/api/user/fillUsernameAndPwd', apiAuth, fillUsernameAndPwd],
     ['POST', '/api/user/wxEnter', wxEnter],
+
+    ['POST','/api/permissionJudge',permissionJudge],
+    ['POST','/api/permissionJudgeList',getPermissionJudgeList]
 ];
