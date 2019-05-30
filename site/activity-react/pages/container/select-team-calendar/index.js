@@ -27,6 +27,12 @@ export default class selectTeam extends React.Component{
             this.setState({
                 teamInfo:MemberInfo,
             },this.pageInit);
+        } else {
+            const teamCard = [];
+            teamCard.push(<div className="teamCardTips">请先创建团队或者加入团队!</div>)
+            this.setState({
+                teamCard,
+            });
         }
     };
 

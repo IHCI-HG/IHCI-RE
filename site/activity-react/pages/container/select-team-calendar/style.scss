@@ -29,8 +29,17 @@
         font-size: 20px;
     }
 
+    .teamCardTips{
+        font-size: 20px;
+        padding: 10px;
+        color: #ff0000;
+        width: 100%;
+        text-align: center;
+    }
+
     .teamCardShow{
         display: flex;
+        flex-wrap: wrap;
     }
 
     .teamCardBackground{
