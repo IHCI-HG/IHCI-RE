@@ -52,7 +52,7 @@ export default class Person extends React.Component{
         //     window.toast("请先完成资料填写")
         // }
 
-        if(!!INIT_DATA.userObj.personInfo)
+        if(INIT_DATA.userObj.personInfo.mail)
             if(INIT_DATA.userObj.personInfo.mail.length>0)
             {
                 this.setState({
@@ -359,9 +359,9 @@ export default class Person extends React.Component{
             illegalName: false,
         }
 
-        if (!this.isEmailAddress(this.state.personInfo.mail)){
-            infoCheck.illegalEmailAddress = true
-        }
+        // if (!this.isEmailAddress(this.state.personInfo.mail)){
+        //     infoCheck.illegalEmailAddress = true
+        // }
 
        
 

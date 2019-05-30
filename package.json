@@ -151,6 +151,7 @@
     "postcss-less-engine": "^0.6.2",
     "postcss-loader": "^2.1.6",
     "postcss-px2rem": "^0.3.0",
+    "pre-commit": "^1.2.2",
     "react-addons-perf": "^15.4.2",
     "redux-logger": "^2.7.4",
     "sass-loader": "^7.0.3",

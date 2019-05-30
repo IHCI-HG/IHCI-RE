@@ -5,8 +5,7 @@ import api, { authApi } from '../../utils/api';
 import SMSBlock from '../../components/smsCode'
 import './style.scss'
 
-import WxLoginDialog from '../../components/wx-login-dialog'
-
+//import WxLoginDialog from '../../components/wx-login-dialog'
 export class TeamLoginView extends React.Component {
     state = {
 
@@ -15,14 +14,15 @@ export class TeamLoginView extends React.Component {
         username: '',
         password: '',
 
-
+        createNickname:'',
         createUsername: '',
         createPassword: '',
         smsCode: '',
 
         infoCheck: {
-            createUsername: true,
+            createUsernameEmpty: true,
             createPasswordEmpty: true,
+            createNicknameEmpty:true,
             smsCodeEmpty: true,
             usernameEmpty: true,
             passwordEmpty: true
@@ -39,8 +39,6 @@ export class TeamLoginView extends React.Component {
             loginBlock: 'login'
         });
     }
-
-
 
     usernameHandle = (e) => {
         const username = e.target.value
@@ -74,7 +72,22 @@ export class TeamLoginView extends React.Component {
             }
         })
     }
-
+    createNicknameHandle = (e) => {
+        const nickname = e.target.value;
+        var empty = true;
+        if(nickname){
+            empty = false;
+        }else{
+            empty = true;
+        }
+        this.setState({
+            createNickname: nickname,
+            infoCheck:{
+                ...this.state.infoCheck,
+                createNicknameEmpty: empty
+            }
+        })
+    }
     createUsernameHandle = (e) => {
         const createUsername = e.target.value
         var createUsernameEmpty = true
@@ -170,6 +183,7 @@ export class TeamLoginView extends React.Component {
                 userInfo: {
                     username: this.state.createUsername, // 手机登录 账号为手机号码
                     password: this.state.createPassword, // 输入的密码就是登陆密码
+                    nickname:this.state.createNickname,
                     code: this.state.smsCode,
                 }
             }
@@ -180,68 +194,75 @@ export class TeamLoginView extends React.Component {
             window.toast("注册成功")
             setTimeout(() => {
                 if (this.props.join)
-                    location.href = `/person?teamjoin=${this.props.join}&teamId=${this.props.teamId}`
+                    location.href = location.href
                 else
-                    location.href = '/person'
+                    location.href = '/team'
             }, 300);
         }
         else {
             window.toast(result.state.msg || "注册失败")
         }
     }
-
+    forgetPwd = async() => {
+        setTimeout(() => {
+            location.href = '/password-reset'
+        }, 300);
+    }
 
     render() {
-        return <div className="auth-con">
-            <div className='title'>加入{this.props.teamName}</div>
-            <div className="auth-nav">
-                <div
-                    className={this.state.loginBlock == "login" ? "auth-nav-item active" : "auth-nav-item"}
-                    onClick={this.setToLoginHandle}
-                >登录</div>
-                <div
-                    className={this.state.loginBlock == "signUp" ? "auth-nav-item active" : "auth-nav-item"}
-                    onClick={this.setToSignUpHandle}
-                >注册</div>
-            </div>
-            {
+        return (
+            <div>
+                {
                 this.state.loginBlock == "signUp" ?
                     <div className='auth-form'>
-
-                        <div className="auth-desc"></div>
-                        <input type="number" pattern="[0-9]*" placeholder="请填写手机号" className="auth-input" value={this.state.createUsername} onChange={this.createUsernameHandle}></input>
-
+                        <div className="auth-desc">注册</div>
+                        <input type='text' placeholder='请输入昵称' className='auth-input' 
+                            value = {this.state.createNickname}onChange={this.createNicknameHandle}></input>
+                        <input type="number" pattern="[0-9]*" placeholder="请填写手机号" className="auth-input" 
+                            value={this.state.createUsername} onChange={this.createUsernameHandle}></input>
+                        <input type="text" placeholder="请输入密码" className="auth-input" type="password" 
+                            value={this.state.createPassword} onChange={this.createPasswordHandle}></input>
                         <SMSBlock
-
                             smsCodeInputHandle={this.smsCodeHandle}
                             smsCode={this.state.smsCode}
                             phoneNumber={this.state.createUsername}
                             phoneEmpty={this.state.createUsernameEmpty}
                         />
                         <div className="auth-desc"></div>
-                        <input type="text" placeholder="请输入密码" className="auth-input" type="password" value={this.state.createPassword} onChange={this.createPasswordHandle}></input>
-
                         <div className="submit-btn" onClick={this.signHandle}>注册</div>
+                        <br />
+                        <div>
+                            <span>已有账号？</span><a onClick={this.setToLoginHandle}>直接登录</a>
+                        </div>
                     </div>
                     : ""
             }
             {
                 this.state.loginBlock == "login" ?
                     <div className='auth-form'>
-                        <div className="auth-desc"></div>
+                        <div className="auth-desc">登录</div>
                         <input type="number" pattern="[0-9]*" placeholder="账号" className="auth-input" value={this.state.username} onChange={this.usernameHandle}></input>
                         <div className="auth-desc"></div>
                         <input type="text" placeholder="密码" className="auth-input" type="password" value={this.state.password} onChange={this.passwordHandle}></input>
-
+                        <div className="forgetPwd" onClick={this.forgetPwd}>忘记密码?</div>
                         <div className="submit-btn" onClick={this.loginHandle}>登录</div>
                         {/* <div className="submit-btn" onClick={this.props.showWxDialogHandle}>微信登录</div> */}
-                        <div className="wx-alarm">Or connect with:</div>
-                        <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
-                        <div className = " wx-btn"><i className="fa fa-weixin fa-3x" aria-hidden="true" onClick={this.props.showWxDialogHandle}></i></div>
+                        <div className="wx-alarm">
+                            <hr />
+                            <span className = 'text'>Or connect with </span>
+                            <span className='line'></span>
+                        </div>
+                        <div className="wx-submit-btn" onClick={this.props.showWxDialogHandle}>
+                            <img className="wx-submit-img" src={require('./wxlogo.png')} style={{width:60, height:60}}/>
+                        </div>
+                        <div>
+                        <span>没有账号？</span><a onClick={this.setToSignUpHandle}>立即注册</a>
+                        </div>
                     </div>
                     : ""
             }
-        </div>
+            </div> 
+        );
     }
 
 }

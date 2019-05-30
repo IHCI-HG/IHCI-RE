@@ -37,16 +37,16 @@ import {
 // 路由前判定是否已经登录或信息填写完全
 const routerAuthJudge = async (req, res, next) => {
     const userId = req.rSession.userId
-    if(userId) {
-        const user = await UserDB.findByUserId(userId)
+    // if(userId) {
+    //     const user = await UserDB.findByUserId(userId)
 
-        if (!/person/.test(req.url)  &&  user.personInfo==null)
-        {
-            res.redirect('/person')
-            return
-        }
-    } 
-    else {
+    //     if (!/person/.test(req.url)  &&  user.personInfo==null)
+    //     {
+    //         res.redirect('/person')
+    //         return
+    //     }
+    // }
+    if(!userId) {
         res.redirect('/')
         return
     }
@@ -98,6 +98,16 @@ const test1 = async (req, res, next) => {
     res.send('dataStr1')
 }
 
+// WARNING: 如果域名变更或者本地IP调试将会导致出错。
+const addwww = async (req, res, next) => {
+    console.log(req.url)
+    if(req.url.indexOf('www.')=== -1&&req.url.indexOf('localhost')!== -1){
+        res.redirect('https://www.animita.cn')
+    }
+    else{
+        next()
+    }
+}
 const mainPage = async (req, res, next) => {
     const filePath = path.resolve(__dirname, '../../public/activity-react/main.html');
     const cccc = {
@@ -117,6 +127,7 @@ const mainPage = async (req, res, next) => {
         renderData: {},
     };
     htmlProcessor(req, res, next, options)
+
 }
 
 const teamPage = async (req, res, next) => {
@@ -285,7 +296,7 @@ const userAuthJudge = async(req, res, next) => {
 
 module.exports = [
     // 主页
-    ['GET', '/', clientParams(), silentAuth, mainPage],
+    ['GET', '/', clientParams(), silentAuth , mainPage , addwww],
     // ['GET', '/', clientParams(), mainPage],
     ['GET', '/activate', clientParams(), pageHandle()],
     //['GET','/wx-choose',clientParams(), pageHandle()],
