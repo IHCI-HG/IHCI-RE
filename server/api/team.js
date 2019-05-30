@@ -21,7 +21,7 @@ import {
 } from '../components/wx-utils/wx-utils'
 import { MongooseDocument } from 'mongoose';
 
-const axios = require('axios')
+import {request} from '../middleware/request/request.js'
 
 var mongoose = require('mongoose')
 
@@ -465,7 +465,7 @@ const openUserRightService = async (req, res, next) => {
         })          
         }))    
     console.log(memberList,teamObj.name,memberList)
-    var result = await axios.post("http://localhost:8081/createOrganizationUserRights",{
+    var result = await request("createOrganizationUserRights",{
         organId:teamId,
         organName:teamObj.name,
         memberList:memberList
@@ -488,7 +488,7 @@ const openUserRightService = async (req, res, next) => {
 const isOpenUserRightService = async (req,res,next) =>{
     try{
         const teamId = req.body.teamId
-        var result = await axios.post("http://localhost:8081/findOrgan",{
+        var result = await request("findOrgan",{
             organId:teamId
         })
         console.log(result)
@@ -548,7 +548,7 @@ const sendTeamMemberList = async (req, res, next) => {
         })          
         }))    
         
-    var result = await axios.post("http://localhost:8081/memberlist",{
+    var result = await request("memberlist",{
         teamId:teamId,
         teamName:teamObj.name,
         memberList:memberList

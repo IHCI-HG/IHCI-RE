@@ -12,7 +12,9 @@ var path = require('path'),
     server = require('../server'),
     url = require('url');
 
-const axios = require('axios')
+// const axios = require('axios')
+const { request } = require('../middleware/request/request')
+
 const jwt    = require('jsonwebtoken');
 const jwtsecret = 'myjwttest'
 
@@ -245,7 +247,7 @@ const userAuthJudge = async(req, res, next) => {
         console.log('------------------------')
         console.log(userId)
         console.log(teamId)
-        var result = await axios.post("http://localhost:8081/authenticate",{
+        var result = await request("authenticate",{
             organId:teamId,
             userId:userId,
         })
@@ -300,6 +302,7 @@ const userAuthJudge = async(req, res, next) => {
         next()
 
     }catch(err){
+        console.log(err)
         console.log('come in err')
         req.rSession['userRights'] = false
         console.log('have set false')

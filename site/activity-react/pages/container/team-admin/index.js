@@ -29,6 +29,7 @@ export default class TeamAdmin extends React.Component{
 
     }
     componentDidMount = async() => {
+        console.log('111')
         this.teamId = this.props.params.id
         const teamId = this.teamId
         this.initTeamInfo(this.teamId)
