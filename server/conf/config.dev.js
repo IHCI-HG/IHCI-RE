@@ -45,7 +45,7 @@ var config = {
     // mail: 'http://localhost:5000',
     mailOrigin: 'http://localhost:5000',
     mail: {
-        host: 'smtp.163.com', 
+        host: 'smtp.163.com',
         port: 25,
         auth: {
             user: 'ihci2018@163.com', //注册的邮箱账号
