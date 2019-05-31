@@ -589,7 +589,8 @@ export const remindSchedule = async function (targetUsrId, sourceUsrId, schedule
     const openidList = await userDB.openidList([creatorId])
     const content = checkitemObj.content.split("<")[1].split(">")[1]
 
-    openidList.map((item) => {
+    // WIP
+    /*openidList.map((item) => {
         if (typeof item.openid == 'string') {
             pub_pushTemplateMsg(
                 item.openid,
@@ -614,5 +615,5 @@ export const remindSchedule = async function (targetUsrId, sourceUsrId, schedule
                 }
             )
         }
-    })
+    })*/
 }
