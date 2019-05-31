@@ -87,4 +87,3 @@ stats.json
 todo.md
 dest
 pytest.py
-server/conf/*.js
