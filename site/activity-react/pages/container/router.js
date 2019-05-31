@@ -57,13 +57,20 @@ const routerConf = [{
             });
         }
     },{
-        path: 'calendar',
+        path: 'calendar/:teamId',
         getComponent: function (nextState, callback) {
             require.ensure([], (require) => {
                 callback(null, require('./calendar').default);
             });
         }
     }, {
+    path: 'select-calendar',
+    getComponent: function (nextState, callback) {
+        require.ensure([], (require) => {
+            callback(null, require('./select-team-calendar').default);
+        });
+    }
+    },{
         path: 'inform',
         getComponent: function (nextState, callback) {
             require.ensure([], (require) => {
@@ -119,7 +126,7 @@ const routerConf = [{
                 callback(null, require('./todo').default);
             });
         }
-    }, 
+    },
     {
         path: 'person',
         getComponent: function (nextState, callback) {
@@ -127,7 +134,7 @@ const routerConf = [{
                 callback(null, require('./person').default);
             });
         }
-    }, 
+    },
     {
         path: 'team-management',
         getComponent: function (nextState, callback) {
@@ -135,7 +142,7 @@ const routerConf = [{
                 callback(null, require('./team-management').default);
             });
         }
-    }, 
+    },
     {
         path: 'modify-password',
         getComponent: function (nextState, callback) {
@@ -143,7 +150,7 @@ const routerConf = [{
                 callback(null, require('./modify-password').default);
             });
         }
-    }, 
+    },
     {
         path: 'sign',
         getComponent: function (nextState, callback) {
