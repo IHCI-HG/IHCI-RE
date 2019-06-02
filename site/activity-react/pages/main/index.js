@@ -143,6 +143,7 @@ export default class MainPage extends React.Component {
                 <div className="foot-item">
                     <div className="foot-item-title">IHCI</div>
                     <div href="">关于我们</div>
+                    <a href="http://localhost:3000">帮助中心</a>
                     <div href=""><img className="wx" width='20px' height="20px" src={require('./wechat@2x.png')} /></div>
                 </div>
                 <div className="foot-item">
@@ -172,7 +173,7 @@ export default class MainPage extends React.Component {
                         <div href="">HTML&CSS</div>
                         <div href="">人工智能</div>
                         <div href="">关于我们</div>
-                        
+                        <a href="http://localhost:3010">帮助中心</a>
                        
                     </div>
                     <div className="foot-item">

@@ -212,6 +212,7 @@ export class TeamLoginView extends React.Component {
     render() {
         return (
             <div>
+                <div style={{textAlign: "center" }}><img src={require('./logo.png')} style={{width: 250 }}></img></div>
                 {
                 this.state.loginBlock == "signUp" ?
                     <div className='auth-form'>
@@ -231,8 +232,8 @@ export class TeamLoginView extends React.Component {
                         <div className="auth-desc"></div>
                         <div className="submit-btn" onClick={this.signHandle}>注册</div>
                         <br />
-                        <div>
-                            <span>已有账号？</span><a onClick={this.setToLoginHandle}>直接登录</a>
+                        <div className="text">
+                            <span>已有账号？</span><a className="logintext" onClick={this.setToLoginHandle}>直接登录</a>
                         </div>
                     </div>
                     : ""
@@ -249,14 +250,14 @@ export class TeamLoginView extends React.Component {
                         {/* <div className="submit-btn" onClick={this.props.showWxDialogHandle}>微信登录</div> */}
                         <div className="wx-alarm">
                             <hr />
-                            <span className = 'text'>Or connect with </span>
+                            <div className='text' style={{fontSize: "20px" ,margin: "10px"}}>— Or connect with —</div>
                             <span className='line'></span>
                         </div>
                         <div className="wx-submit-btn" onClick={this.props.showWxDialogHandle}>
                             <img className="wx-submit-img" src={require('./wxlogo.png')} style={{width:60, height:60}}/>
                         </div>
-                        <div>
-                        <span>没有账号？</span><a onClick={this.setToSignUpHandle}>立即注册</a>
+                        <div className="text">
+                        <span>没有账号？</span><a className="logintext" onClick={this.setToSignUpHandle}>立即注册</a>
                         </div>
                     </div>
                     : ""

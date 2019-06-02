@@ -1,5 +1,6 @@
 .sms-block{
-    width:400px;
+    width:100%;
+    margin: 15px 0;
     display:flex;
     flex-wrap:wrap;
     height:52px;
@@ -10,7 +11,7 @@
         border: 2px solid #545454;
         border-radius: 5px;
         height: 52px;
-        width: 250px;
+        width: 62%;
         background-color: #f2f2f2;
         padding: 0 20px;
         margin-bottom: 10px;
@@ -23,10 +24,11 @@
         margin-left:10px;
         display:flex;
         flex-wrap:wrap;
+        
         //align-items: center;
         cursor: pointer;
         text-align: center;
-        width: 140px;
+        width: 35%;
         background-color: #ffb43d;
         border-color: #ffb43d;
         color: #fff;
@@ -47,14 +49,14 @@
     }
     
     .inactive-btn{
-        margin-top:13px;
+        // margin-top:13px;
         margin-left:10px;
         display:flex;
         flex-wrap:wrap;
         //align-items: center;
         cursor: not-allowed;
         text-align: center;
-        width: 130px;
+        width: 35%;
         background-color: lightgray;
         border-color: lightgray;
         color: #fff;

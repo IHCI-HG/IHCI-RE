@@ -33,6 +33,8 @@ class App extends React.Component{
         menuCreateBgColor: '',
         menuQuitBgColor: '',
 
+        helpCenterColor: '',
+
         showRemindCount: '',
         
     }
@@ -112,8 +114,16 @@ class App extends React.Component{
             menuQuitBgColor: 'whitesmoke'
         })
     }
-
-
+    handleHelpMouseOut = () => {
+        this.setState({
+            helpCenterColor: 'whitesmoke'
+        })
+    }
+    handleHelpMouseOver = () => {
+        this.setState({
+            helpCenterColor: '#ccc'
+        })
+    }
 
     componentWillMount = async() => {
         this.setHeadImg()
@@ -247,6 +257,9 @@ class App extends React.Component{
                         <div className="menuCreate" onClick={() => {this.locationTo('/team-create')}} 
                         style={{backgroundColor:this.state.menuCreateBgColor}}
                         onMouseOver={this.handleCreateMouseOver} onMouseOut={this.handleCreateMouseOut}>+创建团队</div>
+                        <div className="helpCenter" onClick={() => {this.locationTo('http://localhost:3010')}} 
+                        style={{backgroundColor: this.state.helpCenterColor}}
+                        onMouseOver={this.handleHelpMouseOver} onMouseOut={this.handleHelpMouseOut}>帮助中心</div>
                         <div className="menuQuit" onClick={this.logOutHandle} 
                         style={{backgroundColor:this.state.menuQuitBgColor}}
                         onMouseOver={this.handleQuitMouseOver} onMouseOut={this.handleQuitMouseOut}>退出</div>

@@ -47,15 +47,17 @@
         
         .auth-form {
             padding: 30px;
+            margin: 10px auto;
             width:400px;
             background-color: #fff;
             height: 100%;
             display:flex;
             flex-direction: column;
             .auth-desc {
-                font-size: 16px;
+                font-size: 40px;
                 font-weight: bold;
                 margin-bottom: 10px;
+                text-align: center;
             }
             .auth-input {
                 outline: 0; 
@@ -63,7 +65,7 @@
                 border-radius: 2px;
                 height: 65px;
                 width: 90%;
-
+                margin: 10px auto;
                 padding: 0 20px;
                 margin-bottom: 20px;
                 border: 2px solid #e9eaea;
@@ -75,6 +77,11 @@
                 &:focus {
                     border: 1px solid #a2a2a2;
                 }
+            }
+            .forgetPwd{
+                text-align: right;
+                font-size: 10px;
+                cursor: pointer;
             }
             .submit-btn {
                 cursor: pointer;
@@ -96,14 +103,17 @@
                     box-shadow: 1px 2px 6px #a2a2a2;
                 }
             }
-            .wx-alarm{
-                font-size: 20px;
-                padding-top: 17px;
-                padding-bottom: 5px;
+            .text{
+                text-align: center;
             }
-            .wx-btn{
+            .wx-submit-btn{
+                text-align: center;
+            }
+            .logintext {
                 cursor: pointer;
-                margin:auto;
+            }
+            .wx-submit-img{
+                cursor: pointer;
             }
         }
 
