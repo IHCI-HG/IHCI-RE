@@ -582,32 +582,32 @@ export const compCheckitemTemplate = async function (creatorId, checkitemObj , h
  * is mentioned by someone in calendar's schedule.
  * @param targetUsrId: userId of receiver
  * @param sourceUsrId: userId of sender
- * @param scheduleId: the scheduleId of the schedule in calendar.
+ * @param schedule: the schedule.
  * @return {Promise<void>}
  */
-export const remindSchedule = async function (targetUsrId, sourceUsrId, scheduleId) {
+export const remindSchedule = async function (targetUsrId, sourceUsrId, schedule) {
     const openidList = await userDB.openidList([creatorId])
     const content = checkitemObj.content.split("<")[1].split(">")[1]
 
-    // WIP
-    /*openidList.map((item) => {
+    // TODO：暂未测试，需要等部署。url still WIP.
+    openidList.map((item) => {
         if (typeof item.openid == 'string') {
             pub_pushTemplateMsg(
                 item.openid,
-                'p6pZBXX0SaqODRDZgY_3NqyIAK0mYN9HXYq6yMLyA04',
-                'http://www.animita.cn/todo/' + checkitemObj._id,
+                'yJSayd6CBNoEV9gQqGK-_U_VuBXDCFcY8axpxjY7ENw',
+                'http://www.animita.cn/calendar',
                 {
                     "first": {
-                        "value": headername + " 完成了任务",
+                        "value": "你有一个新的日程提醒",
                     },
                     "keyword1": {
-                        "value": content,
+                        "value": schedule.name,
                     },
                     "keyword2": {
                         "value": formatDate(new Date()),
                     },
                     "keyword3": {
-                        "value": "已完成",
+                        "value": schedule.location || "无",
                     },
                     "remark": {
                         "value": "点击查看",
@@ -615,5 +615,5 @@ export const remindSchedule = async function (targetUsrId, sourceUsrId, schedule
                 }
             )
         }
-    })*/
+    })
 }

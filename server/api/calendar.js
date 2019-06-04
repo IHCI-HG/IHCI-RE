@@ -11,9 +11,9 @@ import apiAuth from '../components/auth/api-auth'
 
 const remind = async (req, res, next) => {
     const target = req.body.target;
-    const scheduleId = req.body.scheduleId;
+    const schedule = req.body.schedule;
     const source = req.body.source;
-    remindSchedule(target, source, scheduleId);
+    remindSchedule(target, source, schedule);
 }
 
 
