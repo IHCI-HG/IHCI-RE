@@ -1,10 +1,3 @@
-var _ = require('underscore'),
-    resProcessor = require('../components/res-processor/res-processor'),
-    proxy = require('../components/proxy/proxy'),
-    conf = require('../conf');
-
-import fetch from 'isomorphic-fetch';
-import lo from 'lodash';
 import { remindSchedule } from '../components/wx-utils/wx-utils'
 import apiAuth from '../components/auth/api-auth'
 
