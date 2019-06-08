@@ -586,12 +586,10 @@ export const compCheckitemTemplate = async function (creatorId, checkitemObj , h
  * @return {Promise<void>}
  */
 export const remindSchedule = async function (targetUsrId, sourceUsrId, schedule) {
-    const openidList = await userDB.openidList([creatorId])
-    const content = checkitemObj.content.split("<")[1].split(">")[1]
-
+    const openidList = await userDB.openidList([targetUsrId])
     // TODO：暂未测试，需要等部署。url still WIP.
     openidList.map((item) => {
-        if (typeof item.openid == 'string') {
+        if (item && typeof item.openid == 'string') {
             pub_pushTemplateMsg(
                 item.openid,
                 'yJSayd6CBNoEV9gQqGK-_U_VuBXDCFcY8axpxjY7ENw',

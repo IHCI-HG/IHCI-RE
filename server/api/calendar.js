@@ -7,6 +7,7 @@ const remind = async (req, res, next) => {
     const schedule = req.body.schedule;
     const source = req.body.source;
     remindSchedule(target, source, schedule);
+    res.send({'status': 200});
 }
 
 

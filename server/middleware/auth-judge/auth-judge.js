@@ -30,7 +30,7 @@ const getTeamId = async(req, res, next) => {
 }
 export const isMember = async (req, res, next) =>{
     var teamId = await getTeamId(req, res, next)
-    if(!teamId){
+    if(!teamId || req.body.authCode){
         next()
     }
     else{

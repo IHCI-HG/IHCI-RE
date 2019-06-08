@@ -22,10 +22,10 @@ const apiAuth = (req, res, next) => {
     if(req.rSession.userId) {
         next()
     } else if (req.body.authCode) {
+        const timestamp = Date.now() - Date.now()%60000;
+        const previousTS = Date.now() - Date.now()%60000 - 60000;
         for (let i=0;i<serverAllowed.length;i++) {
             let server = serverAllowed[i];
-            const timestamp = Date.now() - Date.now()%60000;
-            const previousTS = Date.now() - Date.now()%60000 - 60000;
             if (req.body.authCode === generateCode(server, timestamp) ||
                 req.body.authCode === generateCode(server, previousTS)) {
                 next();
@@ -33,7 +33,7 @@ const apiAuth = (req, res, next) => {
             }
         }
         resProcessor.jsonp(req, res, {
-            state: { code: 0, msg: '请先登录' },
+            state: { code: 0, msg: '识别码校验不通过'},
             data: {}
         });
 
