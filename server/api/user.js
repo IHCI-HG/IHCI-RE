@@ -899,6 +899,10 @@ const permissionJudge = async(req,res,next) =>{
 const getPermissionJudgeList = async(req,res,next) =>{
     const teamId = req.body.teamId
     const userId = req.rSession.userId
+    console.log('--------')
+    console.log(teamId)
+    console.log(userId)
+    console.log(req.rSession[userId])
     const permissionList = req.rSession[userId][teamId]
     console.log(permissionList)
     if(permissionList){
@@ -925,7 +929,6 @@ const getPermissionJudgeList = async(req,res,next) =>{
 
 
 const userRightsServiceOpen = async(req,res,next) =>{
-    console.log('come in !!!')
     if(req.rSession['userRights']){
         resProcessor.jsonp(req, res, {
             state: {

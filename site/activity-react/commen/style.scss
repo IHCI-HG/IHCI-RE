@@ -56,6 +56,8 @@ pre {
 
 // 白色的那个页面框
 .page-wrap {
+    width: 80%;
+    margin: auto;
     box-sizing: border-box;
     width: 100%;
     background-color: #fff;
@@ -76,7 +78,7 @@ input[type="number"]{
 @media only screen and (min-width: 768px) {
     .page-wrap {
         box-sizing: border-box;
-        width: 1280px;
+        width: 80%;
         background-color: #fff;
         border: 1px solid #e6e6e6; /*no*/
         border-radius: 2px;

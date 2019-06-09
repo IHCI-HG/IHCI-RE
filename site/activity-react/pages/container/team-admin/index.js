@@ -5,6 +5,7 @@ import { permissionJudgeList,isOpenUserRightServiceResult,userRightsServiceOpen 
 import Page from '../../../components/page'
 import fileUploader from '../../../utils/file-uploader';
 import {create} from '../../../../../server/components/uuid/uuid'
+import UserRightsConst from '../../../constant/userRights'
 
 export default class TeamAdmin extends React.Component{
     state = {
@@ -21,7 +22,6 @@ export default class TeamAdmin extends React.Component{
         },
 
         isOpenUserRightService:false,
-
         inviteTeamMemberPermission:false,
         readTeamMemberPermission:false,
         assignRolePermission:false,
@@ -29,7 +29,6 @@ export default class TeamAdmin extends React.Component{
 
     }
     componentDidMount = async() => {
-        console.log('111')
         this.teamId = this.props.params.id
         const teamId = this.teamId
         await this.initTeamInfo(this.teamId)
@@ -38,28 +37,23 @@ export default class TeamAdmin extends React.Component{
         let readTeamMemberPermission = false
         let assignRolePermission = false 
         const userRightsServiceOpenResult = await userRightsServiceOpen();
-        console.log(userRightsServiceOpenResult)
         if(userRightsServiceOpenResult.state.code === 0){
-            console.log('~~~~~')
             const isOpen = await isOpenUserRightServiceResult(teamId);
-            console.log(isOpen)
             if(isOpen){
                 isOpenUserRightService = true
-                const permissionList =await permissionJudgeList(teamId);   
-                if(permissionList.indexOf('inviteTeamMember')!== -1){
+                const permissionList =await permissionJudgeList(teamId);      
+                if(permissionList.indexOf(UserRightsConst.TEAM_MEMBER_INVITE)!== -1){
+                    
                     inviteTeamMemberPermission = true
                 }
-                if(permissionList.indexOf('readTeamMember') !== -1){
+                if(permissionList.indexOf(UserRightsConst.TEAM_MEMBER_READ) !== -1){
                     readTeamMemberPermission = true
                 }
-                if(permissionList.indexOf('assignRolePermission') !== -1){
+                if(permissionList.indexOf(UserRightsConst.ROLE_PERMISSION_ASSIGN) !== -1){
                     assignRolePermission = true
                 }
             }else{
-                console.log('com in')
                 let isCreator = false
-                console.log(this.teamInfo)
-                console.log(this.props.personInfo._id)
                 this.teamInfo.memberList.map((item) => {
         
                     if(item.userId == this.props.personInfo._id && item.role == 'creator') {
@@ -67,7 +61,6 @@ export default class TeamAdmin extends React.Component{
                     } 
                 })
                 if(isCreator) {
-                    console.log('is creator')
                     assignRolePermission = true
                 }
             }

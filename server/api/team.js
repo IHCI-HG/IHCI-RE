@@ -424,7 +424,6 @@ const teamInfo = async (req, res, next) => {
 
 
 const openUserRightService = async (req, res, next) => {
-    console.log('come in');
     const teamId = req.body.teamId  
     console.log(teamId)
     try{

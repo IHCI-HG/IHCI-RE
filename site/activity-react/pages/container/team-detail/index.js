@@ -12,6 +12,8 @@ import fileUploader from '../../../utils/file-uploader'
 import TopicItem from '../../../components/topic-item'
 import {create} from '../../../../../server/components/uuid/uuid'
 import { permissionJudgeList,isOpenUserRightServiceResult,userRightsServiceOpen } from '../../../utils/user-rights-utils';
+import UserRightsConst from '../../../constant/userRights'
+
 
  
 class TeamChoseItem extends React.PureComponent {
@@ -54,39 +56,72 @@ export default class TeamDetail extends React.Component {
 
         isOpenUserRightService:false,
         operateTeamSettingPermission:false,
-        deleteFilePermission:false
+        deleteFilePermission:false,
+        uploadFilePermission:false,
+        modifyFilePermission:false,
+        moveFilePermission:false,
+        topicPermission:false,
+        taskPermisson:false,
+        readMemberPermission:false
     }
 
     componentDidMount = async () => {
         this.teamId = this.props.params.id
         const teamId = this.teamId
         const userRightsServiceOpenResult = await userRightsServiceOpen()
-        console.log(userRightsServiceOpenResult)
         let isOpenUserRightService = false
 
         if(userRightsServiceOpenResult.state.code === 0){
             const isOpen = await isOpenUserRightServiceResult(teamId);
-            console.log('is opne')
-            console.log(isOpen)
             if(isOpen){
                 isOpenUserRightService = true
                 const permissionList =await permissionJudgeList(teamId);
                 
                 let operateTeamSettingPermission = false
                 let deleteFilePermission = false
+                let uploadFilePermission = false
+                let modifyFilePermission = false
+                let moveFilePermission = false
+                let topicPermission = false
+                let taskPermisson = false
+                let readMemberPermission = false
         
                
-                if(permissionList.indexOf('operateTeamSetting') !== -1){
+                if(permissionList.indexOf(UserRightsConst.TEAM_SETTING) !== -1){
                     operateTeamSettingPermission = true
                 }
-                if(permissionList.indexOf('deleteFile') !== -1){
-                    console.log('can delete')
+                if(permissionList.indexOf(UserRightsConst.FILE_DEL) !== -1){
                     deleteFilePermission = true
                 }
+                if(permissionList.indexOf(UserRightsConst.FILE_UPLOAD) !== -1){
+                    uploadFilePermission = true
+                }
+                if(permissionList.indexOf(UserRightsConst.FILE_MODIFY) !== -1){
+                    modifyFilePermission = true
+                }
+                if(permissionList.indexOf(UserRightsConst.FILE_MOVE) !== -1){
+                    moveFilePermission = true
+                }
+                if(permissionList.indexOf(UserRightsConst.TOPIC) !== -1){
+                    topicPermission = true
+                }
+                if(permissionList.indexOf(UserRightsConst.TASK) !== -1){
+                    taskPermisson = true
+                }
+                if(permissionList.indexOf(UserRightsConst.TEAM_MEMBER_READ) !== -1){
+                    readMemberPermission = true
+                }
+
                 this.setState({
                     isOpenUserRightService,
                     operateTeamSettingPermission,
-                    deleteFilePermission
+                    deleteFilePermission,
+                    uploadFilePermission,
+                    modifyFilePermission,
+                    moveFilePermission,
+                    topicPermission,
+                    taskPermisson,
+                    readMemberPermission
                 })
             }else{
                 this.setState({
@@ -826,9 +861,7 @@ export default class TeamDetail extends React.Component {
     }
 
     render() {
-        console.log(this.state.isOpenUserRightService)
         let teamInfo = this.state.teamInfo
-        console.log((this.state.isOpenUserRightService&&this.state.operateTeamSettingPermission)||(!this.state.isOpenUserRightService&&this.state.isCreator == 'creator'))
         return (
             <Page title={teamInfo.name + " - IHCI"}
                 className="project-page">
@@ -839,10 +872,12 @@ export default class TeamDetail extends React.Component {
                             <pre><div className="team-des">{teamInfo.desc}</div>  </pre>
                         </div>
                         <div className="right">
+                        {this.state.isOpenUserRightService&&this.state.readMemberPermission&&
                             <div className="admin" onClick={this.toMemberHandle}>
                                 <div className="admin-con member-num">{this.state.memberList.length}</div>
                                 <span>成员</span>
                             </div>
+                        }
                             {
                                ( (this.state.isOpenUserRightService&&this.state.operateTeamSettingPermission)||(!this.state.isOpenUserRightService&&this.state.isCreator == 'creator') )
                                 && <div className="admin">
@@ -862,7 +897,8 @@ export default class TeamDetail extends React.Component {
 
 
                     <div className="div-line"></div>
-
+                    {this.state.isOpenUserRightService&&this.state.topicPermission&&
+                    <div>
                     <div className="head">
                         <span className='head-title'>讨论</span>
                         {(INIT_DATA.role!=='visitor')&&<div className="create-btn" onClick={() => { this.setState({ showCreateTopic: true }) }}>发起讨论</div>}
@@ -905,19 +941,20 @@ export default class TeamDetail extends React.Component {
                             })
                         }
                     </div>
-
+                    </div>}
+                    {this.state.isOpenUserRightService&&this.state.taskPermisson&&
                         <Task
                         role={INIT_DATA.role}
                         teamId={this.props.params.id}
                         curUserId={this.props.personInfo._id}
-                        ></Task>
+                        ></Task>}
                     
                             
                         <input className='file-input-hidden' type="file" ref={(fileInput) => this.fileInput = fileInput} onChange={this.uploadFileHandle}></input>
                         <div className="head">
                             <span className='head-title'>文件</span>
-                            {(INIT_DATA.role!=='visitor')&&<div className="create-btn" onClick={this.openFileInput}>上传文件</div>}
-                            {(INIT_DATA.role!=='visitor')&&<div className="create-btn" onClick={this.createFolderHandle}>创建文件夹</div>}
+                            {this.state.isOpenUserRightService&&this.state.uploadFilePermission&& <div className="create-btn" onClick={this.openFileInput}>上传文件</div>}
+                            {this.state.isOpenUserRightService&&this.state.uploadFilePermission&& <div className="create-btn" onClick={this.createFolderHandle}>创建文件夹</div>}
                         </div>
 
                         <div className="file-list">
@@ -968,8 +1005,8 @@ export default class TeamDetail extends React.Component {
                                                     <div className="size">-</div>
                                                     <div className="last-modify">{formatDate(item.last_modify_time)}</div>
                                                     {(INIT_DATA.role!=='visitor')&&<div className="tools">
-                                                        <span onClick={() => { this.openMoveModalHandle(item) }}>移动</span>
-                                                        <span onClick={() => { this.renameHandle(item) }}> 重命名 </span>
+                                                       {this.state.isOpenUserRightService&&this.state.moveFilePermission&&<span onClick={() => { this.openMoveModalHandle(item) }}>移动</span>}
+                                                       {this.state.isOpenUserRightService&&this.state.modifyFilePermission&&<span onClick={() => { this.renameHandle(item) }}> 重命名 </span>}
                                                        {this.state.isOpenUserRightService&&this.state.deleteFilePermission&&<span onClick={() => { this.deleteHandle('folder', item.name) }}>删除</span>} 
                                                     </div>}
                                                 </div>
@@ -983,8 +1020,8 @@ export default class TeamDetail extends React.Component {
                                                     <div className="last-modify">{formatDate(item.last_modify_time)}</div>
                                                     {(INIT_DATA.role!=='visitor')&&<div className="tools">
                                                         <span onClick={() => { this.downloadHandle(item.ossKey) }}>下载</span>
-                                                        <span onClick={() => { this.openMoveModalHandle(item) }}>移动</span>
-                                                        <span onClick={() => { this.renameHandle(item) }}> 重命名 </span>
+                                                        {this.state.isOpenUserRightService&&this.state.moveFilePermission&&<span onClick={() => { this.openMoveModalHandle(item) }}>移动</span>}
+                                                        {this.state.isOpenUserRightService&&this.state.modifyFilePermission&&<span onClick={() => { this.renameHandle(item) }}> 重命名 </span>}
                                                         {this.state.isOpenUserRightService&&this.state.deleteFilePermission&& <span onClick={() => { this.deleteHandle('file', item.name) }}>删除</span>}
                                                     </div>}
                                                 </div>

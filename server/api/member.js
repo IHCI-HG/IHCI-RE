@@ -42,8 +42,13 @@ const member = async (req, res, next) => {
         }
         const memberList = []
         await Promise.all ( memberId.map(async item => {
-            const memberObj = await userDB.findByUserId(item)  
-            memberList.push(memberObj)          
+            let memberObj = await userDB.findByUserId(item) 
+            const obj = {
+                teamList:memberObj.teamList,
+                username:memberObj.username,
+                personInfo:memberObj.personInfo
+            }
+            memberList.push(obj)          
             }))        
         resProcessor.jsonp(req, res, {
             state: { code: 0 },

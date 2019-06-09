@@ -5,6 +5,7 @@ import api from '../../../utils/api';
 import Page from '../../../components/page';
 import { locationTo } from '../../../utils/util';
 import { permissionJudgeList,isOpenUserRightServiceResult } from '../../../utils/user-rights-utils';
+import UserRightsConst from '../../../constant/userRights'
 
 
 class TeamGalleryItem extends React.PureComponent{
@@ -48,7 +49,12 @@ class TeamListItem extends React.PureComponent{
 }
 
 export default class Team extends React.Component{
-    componentDidMount = async() => {
+
+    state = {
+        teamList: [],
+    }
+
+    componentDidMount = async () => {
         await this.initTeamList()
     }
 
@@ -59,10 +65,10 @@ export default class Team extends React.Component{
         })
         const teamList = result.data.userObj.teamList
         const teamIdList = []
-        teamList.map((item) => {
+        teamList.forEach((item) => {
             teamIdList.push(item.teamId)
         })
-
+        // console.log(teamList)
         const listResult = await api('/api/team/infoList', {
             method: 'POST',
             body: {
@@ -70,32 +76,39 @@ export default class Team extends React.Component{
             }
         })
         const teamInfoList = listResult.data.teamInfoList
-
-        teamList.map(async (item, idx) => {
-            // console.log('come in')
-            // let managed = false;
-            // let operateTeamSettingPermission = false;
-            // const permissionList = await permissionJudgeList(item.teamId);
+        const teamListResult = [];
+        for(let i=0;i<teamList.length;i++){
+            let managed = false;
+            let operateTeamSettingPermission = false;
+            const permissionList = await permissionJudgeList(teamList[i].teamId);
             // console.log(permissionList)
-            // const isOpen = await isOpenUserRightServiceResult(item.teamId);
-            // if(permissionList.indexOf('operateTeamSetting')!== -1){
-            //     operateTeamSettingPermission = true
-            // }    
-            // if(isOpen){
-            //     managed = operateTeamSettingPermission
-            // }else{
-            //     managed = item.role == 'creator' || item.role == 'admin'
-            // }
-            // console.log(managed)
-            teamList[idx] = {
-                ...item,
-                ...teamInfoList[idx],
-                managed: (item.role == 'creator' || item.role == 'admin')
+            const isOpen = await isOpenUserRightServiceResult(teamList[i].teamId);
+            if(permissionList.indexOf(UserRightsConst.TEAM_SETTING) !== -1){
+                operateTeamSettingPermission = true
+            }    
+            if(isOpen){
+                // console.log(operateTeamSettingPermission)
+                managed = operateTeamSettingPermission
+            }else{
+                managed = teamList[i].role == 'creator' || teamList[i].role == 'admin'
             }
-        })
-
+            // console.log(managed)
+            let obj = {
+                ...teamList[i],
+                ...teamInfoList[i],
+                managed: managed
+            }
+            // console.log(obj)
+            teamListResult.push(obj)
+        }
+         
+        // console.log(teamList)
+        // teamList.map((o)=>{
+        //     // console.log(o)
+        // })
+        console.log(teamListResult)
         this.setState({
-            teamList: teamList
+            teamList:teamListResult
         })
     }
 
@@ -135,11 +148,11 @@ export default class Team extends React.Component{
         location.href = url
     }
 
-
-    state = {
-        teamList: [],
-    }
     render() {
+        console.log(this.state.teamList)
+        const teamList = this.state.teamList
+        const test = this.state.teamList
+        console.log(test)
         return (
             <Page title="团队 - IHCI" className="team-page">
                 <div className="page-wrap">
@@ -148,7 +161,7 @@ export default class Team extends React.Component{
                         <div className="head" onClick={this.starHandle}>星标团队</div>
                         <div className="team-list">
                             {   
-                                this.state.teamList.map((item) => {
+                                teamList.map((item) => {
                                     if(item.marked == true) {
                                         return <TeamGalleryItem key={'mark-team' + item._id} {...item} locationTo={this.locationTo} starHandle={this.starHandle} />
                                     }
@@ -159,7 +172,11 @@ export default class Team extends React.Component{
                         <div className="head">我管理的团队</div>
                         <div className="team-list">
                             {   
-                                this.state.teamList.map((item) => {
+                                teamList.map((item) => {
+                                    console.log(teamList[0])
+                                    console.log(item)
+                                    console.log(item._id)
+                                    console.log(item.managed)
                                     if(item.managed == true) {
                                         return <TeamListItem key={'manage-team' + item._id} {...item} locationTo={this.locationTo} starHandle={this.starHandle} />
                                     }
@@ -170,7 +187,8 @@ export default class Team extends React.Component{
                         <div className="head">我参与的团队</div>
                         <div className="team-list">
                             {   
-                                this.state.teamList.map((item) => {
+                                teamList.map((item) => {
+                                    console.log(item)
                                     return <TeamListItem key={'join-team' + item._id} {...item} locationTo={this.locationTo} starHandle={this.starHandle}  />
                                 })
                             }

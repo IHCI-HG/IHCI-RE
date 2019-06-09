@@ -250,46 +250,71 @@ const silentAuth = async(req, res, next) => {
     }
 }
 
+//chaneg
 const userAuthJudge = async(req, res, next) => {
-    
     try{
         const userId = req.rSession.userId
-        const teamId = req.url.split('/')[2]
-        console.log('------------------------')
-        console.log(userId)
-        console.log(teamId)
-        var result = await request("authenticate",{
-            organId:teamId,
-            userId:userId,
-        })
-        console.log(result);
-        if(result.data.state.code === 0) {
-            const token = result.data.token
-            jwt.verify(token, jwtsecret, function(err, decoded) {      
-                if (err) {
-            //   return res.json({ success: false, message: '无效的token.' });    
-                    console.log('无效的token');
-                } else {
-                  // 如果验证通过，在req中写入解密结果
-                  req.decoded = decoded;  
-                  console.log(req)
-                  console.log(decoded);
-                //   const obj = {
-                //       teamId:decoded.permissionNameList
-                //   }
-                const obj = {}
-                obj[teamId] = decoded.permissionValueList
-                //   window.sessionStorage.setItem(decoded.userId, obj);
-                req.rSession['userRights'] = true
-                req.rSession[userId] = obj;
-                console.log('$$$$$$$$$$$$$$$$$$$$');
-                console.log(req.rSession);
+        const userObj = await UserDB.findById(userId)
+        const teamList = userObj.teamList
+        const obj = {}
+        for(let i=0;i<teamList.length;i++){
+            let teamId = teamList[i].teamId
+            var result = await request("authenticate",{
+                organId:teamId,
+                userId:userId,
+            })
+            if(result.data.state.code === 0) {
+                const token = result.data.token
+                jwt.verify(token, jwtsecret, function(err, decoded) {      
+                    if (err) {
+                        console.log('无效的token');
+                    } else {
+                    // 如果验证通过，在req中写入解密结果
+                    req.decoded = decoded;  
+                    obj[teamId] = decoded.permissionValueList
+                    
+                }
+              });
             }
-          });
-        }else{
-            console.log('come in')
-            // next()
         }
+        req.rSession['userRights'] = true
+        req.rSession[userId] = obj;
+        // const teamId = req.url.split('/')[2]
+        // console.log('------------------------')
+        // console.log(userId)
+        // console.log(teamId)
+        // var result = await request("authenticate",{
+        //     organId:teamId,
+        //     userId:userId,
+        // })
+        // console.log(result);
+        // if(result.data.state.code === 0) {
+        //     const token = result.data.token
+        //     jwt.verify(token, jwtsecret, function(err, decoded) {      
+        //         if (err) {
+        //     //   return res.json({ success: false, message: '无效的token.' });    
+        //             console.log('无效的token');
+        //         } else {
+        //           // 如果验证通过，在req中写入解密结果
+        //           req.decoded = decoded;  
+        //           console.log(req)
+        //           console.log(decoded);
+        //         //   const obj = {
+        //         //       teamId:decoded.permissionNameList
+        //         //   }
+        //         const obj = {}
+        //         obj[teamId] = decoded.permissionValueList
+        //         //   window.sessionStorage.setItem(decoded.userId, obj);
+        //         req.rSession['userRights'] = true
+        //         req.rSession[userId] = obj;
+        //         console.log('$$$$$$$$$$$$$$$$$$$$');
+        //         console.log(req.rSession);
+        //     }
+        //   });
+        // }else{
+        //     console.log('come in')
+        //     // next()
+        // }
         // if(req.url.indexOf('/discuss/topic/')!== -1){
         //     const topicId = req.url.split('/')[3]
         //     const topicObj = await topicDB.findByTopicId(topicId)
@@ -335,20 +360,20 @@ module.exports = [
 
     ['GET', '/auth', clientParams(), wxAuthCodeHandle , mainPage],
 
-    ['GET', '/team', clientParams(), routerAuthJudge, pageHandle() ],
-    ['GET', '/files/:teamId', clientParams(), routerAuthJudge,userAuthJudge, pageHandle() ],
-    ['GET', '/sign', clientParams(), routerAuthJudge, pageHandle() ],
+    ['GET', '/team', clientParams(), routerAuthJudge,userAuthJudge, pageHandle() ],
+    ['GET', '/files/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
+    ['GET', '/sign', clientParams(), routerAuthJudge,pageHandle() ],
 
-    ['GET', '/team/:id', clientParams(), silentAuth, routerAuthJudge,userAuthJudge, pageHandle() ],
-    ['GET', '/todo/:id', clientParams(), silentAuth, routerAuthJudge,userAuthJudge, pageHandle() ],
-    ['GET', '/team-admin/:teamId', clientParams(), routerAuthJudge,userAuthJudge, pageHandle() ],
+    ['GET', '/team/:id', clientParams(), silentAuth, routerAuthJudge, pageHandle() ],
+    ['GET', '/todo/:id', clientParams(), silentAuth, routerAuthJudge, pageHandle() ],
+    ['GET', '/team-admin/:teamId', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/team-management',clientParams(), routerAuthJudge, pageHandle()],
     ['GET', '/modify-password',clientParams(), routerAuthJudge, pageHandle()],
     ['GET', '/team-join/:teamId', clientParams(), silentAuth, joinTeam, pageHandle() ],
 
     ['GET', '/team-create', clientParams(), routerAuthJudge, pageHandle() ],
     ['GET', '/person', clientParams(), routerAuthJudge, personSeting, pageHandle() ],
-    ['GET', '/discuss/topic/:id', clientParams(), silentAuth, routerAuthJudge,userAuthJudge, pageHandle() ],
+    ['GET', '/discuss/topic/:id', clientParams(), silentAuth, routerAuthJudge, pageHandle() ],
     ['GET', '/timeline', clientParams(), silentAuth,    routerAuthJudge, pageHandle() ],
     ['GET', '/member', clientParams(),   routerAuthJudge, pageHandle() ],
     ['GET', '/search', clientParams(),   routerAuthJudge, pageHandle() ],
