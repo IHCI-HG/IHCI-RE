@@ -1,6 +1,6 @@
 import * as React from 'react';
 import './style.scss'
-import { iframeUrl } from '../../../utils/iframeUrlConfig'
+import { iframeUrl } from './iframeUrlConfig'
 import api from '../../../utils/api';
 import Page from '../../../components/page';
 import { locationTo } from '../../../utils/util';
