@@ -37,7 +37,7 @@
     "fastclick": "^1.0.6",
     "graphql": "^0.10.5",
     "graphql-tools": "^1.1.0",
-    "handlebars": "3.0.1",
+    "handlebars": "4.3.0",
     "http-proxy": "1.11.1",
     "isomorphic-fetch": "^2.2.1",
     "jssha": "^2.0.2",
