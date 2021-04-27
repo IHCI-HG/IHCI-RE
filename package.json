@@ -74,7 +74,7 @@
     "react-router-redux": "^4.0.5",
     "react-slick": "^0.15.4",
     "react-swipe": "^5.0.8",
-    "redis": "^2.6.3",
+    "redis": "^3.1.1",
     "redux": "^3.6.0",
     "redux-actions": "^1.2.0",
     "redux-auth-wrapper": "^0.8.0",
