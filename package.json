@@ -91,7 +91,7 @@
     "uuid": "2.0.1",
     "webpack-isomorphic-tools": "^2.6.6",
     "whatwg-fetch": "^2.0.3",
-    "xlsx": "0.8.0",
+    "xlsx": "0.17.0",
     "zscroller": "^0.4.3"
   },
   "devDependencies": {
