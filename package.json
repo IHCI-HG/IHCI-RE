@@ -20,7 +20,7 @@
     "babel-runtime": "^6.26.0",
     "bluebird": "^3.5.1",
     "body-parser": "1.13.3",
-    "body-parser-xml": "^1.1.0",
+    "body-parser-xml": "^2.0.3",
     "braft-editor": "^1.9.7",
     "classnames": "^2.2.5",
     "clipboard": "^1.7.1",
